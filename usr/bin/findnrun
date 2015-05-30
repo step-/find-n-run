@@ -2,17 +2,19 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.9
-# March-May 2015 by SFR and L18L; GNU GPL applies
+  Version=1.9-gawk
+# March-May 2015 by SFR and L18L; gawk fork by step
+# GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
-# Req.: Gtkdialog >= 0.8.3, grep, sort, cut, sed
+# Req.: Gtkdialog >= 0.8.3, gawk
+# https://github.com/step-/find-n-run.git
 # =============================================================================
 
 export TEXTDOMAIN=find_n_run
 export OUTPUT_CHARSET=UTF-8
 
 APP_TITLE="$(gettext "Find'N'Run")-${Version}"
-ABOUT="$(sed -n "4,7p" "$0" | cut -c2-)"
+ABOUT="$(awk 'NR>3 && NR<9 {print substr($0,2)}' "$0")"
 
 LOC1="${XDG_DATA_HOME}/applications/"
 LOC2="/usr/local/share/applications/"
@@ -20,6 +22,10 @@ LOC3="/usr/share/applications/"
 #LOC4="${HOME}/.local/share/applications/"
 
 CONFIG="${HOME}/.findnrunrc"
+
+trap 'rm -f "${AWKF}"' INT QUIT TERM HUP EXIT
+AWKF=`mktemp`
+SEP=`echo -e "\b"` # field separator of packed values (also used as "\b")
 
 # -----------------------------------------------------------------------------
 
@@ -38,7 +44,7 @@ fi
 
 # =============================================================================
 
-[ "`which gtkdialog4 2>/dev/null`" ] && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
+which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
 
 # -----------------------------------------------------------------------------
 
@@ -61,12 +67,83 @@ export GUI_ABOUT='
 
 # -----------------------------------------------------------------------------
 
-export GUI_MAIN='
-<window title="'${APP_TITLE}'" icon-name="edit-find" window-position="2"  height-request="278">
+# Set LOCS to the glob that lists valid .desktop file locations.
+# Do this in the main shell after having processed script option.
+for i in "${LOC1}" "${LOC2}" "${LOC3}"; do
+  set -- "$i"*.desktop
+  if [ "$1" != "${1%/*.desktop}/*.desktop" ]; then
+    x=${1%% }; x=${x%/*}; LOCS="${LOCS}${LOCS+ }$x/*.desktop"
+  else
+    : # LOCi is empty or non-existent
+  fi
+done
+
+# Prepare gawk script
+# Usage: gawk -f "scriptpath" [-v GREP="string"] files
+> "${AWKF}" echo '
+BEGIN {RS="^~cannot~match~me~"}
+{file[++n]=";"FILENAME"\n"$0} # slurp n input files
+END {
+  # decode
+  for(i=1; i<=n; i++) {
+    fil=file[i]
+    name=exec=icnpath=icnname=icnext=comment=""
+    match(fil, /^;([^\n]+)/, m); filename=m[1]
+    match(fil, /\nName=([^\n]+)/, m); name=m[1]
+    if(match(fil, /\nName\[('"${LR:-@}|${L:-@}"')\]=([^\n]+)/, m)) name=m[2]
+    match(fil, /\nExec=([^\n]+)/, m); exec=m[1]
+    match(fil, /\nIcon=([^\n]*\/)?([^\n.]+)([.][^\n]*)?/, m)
+    icnpath=m[1]; icnname=m[2]; icnext=substr(m[3],2)
+    match(fil, /\nComment=([^\n]+)/, m); comment=m[1]
+    if(match(fil, /\nComment\[('"${LR:-@}|${L:-@}"')\]=([^\n]+)/, m)) comment=m[2]
+    # narrow matches by GREP pattern and store for sorting step
+    if(GREP && index(tolower(name), GREP) || !GREP) {
+      key[k] = k = tolower(name) # case-indepedent sort
+      out[k] = format_item()
+    }
+  }
+  # Sort by name and print. Note: requires gnu-awk.
+  nkey = asort(key)
+  for(i=1; i<=nkey; i++)
+    print out[key[i]]
+}
+
+# Format tree widget item - all available columns + packed values
+# Note: assert data does not include characters "|" and "\b" ($SEP).
+function format_item(   ic,cols) {
+  ic = format_icon_cell()
+  cols = sprintf("%s||%s|%s|%s|%s|%s", \
+    ic, filename, name, exec, comment, \
+    sprintf("%s\b%s\b%s\b%s", filename, name, exec, comment))
+    # tree widget exports all packed values as a single column
+  return(cols)
+}
+
+# Format tree row icon cell.
+# Use within <input icon-column="0"> or <stock-column="0">
+# Note: tree widget does not support icons with paths anyway.
+function format_icon_cell() {
+  return(icnpath ? icnpath icnname "." icnext : icnname)
+}
+
+#NOT USED
+## Format <item TAG=VALUE> icon tag.
+## Usage: printf "<item%s>", format_icon_tag()
+## Note: tree widget does not support icons with paths anyway.
+#function format_icon_tag() {
+#  return(icnpath \
+#    ? " image-name=\"" icnpath icnname "." icnext "\"" \
+#    : match(icnname, /^gtk-/) \
+#      ? " stock-id=\"" icnname "\"" : " icon-name=\"" icnname "\"")
+#}
+'
+
+$GTKDIALOG -s <<EOF
+<window title="${APP_TITLE}" icon-name="edit-find" window-position="2"  height-request="278" width-request="460">
   <vbox>    
-    <hbox tooltip-text="'$(gettext "Run by double click or ENTER key")'">
+    <hbox tooltip-text="$(gettext "Run by double click or ENTER key")">
       <text>
-        <label>'$(gettext "Narrow search by input of some letters:")'</label>
+        <label>$(gettext "Type some letters to narrow list:")</label>
       </text>
       <entry secondary-icon-stock="gtk-close">
         <variable>varENTRY</variable>
@@ -76,44 +153,44 @@ export GUI_MAIN='
       </entry>
     </hbox>
 
-    <tree enable-search="false" exported-column="0" column-visible="0|1" headers-visible="false">
+    <tree enable-search="false" exported-column="5" column-visible="1|0|1|0|0|0" headers-visible="false" icon-column-name="gtk-apply">
+      <label>Icon|File|Name|Exec|Comment|PackedValues</label>
       <variable>varLIST</variable>
-      <label>Name|Loc</label>
-      <input>grep -H -R -E "^Name(\['${LR}'\]|\['${L}'\])?=" '${LOC1}' '${LOC2}' '${LOC3}' --include="*.desktop" 2>/dev/null | sort -t= -k1,1 -d -r | sort -t: -u -k1,1 | sed "s#:Name\(\['${LR}'\]\|\['${L}'\]\)\?=#|#" | sort -t\| -k2 -f | grep -i "|.*${varENTRY}" | grep -F -i -- "${varENTRY}"</input>
-      <action>X="$(grep -m1 "^Exec=" "${varLIST}" | cut -f2- -d "=")"; unset GUI_ABOUT GUI_MAIN varENTRY varLIST varCOMMENT varOPEN TEXTDOMAIN OUTPUT_CHARSET; eval ${X% \%*} &</action>
+      <input icon-column="0">gawk -f "${AWKF}" -v GREP="\${varENTRY}" ${LOCS}</input>
+      <action>IFS=${SEP}; set -- \${varLIST}; unset GUI_ABOUT varENTRY varLIST varCOMMENT varOPEN TEXTDOMAIN OUTPUT_CHARSET; eval \${3% \%*} &</action>
       <action signal="changed">clear:varCOMMENT</action>
       <action signal="changed">refresh:varCOMMENT</action>
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
     </tree>
     
-    <statusbar has-resize-grip="false" tooltip-text="'$(gettext "Comment")'">
+    <statusbar has-resize-grip="false" tooltip-text="$(gettext "Comment")">
       <variable>varCOMMENT</variable>
-      <input>grep -E "^Comment(\['${LR}'\]|\['${L}'\])?=" "${varLIST}" 2>/dev/null | sort -t= -k1,1 -d -r | cut -f2- -d "="</input>
+      <input>IFS=${SEP}; set -- \${varLIST}; echo \$4</input>
     </statusbar>
      
     <hbox space-fill="false" space-expand="false">
       <checkbox use-underline="true">
-        <label>'$(gettext "_Leave this window open")'</label>
-        <default>'${defOPEN}'</default>
+        <label>$(gettext "_Leave this window open")</label>
+        <default>${defOPEN}</default>
         <variable>varOPEN</variable>
-        <action>echo -e "defOPEN=${varOPEN}" > "'${CONFIG}'"</action>
+        <action>echo -e "defOPEN=\${varOPEN}" > "${CONFIG}"</action>
       </checkbox>
       <text space-fill="true" space-expand="true"><label>""</label></text>
- 	  <button tooltip-text="'$(gettext "About")'">
+ 	  <button tooltip-text="$(gettext "About")">
 	    <input file stock="gtk-about"></input>
 	    <action>launch:GUI_ABOUT</action>
 	  </button>
-      <button tooltip-text="'$(gettext "Exit")'">
+      <button tooltip-text="$(gettext "Exit")">
         <input file stock="gtk-quit"></input>
         <action>exit:EXIT</action>
       </button>
     </hbox>
         
   </vbox>
-  <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
   <action signal="delete-event">exit:abort</action>
-</window>'
-
-$GTKDIALOG -p GUI_MAIN
+</window>
+EOF
 
 ###############################################################################
+
