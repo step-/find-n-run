@@ -157,11 +157,20 @@ $GTKDIALOG -s <<EOF
       <label>Icon|File|Name|Exec|Comment|PackedValues</label>
       <variable>varLIST</variable>
       <input icon-column="0">gawk -f "${AWKF}" -v GREP="\${varENTRY}" ${LOCS}</input>
-      <action>IFS=${SEP}; set -- \${varLIST}; unset GUI_ABOUT varENTRY varLIST varCOMMENT varOPEN TEXTDOMAIN OUTPUT_CHARSET; eval \${3% \%*} &</action>
+      <action>IFS=${SEP}; set -- \${varLIST}; unset GUI_ABOUT varENTRY varLIST varCOMMENT varOPEN varCMD TEXTDOMAIN OUTPUT_CHARSET; eval \${3% \%*} &</action>
+      <action signal="changed">clear:varCMD</action>
+      <action signal="changed">refresh:varCMD</action>
       <action signal="changed">clear:varCOMMENT</action>
       <action signal="changed">refresh:varCOMMENT</action>
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
     </tree>
+
+    <entry secondary-icon-stock="gtk-apply">
+      <variable>varCMD</variable>
+      <input>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@"</input>
+      <action signal="activate">\${varCMD} &</action>
+      <action signal="secondary-icon-release">\${varCMD} &</action>
+    </entry>
     
     <statusbar has-resize-grip="false" tooltip-text="$(gettext "Comment")">
       <variable>varCOMMENT</variable>
