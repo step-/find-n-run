@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.9-gawk
+  Version=1.10-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
@@ -23,8 +23,9 @@ LOC3="/usr/share/applications/"
 
 CONFIG="${HOME}/.findnrunrc"
 
-trap 'rm -f "${AWKF}"' INT QUIT TERM HUP EXIT
+trap 'rm -f "${AWKF}" "${HSTF}"' INT QUIT TERM HUP EXIT
 AWKF=`mktemp`
+HSTF="${AWKF}.sh"; >"${HSTF}" # combobox command line history
 SEP=`echo -e "\b"` # field separator of packed values (also used as "\b")
 
 # -----------------------------------------------------------------------------
@@ -147,8 +148,8 @@ $GTKDIALOG -s <<EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2"  height-request="278" width-request="460">
   <vbox>    
     <hbox>
-      <entry secondary-icon-stock="gtk-close" tooltip-text="$(gettext "Run by double click or ENTER key")">
-        <default>$(gettext "Type some letters to narrow list")</default>
+      <entry secondary-icon-stock="gtk-close" tooltip-text="$(gettext "Press ENTER to select")">
+        <default>$(gettext "Type some letters to narrow the list")</default>
         <variable>varENTRY</variable>
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
@@ -156,25 +157,42 @@ $GTKDIALOG -s <<EOF
       </entry>
     </hbox>
 
-    <tree enable-search="false" exported-column="5" column-visible="1|0|1|0|0|0" headers-visible="false" icon-column-name="gtk-apply">
+    <tree enable-search="false" exported-column="5" column-visible="1|0|1|0|0|0" headers-visible="false" icon-column-name="gtk-apply" tooltip-text="$(gettext "Press ENTER to run selected item")">
       <label>Icon|File|Name|Exec|Comment|PackedValues</label>
       <variable>varLIST</variable>
       <input icon-column="0">gawk -f "${AWKF}" -v GREP="\${varENTRY}" ${LOCS}</input>
-      <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; ${UNEXPORT}; eval "\$@" &</action>
-      <action signal="changed">clear:varCMD</action>
+      <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
+      <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
       <action signal="changed">clear:varCOMMENT</action>
       <action signal="changed">refresh:varCOMMENT</action>
-      <action condition="active_is_false(varOPEN)">exit:EXIT</action>
+      <action>clear:varENTRY</action>
+      <action>grabfocus:varENTRY</action>
     </tree>
 
-    <entry secondary-icon-stock="gtk-apply">
-      <variable>varCMD</variable>
-      <input>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@"</input>
-      <action signal="activate">set -- \${varCMD}; ${UNEXPORT}; "\$@" &</action>
-      <action signal="secondary-icon-release">\${varCMD} &</action>
-    </entry>
-    
+    <hbox space-fill="false" space-expand="false">
+      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the up-arrow key to grab the current command and move back through the command history. You may modify the command. You may enter any shell command.")">
+        <variable>varCMD</variable>
+        <default>$(gettext "Press up-arrow key to grab command")</default>
+        <input file>${HSTF}</input>
+        <input>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@"</input>
+        <output file>${HSTF}</output>
+
+        <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
+        <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT}; "\$@" &</action>
+        <action signal="activate">clear:varENTRY</action>
+        <action signal="activate">grabfocus:varENTRY</action>
+        <action signal="activate">refresh:varCMD</action>
+      </comboboxentry>
+      <button tooltip-text="$(gettext "Clear selected command line")">
+        <height>16</height>
+        <input file icon="edit-clear"></input>
+        <action>removeselected:varCMD</action>
+        <action>save:varCMD</action>
+        <action>refresh:varCMD</action>
+      </button>
+    </hbox>
+
     <entry sensitive="false" tooltip-text="$(gettext "Comment")">
       <variable>varCOMMENT</variable>
       <input>IFS=${SEP}; set -- \${varLIST}; echo \$4</input>
