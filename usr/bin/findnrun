@@ -141,11 +141,9 @@ function format_icon_cell() {
 $GTKDIALOG -s <<EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2"  height-request="278" width-request="460">
   <vbox>    
-    <hbox tooltip-text="$(gettext "Run by double click or ENTER key")">
-      <text>
-        <label>$(gettext "Type some letters to narrow list:")</label>
-      </text>
-      <entry secondary-icon-stock="gtk-close">
+    <hbox>
+      <entry secondary-icon-stock="gtk-close" tooltip-text="$(gettext "Run by double click or ENTER key")">
+        <default>$(gettext "Type some letters to narrow list")</default>
         <variable>varENTRY</variable>
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
