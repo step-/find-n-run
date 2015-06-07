@@ -91,7 +91,9 @@ END {
     match(fil, /^;([^\n]+)/, m); filename=m[1]
     match(fil, /\nName=([^\n]+)/, m); name=m[1]
     if(match(fil, /\nName\[('"${LR:-@}|${L:-@}"')\]=([^\n]+)/, m)) name=m[2]
+    if(!name) continue # trap bogus .desktop files
     match(fil, /\nExec=([^\n]+)/, m); exec=m[1]
+    if(!exec) continue # trap bogus .desktop files
     match(fil, /\nIcon=([^\n]*\/)?([^\n.]+)([.][^\n]*)?/, m)
     icnpath=m[1]; icnname=m[2]; icnext=substr(m[3],2)
     match(fil, /\nComment=([^\n]+)/, m); comment=m[1]
