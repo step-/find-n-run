@@ -172,10 +172,10 @@ $GTKDIALOG -s <<EOF
       <action signal="secondary-icon-release">\${varCMD} &</action>
     </entry>
     
-    <statusbar has-resize-grip="false" tooltip-text="$(gettext "Comment")">
+    <entry sensitive="false" tooltip-text="$(gettext "Comment")">
       <variable>varCOMMENT</variable>
       <input>IFS=${SEP}; set -- \${varLIST}; echo \$4</input>
-    </statusbar>
+    </entry>
 
     <hbox space-fill="false" space-expand="false">
       <checkbox use-underline="true">
