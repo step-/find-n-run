@@ -35,6 +35,9 @@ L=${LANG%_*}  #ex:pt
 
 # -----------------------------------------------------------------------------
 
+# Unexport these variables before running the selected command.
+UNEXPORT="unset GUI_ABOUT varENTRY varLIST varCMD varCOMMENT varOPEN TEXTDOMAIN OUTPUT_CHARSET"
+
 # Defaults
 defOPEN=false
 
@@ -157,7 +160,7 @@ $GTKDIALOG -s <<EOF
       <label>Icon|File|Name|Exec|Comment|PackedValues</label>
       <variable>varLIST</variable>
       <input icon-column="0">gawk -f "${AWKF}" -v GREP="\${varENTRY}" ${LOCS}</input>
-      <action>IFS=${SEP}; set -- \${varLIST}; unset GUI_ABOUT varENTRY varLIST varCOMMENT varOPEN varCMD TEXTDOMAIN OUTPUT_CHARSET; eval \${3% \%*} &</action>
+      <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; ${UNEXPORT}; eval "\$@" &</action>
       <action signal="changed">clear:varCMD</action>
       <action signal="changed">refresh:varCMD</action>
       <action signal="changed">clear:varCOMMENT</action>
@@ -168,7 +171,7 @@ $GTKDIALOG -s <<EOF
     <entry secondary-icon-stock="gtk-apply">
       <variable>varCMD</variable>
       <input>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@"</input>
-      <action signal="activate">\${varCMD} &</action>
+      <action signal="activate">set -- \${varCMD}; ${UNEXPORT}; "\$@" &</action>
       <action signal="secondary-icon-release">\${varCMD} &</action>
     </entry>
     
