@@ -176,7 +176,7 @@ $GTKDIALOG -s <<EOF
       <variable>varCOMMENT</variable>
       <input>IFS=${SEP}; set -- \${varLIST}; echo \$4</input>
     </statusbar>
-     
+
     <hbox space-fill="false" space-expand="false">
       <checkbox use-underline="true">
         <label>$(gettext "_Leave this window open")</label>
@@ -185,16 +185,18 @@ $GTKDIALOG -s <<EOF
         <action>echo -e "defOPEN=\${varOPEN}" > "${CONFIG}"</action>
       </checkbox>
       <text space-fill="true" space-expand="true"><label>""</label></text>
- 	  <button tooltip-text="$(gettext "About")">
-	    <input file stock="gtk-about"></input>
-	    <action>launch:GUI_ABOUT</action>
-	  </button>
+      <button tooltip-text="$(gettext "About")">
+        <height>16</height>
+        <input file icon="gtk-about"></input>
+        <action>launch:GUI_ABOUT</action>
+      </button>
       <button tooltip-text="$(gettext "Exit")">
-        <input file stock="gtk-quit"></input>
+        <height>16</height>
+        <input file icon="gtk-quit"></input>
         <action>exit:EXIT</action>
       </button>
     </hbox>
-        
+
   </vbox>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
   <action signal="delete-event">exit:abort</action>
