@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10-gawk
+  Version=1.10.1-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
@@ -179,7 +179,8 @@ $GTKDIALOG -s <<EOF
         <output file>${HSTF}</output>
 
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
-        <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT}; "\$@" &</action>
+        <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
+        <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
         <action signal="activate">clear:varENTRY</action>
         <action signal="activate">grabfocus:varENTRY</action>
         <action signal="activate">refresh:varCMD</action>
