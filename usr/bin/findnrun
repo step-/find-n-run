@@ -112,15 +112,15 @@ END {
   nkey = asort(key)
   for(i=1; i<=nkey; i++)
     print substr(out[key[i]], 1, 510)
-    # 510 works around gtkdialog tree widget buffer overflow bug
+    # 510 works around gtkdialog tree widget buffer overflow limit
 }
 
-# Format tree widget item - all available columns + packed values
+# Format tree widget item - columns: icon, name, all-packed-values.
 # Note: assert data does not include characters "|" and $SEP.
 function format_item(   ic,cols) {
   ic = format_icon_cell()
-  cols = sprintf("%s||%s|%s|%s|%s|%s", \
-    ic, filename, name, exec, comment, \
+  cols = sprintf("%s||%s|%s", \
+    ic, name, \
     sprintf("%s'${SEP}'%s'${SEP}'%s'${SEP}'%s", filename,name,exec,comment))
     # tree widget exports all packed values as a single column
   return(cols)
@@ -158,8 +158,8 @@ $GTKDIALOG -s <<EOF
       </entry>
     </hbox>
 
-    <tree enable-search="false" exported-column="5" column-visible="1|0|1|0|0|0" headers-visible="false" icon-column-name="gtk-apply" tooltip-text="$(gettext "Press ENTER to run selected item")">
-      <label>Icon|File|Name|Exec|Comment|PackedValues</label>
+    <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" tooltip-text="$(gettext "Press ENTER to run selected item")">
+      <label>Icon|Name|PackedValues</label>
       <variable>varLIST</variable>
       <input icon-column="0">gawk -f "${AWKF}" -v GREP="\${varENTRY}" ${LOCS}</input>
       <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
