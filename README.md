@@ -20,14 +20,14 @@ of processes that need to run when the search field is exercised.
 Switching to `awk` also allowed me to add considerable extra functionality:
 
  * Display an application icon for each `.desktop` file.
-   Due to limitations of the `gtkdialog` tree widget, icons that are not
-   located in `/usr/share/pixmaps` will not show in the dialog window.
+   It is possible for some icons to be empty on first run. You may then
+   enable option _"Show all icons"_ in the main window to correct this issue.
  * Command line entry with command history. A combobox widget
    tracks the command associated with the currently selected `.desktop`
    item. Pressing up-arrow/down-arrow moves back/forward in the history
    of previously executed commands.
    Due to limitations of the `gtkdialog` comboboxentry widget, the
-   combobox is normally blank until it's focused **and** up-arrow has
+   combobox is normally blank until it is focused **and** up-arrow has
    been pressed at least once. The first key press displays the
    command associated with the current entry.
 
@@ -42,7 +42,9 @@ Please file bugs in the Issues section of the
 
 ## Screenshot
 
-Side by side: Left: version 1.10-gawk -- Right: original version 1.9 (Fatdog64-701).
+Side by side: Left: version 1.10.3-gawk -- Right: original version 1.9 (Fatdog64-701).
 
-![side-by-side versions](findnrun-1.10-gawk.png)
+![side-by-side main window](findnrun-1.10.3-gawk-main.png)
+
+![side-by-side about dialog](findnrun-1.10.3-gawk-about.png)
 

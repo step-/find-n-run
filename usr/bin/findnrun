@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.2-gawk
+  Version=1.10.3-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
@@ -23,10 +23,13 @@ LOC3="/usr/share/applications/"
 
 CONFIG="${HOME}/.findnrunrc"
 
-trap 'rm -f "${AWKF}" "${HSTF}"' INT QUIT TERM HUP EXIT
-AWKF=`mktemp`
-HSTF="${AWKF}.sh"; >"${HSTF}" # combobox command line history
+DEBUG= # unset to disable debug messages to stderr
+trap 'rm -f "${TMPF}"*' INT QUIT TERM HUP EXIT
+TMPF=`mktemp`
+AWKF="${TMPF}.awk"
+HSTF="${TMPF}.sh"; >"${HSTF}" # combobox command line history
 SEP=`echo -e "\b"` # field separator of packed values
+ICONSTEM="/usr/share/pixmaps/findnrun-" # prefix to worked-around icons.
 
 # -----------------------------------------------------------------------------
 
@@ -37,14 +40,13 @@ L=${LANG%_*}  #ex:pt
 # -----------------------------------------------------------------------------
 
 # Unexport these variables before running the selected command.
-UNEXPORT="unset GUI_ABOUT varENTRY varLIST varCMD varCOMMENT varOPEN TEXTDOMAIN OUTPUT_CHARSET"
+UNEXPORT="unset GUI_ABOUT varENTRY varLIST varCMD varCOMMENT varOPEN varICONS TEXTDOMAIN OUTPUT_CHARSET"
 
 # Defaults
 defOPEN=false
+export varICONS=false
 
-if [ -f "$CONFIG" ]; then
-. "$CONFIG"
-fi
+touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
 
 # =============================================================================
 
@@ -83,13 +85,28 @@ for i in "${LOC1}" "${LOC2}" "${LOC3}"; do
 done
 
 # Prepare gawk script
-# Usage: gawk -f "scriptpath" [-v GREP="string"] files
+# Usage: gawk -f "scriptpath" [-v GREP="string"] [-v ALL_ICONS=true] files
 > "${AWKF}" echo '
-BEGIN {RS="^~cannot~match~me~"}
-{file[++n]=";"FILENAME"\n"$0} # slurp n input files
+BEGIN {
+  if("'${DEBUG}'") print "\nSTARTING AWK, ALL_ICONS="ALL_ICONS >"/dev/stderr"
+  RS="^~cannot~match~me~" # enable slurp read mode.
+  # Choose a shell for ongoing command execution - see icon_workaround().
+  sh = "/bin/dash" # not used as a coprocess
+  ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
+}
+{
+  # Slurp NFILES .desktop files.
+  file[++NFILES]=";"FILENAME"\n"$0
+}
 END {
-  # decode
-  for(i=1; i<=n; i++) {
+  # Is the icon work-around enabled and up-to-date?
+  if(ICONUPDATED = is_icon_workaround_uptodate()) {
+    # Speed up icon_workaround() by reading the icon index file.
+    read_icon_index() # creates ICONINDEX map
+  }
+  # Decode .desktop files.
+  if("'${DEBUG}'") print "awk decoding",NFILES,"files..." > "/dev/stderr"
+  for(i=1; i<=NFILES; i++) {
     fil=file[i]
     name=exec=icnpath=icnname=icnext=comment=""
     match(fil, /^;([^\n]+)/, m); filename=m[1]
@@ -105,14 +122,22 @@ END {
     # narrow matches by GREP pattern and store for sorting step
     if(GREP && index(tolower(name), GREP) || !GREP) {
       key[k] = k = tolower(name) # case-indepedent sort
+      if(ALL_ICONS == "true") icon = icon_workaround(sh)
       out[k] = format_item()
     }
   }
-  # Sort by name and print. Note: requires gnu-awk.
-  nkey = asort(key)
-  for(i=1; i<=nkey; i++)
+  # Sort by name and print.
+  nkey = asort(key) # Note: asort is a GNU awk (gawk) extension.
+  for(i=1; i<=nkey; i++) {
     print substr(out[key[i]], 1, 510)
     # 510 works around gtkdialog tree widget buffer overflow limit
+  }
+  # Remember if we performed a complete icon work-around.
+  mark_icon_workaround_uptodate()
+  # Close shell.
+  print "exit" | sh
+  close(sh)
+  if("'${DEBUG}'") print "ENDING AWK" >"/dev/stderr"
 }
 
 # Format tree widget item - columns: icon, name, all-packed-values.
@@ -129,20 +154,91 @@ function format_item(   ic,cols) {
 # Format tree row icon cell.
 # Use within <input icon-column="0"> or <stock-column="0">
 # Note: tree widget does not support icons with paths anyway.
-function format_icon_cell() {
+function format_icon_cell( ) {
   return(icnpath ? icnpath icnname "." icnext : icnname)
 }
 
-#NOT USED
-## Format <item TAG=VALUE> icon tag.
-## Usage: printf "<item%s>", format_icon_tag()
-## Note: tree widget does not support icons with paths anyway.
-#function format_icon_tag() {
-#  return(icnpath \
-#    ? " image-name=\"" icnpath icnname "." icnext "\"" \
-#    : match(icnname, /^gtk-/) \
-#      ? " stock-id=\"" icnname "\"" : " icon-name=\"" icnname "\"")
-#}
+# Workaround for gtkdialog tree widget not displaying icons with path.
+function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
+  # Supposedly, IFP is the icon full path (it is used as the icon index key).
+  IFP = icnpath icnname (icnext ?".":"") icnext
+  # If the work-around is not up-to-date run sh/finđ/ln to create icon links.
+  if(!ICONUPDATED) {
+    #printf "L" > "/dev/stderr"
+    ifp = IFP
+    c = ""
+    if(-1 == getline < ifp) { # file ifp does not exist
+      # This could happen because .desktop file sets Icon=name-only (valid), but
+      # we cannot trust gtkdialog to show icons by name only, so get fullpath.
+      c = "2>/dev/null find -L /usr/share/icons /usr/share/pixmaps " \
+        " -type f -name \""icnname".*\" ! -path \"*/.*/*\" -print0 -quit"
+        # ! -path "*/.*/*" excludes all matches within any hidden dir, neat!
+        # -print0 ensures match string does not include \n character
+        # -quit exits after first match, if any; GNU awk (gawk) extension.
+      # Read found path into ifp, which stays == "" if nothing found.
+      ifp=""; c | getline ifp; close(c)
+    } else { # file ifp exists
+      close(ifp)
+    }
+    if("" == ifp) {
+      print filename": Icon=" icnpath icnname "." icnext, "Not found." >"/dev/stderr"
+      return
+    }
+    # gtkdialog tree can definitely display icon paths /usr/share/pixmaps/*
+    # so try symlinking to target ifp
+    x = split(ifp, a, /\//)
+    lnk = a[x] # link name lnk <- icon-name[.ext] (no path)
+    ext = (x = split(lnk, a, /\./)) ?"."a[x] :"" # ".ext" if any
+    if(ext) x-- # forget ext from split link name
+    # implode link name while replacing all dots with underscores
+    lnk = ""; for(c=1; c<=x; c++) lnk = lnk "_" a[c]; lnk = substr(lnk, 2)
+    # Symlink the icon.
+    print "2>/dev/null ln -s \""ifp"\" \"" ICONSTEM lnk ext "\"" | sh
+    # Progressively build the icon index file.
+    print IFP ":" ifp ":" lnk ":" ext >> (ICONSTEM".index")
+  } else {
+    #printf "I" > "/dev/stderr"
+    # The work-around is up-to-date so use ICONINDEX map to speed things up
+    split(ICONINDEX[IFP], a, ":")
+    lnk = a[3]
+  }
+
+  icnpath = "" # this tells format_item() to use icnname only
+  icnname = "findnrun-" lnk # no ext
+  # gtkdialog is very finicky: icon name must not include dots nor extension
+  # but the link name must include an extension!
+}
+
+# Is the icon work-around enabled and up-to-date? - icon_workaround() helper.
+function is_icon_workaround_uptodate(   uptodate,x) {
+  if(uptodate = ("true" == ALL_ICONS)) {
+    if(uptodate = (-1 != (getline < (x = ICONSTEM".uptodate"))))
+      close(x)
+  }
+  if("'${DEBUG}'") print "is_icon_workaround_uptodate="uptodate > "/dev/stderr"
+  return(uptodate)
+}
+
+# Read the index file - icon_workaround() helper
+function read_icon_index(   a,b,data,i,x) {
+  if("'${DEBUG}'") print "in read_icon_index" >"/dev/stderr"
+  if(1 == (getline data < (x = ICONSTEM".index"))) {
+    close(x)
+    na = split(data, a, /\n/) # we slurped the index file
+    for(i=1; i<=na; i++) {
+      split(a[i], b, ":") # index file format: IFP ":" ifp ":" lnk ":" ext
+      ICONINDEX[b[1]] = a[i]
+    }
+  }
+}
+
+# If the icon work-around is enabled, mark whether it is up-to-date.
+function mark_icon_workaround_uptodate( ) {
+  if("true" == ALL_ICONS) {
+    print "" > (ICONSTEM".uptodate")
+    if("'${DEBUG}'") print "\nmark_icon_workaround created", ICONSTEM".uptodate" > "/dev/stderr"
+  }
+}
 '
 
 $GTKDIALOG -s <<EOF
@@ -158,10 +254,10 @@ $GTKDIALOG -s <<EOF
       </entry>
     </hbox>
 
-    <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" tooltip-text="$(gettext "Press ENTER to run selected item")">
+    <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
       <label>Icon|Name|PackedValues</label>
       <variable>varLIST</variable>
-      <input icon-column="0">gawk -f "${AWKF}" -v GREP="\${varENTRY}" ${LOCS}</input>
+      <input icon-column="0">gawk -f "${AWKF}" -v GREP="\${varENTRY}" -v ALL_ICONS=\${varICONS} ${LOCS}</input>
       <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
@@ -172,7 +268,7 @@ $GTKDIALOG -s <<EOF
     </tree>
 
     <hbox space-fill="false" space-expand="false">
-      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the up-arrow key to grab the current command and move back through the command history. You may modify the command. You may enter any shell command.")">
+      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit.")">
         <variable>varCMD</variable>
         <default>$(gettext "Press up-arrow key to grab command")</default>
         <input file>${HSTF}</input>
@@ -186,7 +282,7 @@ $GTKDIALOG -s <<EOF
         <action signal="activate">grabfocus:varENTRY</action>
         <action signal="activate">refresh:varCMD</action>
       </comboboxentry>
-      <button tooltip-text="$(gettext "Clear selected command line")">
+      <button tooltip-text="$(gettext "Remove the selected command history entry")">
         <height>16</height>
         <input file icon="edit-clear"></input>
         <action>removeselected:varCMD</action>
@@ -201,11 +297,30 @@ $GTKDIALOG -s <<EOF
     </entry>
 
     <hbox space-fill="false" space-expand="false">
-      <checkbox use-underline="true">
+      <checkbox use-underline="true" tooltip-text="$(gettext "When this option is disabled, the window closes soon after executing a command. Enable this option to use the command history feature, or to avoid startup delays.")">
         <label>$(gettext "_Leave this window open")</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
-        <action>echo -e "defOPEN=\${varOPEN}" > "${CONFIG}"</action>
+        <action>awk -v s=defOPEN=\${varOPEN} '/^defOPEN=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+      </checkbox>
+      <checkbox use-underline="true" tooltip-text="$(gettext "Display all available icons. Caching all icons may take some time; please be patient. Disabling this option clears the cache completely.")">
+        <label>$(gettext "Show all _icons")</label>
+        <default>${varICONS}</default>
+        <variable>varICONS</variable>
+        <action>awk -v s=varICONS=\${varICONS} '/^varICONS=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+        <action>clear:varENTRY</action>
+        ${DEBUG:+<action>ls /usr/share/pixmaps/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
+        <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
+        ${DEBUG:+<action>if true echo >&2 in true clear:varLIST</action>}
+        <action>if true clear:varLIST</action>
+        ${DEBUG:+<action>if true echo >&2 in true refresh:varLIST</action>}
+        <action>if true refresh:varLIST</action>
+        ${DEBUG:+<action>if false echo >&2 in false rm -f /usr/share/pixmaps/findnrun-\*</action>}
+        <action>if false rm -f /usr/share/pixmaps/findnrun-*</action>
+        ${DEBUG:+<action>if false echo >&2 in false clear:varLIST</action>}
+        <action>if false clear:varLIST</action>
+        ${DEBUG:+<action>if false echo >&2 in false refresh:varLIST</action>}
+        <action>if false refresh:varLIST</action>
       </checkbox>
       <text space-fill="true" space-expand="true"><label>""</label></text>
       <button tooltip-text="$(gettext "About")">
