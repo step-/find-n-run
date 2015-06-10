@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.3-gawk
+  Version=1.10.3.1-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
@@ -24,12 +24,12 @@ LOC3="/usr/share/applications/"
 CONFIG="${HOME}/.findnrunrc"
 
 DEBUG= # unset to disable debug messages to stderr
-trap 'rm -f "${TMPF}"*' INT QUIT TERM HUP EXIT
+trap 'rm -f "${TMPF:-/tmp/dummy}"*' INT QUIT TERM HUP EXIT
 TMPF=`mktemp`
 AWKF="${TMPF}.awk"
 HSTF="${TMPF}.sh"; >"${HSTF}" # combobox command line history
 SEP=`echo -e "\b"` # field separator of packed values
-ICONSTEM="/usr/share/pixmaps/findnrun-" # prefix to worked-around icons.
+ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG).
 
 # -----------------------------------------------------------------------------
 
@@ -46,7 +46,13 @@ UNEXPORT="unset GUI_ABOUT varENTRY varLIST varCMD varCOMMENT varOPEN varICONS TE
 defOPEN=false
 export varICONS=false
 
+# Read / supplement $CONFIG.
 touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
+# Add missing defaults.
+awk '/^ICONCACHE=/{f=1}END{if(!f)print "ICONCACHE='"${ICONCACHE}"'">ARGV[1]}' "${CONFIG}"
+
+# Values that depend on defaults.
+ICONSTEM="${ICONCACHE}/findnrun-" # prefix to worked-around icons.
 
 # =============================================================================
 
@@ -93,10 +99,12 @@ BEGIN {
   # Choose a shell for ongoing command execution - see icon_workaround().
   sh = "/bin/dash" # not used as a coprocess
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
+  if("'${DEBUG}'") print "ICONSTEM="ICONSTEM >"/dev/stderr"
 }
 {
   # Slurp NFILES .desktop files.
   file[++NFILES]=";"FILENAME"\n"$0
+  FILENAME="-in-section-END-"
 }
 END {
   # Is the icon work-around enabled and up-to-date?
@@ -162,6 +170,7 @@ function format_icon_cell( ) {
 function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
   # Supposedly, IFP is the icon full path (it is used as the icon index key).
   IFP = icnpath icnname (icnext ?".":"") icnext
+  if("" == IFP) return
   # If the work-around is not up-to-date run sh/finđ/ln to create icon links.
   if(!ICONUPDATED) {
     #printf "L" > "/dev/stderr"
@@ -170,7 +179,7 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
     if(-1 == getline < ifp) { # file ifp does not exist
       # This could happen because .desktop file sets Icon=name-only (valid), but
       # we cannot trust gtkdialog to show icons by name only, so get fullpath.
-      c = "2>/dev/null find -L /usr/share/icons /usr/share/pixmaps " \
+      c = "2>/dev/null find -L ${HOME}/.icons /usr/share/icons /usr/share/pixmaps " \
         " -type f -name \""icnname".*\" ! -path \"*/.*/*\" -print0 -quit"
         # ! -path "*/.*/*" excludes all matches within any hidden dir, neat!
         # -print0 ensures match string does not include \n character
@@ -309,14 +318,14 @@ $GTKDIALOG -s <<EOF
         <variable>varICONS</variable>
         <action>awk -v s=varICONS=\${varICONS} '/^varICONS=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
         <action>clear:varENTRY</action>
-        ${DEBUG:+<action>ls /usr/share/pixmaps/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
+        ${DEBUG:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
         ${DEBUG:+<action>if true echo >&2 in true clear:varLIST</action>}
         <action>if true clear:varLIST</action>
         ${DEBUG:+<action>if true echo >&2 in true refresh:varLIST</action>}
         <action>if true refresh:varLIST</action>
-        ${DEBUG:+<action>if false echo >&2 in false rm -f /usr/share/pixmaps/findnrun-\*</action>}
-        <action>if false rm -f /usr/share/pixmaps/findnrun-*</action>
+        ${DEBUG:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/findnrun-\*</action>}
+        <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
         ${DEBUG:+<action>if false echo >&2 in false clear:varLIST</action>}
         <action>if false clear:varLIST</action>
         ${DEBUG:+<action>if false echo >&2 in false refresh:varLIST</action>}
