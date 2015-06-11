@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.4-gawk
+  Version=1.10.4.1-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
@@ -16,10 +16,8 @@ export OUTPUT_CHARSET=UTF-8
 APP_TITLE="$(gettext "Find'N'Run")-${Version}"
 ABOUT="$(awk 'NR>3 && NR<9 {print substr($0,2)}' "$0")"
 
-LOC1="${XDG_DATA_HOME}/applications/"
-LOC2="/usr/local/share/applications/"
-LOC3="/usr/share/applications/"
-#LOC4="${HOME}/.local/share/applications/"
+DESKTOP_FILES_DIRS="$XDG_DATA_HOME/applications /usr/local/share/applications /usr/share/applications"
+ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons /usr/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
 
 CONFIG="${HOME}/.findnrunrc"
 
@@ -83,8 +81,8 @@ export GUI_ABOUT='
 
 # Set LOCS to the glob that lists valid .desktop file locations.
 # Do this in the main shell after having processed script option.
-for i in "${LOC1}" "${LOC2}" "${LOC3}"; do
-  set -- "$i"*.desktop
+for i in ${DESKTOP_FILES_DIRS}; do
+  set -- "$i"/*.desktop
   if [ "$1" != "${1%/*.desktop}/*.desktop" ]; then
     x=${1%% }; x=${x%/*}; LOCS="${LOCS}${LOCS+ }$x/*.desktop"
   else
@@ -181,7 +179,7 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
     if(-1 == getline < ifp) { # file ifp does not exist
       # This could happen because .desktop file sets Icon=name-only (valid), but
       # we cannot trust gtkdialog to show icons by name only, so get fullpath.
-      c = "2>/dev/null find -L ${HOME}/.icons /usr/share/icons /usr/share/pixmaps " \
+      c = "2>/dev/null find -L '${ICON_DIRS}' " \
         " -type f -name \""icnname".*\" ! -path \"*/.*/*\" -print0 -quit"
         # ! -path "*/.*/*" excludes all matches within any hidden dir, neat!
         # -print0 ensures match string does not include \n character
@@ -279,7 +277,7 @@ END {
 # Build database of .desktop file entries.
 gawk -v ALL_ICONS=${varICONS} -f "${AWKF}" ${LOCS} > "${DATF}"
 
-$GTKDIALOG -s <<EOF
+$GTKDIALOG -s >/dev/null <<EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2"  height-request="278" width-request="460">
   <vbox>    
     <hbox>
