@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.4.1-gawk
+  Version=1.10.4.2-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
@@ -92,12 +92,13 @@ done
 
 # Prepare database builder gawk script
 # Usage: gawk -f "scriptpath" [-v GREP="string"] [-v ALL_ICONS=true] files
+[ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKF}" echo '
 BEGIN {
   if("'${DEBUG}'") print "\nSTARTING AWK builder, ALL_ICONS="ALL_ICONS >"/dev/stderr"
   RS="^~cannot~match~me~" # enable slurp read mode.
   # Choose a shell for ongoing command execution - see icon_workaround().
-  sh = "/bin/dash" # not used as a coprocess
+  sh = "'${SH}'" # not used as a coprocess
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
   if("'${DEBUG}'") print "ICONSTEM="ICONSTEM >"/dev/stderr"
 }
@@ -290,7 +291,7 @@ $GTKDIALOG -s >/dev/null <<EOF
       </entry>
     </hbox>
 
-    <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
+    <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
       <label>Icon|Name|PackedValues</label>
       <variable>varLIST</variable>
       <input icon-column="0">gawk -f "${AWKQ}" -v GREP="\${varENTRY}" -v ALL_ICONS=\${varICONS} ${DATF}</input>
