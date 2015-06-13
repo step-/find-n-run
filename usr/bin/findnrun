@@ -334,13 +334,13 @@ $GTKDIALOG -s >/dev/null <<EOF
     </entry>
 
     <hbox space-fill="false" space-expand="false">
-      <checkbox use-underline="true" tooltip-text="$(gettext "When this option is disabled, the window closes soon after executing a command. Enable this option to use the command history feature, or to avoid startup delays.")">
-        <label>$(gettext "_Leave this window open")</label>
+      <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after starting an item vs. close this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays.")">
+        <label>$(gettext "_Keep window")</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
         <action>awk -v s=defOPEN=\${varOPEN} '/^defOPEN=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
-      <checkbox use-underline="true" tooltip-text="$(gettext "Display all available icons. Caching all icons may take some time; please be patient. Disabling this option clears the cache completely.")">
+      <checkbox use-underline="true" tooltip-text="$(gettext "Display all available icons vs. display just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.")">
         <label>$(gettext "Show all _icons")</label>
         <default>${varICONS}</default>
         <variable>varICONS</variable>
