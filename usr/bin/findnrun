@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.4.2-gawk
+  Version=1.10.4.3-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
@@ -21,13 +21,15 @@ ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons /usr/share/icons /usr/share/pixmaps
 
 CONFIG="${HOME}/.findnrunrc"
 
+REMARK= # leave unset
 DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-3
 trap 'rm -f "${TMPF:-/tmp/dummy}"*' INT QUIT TERM HUP EXIT
 TMPF=`mktemp`
 DATF="${TMPF}.dat" # database of .desktop file entries
 AWKF="${TMPF}-build.awk" # builds (and queries) database
 AWKQ="${TMPF}-query.awk" # queries database (faster)
-HSTF="${TMPF}.sh"; >"${HSTF}" # combobox command line history
+HSTF="${TMPF}.sh"; >"${HSTF}" # saves combobox command line history
+FCSF="${TMPF}.fcs"; >"${FCSF}" # triggers varENTRY focus grabber
 SEP=`echo -e "\b"` # field separator of packed values
 ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG).
 
@@ -40,11 +42,12 @@ L=${LANG%_*}  #ex:pt
 # -----------------------------------------------------------------------------
 
 # Unexport these variables before running the selected command.
-UNEXPORT="unset GUI_ABOUT varENTRY varLIST varCMD varCOMMENT varOPEN varICONS TEXTDOMAIN OUTPUT_CHARSET"
+UNEXPORT="unset GUI_ABOUT varENTRY varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICON varFOCUSSEARCH TEXTDOMAIN OUTPUT_CHARSET"
 
 # Defaults
 defOPEN=false
 export varICONS=false
+export varFOCUSSEARCH=false
 
 # Read / supplement $CONFIG.
 touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
@@ -288,6 +291,7 @@ $GTKDIALOG -s >/dev/null <<EOF
         ${DEBUG:+<input file>/tmp/varENTRY</input>}
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
+        <action signal="activate">echo false>"${FCSF}"</action>
         <action signal="secondary-icon-release">clear:varENTRY</action>
       </entry>
     </hbox>
@@ -301,9 +305,22 @@ $GTKDIALOG -s >/dev/null <<EOF
       <action signal="changed">refresh:varCMD</action>
       <action signal="changed">clear:varCOMMENT</action>
       <action signal="changed">refresh:varCOMMENT</action>
-      <action>clear:varENTRY</action>
-      <action>grabfocus:varENTRY</action>
+      ${DEBUG:+<action>echo >&2 auto-refreshing varFOCUSGRABBER</action>}
+      <action>( sleep 0.1 || sleep 1; echo "\${varFOCUSSEARCH}">"${FCSF}"; ) &</action>
     </tree>
+
+    ${REMARK# handle varLIST on(EnterEnter|double-click)}
+    ${REMARK# input file auto-refresh rate cannot be configured. http://code.google.com/p/gtkdialog/source/detail?r=453}
+    ${REMARK# gtkdialog compiled w/o inotify refreshes about once a second. With inotify refreshing is instantaneous.}
+    <checkbox auto-refresh="true" visible="false">
+      <default>false</default>
+      <variable>varFOCUSGRABBER</variable>
+      <input file>${FCSF}</input>
+      ${DEBUG:+<action>if true echo >&2 'grabfocus:varENTRY'</action>}
+      <action>if true grabfocus:varENTRY</action>
+      <action>if true echo false>"${FCSF}"</action>
+      <action>if true clear:varFOCUSGRABBER</action>
+    </checkbox>
 
     <hbox space-fill="false" space-expand="false">
       <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit.")">
@@ -316,8 +333,8 @@ $GTKDIALOG -s >/dev/null <<EOF
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
         <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
-        <action signal="activate">clear:varENTRY</action>
-        <action signal="activate">grabfocus:varENTRY</action>
+        <action signal="activate" condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varENTRY</action>
+        <action signal="activate" condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         <action signal="activate">refresh:varCMD</action>
       </comboboxentry>
       <button tooltip-text="$(gettext "Remove the selected command history entry")">
@@ -363,6 +380,12 @@ $GTKDIALOG -s >/dev/null <<EOF
         <action>if false clear:varLIST</action>
         ${DEBUG:+<action>if false echo >&2 in false refresh:varLIST</action>}
         <action>if false refresh:varLIST</action>
+      </checkbox>
+      <checkbox use-underline="true" tooltip-text="$(gettext "Move the keyboard focus to the search input field after starting an item vs. keep the keyboard focus on the started list item. This option also affects the command input field.")">
+        <label>$(gettext "_Focus search")</label>
+        <default>${varFOCUSSEARCH}</default>
+        <variable>varFOCUSSEARCH</variable>
+        <action>awk -v s=varFOCUSSEARCH=\${varFOCUSSEARCH} '/^varFOCUSSEARCH=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       <text space-fill="true" space-expand="true"><label>""</label></text>
       <button tooltip-text="$(gettext "About")">
