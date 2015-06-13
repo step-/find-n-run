@@ -342,7 +342,7 @@ $GTKDIALOG -s >/dev/null <<EOF
         <action>awk -v s=defOPEN=\${varOPEN} '/^defOPEN=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       <checkbox use-underline="true" tooltip-text="$(gettext "Display all available icons vs. display just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.")">
-        <label>$(gettext "Show all _icons")</label>
+        <label>$(gettext "_Show all icons")</label>
         <default>${varICONS}</default>
         <variable>varICONS</variable>
         <action>awk -v s=varICONS=\${varICONS} '/^varICONS=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
