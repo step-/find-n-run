@@ -21,7 +21,7 @@ ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons /usr/share/icons /usr/share/pixmaps
 
 CONFIG="${HOME}/.findnrunrc"
 
-DEBUG= # unset to disable debug trace to stderr; set verbosity (integer) 1-3
+DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-3
 trap 'rm -f "${TMPF:-/tmp/dummy}"*' INT QUIT TERM HUP EXIT
 TMPF=`mktemp`
 DATF="${TMPF}.dat" # database of .desktop file entries
@@ -277,14 +277,15 @@ END {
 
 # Build database of .desktop file entries.
 gawk -v ALL_ICONS=${varICONS} -f "${AWKF}" ${LOCS} > "${DATF}"
-
+[ "${DEBUG}" ] && { >/tmp/varENTRY; echo >&2 accepting input from /tmp/varENTRY; }
 $GTKDIALOG -s >/dev/null <<EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2"  height-request="278" width-request="460">
   <vbox>    
     <hbox>
-      <entry secondary-icon-stock="gtk-close" tooltip-text="$(gettext "Press ENTER to select")">
+      <entry auto-refresh="${DEBUG:+true}" secondary-icon-stock="gtk-close" tooltip-text="$(gettext "Press ENTER to select")">
         <default>$(gettext "Type some letters to narrow the list")</default>
         <variable>varENTRY</variable>
+        ${DEBUG:+<input file>/tmp/varENTRY</input>}
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="secondary-icon-release">clear:varENTRY</action>
