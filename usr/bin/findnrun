@@ -13,8 +13,8 @@
 export TEXTDOMAIN=find_n_run
 export OUTPUT_CHARSET=UTF-8
 
-APP_TITLE="$(gettext "Find'N'Run")-${Version}"
-ABOUT="$(awk 'NR>3 && NR<9 {print substr($0,2)}' "$0")"
+APP_NAME=$(gettext "Find'N'Run")
+APP_TITLE="${APP_NAME}-${Version}"
 
 DESKTOP_FILES_DIRS="$XDG_DATA_HOME/applications /usr/local/share/applications /usr/share/applications"
 ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons /usr/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
@@ -60,25 +60,6 @@ ICONSTEM="${ICONCACHE}/findnrun-" # prefix to worked-around icons.
 # =============================================================================
 
 which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
-
-# -----------------------------------------------------------------------------
-
-export GUI_ABOUT='
-<window title="'${APP_TITLE}'" icon-name="edit-find" window-position="2">
-  <vbox>
-    <frame>
-      <text justify="2" selectable="true" can-focus="false">
-        <label>"'${ABOUT}'"</label>
-      </text>
-    </frame>
-    <hbox homogeneous="true">
-      <button ok>
-        <action>closewindow:GUI_ABOUT</action>
-      </button>
-    </hbox>
-  </vbox>
-  <variable>GUI_ABOUT</variable>
-</window>'
 
 # -----------------------------------------------------------------------------
 
@@ -281,6 +262,36 @@ END {
 # Build database of .desktop file entries.
 gawk -v ALL_ICONS=${varICONS} -f "${AWKF}" ${LOCS} > "${DATF}"
 [ "${DEBUG}" ] && { >/tmp/varENTRY; echo >&2 accepting input from /tmp/varENTRY; }
+NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
+
+# Prepare About dialog
+export GUI_ABOUT='
+<window title="'${APP_TITLE}'" icon-name="edit-find" window-position="2">
+  <vbox>
+    <frame>
+      <text justify="2" selectable="true" can-focus="false">
+        <label>"'"$(printf "$(gettext "%s %s
+by SFR, L18L, step
+GNU GPL license applies
+
+http://www.murga-linux.com/puppy/viewtopic.php?t=98330
+https://github.com/step-/find-n-run.git
+
+configuration: %s
+%s applications found
+")" "${APP_NAME}" "${Version}" "${CONFIG}" "${NDATF}")"'"</label>
+      </text>
+    </frame>
+    <hbox homogeneous="true">
+      <button ok>
+        <action>closewindow:GUI_ABOUT</action>
+      </button>
+    </hbox>
+  </vbox>
+  <variable>GUI_ABOUT</variable>
+</window>'
+
+# Prepare and start main window
 $GTKDIALOG -s >/dev/null <<EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2"  height-request="278" width-request="460">
   <vbox>    
