@@ -2,7 +2,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.4.3-gawk
+  Version=1.10.4.4-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
@@ -19,7 +19,7 @@ APP_TITLE="${APP_NAME}-${Version}"
 DESKTOP_FILES_DIRS="$XDG_DATA_HOME/applications /usr/local/share/applications /usr/share/applications"
 ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons /usr/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
 
-CONFIG="${HOME}/.findnrunrc"
+[ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
 
 REMARK= # leave unset
 DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-3
