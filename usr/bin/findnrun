@@ -51,8 +51,21 @@ export varFOCUSSEARCH=false
 
 # Read / supplement $CONFIG.
 touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
-# Add missing defaults.
-awk '/^ICONCACHE=/{f=1}END{if(!f)print "ICONCACHE='"${ICONCACHE}"'">ARGV[1]}' "${CONFIG}"
+# Add missing/hidden defaults.
+awk '
+  /^ICONCACHE=/{f1=1}
+  /^SEARCHCOMMENTS=/{f2=1}
+  /^SEARCHFROMLEFT=/{f3=1}
+  /^SEARCHREGEX=/{f4=1}
+  /^CASEDEPENDENT=/{f5=1}
+  END{
+    if(!f1) print "ICONCACHE='"${ICONCACHE}"'">>ARGV[1]
+    if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
+    if(!f3) print "SEARCHFROMLEFT=false">>ARGV[1]
+    if(!f4) print "SEARCHREGEX=false">>ARGV[1]
+    if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
+  }
+  ' "${CONFIG}"
 
 # Values that depend on defaults.
 ICONSTEM="${ICONCACHE}/findnrun-" # prefix to worked-around icons.
@@ -240,6 +253,18 @@ function mark_icon_workaround_uptodate( ) {
 
 # Prepare database query gawk script (a simplified version of the first script).
 # Usage: gawk -f "scriptpath" [-v GREP="string"] ${DATF}
+unset case name comm left
+[ true = "${CASEDEPENDENT}" ] || case=tolower
+if [ true = "${SEARCHREGEX}" ]; then
+  name="match($case(a[2]),GREP)"
+  [ true = "${SEARCHFROMLEFT}" ] && left="&& RSTART==1"
+  [ true = "${SEARCHCOMMENTS}" ] && comm="|| match($case(a[4]),GREP)"
+  :
+else
+  name="index($case(a[2]),GREP)"
+  [ true = "${SEARCHFROMLEFT}" ] && left="==1"
+  [ true = "${SEARCHCOMMENTS}" ] && comm="|| index($case(a[4]),GREP)"
+fi
 > "${AWKQ}" echo '
 BEGIN {
   if("'${DEBUG}'">2) print "\nSTARTING AWK querier, GREP="GREP >"/dev/stderr"
@@ -249,7 +274,7 @@ BEGIN {
   # split out the last field of the record that format_item() printed ($AWKF)
   split($(NF), a, /'"${SEP}"'/) # a <- {filename, name, exec, comment}
   # narrow matches by GREP pattern
-  if(GREP && index(tolower(a[2]), GREP) || !GREP) {
+  if(GREP && ('"${name}${left} ${comm}${left}"') || !GREP) {
     print substr($0, 1, 510)
     # 510 works around gtkdialog tree widget buffer overflow limit
   }
