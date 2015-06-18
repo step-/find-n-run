@@ -2,12 +2,12 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.4.5-gawk
+  Version=1.10.5-gawk
 # March-May 2015 by SFR and L18L; gawk fork by step
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
 # Req.: Gtkdialog >= 0.8.3, gawk
-# https://github.com/step-/find-n-run.git
+# https://github.com/step-/find-n-run
 # =============================================================================
 
 export TEXTDOMAIN=find_n_run
@@ -301,7 +301,7 @@ by SFR, L18L, step
 GNU GPL license applies
 
 http://www.murga-linux.com/puppy/viewtopic.php?t=98330
-https://github.com/step-/find-n-run.git
+https://github.com/step-/find-n-run
 
 configuration: %s
 %s applications found
