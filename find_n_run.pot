@@ -1,0 +1,119 @@
+# Find'N'Run message catalog.
+# Copyright (C) 2015, the Authors
+# This file is distributed under the same license as the find-n-run package.
+# http://www.murga-linux.com/puppy/viewtopic.php?t=98330
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: find-n-run 1.10.5\n"
+"Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
+"POT-Creation-Date: 2015-06-20 21:39+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#. i18n find_n_run.po file generated with:
+#. i18n xgettext -ci18n -L Shell -o find_n_run.pot --no-wrap --package-name=find-n-run --package-version=1.10.5 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
+#. i18n Main window title
+#: /usr/bin/findnrun:19
+msgid "Find'N'Run"
+msgstr ""
+
+#. i18n About dialog widgets: window width; window text; number of apps text (singular/plural)
+#: /usr/bin/findnrun:299
+msgid "420"
+msgstr ""
+
+#: /usr/bin/findnrun:303
+msgid ""
+"%s %s\n"
+"by SFR, L18L, step\n"
+"Open source - GNU GPL license applies\n"
+"\n"
+"http://www.murga-linux.com/puppy/viewtopic.php?t=98330\n"
+"https://github.com/step-/find-n-run\n"
+"\n"
+"configuration: %s\n"
+msgstr ""
+
+#: /usr/bin/findnrun:312
+msgid "%s application found"
+msgid_plural "%s applications found"
+msgstr[0] ""
+msgstr[1] ""
+
+#. i18n Main window widgets: window width; icon tooltip; entry default; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
+#. i18n "0" (invisible, disregard).
+#: /usr/bin/findnrun:328
+msgid "0"
+msgstr ""
+
+#: /usr/bin/findnrun:332
+msgid "460"
+msgstr ""
+
+#: /usr/bin/findnrun:335
+msgid "Press ENTER to select"
+msgstr ""
+
+#: /usr/bin/findnrun:336
+msgid "Type some letters to narrow the list"
+msgstr ""
+
+#: /usr/bin/findnrun:346
+msgid "Press ENTER or double-click to run the selected item"
+msgstr ""
+
+#: /usr/bin/findnrun:373
+msgid "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit."
+msgstr ""
+
+#: /usr/bin/findnrun:375
+msgid "Press up-arrow key to grab command"
+msgstr ""
+
+#: /usr/bin/findnrun:387
+msgid "Remove the selected command history entry"
+msgstr ""
+
+#: /usr/bin/findnrun:396
+msgid "Comment"
+msgstr ""
+
+#: /usr/bin/findnrun:402
+msgid "Keep this window open after starting an item vs. close this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays."
+msgstr ""
+
+#: /usr/bin/findnrun:403
+msgid "_Keep window"
+msgstr ""
+
+#: /usr/bin/findnrun:408
+msgid "Display all available icons vs. display just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache."
+msgstr ""
+
+#: /usr/bin/findnrun:409
+msgid "_Show all icons"
+msgstr ""
+
+#: /usr/bin/findnrun:431
+msgid "Move the keyboard focus to the search input field after starting an item vs. keep the keyboard focus on the started list item. This option also affects the command input field."
+msgstr ""
+
+#: /usr/bin/findnrun:432
+msgid "_Focus search"
+msgstr ""
+
+#: /usr/bin/findnrun:438
+msgid "About"
+msgstr ""
+
+#: /usr/bin/findnrun:443
+msgid "Exit"
+msgstr ""
