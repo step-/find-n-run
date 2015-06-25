@@ -2,18 +2,29 @@
 
 GNU awk fork of the original find-n-run utility for Puppy linux.
 
+As of version 1.10.5 this script is featured in the original
+[Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330),
+so you need not worry which one you will be getting.
+
 ## Motivation
 
-Puppy linux forum users SFR and L18L have developed Find-N-Run, a wonderful
-little application starter that displays your `*.desktop` files in a
+Puppy linux users SFR and L18L created the original Find'N'Run, a wonderful
+light application starter that displays your `*.desktop` files in a
 `gtkdialog` window with a progressive typing search field to narrow down the
-list. It's all written in shell, optionally augmented with a ROX-Filer
+list. It is all written in shell, optionally augmented with a ROX-Filer
 application directory.
 
-The version of Find-N-Run in this repo focuses on the main shell script,
+The version of Find'N'Run in this repo focuses on the main shell script,
 which I have modified to use GNU `awk` instead of the likes of `grep`,
 `sed`, `cut`, and `sort`. My main intent was to reduce the number
 of processes that need to run when the search field is exercised.
+
+### Naming
+
+_Find'N'Run_ refers to SFS's original utility;
+_find-n-run_ refers to this project;
+`findnrun` is the script name, the same name in both projects;
+finally, `find_n_run` is associated with translation files.
 
 ## Overview
 
