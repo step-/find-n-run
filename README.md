@@ -42,6 +42,7 @@ New features:
  * **Keyboard focus** control.
    After starting an application focus can be returned to
    either the search input field or to the selected application list item.
+ * **Geometry** support to exactly size and position the main window.
  * **Extensive tooltips**, and new configurable **user preferences**.
 
 **Notes**
@@ -56,9 +57,9 @@ New features:
 
 ## Installing
 
-This version can replace directly the Find'N'Run script included with
+This version can replace directly the `findnrun` script included with
 Fatdog64-700, a 64-bit OS in the Puppy linux family, and the script
-included in the `.pet` package for all other Puppies. _For the .pet version
+included in the `.pet` package for all other Puppies. _For older .pet versions
 simply replace the existing file `/usr/local/apps/FindNRun/findnrun` with
 file `/usr/bin/findnrun` from this repository._
 
@@ -95,6 +96,13 @@ These values are hidden in the main window. They are intended mostly for power u
     SEARCHREGEX=false
     # Enforce case-dependent searching.
     CASEDEPENDENT=false
+    # Main window geometry, no default.
+    # Command-line option --geometry=WxH+X+Y overrides this value.
+    #GEOMETRY=460x280+100+200
+
+## Command-line options
+
+    --geometry=WxH+X+Y
 
 ## Bugs
 
