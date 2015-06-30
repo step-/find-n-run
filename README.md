@@ -23,8 +23,7 @@ of processes that need to run when the search field is exercised.
 
 _Find'N'Run_ refers to SFS's original utility;
 _find-n-run_ refers to this project;
-`findnrun` is the script name, the same name in both projects;
-finally, `find_n_run` is associated with translation files.
+`findnrun` is the script name, the same name in both projects.
 
 ## Overview
 

@@ -10,7 +10,7 @@
 # https://github.com/step-/find-n-run
 # =============================================================================
 
-export TEXTDOMAIN=find_n_run
+export TEXTDOMAIN=findnrun
 export OUTPUT_CHARSET=UTF-8
 
 # i18n find_n_run.po file generated with:
