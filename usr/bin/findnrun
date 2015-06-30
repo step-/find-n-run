@@ -14,7 +14,7 @@ export TEXTDOMAIN=findnrun
 export OUTPUT_CHARSET=UTF-8
 
 # i18n find_n_run.po file generated with:
-# i18n xgettext -ci18n -L Shell -o find_n_run.pot --no-wrap --package-name=find-n-run --package-version=1.10.5 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
+# i18n xgettext -ci18n -L Shell -o findnrun.pot --no-wrap --package-name=find-n-run --package-version=1.10.6 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
 # i18n Main window title
 APP_NAME=$(gettext "Find'N'Run")
 APP_TITLE="${APP_NAME}-${Version}"
@@ -302,7 +302,7 @@ gawk -v ALL_ICONS=${varICONS} -f "${AWKF}" ${LOCS} > "${DATF}"
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
 # Prepare About dialog
-# i18n About dialog widgets: window width; window text; number of apps text (singular/plural)
+# i18n About dialog widgets: window text; number of apps text (singular/plural)
 export GUI_ABOUT='
 <window title="'${APP_TITLE}'" icon-name="edit-find" window-position="2">
   <vbox>
