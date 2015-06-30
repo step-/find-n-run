@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Find'N'Run
+Comment=Find and run applications very quickly
+Comment[pl]=Szybko znajdź i uruchom aplikacje
+Exec=findnrun
+Terminal=false
+Type=Application
+Icon=findnrun.png
+Categories=X-FilesystemFind;
