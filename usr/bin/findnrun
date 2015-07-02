@@ -345,7 +345,6 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
-        <action signal="secondary-icon-release">clear:varENTRY</action>
       </entry>
       <button tooltip-text="$(gettext "Clear entry")" stock-icon-size="1">
         <input file stock="gtk-clear"></input>
