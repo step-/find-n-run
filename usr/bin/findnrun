@@ -338,7 +338,7 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>    
     <hbox>
-      <entry auto-refresh="${DEBUG:+true}" secondary-icon-stock="gtk-close" tooltip-text="$(gettext "Press ENTER to select")">
+      <entry auto-refresh="${DEBUG:+true}" secondary-icon-stock="gtk-clear" tooltip-text="$(gettext "Press ENTER to select")">
         <default>$(gettext "Type some letters to narrow the list")</default>
         <variable>varENTRY</variable>
         ${DEBUG:+<input file>/tmp/varENTRY</input>}
@@ -390,9 +390,9 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
         <action signal="activate" condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         <action signal="activate">refresh:varCMD</action>
       </comboboxentry>
-      <button tooltip-text="$(gettext "Remove the selected command history entry")">
+      <button tooltip-text="$(gettext "Remove entry from command history")">
         <height>16</height>
-        <input file icon="edit-clear"></input>
+        <input file icon="list-remove"></input>
         <action>removeselected:varCMD</action>
         <action>save:varCMD</action>
         <action>refresh:varCMD</action>

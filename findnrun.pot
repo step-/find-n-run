@@ -26,7 +26,7 @@ msgstr ""
 msgid "Find'N'Run"
 msgstr ""
 
-#. i18n About dialog widgets: window width; window text; number of apps text (singular/plural)
+#. i18n About dialog widgets: window text; number of apps text (singular/plural)
 #: findnrun:311
 msgid ""
 "%s %s\n"
@@ -45,7 +45,7 @@ msgid_plural "%s applications found"
 msgstr[0] ""
 msgstr[1] ""
 
-#. i18n Main window widgets: icon tooltip; entry default; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
+#. i18n Main window widgets: entry tooltip; entry default; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
 #. i18n "0" (invisible, disregard).
 #: findnrun:336
 msgid "0"
@@ -72,7 +72,7 @@ msgid "Press up-arrow key to grab command"
 msgstr ""
 
 #: findnrun:393
-msgid "Remove the selected command history entry"
+msgid "Remove entry from command history"
 msgstr ""
 
 #: findnrun:402
