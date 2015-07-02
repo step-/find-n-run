@@ -331,14 +331,14 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
 </window>'
 
 # Prepare and start main window
-# i18n Main window widgets: entry tooltip; entry default; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
+# i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext's limitation
 $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>    
-    <hbox>
-      <entry auto-refresh="${DEBUG:+true}" secondary-icon-stock="gtk-clear" tooltip-text="$(gettext "Press ENTER to select")">
+    <hbox spacing="0">
+      <entry auto-refresh="${DEBUG:+true}" tooltip-text="$(gettext "Press ENTER to select")">
         <default>$(gettext "Type some letters to narrow the list")</default>
         <variable>varENTRY</variable>
         ${DEBUG:+<input file>/tmp/varENTRY</input>}
@@ -347,6 +347,11 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
         <action signal="activate">echo false>"${FCSF}"</action>
         <action signal="secondary-icon-release">clear:varENTRY</action>
       </entry>
+      <button tooltip-text="$(gettext "Clear entry")" stock-icon-size="1">
+        <input file stock="gtk-clear"></input>
+        <action>grabfocus:varENTRY</action>
+        <action>clear:varENTRY</action>
+      </button>
     </hbox>
 
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
@@ -390,9 +395,9 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
         <action signal="activate" condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         <action signal="activate">refresh:varCMD</action>
       </comboboxentry>
-      <button tooltip-text="$(gettext "Remove entry from command history")">
-        <height>16</height>
-        <input file icon="list-remove"></input>
+      <button tooltip-text="$(gettext "Remove entry from command history")" stock-icon-size="1">
+        <input file stock="gtk-remove"></input>
+        <action>grabfocus:varCMD</action>
         <action>removeselected:varCMD</action>
         <action>save:varCMD</action>
         <action>refresh:varCMD</action>
@@ -441,14 +446,12 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
         <action>awk -v s=varFOCUSSEARCH=\${varFOCUSSEARCH} '/^varFOCUSSEARCH=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       <text space-fill="true" space-expand="true"><label>""</label></text>
-      <button tooltip-text="$(gettext "About")">
-        <height>16</height>
-        <input file icon="gtk-about"></input>
+      <button tooltip-text="$(gettext "About")" stock-icon-size="1">
+        <input file stock="gtk-about"></input>
         <action>launch:GUI_ABOUT</action>
       </button>
-      <button tooltip-text="$(gettext "Exit")">
-        <height>16</height>
-        <input file icon="gtk-quit"></input>
+      <button tooltip-text="$(gettext "Exit")" stock-icon-size="1">
+        <input file stock="gtk-quit"></input>
         <action>exit:EXIT</action>
       </button>
     </hbox>
