@@ -331,10 +331,10 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
 </window>'
 
 # Prepare and start main window
-# i18n Main window widgets: window width; icon tooltip; entry default; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
+# i18n Main window widgets: entry tooltip; entry default; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext's limitation
-$GTKDIALOG ${GEOMETRY} -s >/dev/null <<EOF
+$GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>    
     <hbox>
