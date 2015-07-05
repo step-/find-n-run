@@ -43,6 +43,7 @@ New features:
    After starting an application focus can be returned to
    either the search input field or to the selected application list item.
  * **Geometry** support to exactly size and position the main window.
+ * **New hi-res desktop icon**. 
  * **Extensive tooltips**, and new configurable **user preferences**.
 
 **Notes**

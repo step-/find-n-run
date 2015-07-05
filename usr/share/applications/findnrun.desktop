@@ -6,5 +6,5 @@ Comment[pl]=Szybko znajdź i uruchom aplikacje
 Exec=findnrun
 Terminal=false
 Type=Application
-Icon=findnrun.png
+Icon=findnrun
 Categories=X-FilesystemFind;
