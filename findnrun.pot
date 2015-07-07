@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 1.10.6\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2015-06-30 22:01+0200\n"
+"POT-Creation-Date: 2015-07-07 11:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,54 +59,58 @@ msgstr ""
 msgid "Type some letters to narrow the list"
 msgstr ""
 
-#: findnrun:352
+#: findnrun:349
+msgid "Clear entry"
+msgstr ""
+
+#: findnrun:356
 msgid "Press ENTER or double-click to run the selected item"
 msgstr ""
 
-#: findnrun:379
+#: findnrun:383
 msgid "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit."
 msgstr ""
 
-#: findnrun:381
+#: findnrun:385
 msgid "Press up-arrow key to grab command"
 msgstr ""
 
-#: findnrun:393
+#: findnrun:397
 msgid "Remove entry from command history"
 msgstr ""
 
-#: findnrun:402
+#: findnrun:406
 msgid "Comment"
 msgstr ""
 
-#: findnrun:408
+#: findnrun:412
 msgid "Keep this window open after starting an item vs. close this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays."
 msgstr ""
 
-#: findnrun:409
+#: findnrun:413
 msgid "_Keep window"
 msgstr ""
 
-#: findnrun:414
+#: findnrun:418
 msgid "Display all available icons vs. display just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache."
 msgstr ""
 
-#: findnrun:415
+#: findnrun:419
 msgid "_Show all icons"
 msgstr ""
 
-#: findnrun:437
+#: findnrun:441
 msgid "Move the keyboard focus to the search input field after starting an item vs. keep the keyboard focus on the started list item. This option also affects the command input field."
 msgstr ""
 
-#: findnrun:438
+#: findnrun:442
 msgid "_Focus search"
 msgstr ""
 
-#: findnrun:444
+#: findnrun:448
 msgid "About"
 msgstr ""
 
-#: findnrun:449
+#: findnrun:452
 msgid "Exit"
 msgstr ""
