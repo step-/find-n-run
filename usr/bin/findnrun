@@ -17,7 +17,7 @@ export OUTPUT_CHARSET=UTF-8
 # i18n xgettext -ci18n -L Shell -o findnrun.pot --no-wrap --package-name=find-n-run --package-version=1.10.6 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
 # i18n Main window title
 APP_NAME=$(gettext "Find'N'Run")
-APP_TITLE="${APP_NAME}-${Version}"
+APP_TITLE="${APP_NAME}"
 
 DESKTOP_FILES_DIRS="$XDG_DATA_HOME/applications /usr/local/share/applications /usr/share/applications"
 ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons /usr/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
@@ -341,7 +341,7 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
   <vbox>    
     <hbox spacing="0">
       <entry auto-refresh="${DEBUG:+true}" tooltip-text="$(gettext "Press ENTER to select")">
-        <default>$(gettext "Type some letters to narrow the list")</default>
+        <default>$(gettext "Type some letters to refine the list")</default>
         <variable>varENTRY</variable>
         ${DEBUG:+<input file>/tmp/varENTRY</input>}
         <action>refresh:varLIST</action>
@@ -405,7 +405,7 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
       </button>
     </hbox>
 
-    <entry sensitive="false" tooltip-text="$(gettext "Comment")">
+    <entry sensitive="false" tooltip-text="$(gettext "Comment about current item")">
       <variable>varCOMMENT</variable>
       <input>IFS=${SEP}; set -- \${varLIST}; echo \$4</input>
     </entry>

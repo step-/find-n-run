@@ -55,7 +55,7 @@ msgid "Press ENTER to select"
 msgstr ""
 
 #: findnrun:344
-msgid "Type some letters to narrow the list"
+msgid "Type some letters to refine the list"
 msgstr ""
 
 #: findnrun:351
@@ -79,7 +79,7 @@ msgid "Remove entry from command history"
 msgstr ""
 
 #: findnrun:408
-msgid "Comment"
+msgid "Comment about current item"
 msgstr ""
 
 #: findnrun:414
