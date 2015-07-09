@@ -307,18 +307,18 @@ export GUI_ABOUT='
 <window title="'${APP_TITLE}'" icon-name="edit-find" window-position="2">
   <vbox>
     <frame>
-      <text justify="2" selectable="true" can-focus="false">
+      <text justify="0" selectable="true" can-focus="false">
         <label>"'"$(printf "$(gettext "%s %s
 authors: SFR, L18L, step
 Open source - GNU GPL license applies
 
 %s
+%s
 
 configuration: %s
 ")" "${APP_NAME}" "${Version}" \
-"http://www.murga-linux.com/puppy/viewtopic.php?t=98330
-https://github.com/step-/find-n-run" \
-"${CONFIG}")
+"http://www.murga-linux.com/puppy/viewtopic.php?t=98330" \
+"https://github.com/step-/find-n-run" "${CONFIG}")
 $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")" "${NDATF}"
 )"'"</label>
       </text>
