@@ -309,14 +309,16 @@ export GUI_ABOUT='
     <frame>
       <text justify="2" selectable="true" can-focus="false">
         <label>"'"$(printf "$(gettext "%s %s
-by SFR, L18L, step
+authors: SFR, L18L, step
 Open source - GNU GPL license applies
 
-http://www.murga-linux.com/puppy/viewtopic.php?t=98330
-https://github.com/step-/find-n-run
+%s
 
 configuration: %s
-")" "${APP_NAME}" "${Version}" "${CONFIG}")
+")" "${APP_NAME}" "${Version}" \
+"http://www.murga-linux.com/puppy/viewtopic.php?t=98330
+https://github.com/step-/find-n-run" \
+"${CONFIG}")
 $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")" "${NDATF}"
 )"'"</label>
       </text>
@@ -409,13 +411,13 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
     </entry>
 
     <hbox space-fill="false" space-expand="false">
-      <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after starting an item vs. close this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays.")">
+      <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after starting an item instead of closing this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays.")">
         <label>$(gettext "_Keep window")</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
         <action>awk -v s=defOPEN=\${varOPEN} '/^defOPEN=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
-      <checkbox use-underline="true" tooltip-text="$(gettext "Display all available icons vs. display just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.")">
+      <checkbox use-underline="true" tooltip-text="$(gettext "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.")">
         <label>$(gettext "_Show all icons")</label>
         <default>${varICONS}</default>
         <variable>varICONS</variable>
@@ -438,7 +440,7 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
         ${DEBUG:+<action>if false echo >&2 in false refresh:varLIST</action>}
         <action>if false refresh:varLIST</action>
       </checkbox>
-      <checkbox use-underline="true" tooltip-text="$(gettext "Move the keyboard focus to the search input field after starting an item vs. keep the keyboard focus on the started list item. This option also affects the command input field.")">
+      <checkbox use-underline="true" tooltip-text="$(gettext "Move the keyboard focus to the search input field after starting an item instead of keeping the keyboard focus on the started list item. This option also affects the command input field.")">
         <label>$(gettext "_Focus search")</label>
         <default>${varFOCUSSEARCH}</default>
         <variable>varFOCUSSEARCH</variable>
