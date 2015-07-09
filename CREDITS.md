@@ -1,4 +1,7 @@
-### find-n-run desktop icon
+## Credits
+
+**find-n-run desktop icon**
+
  * Icon Pack: Human-O2
  * Designer: http://schollidesign.deviantart.com
  * License: GNU/GPL

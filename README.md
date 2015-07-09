@@ -4,26 +4,29 @@ GNU awk fork of the original find-n-run utility for Puppy linux.
 
 As of version 1.10.5 this script is featured in the original
 [Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330),
-so you need not worry which one you will be getting.
+so you need not worry which one you are getting.
 
 ## Motivation
 
 Puppy linux users SFR and L18L created the original Find'N'Run, a wonderful
 light application starter that displays your `*.desktop` files in a
-`gtkdialog` window with a progressive typing search field to narrow down the
-list. It is all written in shell, optionally augmented with a ROX-Filer
-application directory.
+`gtkdialog` window with a progressive typing search field to refine the
+hit list. It is written in shell.
 
 The version of Find'N'Run in this repo focuses on the main shell script,
 which I have modified to use GNU `awk` instead of the likes of `grep`,
 `sed`, `cut`, and `sort`. My main intent was to reduce the number
 of processes that need to run when the search field is exercised.
+After so doing, I added some new features.
+
+This version does not include the optional ROX-Filer application directory
+found in SFR's original version.
 
 ### Naming
 
-_Find'N'Run_ refers to SFS's original utility;
+_Find'N'Run_ refers to SFS's original application;
 _find-n-run_ refers to this project;
-`findnrun` is the script name, the same name in both projects.
+`findnrun` is the script name, the same name for both projects.
 
 ## Overview
 
@@ -44,6 +47,7 @@ New features:
    either the search input field or to the selected application list item.
  * **Geometry** support to exactly size and position the main window.
  * **New hi-res desktop icon**. 
+ * **Full localization support**.
  * **Extensive tooltips**, and new configurable **user preferences**.
 
 **Notes**
@@ -55,6 +59,16 @@ New features:
    combobox is normally blank until it is focused **and** up-arrow has
    been pressed at least once. The first key press displays the
    command associated with the current entry.
+
+## Screenshots
+
+Side by side: Left: version 1.10.6-gawk (default window size) -- Right: original version 1.9 (Fatdog64-701).
+
+![side-by-side main window](images/findnrun-1.10.6-main.png)
+![a](images/findnrun-1.9-main.png)
+
+![side-by-side about dialog](images/findnrun-1.10.6-about.png)
+![a](images/findnrun-1.9-about.png)
 
 ## Installing
 
@@ -103,26 +117,30 @@ These values are hidden in the main window. They are intended mostly for power u
 
 ## Command-line options
 
-    --geometry=WxH+X+Y
+`--geometry=WxH+X+Y`
 
-## Bugs
+  Set window Width`x`Heigth and top-left corner position.
+  You may omit `WxH` or `+X+Y`.
 
-I beg you to please file bugs against this script in the issues section of the
+## Reporting bugs
+
+Please file bugs against this script in the issues section of the
 [github repository](https://github.com/step-/find-n-run/issues)
 _and not in the Puppy Linux forum thread_. You do not need a github accont
 to file new issues.
 
+## Translations
+
+I will gladly add contributed translations to the git repository if
+translators send them to me. Generate a Github pull request or attach your
+contributed files to the above-mentioned forum thread.
+See [TRANSLATING](TRANSLATING.md) for further instructions.
+
+## Credits
+
+[CREDITS](CREDITS.md)
+
 ## Change Log
 
 See the project [release announcements](https://github.com/step-/find-n-run/releases) page and - for fine-grained information - the [commit history](https://github.com/step-/find-n-run/commits/master) page.
-
-## Screenshots
-
-Side by side: Left: version 1.10.4.4-gawk -- Right: original version 1.9 (Fatdog64-701).
-
-![side-by-side main window](images/findnrun-1.10.4.4-main.png)
-![a](images/findnrun-1.9-main.png)
-
-![side-by-side about dialog](images/findnrun-1.10.4.4-about.png)
-![a](images/findnrun-1.9-about.png)
 
