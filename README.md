@@ -114,6 +114,8 @@ These values are hidden in the main window. They are intended mostly for power u
     # Main window geometry, no default.
     # Command-line option --geometry=WxH+X+Y overrides this value.
     #GEOMETRY=460x280+100+200
+    # Icon search directories, space-separated list, Freedesktop.org's default.
+    #ICON_DIRS=...
 
 ## Command-line options
 
@@ -121,6 +123,15 @@ These values are hidden in the main window. They are intended mostly for power u
 
   Set window Width`x`Heigth and top-left corner position.
   You may omit `WxH` or `+X+Y`.
+
+## Known issues and limitations
+
+ * [Freedesktop.org's](http://standards.freedesktop.org/icon-theme-spec)
+   icon _theme_ support isn't implemented. This means that if multiple
+   icon themes are installed _findnrun_ will apply the first icon found
+   in alphabetical order.
+   You can work around this limitation by setting hidden user preference
+   `ICON_DIRS`.
 
 ## Reporting bugs
 

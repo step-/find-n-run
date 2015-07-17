@@ -20,7 +20,10 @@ APP_NAME=$(gettext "Find'N'Run")
 APP_TITLE="${APP_NAME}"
 
 DESKTOP_FILES_DIRS="$XDG_DATA_HOME/applications /usr/local/share/applications /usr/share/applications"
-ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons /usr/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
+# Ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
+# Some Fatdog64-specific locations added.
+# Note: Search by icon *theme* isn't implemented.
+ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons$(IFS=:; set -- ${XDG_DATA_DIR:-/usr/share:/usr/local/share}; for i; do echo -n " $i/icons"; done) /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
 
@@ -180,16 +183,17 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
   # Supposedly, IFP is the icon full path (it is used as the icon index key).
   IFP = icnpath icnname (icnext ?".":"") icnext
   if("" == IFP) return
-  # If the work-around is not up-to-date run sh/finđ/ln to create icon links.
+  # If the work-around is not up-to-date run sh/find/ln to create icon links.
   if(!ICONUPDATED) {
     #printf "L" > "/dev/stderr"
     ifp = IFP
     c = ""
     if(-1 == getline < ifp) { # file ifp does not exist
       # This could happen because .desktop file sets Icon=name-only (valid), but
-      # we cannot trust gtkdialog to show icons by name only, so get fullpath.
+      # we cannot trust gtkdialog to show icons by name without extension, so
+      # get the full pathname; ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#icon_lookup
       c = "2>/dev/null find -L '${ICON_DIRS}' " \
-        " -type f -name \""icnname".*\" ! -path \"*/.*/*\" -print0 -quit"
+        " -type f \\( -name \""icnname".png\" -o -name \""icnname".svg\" -o -name \""icnname".xpm\" \\) -print0 -quit"
         # ! -path "*/.*/*" excludes all matches within any hidden dir, neat!
         # -print0 ensures match string does not include \n character
         # -quit exits after first match, if any; GNU awk (gawk) extension.
