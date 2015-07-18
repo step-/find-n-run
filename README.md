@@ -33,9 +33,9 @@ _find-n-run_ refers to this project;
 New features:
 
  * **Faster searching**.
-   It is also possible searching through **application
-   comments**, searching for **left-starting matches** only, searching
-   using **regular expressions**, and enforcing **case-dependence**.
+   It is also possible to search through **application
+   comments** and **categories**, searching for **left-starting matches** only,
+   searching using **regular expressions**, and enforcing **case-dependence**.
  * **Application icon** column. [1]
  * **Command line entry** with command history.
    A combobox widget
@@ -103,11 +103,16 @@ These values are hidden in the main window. They are intended mostly for power u
 
     # Icon cache location.
     ICONCACHE=${HOME}/.icons
-    # Extend search to application comments.
+    # Extend search to application comments (OR).
     SEARCHCOMMENTS=false
+    # Extend search to application categories (OR).
+    # Prepend ';' to search for category only, i.e., ';office'.
+    SEARCHCATEGORIES=false
     # Search pattern must match from the leftmost character.
+    # Ignored for category search.
     SEARCHFROMLEFT=false
     # Search pattern is a POSIX Basic regular expression.
+    # Applied also to comment search and category search.
     SEARCHREGEX=false
     # Enforce case-dependent searching.
     CASEDEPENDENT=false

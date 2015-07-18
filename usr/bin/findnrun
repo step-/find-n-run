@@ -75,12 +75,16 @@ awk '
   /^SEARCHREGEX=/{f4=1}
   /^CASEDEPENDENT=/{f5=1}
   # GEOMETRY=WxH+X+Y has no default
+  # DESKTOP_FILE_DIRS has system default
+  # ICON_DIRS has system default
+  /^SEARCHCATEGORIES=/{f6=1}
   END{
     if(!f1) print "ICONCACHE='"${ICONCACHE}"'">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
     if(!f3) print "SEARCHFROMLEFT=false">>ARGV[1]
     if(!f4) print "SEARCHREGEX=false">>ARGV[1]
     if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
+    if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
   }
   ' "${CONFIG}"
 
@@ -138,7 +142,7 @@ END {
   if("'${DEBUG}'") print "awk decoding",NFILES,"files..." > "/dev/stderr"
   for(i=1; i<=NFILES; i++) {
     fil=file[i]
-    name=exec=icnpath=icnname=icnext=comment=""
+    name=exec=icnpath=icnname=icnext=comment=category=""
     match(fil, /^;([^\n]+)/, m); filename=m[1]
     match(fil, /\nName=([^\n]+)/, m); name=m[1]
     if(match(fil, /\nName\[('"${LR:-@}|${L:-@}"')\]=([^\n]+)/, m)) name=m[2]
@@ -149,6 +153,7 @@ END {
     icnpath=m[1]; icnname=m[2]; icnext=substr(m[3],2)
     match(fil, /\nComment=([^\n]+)/, m); comment=m[1]
     if(match(fil, /\nComment\[('"${LR:-@}|${L:-@}"')\]=([^\n]+)/, m)) comment=m[2]
+    match(fil, /\nCategories=([^\n]+)/, m); category=";"m[1]
     # narrow matches by GREP pattern and store for sorting step
     if(GREP && index(tolower(name), GREP) || !GREP) {
       key[k] = k = tolower(name) # case-indepedent sort
@@ -176,7 +181,8 @@ function format_item(   ic,cols) {
   ic = format_icon_cell()
   cols = sprintf("%s||%s|%s", \
     ic, name, \
-    sprintf("%s'${SEP}'%s'${SEP}'%s'${SEP}'%s", filename,name,exec,comment))
+    sprintf("%s'${SEP}'%s'${SEP}'%s'${SEP}'%s'${SEP}'%s", \
+    filename,name,exec,comment,category))
     # tree widget exports all packed values as a single column
   return(cols)
 }
@@ -278,29 +284,34 @@ function mark_icon_workaround_uptodate( ) {
 
 # Prepare database query gawk script (a simplified version of the first script).
 # Usage: gawk -f "scriptpath" [-v GREP="string"] ${DATF}
-unset case name commleft left REDIRECT2
+unset case name commleft left categ REDIRECT2
 [ true = "${CASEDEPENDENT}" ] || case=tolower
 if [ true = "${SEARCHREGEX}" ]; then
   REDIRECT2=" 2>/dev/null" # Quiet awk's "fatal: invalid regex" message
   name="match($case(a[2]),GREP)"
   [ true = "${SEARCHFROMLEFT}" ] && left="&& RSTART==1"
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| match($case(a[4]),GREP)${left}"
+  [ true = "${SEARCHCATEGORIES}" ] && categ="|| match($case(a[5]),GREP)"
   :
 else
   name="index($case(a[2]),GREP)"
   [ true = "${SEARCHFROMLEFT}" ] && left="==1"
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| index($case(a[4]),GREP)${left}"
+  [ true = "${SEARCHCATEGORIES}" ] && categ="|| index($case(a[5]),GREP)"
 fi
 > "${AWKQ}" echo '
 BEGIN {
-  if("'${DEBUG}'">2) print "\nSTARTING AWK querier, GREP="GREP >"/dev/stderr"
+  if("'${DEBUG}'">2) {
+    print "\nSTARTING AWK querier, GREP="GREP >"/dev/stderr"
+    print "expression=('"${name}${left} ${commleft} ${categ}"')" >"/dev/stderr"
+  }
   FS="|"
 }
 {
   # split out the last field of the record that format_item() printed ($AWKF)
-  split($(NF), a, /'"${SEP}"'/) # a <- {filename, name, exec, comment}
+  split($(NF), a, /'"${SEP}"'/) # a <- {filename,name,exec,comment,category}
   # narrow matches by GREP pattern
-  if(GREP && ('"${name}${left} ${commleft}"') || !GREP) {
+  if(GREP && ('"${name}${left} ${commleft} ${categ}"') || !GREP) {
     print substr($0, 1, 510)
     # 510 works around gtkdialog tree widget buffer overflow limit
   }
@@ -347,6 +358,8 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
 </window>'
 
 # Prepare and start main window
+unset showcategories
+[ true = "${SEARCHCATEGORIES}" ] && showcategories=true
 # i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext's limitation
@@ -421,7 +434,7 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
 
     <entry sensitive="false" tooltip-text="$(gettext "Comment about current item")">
       <variable>varCOMMENT</variable>
-      <input>IFS=${SEP}; set -- \${varLIST}; echo \$4</input>
+      <input>IFS=${SEP}; set -- \${varLIST}; echo "\$4${showcategories:+ \$5}"</input>
     </entry>
 
     <hbox space-fill="false" space-expand="false">
