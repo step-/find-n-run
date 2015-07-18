@@ -114,8 +114,10 @@ These values are hidden in the main window. They are intended mostly for power u
     # Main window geometry, no default.
     # Command-line option --geometry=WxH+X+Y overrides this value.
     #GEOMETRY=460x280+100+200
-    # Icon search directories, space-separated list, Freedesktop.org's default.
-    #ICON_DIRS=...
+    # Desktop file search directories, space-separated list, system default.
+    #DESKTOP_FILE_DIRS=~/.local/applications /usr/share/applications /usr/local/share/applications
+    # Icon search directories, space-separated list, system default.
+    #ICON_DIRS=~/.icons ~/.local/іcons /usr/share/icons /usr/local/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons
 
 ## Command-line options
 

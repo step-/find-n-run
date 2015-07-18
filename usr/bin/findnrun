@@ -7,23 +7,33 @@
 # GNU GPL applies
 # http://www.murga-linux.com/puppy/viewtopic.php?t=98330
 # Req.: Gtkdialog >= 0.8.3, gawk
-# https://github.com/step-/find-n-run
+# gawk version: https://github.com/step-/find-n-run
 # =============================================================================
 
 export TEXTDOMAIN=findnrun
 export OUTPUT_CHARSET=UTF-8
 
-# i18n find_n_run.po file generated with:
+# i18n find_n_run.pot file generated with:
 # i18n xgettext -ci18n -L Shell -o findnrun.pot --no-wrap --package-name=find-n-run --package-version=1.10.6 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
 # i18n Main window title
 APP_NAME=$(gettext "Find'N'Run")
 APP_TITLE="${APP_NAME}"
 
-DESKTOP_FILES_DIRS="$XDG_DATA_HOME/applications /usr/local/share/applications /usr/share/applications"
+XDG_DATA_DIRS=${XDG_DATA_DIRS:-/usr/share:/usr/local/share}
+XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local}
+
+{ read DESKTOP_FILE_DIRS; read ICON_DIRS; } << EOF
+$(
+  IFS=:
+  set -- ${XDG_DATA_HOME} ${XDG_DATA_DIRS}
+  for i; do echo -n " $i/applications"; done; echo
+  for i; do echo -n " $i/icons"; done; echo
+)
+EOF
 # Ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
-# Some Fatdog64-specific locations added.
 # Note: Search by icon *theme* isn't implemented.
-ICON_DIRS="$HOME/.icons $XDG_DATA_HOME/icons$(IFS=:; set -- ${XDG_DATA_DIR:-/usr/share:/usr/local/share}; for i; do echo -n " $i/icons"; done) /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
+# Additional Fatdog64-specific locations start at .../midi-icons.
+ICON_DIRS="$HOME/.icons ${ICON_DIRS} /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
 
@@ -92,7 +102,7 @@ which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
 
 # Set LOCS to the glob that lists valid .desktop file locations.
 # Do this in the main shell after having processed script option.
-for i in ${DESKTOP_FILES_DIRS}; do
+for i in ${DESKTOP_FILE_DIRS}; do
   set -- "$i"/*.desktop
   if [ "$1" != "${1%/*.desktop}/*.desktop" ]; then
     x=${1%% }; x=${x%/*}; LOCS="${LOCS}${LOCS+ }$x/*.desktop"
