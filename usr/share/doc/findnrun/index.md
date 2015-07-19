@@ -169,3 +169,7 @@ See [TRANSLATING](TRANSLATING.md) for further instructions.
 
 See the project [release announcements](https://github.com/step-/find-n-run/releases) page and - for fine-grained information - the [commit history](https://github.com/step-/find-n-run/commits/master) page.
 
+## License
+
+[LICENSE](LICENSE)
+
