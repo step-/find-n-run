@@ -26,9 +26,9 @@ core operations.
 
 ### Naming
 
-_Find'N'Run_ refers to _original_ application;
-_find-n-run_ refers to this new project;
-`findnrun` is the script name, the same name for both projects.
+ - _find-n-run_ refers to this new project and its repository.
+ - _Find'N'Run_ refers to the _original_ project. For historical reasons both projects also used it as the window title.
+ - `findnrun` is the script name; the same _name_ for both projects - but of course the script contents differ.
 
 ## Overview
 
