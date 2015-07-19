@@ -385,6 +385,7 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
     </hbox>
   </vbox>
   <variable>GUI_ABOUT</variable>
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">closewindow:GUI_ABOUT</action>
 </window>'
 
 # Prepare and start main window
