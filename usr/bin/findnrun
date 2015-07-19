@@ -344,7 +344,9 @@ EOF
       helpviewer="cd '${helpdir}' && '${helpviewer}' '${HELPFILE##*/}'" ;;
   esac &&
   helpbutton="
-<button help>
+<button use-underline=\"true\">
+  <label>$(gettext "_Help")</label>
+  <input file stock=\"gtk-help\"></input>
   <action>${helpviewer} &</action>
   <action>closewindow:GUI_ABOUT</action>
 </button>"
@@ -372,10 +374,14 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
       </text>
     </frame>
     <hbox homogeneous="true">
-      <button ok>
+      <text space-fill="true" space-expand="true"><label>""</label></text>
+      <button use-underline="true">
+        <label>'"$(gettext "_OK")"'</label>
+        <input file stock="gtk-ok"></input>
         <action>closewindow:GUI_ABOUT</action>
       </button>
       '"${helpbutton}"'
+      <text space-fill="true" space-expand="true"><label>""</label></text>
     </hbox>
   </vbox>
   <variable>GUI_ABOUT</variable>
@@ -498,7 +504,7 @@ $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
         <action>awk -v s=varFOCUSSEARCH=\${varFOCUSSEARCH} '/^varFOCUSSEARCH=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       <text space-fill="true" space-expand="true"><label>""</label></text>
-      <button tooltip-text="$(gettext "About")" stock-icon-size="1">
+      <button tooltip-text="$(gettext "About and help")" stock-icon-size="1">
         <input file stock="gtk-about"></input>
         <action>launch:GUI_ABOUT</action>
       </button>
