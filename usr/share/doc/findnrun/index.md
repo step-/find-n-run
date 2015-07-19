@@ -140,8 +140,9 @@ These values are hidden in the main window. They are intended mostly for power u
 
 ## Known issues and limitations
 
- * [Freedesktop.org's](http://standards.freedesktop.org/icon-theme-spec)
-   icon _theme_ support isn't implemented. This means that if multiple
+ * Freedesktop.org's
+   [icon theme](http://standards.freedesktop.org/icon-theme-spec)
+   support isn't implemented. This means that if multiple
    icon themes are installed _findnrun_ will apply the first icon found
    in alphabetical order.
    You can work around this limitation by setting hidden user preference
@@ -155,6 +156,15 @@ _and not in the Puppy Linux forum thread_. You do not need a github accont
 to file new issues.
 
 ## Translations
+
+If the system locale is correctly configured, `findnrun` should automatically
+display entry _name_ and _comments_ in the local language provided that the
+corresponding `.desktop` file includes translation strings.
+Note that entry _categories_ are available in English only accoding to the
+freedesktop.org's desktop file specifications
+[ref1](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s04.html)
+and
+[ref2](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s05.html).
 
 I will gladly add contributed translations to the git repository if
 translators send them to me. Generate a Github pull request or attach your
