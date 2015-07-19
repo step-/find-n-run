@@ -9,107 +9,117 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 1.10.6\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2015-07-09 08:37+0000\n"
+"POT-Creation-Date: 2015-07-19 18:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: en\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#. i18n find_n_run.po file generated with:
+#. i18n find_n_run.pot file generated with:
 #. i18n xgettext -ci18n -L Shell -o findnrun.pot --no-wrap --package-name=find-n-run --package-version=1.10.6 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
 #. i18n Main window title
 #: findnrun:19
 msgid "Find'N'Run"
 msgstr ""
 
+#: findnrun:348
+msgid "_Help"
+msgstr ""
+
 #. i18n About dialog widgets: window text; number of apps text (singular/plural)
-#: findnrun:311
+#: findnrun:361
 msgid ""
 "%s %s\n"
 "authors: SFR, L18L, step\n"
 "Open source - GNU GPL license applies\n"
 "\n"
-"%s\n%s\n"
+"%s\n"
+"%s\n"
 "\n"
 "configuration: %s\n"
 msgstr ""
 
-#: findnrun:322
+#: findnrun:372
 msgid "%s application found"
 msgid_plural "%s applications found"
 msgstr[0] ""
 msgstr[1] ""
 
+#: findnrun:379
+msgid "_OK"
+msgstr ""
+
 #. i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
 #. i18n "0" (invisible, disregard).
-#: findnrun:338
+#: findnrun:396
 msgid "0"
 msgstr ""
 
-#: findnrun:343
+#: findnrun:401
 msgid "Press ENTER to select"
 msgstr ""
 
-#: findnrun:344
+#: findnrun:402
 msgid "Type some letters to refine the list"
 msgstr ""
 
-#: findnrun:351
+#: findnrun:409
 msgid "Clear entry"
 msgstr ""
 
-#: findnrun:358
+#: findnrun:416
 msgid "Press ENTER or double-click to run the selected item"
 msgstr ""
 
-#: findnrun:385
+#: findnrun:443
 msgid "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit."
 msgstr ""
 
-#: findnrun:387
+#: findnrun:445
 msgid "Press up-arrow key to grab command"
 msgstr ""
 
-#: findnrun:399
+#: findnrun:457
 msgid "Remove entry from command history"
 msgstr ""
 
-#: findnrun:408
+#: findnrun:466
 msgid "Comment about current item"
 msgstr ""
 
-#: findnrun:414
+#: findnrun:472
 msgid "Keep this window open after starting an item instead of closing this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays."
 msgstr ""
 
-#: findnrun:415
+#: findnrun:473
 msgid "_Keep window"
 msgstr ""
 
-#: findnrun:420
+#: findnrun:478
 msgid "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache."
 msgstr ""
 
-#: findnrun:421
+#: findnrun:479
 msgid "_Show all icons"
 msgstr ""
 
-#: findnrun:443
+#: findnrun:501
 msgid "Move the keyboard focus to the search input field after starting an item instead of keeping the keyboard focus on the started list item. This option also affects the command input field."
 msgstr ""
 
-#: findnrun:444
+#: findnrun:502
 msgid "_Focus search"
 msgstr ""
 
-#: findnrun:450
-msgid "About"
+#: findnrun:508
+msgid "About and help"
 msgstr ""
 
-#: findnrun:454
+#: findnrun:512
 msgid "Exit"
 msgstr ""
+
