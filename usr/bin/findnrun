@@ -41,7 +41,7 @@ HELPFILE=/usr/share/doc/findnrun/index.md
 REMARK= # leave unset
 DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-3
 trap 'rm -rf "${TMPF:-/tmp/dummy}"*' INT QUIT TERM HUP EXIT
-TMPF=`mktemp -d --tmpdir ${0##*/}_XXXXX`
+TMPF=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX`
 DATF="${TMPF}/.dat" # database of .desktop file entries
 AWKF="${TMPF}/.build.awk" # builds (and queries) database
 AWKQ="${TMPF}/.query.awk" # queries database (faster)
