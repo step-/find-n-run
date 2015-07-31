@@ -12,4 +12,6 @@
  * French, 1.10.6, ASRI at Puppy Linux Forum
  * German, 1.10.6, L18L at Puppy Linux Forum
  * Italian, 1.10.6, xanad at Puppy Linux Forum
+ * Simplified Chinese, 1.10.6, icake@hotmail.com
+ * Traditional Chinese, 1.10.6, icake@hotmail.com
 

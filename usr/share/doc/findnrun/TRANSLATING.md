@@ -12,7 +12,8 @@ contributed files (see below) to the forum thread.
  * Edit and translate the `.po` file
  * Convert the translated `.po` file to `.mo` format
  * Install the `.mo` file
- * Test your translation including the About dialog
+ * Test your translation including the About dialog; to open the About
+   dialog click the star icon in the find-n-run main window
  * Send the `.po` and `.mo` files to me for inclusion in this repository.
 
 **Note:** Place `.po` and `.mo` files in
@@ -57,4 +58,15 @@ the _language code_ for your language, i.e., 'de' for German, 'fr' for French,
     test -L /usr/share/local/de/LC_MESSAGES/findnrun.mo && rm /usr/share/local/de/LC_MESSAGES/findnrun.mo
 
 **Note 2:** If at all possible, please generate a Github pull request for your contribution. Otherwise attach the two files to the project forum thread - see [README](README.md) for URL info.
+
+### Desktop file
+
+Finally open file `usr/share/applications/findnrun.desktop` and check whether
+a translated _Comment field_ already exists for your language. If not,
+please make one and send it to me via the mechanisms noted above.
+
+**example for Spanish**
+
+    Comment=Find and run apps very quickly
+    Comment[es]=Buscar y ejecutar aplicaciones rápidamente
 
