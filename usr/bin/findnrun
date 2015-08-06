@@ -523,3 +523,9 @@ EOF
 
 ###############################################################################
 
+# i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
+# i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
+Name=$(gettext "Find'N'Run ")
+# i18n Optionally translate the Comment[xx] field to be added to file findnrun.desktop
+Comment=$(gettext "Find and run applications very quickly")
+
