@@ -158,3 +158,13 @@ msgstr "Aide et infos"
 msgid "Exit"
 msgstr "Quitter"
 
+#. i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
+#. i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
+#: findnrun:528
+msgid "Find'N'Run "
+msgstr ""
+
+#. i18n Optionally translate the Comment[xx] field to be added to file findnrun.desktop
+#: findnrun:530
+msgid "Find and run applications very quickly"
+msgstr "Trouvez et exécuter des applications très rapidement"
