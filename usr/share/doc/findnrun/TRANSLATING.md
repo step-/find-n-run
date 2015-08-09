@@ -44,18 +44,28 @@ the _language code_ for your language, i.e., 'de' for German, 'fr' for French,
     # Now test the .mo file... (Note 1)
     # Then send .mo and .po files for inclusion in this repository (Note 2)
 
-**Νote 1:** Test all main window _and about dialog_ elements. Before testing you should set the system locale to the translation language. If for some reason you can't set the system locale, you might try faking language setup by running these shell commands (replace all occurrences of `de` with the language code that you are testing):
+**Νote 1:** Test all main window _and about dialog_ elements. Before testing you should set the system locale code to the translation language. If for some reason you can't set the system locale, you might try _faking_ proper language setup by running these shell commands (replace all occurrences of `de` with the language code that you are testing):
 
     # Start at the top directory of this git repository.
     cd find-n-run
     # Temporarily link message catalog file
     test -d /usr/share/locale/de || ln -s `pwd`/usr/share/locale/de /usr/share/locale/de
     test -e /usr/share/locale/de/LC_MESSAGES/findnrun.mo || ln -s `pwd`/usr/share/locale/de/LC_MESSAGES/findnun.mo /usr/share/locale/de/LC_MESSAGES/findnrun.mo
-    # Set LANGUAGE (or LANG) to the FULL language locale
+    # Set LANGUAGE to the FULL language locale
     env LANGUAGE=de_DE.UTF-8 usr/bin/findnrun --geometry=
     # Clean up temporary links
     test -L /usr/share/locale/de && rm /usr/share/locale/de
     test -L /usr/share/locale/de/LC_MESSAGES/findnrun.mo && rm /usr/share/locale/de/LC_MESSAGES/findnrun.mo
+
+These settings should be enough to view (test) all of the translated strings
+that you add. However, the settings aren't enough for `findnrun` to also
+display localized application comments, which you do not provide because
+those are included in the `.desktop` files. To be able to also view
+localized comments you do need to set the system locale code _properly_. The
+exact procedure for doing so varies among linux variants. For instance,
+on Fatdog64 linux you would run `/usr/sbin/fatdog-locale.sh` and restart X.
+After this step, `findnrun` looks at environment variable `LANG` determine the
+locale code of `.desktop` file comments.
 
 **Note 2:** If at all possible, please generate a Github pull request for your contribution. Otherwise attach the two files to the project forum thread - see [README](README.md) for URL info.
 
