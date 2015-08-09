@@ -2,11 +2,10 @@
 
 Enhanced version of the _original_ Find'N'Run linux utility.
 
-[Project home](http://github.com/step-/find-n-run)
-
-As of version 1.10.5 this script is featured in the _original_
-[Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330),
-so you need not worry which one you are getting.
+ * [Project home](http://github.com/step-/find-n-run)
+ * As of version 1.10.5 this script is featured in the _original_
+[Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
+ * Version 1.10.6 runs on Lubuntu: [package information](LUBUNTU.md)
 
 ## Introduction
 
@@ -23,6 +22,8 @@ found in the _original_ version.
 
 Unlike the _original_ script, this version uses GNU `awk` (gawk) for
 core operations.
+
+find-n-run is being developed and tested on Fatdog64-701 64-bit linux.
 
 ### Naming
 
@@ -66,11 +67,11 @@ New features:
 
 Side by side: Left: version 1.10.6-gawk (default window size) -- Right: original version 1.9 (Fatdog64-701).
 
-![side-by-side main window](images/findnrun-1.10.6-main.png)
-![http://github.com/step-/find-n-run/](images/findnrun-1.9-main.png)
+![side-by-side main window](images/findnrun-pub-main.png)
+![http://github.com/step-/find-n-run/](images/findnrun-1.9-pub-main.png)
 
-![side-by-side about dialog](images/findnrun-1.10.6-about.png)
-![http://github.com/step-/find-n-run/](images/findnrun-1.9-about.png)
+![side-by-side about dialog](images/findnrun-pub-about.png)
+![http://github.com/step-/find-n-run/](images/findnrun-1.9-pub-about.png)
 
 ## Installing
 
@@ -79,11 +80,35 @@ The package includes a help file, a desktop icon and file, and traslations.
 However, if you prefer a barebone, manual installation you can just copy
 the script file `usr/bin/findnrun`.
 
-This version can replace directly the `findnrun` script included with
+### Packages
+
+Packages for various distributions can be downloaded from:
+
+(1) the latest release page in the [releases](http://github.com/step-/find-n-run/releases/) page on Github:
+
+ * Fatdog64 [.txz](http://github.com/step-/find-n-run/releases/)
+ * Lubuntu [.deb](http://github.com/step-/find-n-run/releases/)
+
+(2) one of these known threads:
+
+ * Puppy linux generic [.pet](http://www.murga-linux.com/puppy/viewtopic.php?t=98330), which also features a ROX-app application
+ * Quirky linux [.pet](http://www.murga-linux.com/puppy/viewtopic.php?t=99789)
+
+### Manual installation
+
+For a minimal installation, download the latest `.zip` or `.tar.gz` archive from
+the [releases](http://github.com/step-/find-n-run/releases/) page on Github:
+
+ * Non-Puppy linux OS: ensure all [pre-requisites](LUBUNTU.md) are met
+ * Extract file `usr/bin/findnrun` and copy it to `/usr/bin/findnrun`
+ * Set file ownership to root and executable file permissions
+
+**Puppy linux OS:**
+You can replace directly the `findnrun` script included with
 Fatdog64-700, a 64-bit OS in the Puppy linux family, and the script
-included in the `.pet` package for all other Puppies. For older .pet versions
+included in the `.pet` package for all other Puppies. For older `.pet` versions
 simply replace the existing file `/usr/local/apps/FindNRun/findnrun` with
-file `/usr/bin/findnrun` from this repository.
+file `usr/bin/findnrun` from the downloaded archive.
 
 ## User Preferences
 
@@ -173,7 +198,7 @@ See [TRANSLATING](TRANSLATING.md) for further instructions.
 
 ## Credits
 
-[CREDITS](CREDITS.md)
+[Artwork, translations](CREDITS.md)
 
 ## Change Log
 
@@ -181,5 +206,5 @@ See the project [release announcements](https://github.com/step-/find-n-run/rele
 
 ## License
 
-[LICENSE](LICENSE)
+[GNU GPL v2](LICENSE.md)
 

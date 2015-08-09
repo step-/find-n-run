@@ -2,13 +2,12 @@
 
 Enhanced version of the _original_ Find'N'Run linux utility.
 
-[Project home](http://github.com/step-/find-n-run)
+ * [Project home](http://github.com/step-/find-n-run)
+ * As of version 1.10.5 this script is featured in the _original_
+[Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
+ * Version 1.10.6 runs on Lubuntu: [package information](usr/share/doc/findnrun/LUBUNTU.md)
 
-As of version 1.10.5 this script is featured in the _original_
-[Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330),
-so you need not worry which one you are getting.
-
-## Introduction, features, help documentation and more
+## Introduction, features, installing, help documentation and more
 
 [Click to read...](usr/share/doc/findnrun/index.md)
 
@@ -16,11 +15,11 @@ so you need not worry which one you are getting.
 
 Side by side: Left: version 1.10.6-gawk (default window size) -- Right: original version 1.9 (Fatdog64-701).
 
-![side-by-side main window](usr/share/doc/findnrun/images/findnrun-1.10.6-main.png)
-![http://github.com/step-/find-n-run/](usr/share/doc/findnrun/images/findnrun-1.9-main.png)
+![side-by-side main window](usr/share/doc/findnrun/images/findnrun-pub-main.png)
+![http://github.com/step-/find-n-run/](usr/share/doc/findnrun/images/findnrun-1.9-pub-main.png)
 
-![side-by-side about dialog](usr/share/doc/findnrun/images/findnrun-1.10.6-about.png)
-![http://github.com/step-/find-n-run/](usr/share/doc/findnrun/images/findnrun-1.9-about.png)
+![side-by-side about dialog](usr/share/doc/findnrun/images/findnrun-pub-about.png)
+![http://github.com/step-/find-n-run/](usr/share/doc/findnrun/images/findnrun-1.9-pub-about.png)
 
 ## Reporting bugs
 
@@ -31,7 +30,7 @@ to file new issues.
 
 ## Credits
 
-[CREDITS](usr/share/doc/findnrun/CREDITS.md)
+[Artwork, translations](usr/share/doc/findnrun/CREDITS.md)
 
 ## Change Log
 
@@ -39,5 +38,5 @@ See the project [release announcements](https://github.com/step-/find-n-run/rele
 
 ## License
 
-[LICENSE](LICENSE)
+[GNU GPL v2](LICENSE)
 
