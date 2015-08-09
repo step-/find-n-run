@@ -1,9 +1,9 @@
-find-n-run version 1.10.6 successfully runs on Lubuntu, I did actually test
-it, and wrote the following installation istructions.
+Find-n-run version 1.10.6 successfully runs on Lubuntu.
 
-Note that supporting Ubuntu-based distros (L/K/Ubuntu, Mint, etc.) is not one of my goals for this project,
-as I do not use L/Ubuntu. However, since find-n-run runs just fine on
-Lubuntu, I will try not to break it in all future releases.
+Supporting Ubuntu-based distros (L/K/Ubuntu, Mint, etc.) is not
+a goal of mine, as I am focused on Fatdog64 linux and do not use
+Ubuntu. However, since in my limited testing find-n-run ran fine on
+Lubuntu, I will try to keep compatibility in all future releases.
 
 Here is a picture of find-n-run 1.10.6 running on Lubuntu with the WinAte
 theme.
@@ -37,7 +37,7 @@ Start a terminal and run this command:
 
 ### gtk-dialog and libnotify-bin
 
-Ubuntu removed gtk-dialog from the offical repository a few versions ago,
+Ubuntu removed gtk-dialog from the offical repository a few releases ago,
 so you need to install gtk-dialog from a contributed repository.
 I tested lanzadoc's repository, which includes a 32-bit package only.
 An option for 64-bit system is listed further down.
