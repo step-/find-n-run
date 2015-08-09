@@ -54,8 +54,8 @@ the _language code_ for your language, i.e., 'de' for German, 'fr' for French,
     # Set LANGUAGE (or LANG) to the FULL language locale
     env LANGUAGE=de_DE.UTF-8 usr/bin/findnrun --geometry=
     # Clean up temporary links
-    test -L /usr/share/local/de && rm /usr/share/local/de
-    test -L /usr/share/local/de/LC_MESSAGES/findnrun.mo && rm /usr/share/local/de/LC_MESSAGES/findnrun.mo
+    test -L /usr/share/locale/de && rm /usr/share/locale/de
+    test -L /usr/share/locale/de/LC_MESSAGES/findnrun.mo && rm /usr/share/locale/de/LC_MESSAGES/findnrun.mo
 
 **Note 2:** If at all possible, please generate a Github pull request for your contribution. Otherwise attach the two files to the project forum thread - see [README](README.md) for URL info.
 
