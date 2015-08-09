@@ -1,8 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Find'N'Run
-Name[es]=Buscar y ejecutar
 Name[de]=Anwendungsfinder
+Name[es]=Buscar y ejecutar
+Name[it]=Trova e lancia
 Name[zh_CN]=找寻和运行
 Name[zh_HK]=找尋和運行
 Name[zh_SG]=找寻和运行
@@ -11,7 +12,7 @@ Comment=Find and run applications very quickly
 Comment[de]=Im System installierte Anwendungen finden und starten
 Comment[es]=Buscar y ejecutar aplicaciones muy rápidamente
 Comment[fr]=Trouvez et exécuter des applications très rapidement
-Comment[it]=Trova e lancia applicazioni rapidamente
+Comment[it]=Trova e lancia applicazioni molto rapidamente
 Comment[pl]=Szybko znajdź i uruchom aplikacje
 Comment[zh_CN]=快速地找寻和运行应用程式
 Comment[zh_HK]=快速地找尋和運行應用程式
