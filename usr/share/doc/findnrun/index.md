@@ -15,7 +15,7 @@ application starter script that displays your `*.desktop` files in a
 hit list.
 
 This project takes the shell script further, by increasing search
-speed, adding many new features, documentation and translations.
+speed, adding many new features, a help system and translations.
 
 This version does not include the optional ROX-Filer application directory
 found in the _original_ version.
@@ -49,8 +49,9 @@ New features:
    After starting an application focus can be returned to
    either the search input field or to the selected application list item.
  * **Geometry** support to exactly size and position the main window.
+ * **Browsable help documentation**.
  * **New hi-res desktop icon**. 
- * **Full localization support**.
+ * **Multi-language** support including program and help documentation.
  * **Extensive tooltips**, and new configurable **user preferences**.
 
 **Notes**
@@ -110,6 +111,11 @@ included in the `.pet` package for all other Puppies. For older `.pet` versions
 simply replace the existing file `/usr/local/apps/FindNRun/findnrun` with
 file `usr/bin/findnrun` from the downloaded archive.
 
+## Help system
+
+You can view this file directly from `findnrun` by pressing key [F1] in the
+main window, or clicking the help icon in the About dialog window.
+
 ## User Preferences
 
 The user preferences file is created as `~/.findnrunrc` on first run.
@@ -155,6 +161,8 @@ These values are hidden in the main window. They are intended mostly for power u
     #DESKTOP_FILE_DIRS=~/.local/applications /usr/share/applications /usr/local/share/applications
     # Icon search directories, space-separated list, system default.
     #ICON_DIRS=~/.icons ~/.local/іcons /usr/share/icons /usr/local/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons
+    # Preferred help viewing program.
+    #BROWSER=
 
 ## Command-line options
 
@@ -162,6 +170,34 @@ These values are hidden in the main window. They are intended mostly for power u
 
   Set window Width`x`Heigth and top-left corner position.
   You may omit `WxH` or `+X+Y`.
+
+## Environment variables
+
+`BROWSER`
+
+  If the **Help file** is installed but it does not open - or it opens
+  in a text editor - try setting `BROWSER` to your preferred web
+  browser.  `BROWSER` can be set either as an environment variable or as
+  a configuration preference.
+
+    env BROWSER=firefox findnrun
+
+`GEOMETRY`
+
+  Window geometry can be set as an environment variable, as a
+  configuration preference, and as a command-line option - in increasing
+  order of precedence.
+
+    env GEOMETRY=500x200+100+100 findnrun
+
+`LANG`
+
+  If a translation file for your local language is installed but you
+  see English messages, you need to properly configure your system
+  locale.  Find-n-run honors the system locale code that environment
+  variable `LANG` displays.
+
+    echo $LANG
 
 ## Known issues and limitations
 
@@ -172,6 +208,11 @@ These values are hidden in the main window. They are intended mostly for power u
    in alphabetical order.
    You can work around this limitation by setting hidden user preference
    `ICON_DIRS`.
+
+ * Prioritized language preferences via environment variable `LANGUAGE`
+   are not supported. Find-n-run honors the system locale code that
+   environment variable `LANG` displays - when a matching transation
+   file is installed.
 
 ## Reporting bugs
 
@@ -185,7 +226,7 @@ to file new issues.
 If the system locale is correctly configured, `findnrun` should automatically
 display entry _name_ and _comments_ in the local language provided that the
 corresponding `.desktop` file includes translation strings.
-Note that entry _categories_ are available in English only accoding to the
+Note that entry _categories_ are available in English only according to the
 freedesktop.org's desktop file specifications
 [ref1](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s04.html)
 and

@@ -14,7 +14,7 @@ contributed files (see below) to the forum thread.
  * Install the `.mo` file
  * Test your translation including the About dialog; to open the About
    dialog click the star icon in the find-n-run main window
- * Send the `.po` and `.mo` files to me for inclusion in this repository.
+ * Send me the `.po` and `.mo` files for inclusion in this repository.
 
 **Note:** Place `.po` and `.mo` files in
 `usr/share/locale/<language>/LC_MESSAGES/findnrun.po`, where `<language>` is
@@ -50,33 +50,110 @@ the _language code_ for your language, i.e., 'de' for German, 'fr' for French,
     cd find-n-run
     # Temporarily link message catalog file
     test -d /usr/share/locale/de || ln -s `pwd`/usr/share/locale/de /usr/share/locale/de
-    test -e /usr/share/locale/de/LC_MESSAGES/findnrun.mo || ln -s `pwd`/usr/share/locale/de/LC_MESSAGES/findnun.mo /usr/share/locale/de/LC_MESSAGES/findnrun.mo
+    test -e /usr/share/locale/de/LC_MESSAGES/findnrun.mo || ln -s `pwd`/usr/share/locale/de/LC_MESSAGES/findnrun.mo /usr/share/locale/de/LC_MESSAGES/findnrun.mo
     # Set LANGUAGE to the FULL language locale
     env LANGUAGE=de_DE.UTF-8 usr/bin/findnrun --geometry=
     # Clean up temporary links
     test -L /usr/share/locale/de && rm /usr/share/locale/de
     test -L /usr/share/locale/de/LC_MESSAGES/findnrun.mo && rm /usr/share/locale/de/LC_MESSAGES/findnrun.mo
 
-These settings should be enough to view (test) all of the translated strings
-that you add. However, the settings aren't enough for `findnrun` to also
-display localized application comments, which you do not provide because
-those are included in the `.desktop` files. To be able to also view
-localized comments you do need to set the system locale code _properly_. The
-exact procedure for doing so varies among linux variants. For instance,
-on Fatdog64 linux you would run `/usr/sbin/fatdog-locale.sh` and restart X.
-After this step, `findnrun` looks at environment variable `LANG` determine the
-locale code of `.desktop` file comments.
+These settings should be enough for `findnrun` to show translated
+messages.  However, they are not sufficient for `findnrun` to also
+display translated application comments. (Translated comments are
+included in many `.desktop` files). To be able to also view translated
+comments you do need to set the system locale code _properly_ by
+following the exact procedure of your linux variant. For instance, the
+steps for Fatdog64 linux involve installing the NLS SFS, setting the
+locale code and restarting X:
+
+    load_sfs.sh --load /path/to/fd64-nls_701.sfs # downloaded with SFS manager
+    /usr/sbin/fatdog-choose-locale.sh # then restart X
+
+`findnrun` looks at environment variable `LANG` to determine the
+locale code of `.desktop` file comments:
+
+    echo $LANG
 
 **Note 2:** If at all possible, please generate a Github pull request for your contribution. Otherwise attach the two files to the project forum thread - see [README](README.md) for URL info.
 
 ### Desktop file
 
-Finally open file `usr/share/applications/findnrun.desktop` and check whether
-a translated _Comment field_ already exists for your language. If not,
-please make one and send it to me via the mechanisms noted above.
+Open file `usr/share/applications/findnrun.desktop` and check whether
+translations into your language already exist for fields `Comment` and
+`Name` If not, send the translated fields to me via one of the
+mechanisms noted above.  Translating at least the `Comment` field is
+recommended.
 
 **example for Spanish**
 
+    Name=Find'N'Run
+    Name[es]=Buscar y ejecutar
     Comment=Find and run apps very quickly
-    Comment[es]=Buscar y ejecutar aplicaciones rápidamente
+    Comment[es]=Buscar y ejecutar aplicaciones muy rápidamente
+
+### Help files
+
+The documents that you are reading online are also included in `findnrun`
+as run-time help files. The help sub-system can display HTML documents
+and markdown documents (using
+[mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index)).
+HTML is preferred because the browser is ubiquitous while mdview isn't.
+
+To translate the help files you can either start from the markdown
+source, or directly from the HTML source. Markdown is easier and should
+be preferred in most cases. I imagine HTML would be preferred if your
+language had very special layout needs that HTML only can provide.
+Another reason to prefer HTML vs. markdown is that with HTML your
+testing cycle will be shorter, because you will not have to depend on
+me to convert markdown to HTML (see instructions [A]).
+
+**[A] instructions for markdown**
+
+The set of English markdown source files is located on github
+[here](https://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun).
+
+ * Translate all `.md` files.
+ * Pack all translated files into a `.tar.gz` archive named after your
+   locale code, i.e. `markdown[de_DE.UTF-8].tar.gz` for German in Germany.
+ * Send me the archive via one of the mechanisms noted above.
+ * I will generate an HTML archive and push it to Github with the expectation
+   that you will **test the HTML archive** and correct translation and layout
+   issues by submitting new `.md` files until all issues are closed.
+
+**note on markdown syntax**
+
+Don't be creative with your markdown syntax. Keep it
+simple.  While the publishing process supports [Markdown
+Extra](http://en.wikipedia.org/wiki/Markdown_Extra) I recommend that you
+stick to the much more limited, but sufficient, markdown syntax that
+[mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index)
+supports. All `.md` files in this project follow this guideline.
+
+**[B] instructions for HTML**
+
+If you prefer HTML to markdown, then the set of English markdown source
+files is archived on github as a `tar.gz` file
+[here](https://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun).
+
+ * Download the latest version of `help[en].tar.gz`, which has full
+   locale code en_US.UTF-8.
+ * Unpack it in a local folder; translate all `.html` files.
+ * Pack all translated files into a `.tar.gz` archive named after your
+   locale code, i.e. `html[de_DE.UTF-8].tar.gz` for German in Germany.
+ * You should **test your archive** before sending it to me. Follow these
+   steps (example for German):
+```
+    cd "/path/to/html[de_DE.UFT-8].tar.gz"
+    mkdir -p /usr/share/doc/findnrun # it should already exist
+    ln -fs "`pwd`/html[de_DE.UFT-8].tar.gz" "/usr/share/doc/findnrun/help[de].tar.gz"
+    env LANG=de_DE.UTF-8 findnrun # assumes proper system locale settings
+```
+ * Send me the archive via one of the mechanisms noted above.
+
+### Thank you
+
+I am committed to enabling software localization. I believe it is
+important in widening the adoption of linux, and it is respectful of
+other cultures. Your help in providing an array of language translations
+is very much appreciated.  Thank you.
 
