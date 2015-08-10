@@ -143,12 +143,13 @@ files is archived on github as a `tar.gz` file
  * You should **test your archive** before sending it to me. Follow these
    steps (example for German):
 ```
-    cd "/path/to/html[de_DE.UFT-8].tar.gz"
+    cd "/path/to/dir/containing/" # html[de_DE.UFT-8].tar.gz
     mkdir -p /usr/share/doc/findnrun # it should already exist
     ln -fs "`pwd`/html[de_DE.UFT-8].tar.gz" "/usr/share/doc/findnrun/help[de].tar.gz"
     env LANG=de_DE.UTF-8 findnrun # assumes proper system locale settings
 ```
  * Send me the archive via one of the mechanisms noted above.
+ * I will publish the HTML archive on Github as an official update.
 
 ### Thank you
 

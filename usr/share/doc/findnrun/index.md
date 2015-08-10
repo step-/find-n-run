@@ -77,9 +77,10 @@ Side by side: Left: version 1.10.6-gawk (default window size) -- Right: original
 ## Installing
 
 It is recommended to install the latest full package for your distribution.
-The package includes a help file, a desktop icon and file, and traslations.
+The package includes a help file, a desktop icon and file, and translations.
 However, if you prefer a barebone, manual installation you can just copy
-the script file `usr/bin/findnrun`.
+the script file `usr/bin/findnrun` from
+[Github](http://github.com/step-/find-n-run) to your system.
 
 ### Packages
 
@@ -211,7 +212,7 @@ These values are hidden in the main window. They are intended mostly for power u
 
  * Prioritized language preferences via environment variable `LANGUAGE`
    are not supported. Find-n-run honors the system locale code that
-   environment variable `LANG` displays - when a matching transation
+   environment variable `LANG` displays - when a matching translation
    file is installed.
 
 ## Reporting bugs
