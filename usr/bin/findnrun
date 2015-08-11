@@ -41,7 +41,7 @@ HELPFILE=/usr/share/doc/findnrun/help[en].tar.gz #HELPFILE=/usr/share/doc/findnr
 REMARK= # leave unset
 DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-3
 trap 'rm -rf "${TMPF:-/tmp/dummy}"*' INT QUIT TERM HUP EXIT
-TMPF=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX`
+TMPF=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPF}"
 DATF="${TMPF}/.dat" # database of .desktop file entries
 AWKF="${TMPF}/.build.awk" # builds (and queries) database
 AWKQ="${TMPF}/.query.awk" # queries database (faster)
@@ -95,6 +95,10 @@ case "$*" in
   *--geometry=*)
     # Override GEOMETRY set in .findnrunrc, if any.
     GEOMETRY=${*##--geometry=}; GEOMETRY=${GEOMETRY## *} ;;
+  *--perm=*)
+    # For users who need to tighten tempdir permissions (default 755).
+    perm=${*##--perm=}; perm=${perm## *}
+    chmod "${perm}" "${TMPF}" ;;
 esac
 # More environment variables: BROWSER, LANG
 # =============================================================================

@@ -52,6 +52,7 @@ New features:
  * **Browsable help documentation**.
  * **New hi-res desktop icon**. 
  * **Multi-language** support including program and help documentation.
+ * **Multiple users** can use find-n-run at the same time. [3]
  * **Extensive tooltips**, and new configurable **user preferences**.
 
 **Notes**
@@ -63,6 +64,10 @@ New features:
    combobox is normally blank until it is focused **and** up-arrow has
    been pressed at least once. The first key press displays the
    command associated with the current entry.
+
+[3] If you are running in a multi-user environment, be aware that
+   find-n-run's temporary files are readable by everyone by default.
+   Use command-line option `--perm=` to tighten permissions.
 
 ## Screenshots
 
@@ -172,7 +177,20 @@ These values are hidden in the main window. They are intended mostly for power u
   Set window Width`x`Heigth and top-left corner position.
   You may omit `WxH` or `+X+Y`.
 
+`--perm=PERMISSIONS`
+
+  Set PERMISSIONS of the _program temporary directory_ (per `chown` command).
+  By default the temporary directory is created readable by everyone (755),
+  which on multi-user systems can be a security concern:
+
+    findnrun --perm=700 # Now only the owner can read it / write it.
+
 ## Environment variables
+
+**Standard variables**
+
+Many linux versions pre-define some of these variables in system
+initialization files.
 
 `BROWSER`
 
@@ -183,14 +201,6 @@ These values are hidden in the main window. They are intended mostly for power u
 
     env BROWSER=firefox findnrun
 
-`GEOMETRY`
-
-  Window geometry can be set as an environment variable, as a
-  configuration preference, and as a command-line option - in increasing
-  order of precedence.
-
-    env GEOMETRY=500x200+100+100 findnrun
-
 `LANG`
 
   If a translation file for your local language is installed but you
@@ -199,6 +209,16 @@ These values are hidden in the main window. They are intended mostly for power u
   variable `LANG` displays.
 
     echo $LANG
+
+**Non-standard variables**
+
+`GEOMETRY`
+
+  Window geometry can be set as an environment variable, as a
+  configuration preference, and as a command-line option - in increasing
+  order of precedence.
+
+    env GEOMETRY=500x200+100+100 findnrun
 
 ## Known issues and limitations
 
