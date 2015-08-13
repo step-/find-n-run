@@ -63,16 +63,21 @@ display translated application comments. (Translated comments are
 included in many `.desktop` files). To be able to also view translated
 comments you do need to set the system locale code _properly_ by
 following the exact procedure of your linux variant. For instance, the
-steps for Fatdog64 linux involve installing the NLS SFS, setting the
-locale code and restarting X:
+steps for Fatdog64 linux involve installing the NLS SFS, dropping to
+the console, setting the locale code and variables, and restarting X:
 
-    load_sfs.sh --load /path/to/fd64-nls_701.sfs # downloaded with SFS manager
-    /usr/sbin/fatdog-choose-locale.sh # then restart X
+    # First download fd64-nls_701.sfs with the SFS manager
+    load_sfs.sh --load /path/to/fd64-nls_701.sfs # load SFS
+    /usr/sbin/fatdog-choose-locale.sh # choose, i.e., German for Germany
+    # Close all windows and press Ctrl+Alt+BackSpace
+    LANG=de_DE.UTF-8; export LANG # German for Germany
+    LANGUAGE=$LANG; export LANGUAGE
+    xwin # restart X with German for Germany as a back-end.
 
 `findnrun` looks at environment variable `LANG` to determine the
-locale code of `.desktop` file comments:
+locale code of `.desktop` file comments. Start a terminal and type:
 
-    echo $LANG
+    echo $LANG # It should match German for Germany
 
 **Note 2:** If at all possible, please generate a Github pull request for your contribution. Otherwise attach the two files to the project forum thread - see [README](README.md) for URL info.
 
@@ -100,19 +105,22 @@ and markdown documents (using
 HTML is preferred because the browser is ubiquitous while mdview isn't.
 
 To translate the help files you can either start from the markdown
-source, or directly from the HTML source. Markdown is easier and should
-be preferred in most cases. I imagine HTML would be preferred if your
-language had very special layout needs that HTML only can provide.
-Another reason to prefer HTML vs. markdown is that with HTML your
-testing cycle will be shorter, because you will not have to depend on
-me to convert markdown to HTML (see instructions [A]).
+source, or directly from the HTML source. Markdown should be preferred
+in most cases because it is easier than HTML, and because you will start
+from the most up-to-date English source files. I imagine HTML would be
+preferred if your language had very special layout needs that HTML only
+can provide.  Another reason to prefer HTML vs. markdown is that with
+HTML your testing cycle will be shorter, because you will not have to
+depend on me to convert markdown to HTML (see instructions [A]).  So,
+as a translator of the Help documentation you need to first decide your
+English source file format: markdown vs. HTML, then proceed as follows.
 
-**[A] instructions for markdown**
+**[A] Instructions for markdown**
 
 The set of English markdown source files is located on github
 [here](https://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun).
 
- * Translate all `.md` files.
+ * Translate all `.md` files found in the on-line folder.
  * Pack all translated files into a `.tar.gz` archive named after your
    locale code, i.e. `markdown[de_DE.UTF-8].tar.gz` for German in Germany.
  * Send me the archive via one of the mechanisms noted above.
@@ -120,16 +128,16 @@ The set of English markdown source files is located on github
    that you will **test the HTML archive** and correct translation and layout
    issues by submitting new `.md` files until all issues are closed.
 
-**note on markdown syntax**
+**Note on markdown syntax**
 
-Don't be creative with your markdown syntax. Keep it
+Avoid being too creative with your markdown syntax. Keep it
 simple.  While the publishing process supports [Markdown
 Extra](http://en.wikipedia.org/wiki/Markdown_Extra) I recommend that you
-stick to the much more limited, but sufficient, markdown syntax that
+stick to the much more limited, but effective, markdown syntax that
 [mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index)
 supports. All `.md` files in this project follow this guideline.
 
-**[B] instructions for HTML**
+**[B] Instructions for HTML**
 
 If you prefer HTML to markdown, then the set of English markdown source
 files is archived on github as a `tar.gz` file
