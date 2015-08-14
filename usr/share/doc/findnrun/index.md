@@ -185,6 +185,25 @@ These values are hidden in the main window. They are intended mostly for power u
 
     findnrun --perm=700 # Now only the owner can read it / write it.
 
+`--stdout`
+
+  Display gtkdialog's standard output, which would otherwise not be shown.
+  This option is mostly of interest to developers and advanced users.
+
+`--`
+
+  If you need to pass advanced options to gtkdialog, like perhaps
+  which X display to use, you need to pass them on the command-line
+  after a `--` stop marker. Anything following `--` will be passed
+  to gtkdialog without further inspection. Be vary that some options
+  you pass could conflict with the way `findnrun` sets up gtkdialog
+  for use. Be also aware that in some cases you might also need to
+  specify option `--stdout`:
+
+    findnrun --geometry= -- --center
+    findnrun -- --display=DISPLAY
+    findnrun --stdout -- --version
+
 ## Environment variables
 
 **Standard variables**

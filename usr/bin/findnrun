@@ -1,4 +1,5 @@
 #!/bin/ash
+# vim: foldmarker=[[[,]]]:
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
@@ -13,7 +14,7 @@
 export TEXTDOMAIN=findnrun
 export OUTPUT_CHARSET=UTF-8
 
-# i18n find_n_run.pot file generated with:
+# i18n findnrun.pot file generated with:
 # i18n xgettext -ci18n -L Shell -o findnrun.pot --no-wrap --package-name=find-n-run --package-version=1.10.6 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
 # i18n Main window title
 APP_NAME=$(gettext "Find'N'Run")
@@ -90,17 +91,24 @@ awk '
 # Values that depend on defaults.
 ICONSTEM="${ICONCACHE}/findnrun-" # prefix to worked-around icons.
 
-# Command-line options
-case "$*" in
-  *--geometry=*)
-    # Override GEOMETRY set in .findnrunrc, if any.
-    GEOMETRY=${*##--geometry=}; GEOMETRY=${GEOMETRY## *} ;;
-  *--perm=*)
-    # For users who need to tighten tempdir permissions (default 755).
-    perm=${*##--perm=}; perm=${perm## *}
-    chmod "${perm}" "${TMPF}" ;;
-esac
-# More environment variables: BROWSER, LANG
+# Parse command line --options. [[[1
+while ! [ "${1#--}" = "$1" ]; do
+  case "$1" in
+    --geometry=*) # Override GEOMETRY set in $CONFIG, if any.
+      o=${1#--geometry=}; GEOMETRY=${o%--geometry}
+      ;;
+    --perm=*|--perm) # Tighten tempdir permissions from 755
+      o=${1#--perm=}; o=${o%--perm}; chmod "${o:-700}" "${TMPF}"
+      ;;
+    --) shift; CMDLINEOPTS="$@"; break ;; # pass CMDLINEOPTS to gtkdialog
+    --stdout) ENABLESTDOUT=1 ;; # Don't redirect gtkdialog's stdout to null
+    --*) echo "${0##*/}: invalid option $1" >&2; exit 1
+    ;;
+  esac
+  shift
+done
+
+# More environment variables: BROWSER, LANG [[[1
 # =============================================================================
 
 which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
@@ -398,7 +406,11 @@ unset showcategories
 # i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext's limitation
-$GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} -s >/dev/null <<EOF
+if [ "${ENABLESTDOUT}" ]; then
+  $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s
+else
+  $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s >/dev/null
+fi << EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>    
     <hbox spacing="0">
