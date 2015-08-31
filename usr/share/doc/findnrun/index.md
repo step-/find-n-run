@@ -257,9 +257,9 @@ initialization files.
 ## Reporting bugs
 
 Please file bugs against this script in the issues section of the
-[github repository](https://github.com/step-/find-n-run/issues)
-_and not in the Puppy Linux forum thread_. You do not need a github accont
-to file new issues.
+[github repository](https://github.com/step-/find-n-run/issues) _and not
+in the Puppy Linux forum thread_. You do need a github free accont to
+file new issues.
 
 ## Translations
 
