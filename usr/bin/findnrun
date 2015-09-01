@@ -50,7 +50,7 @@ DATF="${TMPF}/.dat" # database of .desktop file entries
 AWKF="${TMPF}/.build.awk" # builds (and queries) database
 AWKQ="${TMPF}/.query.awk" # queries database (faster)
 HSTF="${TMPF}/.sh"; >"${HSTF}" # saves combobox command line history
-FCSF="${TMPF}/.fcs"; >"${FCSF}" # triggers varENTRY focus grabber
+FCSF="${TMPF}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 SEP=`echo -e "\b"` # field separator of packed values
 ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG).
 
@@ -61,7 +61,7 @@ LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
 # Unexport these variables before running the selected command.
-UNEXPORT="unset GUI_ABOUT varENTRY varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICON varFOCUSSEARCH TEXTDOMAIN OUTPUT_CHARSET"
+UNEXPORT="unset GUI_ABOUT varSEARCH varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICON varFOCUSSEARCH TEXTDOMAIN OUTPUT_CHARSET"
 
 # Prepare the configuration file. [[[1
 # Defaults.
@@ -336,7 +336,7 @@ END {
 
 # Build database of .desktop file entries. [[[1
 gawk -v ALL_ICONS=${varICONS} -f "${AWKF}" ${LOCS} > "${DATF}"
-[ "${DEBUG}" ] && { >/tmp/varENTRY; echo >&2 accepting input from /tmp/varENTRY; }
+[ "${DEBUG}" ] && { >/tmp/varSEARCH; echo >&2 accepting input from /tmp/varSEARCH; }
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
 # Prepare Help system and its GUI button (About). [[[1
@@ -417,27 +417,27 @@ else
   $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s >/dev/null
 fi << EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
-  <vbox>    
+  <vbox>
     <hbox spacing="0">
       <entry auto-refresh="${DEBUG:+true}" tooltip-text="$(gettext "Press ENTER to select")">
         <default>$(gettext "Type some letters to refine the list")</default>
-        <variable>varENTRY</variable>
-        ${DEBUG:+<input file>/tmp/varENTRY</input>}
+        <variable>varSEARCH</variable>
+        ${DEBUG:+<input file>/tmp/varSEARCH</input>}
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
       </entry>
       <button tooltip-text="$(gettext "Clear entry")" stock-icon-size="1">
         <input file stock="gtk-clear"></input>
-        <action>grabfocus:varENTRY</action>
-        <action>clear:varENTRY</action>
+        <action>grabfocus:varSEARCH</action>
+        <action>clear:varSEARCH</action>
       </button>
     </hbox>
 
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
       <label>Icon|Name|PackedValues</label>
       <variable>varLIST</variable>
-      <input icon-column="0">gawk -f "${AWKQ}" -v GREP="\${varENTRY}" -v ALL_ICONS=\${varICONS} '${DATF}'${REDIRECT2}</input>
+      <input icon-column="0">gawk -f "${AWKQ}" -v GREP="\${varSEARCH}" '${DATF}'${REDIRECT2}</input>
       <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
@@ -454,8 +454,8 @@ fi << EOF
       <default>false</default>
       <variable>varFOCUSGRABBER</variable>
       <input file>${FCSF}</input>
-      ${DEBUG:+<action>if true echo >&2 'grabfocus:varENTRY'</action>}
-      <action>if true grabfocus:varENTRY</action>
+      ${DEBUG:+<action>if true echo >&2 'grabfocus:varSEARCH'</action>}
+      <action>if true grabfocus:varSEARCH</action>
       <action>if true echo false>"${FCSF}"</action>
       <action>if true clear:varFOCUSGRABBER</action>
     </checkbox>
@@ -471,7 +471,7 @@ fi << EOF
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
         <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
-        <action signal="activate" condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varENTRY</action>
+        <action signal="activate" condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
         <action signal="activate" condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         <action signal="activate">refresh:varCMD</action>
       </comboboxentry>
@@ -501,7 +501,7 @@ fi << EOF
         <default>${varICONS}</default>
         <variable>varICONS</variable>
         <action>awk -v s=varICONS=\${varICONS} '/^varICONS=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
-        <action>clear:varENTRY</action>
+        <action>clear:varSEARCH</action>
         ${DEBUG:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
         ${DEBUG:+<action>if true echo >&2 in true rebuilding database...</action>}
