@@ -39,7 +39,7 @@ EOF
 ICON_DIRS="$HOME/.icons ${ICON_DIRS} /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
-HELPFILE=/usr/share/doc/findnrun/help[en].tar.gz #HELPFILE=/usr/share/doc/findnrun/index.html #HELPFILE=/usr/share/doc/findnrun/index.md
+HELPFILE=/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.html:/usr/share/doc/findnrun/index.md
 
 # Initialization variables that should not be changed. [[[1
 REMARK= # leave unset
@@ -341,33 +341,46 @@ NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
-unset x p s helpviewer helpbutton; hf="${HELPFILE}"
-case "${hf}" in *\[*\]*) p="${hf%[*}["; s="]${hf##*]}" # search for translation
-  [ -e "$p${LL}$s" ] && hf="$p${LL}$s"; [ -e "$p${LR}$s" ] && hf="$p${LR}$s"; [ -e "$p${LANG}$s" ] && hf="$p${LANG}$s" ;;
-esac
-if [ -e "${hf}" ]; then
-  hd="${TMPF}/help" && mkdir -p "${hd}" &&
-  case "${hf##*.}" in t[gx]z|[gx]z) tar -C "${hd}" -xaf "${hf}" && hf=$(set +f; echo "${hd}"/index.*) ;; esac &&
-  case "${hf##*.}" in md) x=mdview ;; htm*) x=defaultbrowser;; esac
-  read -t 1 helpviewer << EOF
+find_help() #[[[
+{
+  # In:  ${HELPFILE} paths.
+  # Out: ${helpviewer} command, ${helpbutton} gtk code.
+  local IFS=:
+  set ${HELPFILE}
+  for i; do
+    unset x p s helpviewer helpbutton; hf="$i"
+    case "${hf}" in *\[*\]*) p="${hf%[*}["; s="]${hf##*]}" # search for translation
+      [ -e "$p${LL}$s" ] && hf="$p${LL}$s"; [ -e "$p${LR}$s" ] && hf="$p${LR}$s"; [ -e "$p${LANG}$s" ] && hf="$p${LANG}$s" ;;
+    esac
+    if [ -e "${hf}" ]; then
+      hd="${TMPF}/help" && mkdir -p "${hd}" &&
+      case "${hf##*.}" in t[gx]z|[gx]z) tar -C "${hd}" -xaf "${hf}" && hf=$(set +f; echo "${hd}"/index.*) ;; esac &&
+      case "${hf##*.}" in md) x=mdview ;; htm*) x=defaultbrowser;; esac
+      read -t 1 helpviewer << EOF
 $(which $x defaulttexteditor geany leafpad 2>&-)
 EOF
-  case ${helpviewer} in
-    '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
-    *mdview) helpviewer="'${helpviewer}' '${hf%/*}' '${hf##*/}' '${hf##*/}' \"${APP_TITLE}\"" ;;
-    *defaultbrowser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
-    *) # dup help files to protect sources from text editors
-      if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
-      helpviewer="cd '${hd}' && '${helpviewer}' 'no-help.md'" ;;#${hf##*.}'";;
-  esac &&
-  helpbutton="
+      case ${helpviewer} in
+        '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
+        *mdview) helpviewer="'${helpviewer}' '${hf%/*}' '${hf##*/}' '${hf##*/}' \"${APP_TITLE}\"" ;;
+        *defaultbrowser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
+        *) # dup help files to protect sources from text editors
+          if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
+          helpviewer="cd '${hd}' && '${helpviewer}' 'no-help.md'" ;;#${hf##*.}'";;
+      esac &&
+      helpbutton="
 <button use-underline=\"true\">
   <label>$(gettext "_Help")</label>
   <input file stock=\"gtk-help\"></input>
   <action>${helpviewer} &</action>
   <action>closewindow:GUI_ABOUT</action>
 </button>"
-fi
+    break # on first valid help file path $hf found
+  fi
+  done
+}
+#]]]
+find_help
+echo helpviewer="${helpviewer}" >&2
 
 # i18n About dialog widgets: window text; number of apps text (singular/plural)
 export GUI_ABOUT='
@@ -537,7 +550,7 @@ fi << EOF
     </hbox>
   </vbox>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = F1 ] && echo true )">${helpviewer} &</action>
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = F1 ] && echo true )">${helpviewer:-:} &</action>
   <action signal="delete-event">exit:abort</action>
 </window>
 EOF

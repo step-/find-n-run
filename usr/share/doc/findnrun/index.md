@@ -50,7 +50,7 @@ New features:
    either the search input field or to the selected application list item.
  * **Geometry** support to exactly size and position the main window.
  * **Browsable help documentation**.
- * **New hi-res desktop icon**. 
+ * **New hi-res desktop icon**.
  * **Multi-language** support including program and help documentation.
  * **Multiple users** can use find-n-run at the same time. [3]
  * **Extensive tooltips**, and new configurable **user preferences**.
@@ -120,7 +120,11 @@ file `usr/bin/findnrun` from the downloaded archive.
 ## Help system
 
 You can view this file directly from `findnrun` by pressing key [F1] in the
-main window, or clicking the help icon in the About dialog window.
+main window, or by clicking the help button in the About dialog window.
+If nothing happens when pressing [F1] or if the button is missing, most
+likely the help file isn't installed. If you are sure that the help file
+is installed, try setting environment variable `BROWSER` as explained
+further down.
 
 ## User Preferences
 
