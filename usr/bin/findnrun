@@ -3,12 +3,12 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.6-gawk-RC3
-# March-May 2015 by SFR and L18L; gawk fork by step
-# GNU GPL applies
-# http://www.murga-linux.com/puppy/viewtopic.php?t=98330
-# Req.: Gtkdialog >= 0.8.3, gawk
-# gawk version: https://github.com/step-/find-n-run
+  Version=1.10.6
+# authors: March-May 2015 by SFR and L18L; onwards gawk fork by step
+# license: GNU GPL applies
+# requirements: gtk-dialog >= 0.8.3, gawk, ash (or bash)
+# source: https://github.com/step-/find-n-run
+# forum: http://www.murga-linux.com/puppy/viewtopic.php?t=98330
 # =============================================================================
 
 # Localization settings. [[[1
@@ -380,7 +380,6 @@ EOF
 }
 #]]]
 find_help
-echo helpviewer="${helpviewer}" >&2
 
 # i18n About dialog widgets: window text; number of apps text (singular/plural)
 export GUI_ABOUT='
