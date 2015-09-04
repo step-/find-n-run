@@ -1,6 +1,9 @@
 # find-n-run
 
-Enhanced version of the _original_ Find'N'Run linux utility.
+Simple and quick application finder for Linux derived from
+the _original_ Find'N'Run utility.
+
+## News
 
  * [Project home](http://github.com/step-/find-n-run)
  * As of version 1.10.5 this script is featured in the _original_
@@ -9,7 +12,7 @@ Enhanced version of the _original_ Find'N'Run linux utility.
 
 ## Introduction
 
-Puppy linux users SFR and L18L created the _original_ Find'N'Run, an
+Puppy Linux users SFR and L18L created the _original_ Find'N'Run, an
 application starter script that displays your `*.desktop` files in a
 `gtkdialog` window with a progressive typing search field to refine the
 hit list.
@@ -23,7 +26,10 @@ found in the _original_ version.
 Unlike the _original_ script, this version uses GNU `awk` (gawk) for
 core operations.
 
-find-n-run is being developed and tested on Fatdog64-701 64-bit linux.
+find-n-run is being developed and tested on
+[Fatdog64](http://distro.ibiblio.org/fatdog/web/)-701 64-bit Linux,
+a [LFS](http://www.linuxfromscratch.org/) and
+[Puppy Linux](http://puppylinux.com/) derivative.
 
 ### Naming
 
@@ -33,9 +39,9 @@ find-n-run is being developed and tested on Fatdog64-701 64-bit linux.
 
 ## Overview
 
-New features:
+Main features:
 
- * **Faster searching**.
+ * **Fast searching** and starting system applications (find as you type).
    It is also possible to search through **application
    comments** and **categories**, searching for **left-starting matches** only,
    searching using **regular expressions**, and enforcing **case-dependence**.
@@ -49,11 +55,10 @@ New features:
    After starting an application focus can be returned to
    either the search input field or to the selected application list item.
  * **Geometry** support to exactly size and position the main window.
- * **Browsable help documentation**.
- * **New hi-res desktop icon**.
- * **Multi-language** support including program and help documentation.
+ * **Browsable help documentation** (HTML and markdown).
+ * **Extensive tooltips**, and configurable **user preferences**.
  * **Multiple users** can use find-n-run at the same time. [3]
- * **Extensive tooltips**, and new configurable **user preferences**.
+ * **Multi-language** support includes program and help documentation.
 
 **Notes**
 
@@ -71,48 +76,58 @@ New features:
 
 ## Screenshots
 
-Side by side: Left: version 1.10.6-gawk (default window size) -- Right: original version 1.9 (Fatdog64-701).
+Version 1.10.6 (default window size)
 
-![side-by-side main window](images/findnrun-pub-main.png)
-![http://github.com/step-/find-n-run/](images/findnrun-1.9-pub-main.png)
+![main window](images/findnrun-pub-main.png)
 
-![side-by-side about dialog](images/findnrun-pub-about.png)
-![http://github.com/step-/find-n-run/](images/findnrun-1.9-pub-about.png)
+![about dialog](images/findnrun-pub-about.png)
 
 ## Installing
 
-It is recommended to install the latest full package for your distribution.
-The package includes a help file, a desktop icon and file, and translations.
-However, if you prefer a barebone, manual installation you can just copy
+It is recommended to install the latest full package for your distribution,
+which is split into multiple sub-packages:
+
+ * The _base_ package includes the main script, its `.desktop` file, and an
+   English help file (markdown)
+ * The optional _NLS_ package adds runtime translations in several languages
+ * The optional _doc_ package adds HTML English documentation (possibly
+   also translated in other languages).
+
+If you prefer a barebone, manual installation you can just copy
 the script file `usr/bin/findnrun` from
 [Github](http://github.com/step-/find-n-run) to your system.
+
+In all cases, your system needs to satisfy the following
+[pre-requisites](LUBUNTU.md):
+ash, gawk, gtk-dialog.
 
 ### Packages
 
 Packages for various distributions can be downloaded from:
 
-(1) the latest release page in the [releases](http://github.com/step-/find-n-run/releases/) page on Github:
+(1) the latest release announcement in the [releases page](http://github.com/step-/find-n-run/releases/) on Github:
 
  * Fatdog64 [.txz](http://github.com/step-/find-n-run/releases/)
- * Lubuntu [.deb](http://github.com/step-/find-n-run/releases/)
+ * Puppy Linux [.pet](http://github.com/step-/find-n-run/releases/)
+ * Debian (Lubuntu) [.deb](http://github.com/step-/find-n-run/releases/)
 
 (2) one of these known threads:
 
- * Puppy linux generic [.pet](http://www.murga-linux.com/puppy/viewtopic.php?t=98330), which also features a ROX-app application
- * Quirky linux [.pet](http://www.murga-linux.com/puppy/viewtopic.php?t=99789)
+ * Puppy Linux full [.pet](http://www.murga-linux.com/puppy/viewtopic.php?t=98330), which also features a ROX-app application
+ * Quirky Linux [.pet](http://www.murga-linux.com/puppy/viewtopic.php?t=99789)
 
 ### Manual installation
 
 For a minimal installation, download the latest `.zip` or `.tar.gz` archive from
 the [releases](http://github.com/step-/find-n-run/releases/) page on Github:
 
- * Non-Puppy linux OS: ensure all [pre-requisites](LUBUNTU.md) are met
+ * Non-Puppy Linux OS: ensure all [pre-requisites](LUBUNTU.md) are met
  * Extract file `usr/bin/findnrun` and copy it to `/usr/bin/findnrun`
  * Set file ownership to root and executable file permissions
 
-**Puppy linux OS:**
-You can replace directly the `findnrun` script included with
-Fatdog64-700, a 64-bit OS in the Puppy linux family, and the script
+**Puppy Linux OS:**
+You can replace directly the `findnrun` script bundled with
+Fatdog64, and the script
 included in the `.pet` package for all other Puppies. For older `.pet` versions
 simply replace the existing file `/usr/local/apps/FindNRun/findnrun` with
 file `usr/bin/findnrun` from the downloaded archive.
@@ -212,7 +227,7 @@ These values are hidden in the main window. They are intended mostly for power u
 
 **Standard variables**
 
-Many linux versions pre-define some of these variables in system
+Many Linux versions pre-define some of these variables in system
 initialization files.
 
 `BROWSER`

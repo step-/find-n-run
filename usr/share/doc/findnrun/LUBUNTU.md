@@ -1,8 +1,8 @@
 Find-n-run version 1.10.6 successfully runs on Lubuntu.
 
 Supporting Ubuntu-based distros (L/K/Ubuntu, Mint, etc.) is not
-a goal of mine, as I am focused on Fatdog64 linux and do not use
-Ubuntu. However, since in my limited testing find-n-run ran fine on
+a goal of mine, as I am focused on Fatdog64 Linux and do not use
+Ubuntu. However, since in my limited testing the script runs fine on
 Lubuntu, I will try to keep compatibility in all future releases.
 
 Here is a picture of find-n-run 1.10.6 running on Lubuntu with the WinAte
@@ -17,7 +17,7 @@ theme.
 Download and install the `.deb` package attached to the **latest release**
 in the [release page](http://github.com/step-/find-n-run/releases/).
 
-Before you can run find-n-run you need to fullfil all pre-requisites below.
+Before you can run find-n-run your system must satisfy all pre-requisites.
 
 ## Pre-requisites
 

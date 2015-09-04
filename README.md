@@ -1,6 +1,9 @@
 # find-n-run
 
-Enhanced version of the _original_ Find'N'Run linux utility.
+Simple and quick application finder for Linux derived from
+the _original_ Find'N'Run utility.
+
+## News
 
  * [Project home](http://github.com/step-/find-n-run)
  * As of version 1.10.5 this script is featured in the _original_
@@ -13,13 +16,11 @@ Enhanced version of the _original_ Find'N'Run linux utility.
 
 ## Screenshots
 
-Side by side: Left: version 1.10.6-gawk (default window size) -- Right: original version 1.9 (Fatdog64-701).
+Version 1.10.6 (default window size)
 
-![side-by-side main window](usr/share/doc/findnrun/images/findnrun-pub-main.png)
-![http://github.com/step-/find-n-run/](usr/share/doc/findnrun/images/findnrun-1.9-pub-main.png)
+![main window](usr/share/doc/findnrun/images/findnrun-pub-main.png)
 
-![side-by-side about dialog](usr/share/doc/findnrun/images/findnrun-pub-about.png)
-![http://github.com/step-/find-n-run/](usr/share/doc/findnrun/images/findnrun-1.9-pub-about.png)
+![about dialog](usr/share/doc/findnrun/images/findnrun-pub-about.png)
 
 ## Reporting bugs
 
