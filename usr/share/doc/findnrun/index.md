@@ -1,7 +1,6 @@
 # find-n-run
 
-Simple and quick application finder for Linux derived from
-the _original_ Find'N'Run utility.
+Simple and quick application finder for Linux.
 
 ## News
 
@@ -13,23 +12,23 @@ the _original_ Find'N'Run utility.
 ## Introduction
 
 Puppy Linux users SFR and L18L created the _original_ Find'N'Run, an
-application starter script that displays your `*.desktop` files in a
-`gtkdialog` window with a progressive typing search field to refine the
+application starter script that displays system applications in a
+graphical window with a find-as-you-type search field to refine the
 hit list.
 
-This project takes the shell script further, by increasing search
-speed, adding many new features, a help system and translations.
+This project takes the shell script further, by increasing search speed
+and ease, adding many new features, a help system and translations.
 
-This version does not include the optional ROX-Filer application directory
-found in the _original_ version.
+This version does not include the additional ROX-Filer application,
+which is still included in the _original_ version.
 
-Unlike the _original_ script, this version uses GNU `awk` (gawk) for
+Unlike the _original_ script, this version uses GNU awk (gawk) for
 core operations.
 
 find-n-run is being developed and tested on
-[Fatdog64](http://distro.ibiblio.org/fatdog/web/)-701 64-bit Linux,
-a [LFS](http://www.linuxfromscratch.org/) and
-[Puppy Linux](http://puppylinux.com/) derivative.
+[Fatdog64](http://distro.ibiblio.org/fatdog/web/)-701 64-bit Linux, a
+[Puppy Linux](http://puppylinux.com/) and
+[LFS](http://www.linuxfromscratch.org/) derivative.
 
 ### Naming
 

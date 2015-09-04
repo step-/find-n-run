@@ -1,7 +1,6 @@
 # find-n-run
 
-Simple and quick application finder for Linux derived from
-the _original_ Find'N'Run utility.
+Simple and quick system application finder for Linux.
 
 ## News
 
