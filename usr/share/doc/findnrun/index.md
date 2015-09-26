@@ -7,7 +7,7 @@ Simple and quick application finder for Linux.
  * [Project home](http://github.com/step-/find-n-run)
  * As of version 1.10.5 this script is featured in the _original_
 [Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
- * Version 1.10.6 runs on Lubuntu: [package information](LUBUNTU.md)
+ * Version 1.10.6 runs on Lubuntu: [package information](DEBIAN.md)
 
 ## Introduction
 
@@ -97,7 +97,7 @@ the script file `usr/bin/findnrun` from
 [Github](http://github.com/step-/find-n-run) to your system.
 
 In all cases, your system needs to satisfy the following
-[pre-requisites](LUBUNTU.md):
+[pre-requisites](DEBIAN.md):
 ash, gawk, gtk-dialog.
 
 ### Packages
@@ -120,7 +120,7 @@ Packages for various distributions can be downloaded from:
 For a minimal installation, download the latest `.zip` or `.tar.gz` archive from
 the [releases](http://github.com/step-/find-n-run/releases/) page on Github:
 
- * Non-Puppy Linux OS: ensure all [pre-requisites](LUBUNTU.md) are met
+ * Non-Puppy Linux OS: ensure all [pre-requisites](DEBIAN.md) are met
  * Extract file `usr/bin/findnrun` and copy it to `/usr/bin/findnrun`
  * Set file ownership to root and executable file permissions
 

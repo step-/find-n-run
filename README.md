@@ -7,7 +7,7 @@ Simple and quick system application finder for Linux.
  * [Project home](http://github.com/step-/find-n-run)
  * As of version 1.10.5 this script is featured in the _original_
 [Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
- * Version 1.10.6 runs on Lubuntu: [package information](usr/share/doc/findnrun/LUBUNTU.md)
+ * Version 1.10.6 runs on Lubuntu: [package information](usr/share/doc/findnrun/DEBIAN.md)
 
 ## Introduction, features, installing, help documentation and more
 

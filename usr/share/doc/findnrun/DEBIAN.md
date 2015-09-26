@@ -1,4 +1,4 @@
-_Note: These instructions concern running find-n-run on Debian/Ubuntu/Mint
+_Note: These instructions concern installing find-n-run on Debian/Ubuntu/Mint
 systems. If you are running a Puppy Linux OS, you need not be concerned._
 
 While supporting Debian/Ubuntu/Mint distributions isn't a goal of mine,

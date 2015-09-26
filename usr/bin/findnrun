@@ -3,7 +3,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.6
+  Version=1.10.7
 # authors: March-May 2015 by SFR and L18L; onwards gawk fork by step
 # license: GNU GPL applies
 # requirements: gtk-dialog >= 0.8.3, gawk, ash (or bash)
