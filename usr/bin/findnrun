@@ -170,7 +170,11 @@ END {
     match(fil, /\nCategories=([^\n]+)/, m); category=";"m[1]
     # narrow matches by GREP pattern and store for sorting step
     if(GREP && index(tolower(name), GREP) || !GREP) {
-      key[k] = k = tolower(name) # case-indepedent sort
+      if(key[k = tolower(name)]) { # case-independent sort; assert name != ""
+        # Handle key clash by appending "%<" to the key N times on N-th clash.
+        while(key[k = k"%<"]);
+      }
+      key[k] = k
       if(ALL_ICONS == "true") icon_workaround(sh)
       out[k] = format_item()
     }
@@ -357,12 +361,12 @@ find_help() #[[[
       case "${hf##*.}" in t[gx]z|[gx]z) tar -C "${hd}" -xaf "${hf}" && hf=$(set +f; echo "${hd}"/index.*) ;; esac &&
       case "${hf##*.}" in md) x=mdview ;; htm*) x=defaultbrowser;; esac
       read -t 1 helpviewer << EOF
-$(which $x defaulttexteditor geany leafpad 2>&-)
+$(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
 EOF
       case ${helpviewer} in
         '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
         *mdview) helpviewer="'${helpviewer}' '${hf%/*}' '${hf##*/}' '${hf##*/}' \"${APP_TITLE}\"" ;;
-        *defaultbrowser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
+        *browser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
         *) # dup help files to protect sources from text editors
           if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
           helpviewer="cd '${hd}' && '${helpviewer}' 'no-help.md'" ;;#${hf##*.}'";;
