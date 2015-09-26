@@ -1,5 +1,8 @@
 ## Can't open the Help file?
 
+* If the **Help file** isn't installed, consider downloading and
+  installing the findnrun-doc sub-package for your platform.
+
 * If the **Help file** is installed but it does not open - or it opens
   in a text editor - try setting `BROWSER` to your preferred web
   browser.  `BROWSER` can be set either as an environment variable or as

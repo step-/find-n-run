@@ -1,9 +1,11 @@
-Find-n-run version 1.10.6 successfully runs on Lubuntu.
+_Note: These instructions concern running find-n-run on Debian/Ubuntu/Mint
+systems. If you are running a Puppy Linux OS, you need not be concerned._
 
-Supporting Ubuntu-based distros (L/K/Ubuntu, Mint, etc.) is not
-a goal of mine, as I am focused on Fatdog64 Linux and do not use
-Ubuntu. However, since in my limited testing the script runs fine on
-Lubuntu, I will try to keep compatibility in all future releases.
+While supporting Debian/Ubuntu/Mint distributions isn't a goal of mine,
+in my limited testing with Lubuntu I found that find-n-run 1.10.6 runs
+just fine there.  Why not, I will try to keep, and possibly improve,
+compatibility in future releases, without promising full support
+--because I am focused on Fatdog64 Linux and do not use Ubuntu.
 
 Here is a picture of find-n-run 1.10.6 running on Lubuntu with the WinAte
 theme.
@@ -12,25 +14,35 @@ theme.
 
 ![lubuntu main window](usr/share/doc/findnrun/images/lubuntu-winate-pub-main.png)
 
-## Installing find-n-run on Lubuntu
+## Installing find-n-run on Debian/Ubuntu/Mint systems
 
-Download and install the `.deb` package attached to the **latest release**
-in the [release page](http://github.com/step-/find-n-run/releases/).
+**Pre-requisites**: Before you can install find-n-run your system must
+satisfy the pre-requisites that are explained in the next section.
 
-Before you can run find-n-run your system must satisfy all pre-requisites.
+Then you can download and install the `.deb` package attached to the **latest
+release** in the [release page](http://github.com/step-/find-n-run/releases/).
 
 ## Pre-requisites
 
-To use find-n-run on a plain Lubuntu system you need to install three
-packages, which might themselves pull in additional dependencies:
+_Note: The find-n-run `.deb` package has been improved to automatically
+handle the cases discussed in this section. Follow the instructions on
+the download page and you should be fine. In case you are unable to run
+find-n-run, come back to this section and use it to troubleshoot the
+installation._
+
+To use find-n-run on a plain Debian/Ubuntu/Mint system you need to install
+three packages, which might themselves pull in additional dependencies:
 
  * GNU awk, **gawk**
  * **gtk-dialog**
- * the **ash** shell
+ * the **ash** shell (with some precautions, see further down)
 
 ### GNU awk
 
-Find-n-run requires GNU awk. Lubuntu's default mawk just isn't enough.
+Find-n-run requires GNU awk, best known as `gawk`.  On some Debian-based
+versions, i.e., Lubuntu and others, by default `awk` links to `mawk`,
+which isn't sufficiently capable for `find-n-run. So get `gawk`.
+
 Start a terminal and run this command:
 
     sudo apt-get install gawk
@@ -62,7 +74,7 @@ also install the official libnotify-bin package if necessary.
 
 **Manual installation for 32-bit OS**
 
-Download the `.deb` file directly from lanzadoc's repo:
+Download the `.deb` file directly from lanzadoc's repository:
 
  * http://ppa.launchpad.net/geinux/lanzadoc/ubuntu/pool/main/g/gtkdialog/
  * http://ppa.launchpad.net/geinux/lanzadoc/ubuntu/pool/main/g/gtkdialog/gtkdialog_0.8.4_i386.deb
@@ -83,20 +95,31 @@ You are on your own.  Proceed with due caution at your own risk.
 Alternatively, if you don't mind mixing binaries, you could download
 Fatdog64's own gtk-dialog binary package and dependency libraries from
 the official [page](http://distro.ibiblio.org/fatdog/packages/700/),
-and extract binary files into their standard locations.
+and extract binary files into the standard locations for your OS.
 
 ### Ash
 
-If the ash shell isn't already installed you can target busybox as
-a symbolic link.
-If busybox isn't installed you could target bash instead of busybox.
+If the ash shell **is** installed, be wary that Debian, Mint, and Ubuntu
+have a separate ash.deb package that links `/bin/ash` to `/bin/dash`, and
+dash can't run findnrun. When ash is linked to dash findnrun prints
+error messages to the command line interface similar to:
+```
+    gawk: /tmp/findnrun_18ud5t/.build.awk:3:   if("") print "
+    gawk: /tmp/findnrun_18ud5t/.build.awk:3:                ^ syntax error
+    sh: $'\b': command not found
+```
+Find-n-run really needs the true ash (or bash).
+
+If the true ash shell isn't already installed you can target /bin/busybox,
+if available, as a symbolic link or even /bin/bash.
 
 To create a symbolic link run the following commands in a terminal:
 
+    test `readlink -m /bin/ash` = /bin/dash && echo "Remove link /bin/ash -> /bin/dash first."
     test -x /bin/ash || sudo ln -s /bin/busybox /bin/ash
     test -x /bin/ash || sudo ln -s /bin/bash /bin/ash
+    ls -l /bin/ash
 
-Try running ash in a terminal. If it is still unavailable you could try
+If `/bin/ash` is still unavailable or linked to `/bin/dash` try
 changing the first line of file `/usr/bin/findnrun` to reference
 `/bin/bash` instead of `/bin/ash`.
-
