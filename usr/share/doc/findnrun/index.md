@@ -41,9 +41,9 @@ find-n-run is being developed and tested on
 Main features:
 
  * **Fast searching** and starting system applications (find as you type).
-   It is also possible to search through **application
-   comments** and **categories**, searching for **left-starting matches** only,
-   searching using **regular expressions**, and enforcing **case-dependence**.
+   Search by application **name**, **command line**, **comments**, and
+   **categories**, or all at once. Search **from left**, with **regular
+   expressions**, with **case-dependence** (lower-case).
  * **Application icon** column. [1]
  * **Command line entry** with command history.
    A combobox widget
@@ -165,11 +165,16 @@ These values are hidden in the main window. They are intended mostly for power u
 
     # Icon cache location.
     ICONCACHE=${HOME}/.icons
+    # By default findnrun searches in application names only.
     # Extend search to application comments (OR).
     SEARCHCOMMENTS=false
     # Extend search to application categories (OR).
+    # When true categories are shown in the comment field.
     # Prepend ';' to search for category only, i.e., ';office'.
     SEARCHCATEGORIES=false
+    # Search in names, command lines, comments and categories all at once.
+    # When true (recommended) findnrun finds more and is slightly faster.
+    SEARCHCOMPLETE=false
     # Search pattern must match from the leftmost character.
     # Ignored for category search.
     SEARCHFROMLEFT=false
