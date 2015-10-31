@@ -82,6 +82,7 @@ awk '
   # DESKTOP_FILE_DIRS initialized from system values, environment overrides
   # ICON_DIRS initialized from has system values, environment overrides
   /^SEARCHCATEGORIES=/{f6=1}
+  /^SEARCHCOMPLETE=/{f7=1}
   END{
     if(!f1) print "ICONCACHE='"${ICONCACHE}"'">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
@@ -89,6 +90,7 @@ awk '
     if(!f4) print "SEARCHREGEX=false">>ARGV[1]
     if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
     if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
+    if(!f7) print "SEARCHCOMPLETE=false">>ARGV[1]
   }
   ' "${CONFIG}"
 
