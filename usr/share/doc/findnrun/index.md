@@ -192,6 +192,8 @@ These values are hidden in the main window. They are intended mostly for power u
     #ICON_DIRS=~/.icons ~/.local/іcons /usr/share/icons /usr/local/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons
     # Preferred help viewing program.
     #BROWSER=
+    # Pressing HOTKEY_F2 cycles keyboard input focus between the command entry field and the search field.
+    HOTKEY_F2=F2
 
 ## Command-line options
 

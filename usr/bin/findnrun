@@ -51,6 +51,7 @@ AWKF="${TMPF}/.build.awk" # builds (and queries) database
 AWKQ="${TMPF}/.query.awk" # queries database (faster)
 HSTF="${TMPF}/.sh"; >"${HSTF}" # saves combobox command line history
 FCSF="${TMPF}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
+F2SF="${TMPF}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 SEP=`echo -e "\b"` # field separator of packed values
 ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG).
 
@@ -61,7 +62,7 @@ LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
 # Unexport these variables before running the selected command.
-UNEXPORT="unset GUI_ABOUT varSEARCH varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH TEXTDOMAIN OUTPUT_CHARSET"
+UNEXPORT="unset GUI_ABOUT varSEARCH varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET"
 
 # Prepare the configuration file. [[[1
 # Defaults.
@@ -83,6 +84,7 @@ awk '
   # ICON_DIRS initialized from has system values, environment overrides
   /^SEARCHCATEGORIES=/{f6=1}
   /^SEARCHCOMPLETE=/{f7=1}
+  /^HOTKEY_F2=/{f8=1}
   END{
     if(!f1) print "ICONCACHE='"${ICONCACHE}"'">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
@@ -91,8 +93,11 @@ awk '
     if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
     if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
     if(!f7) print "SEARCHCOMPLETE=false">>ARGV[1]
+    if(!f8) print "HOTKEY_F2=F2">>ARGV[1]
   }
   ' "${CONFIG}"
+
+HOTKEY_F2=${HOTKEY_F2:-F2}
 
 # Values that depend on defaults.
 ICONSTEM="${ICONCACHE}/findnrun-" # prefix to worked-around icons.
@@ -562,9 +567,25 @@ fi << EOF
         <action>exit:EXIT</action>
       </button>
     </hbox>
+    <hbox>
+      ${REMARK# [[[. Key F2 cycles focus between the search field and the command entry field.}
+      <checkbox visible="false">
+        <default>false</default>
+        <label>F2</label>
+        <variable>varF2</variable>
+        <input file>${F2SF}</input>
+        <action>if true grabfocus:varCMD</action>
+        <action>if false grabfocus:varSEARCH</action>
+      </checkbox>
+      ${REMARK# ]]]}
+    </hbox>
   </vbox>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = F1 ] && echo true )">${helpviewer:-:} &</action>
+  ${REMARK# [[[. Key F2 cycles focus between the search and the command entry field.}
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
+  ${REMARK# ]]]}
   <action signal="delete-event">exit:abort</action>
 </window>
 EOF
