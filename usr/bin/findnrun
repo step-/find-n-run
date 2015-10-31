@@ -61,7 +61,7 @@ LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
 # Unexport these variables before running the selected command.
-UNEXPORT="unset GUI_ABOUT varSEARCH varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICON varFOCUSSEARCH TEXTDOMAIN OUTPUT_CHARSET"
+UNEXPORT="unset GUI_ABOUT varSEARCH varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH TEXTDOMAIN OUTPUT_CHARSET"
 
 # Prepare the configuration file. [[[1
 # Defaults.
