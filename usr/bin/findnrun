@@ -65,10 +65,11 @@ LL=${LANG%_*} #ex:pt
 UNEXPORT="unset GUI_ABOUT varSEARCH varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET"
 
 # Prepare the configuration file. [[[1
-# Defaults.
+# Defaults - match same variable/value pairs in the next block.
 defOPEN=false
 export varICONS=false
 export varFOCUSSEARCH=false
+HOTKEY_F2=F2
 
 # Read / supplement $CONFIG.
 touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
@@ -86,7 +87,7 @@ awk '
   /^SEARCHCOMPLETE=/{f7=1}
   /^HOTKEY_F2=/{f8=1}
   END{
-    if(!f1) print "ICONCACHE='"${ICONCACHE}"'">>ARGV[1]
+    if(!f1) print "ICONCACHE=\"'"${ICONCACHE}"'\"">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
     if(!f3) print "SEARCHFROMLEFT=false">>ARGV[1]
     if(!f4) print "SEARCHREGEX=false">>ARGV[1]
@@ -96,8 +97,6 @@ awk '
     if(!f8) print "HOTKEY_F2=F2">>ARGV[1]
   }
   ' "${CONFIG}"
-
-HOTKEY_F2=${HOTKEY_F2:-F2}
 
 # Values that depend on defaults.
 ICONSTEM="${ICONCACHE}/findnrun-" # prefix to worked-around icons.
