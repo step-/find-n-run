@@ -136,7 +136,7 @@ for i in ${DESKTOP_FILE_DIRS}; do
 done
 
 # Prepare the database builder script. [[[1
-# Usage: gawk -f "scriptpath" [-v GREP="string"] [-v ALL_ICONS=true] files
+# Usage: gawk -f "${AWKF}" [-v GREP="string"] [-v ALL_ICONS=true] files
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKF}" echo '#!/usr/bin/gawk -f
 BEGIN {
@@ -306,8 +306,8 @@ function mark_icon_workaround_uptodate( ) {
 }
 '
 
-# Prepare the database query gawk script. [[[1
-# Usage: gawk -f "scriptpath" [-v GREP="string"] ${DATF}
+# Prepare the database query script. [[[1
+# Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
 unset case subject commleft left categ REDIRECT2 func statements
 [ true = "${CASEDEPENDENT}" ] || case=tolower
 if ! [ true = "${SEARCHCOMPLETE}" ]; then
@@ -337,7 +337,7 @@ fi
 > "${AWKQ}" echo '#!/usr/bin/gawk -f
 BEGIN {
   if("'${DEBUG}'">2) {
-    print "\nSTARTING AWK querier, GREP="GREP >"/dev/stderr"
+    print "\nSTARTING AWK querier, GREP=\""GREP"\"" >"/dev/stderr"
     print "expression=('"${subject}${left} ${commleft} ${categ}"')" >"/dev/stderr"
   }
   FS="|"
@@ -436,17 +436,26 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
   <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:GUI_ABOUT</action>
 </window>'
 
+start_dialog() # [[[1
+{
+  if [ ${DEBUG:-0} -gt 9 ]; then
+    cat
+    return
+  fi
+  if [ "${ENABLESTDOUT}" ]; then
+    $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s
+  else
+    $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s >/dev/null
+  fi
+}
+
 # Prepare and show the main window. [[[1
 unset showcategories
 [ true = "${SEARCHCATEGORIES}" ] && showcategories=true
 # i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext's limitation
-if [ "${ENABLESTDOUT}" ]; then
-  $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s
-else
-  $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s >/dev/null
-fi << EOF
+start_dialog << EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>
     <hbox spacing="0">
