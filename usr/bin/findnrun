@@ -47,7 +47,7 @@ DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (intege
 trap 'rm -rf "${TMPF:-/tmp/dummy}"* ${DEBUG:+/tmp/varSEARCH}' INT QUIT TERM HUP 0
 TMPF=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPF}"
 DATF="${TMPF}/.dat" # database of .desktop file entries
-AWKF="${TMPF}/.build.awk" # builds (and queries) database
+AWKB="${TMPF}/.build.awk" # builds (and queries) database
 AWKQ="${TMPF}/.query.awk" # queries database (faster)
 HSTF="${TMPF}/.sh"; >"${HSTF}" # saves combobox command line history
 FCSF="${TMPF}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
@@ -69,6 +69,8 @@ UNEXPORT="unset GUI_ABOUT varSEARCH varLIST varFOCUSGRABBER varCMD varCOMMENT va
 defOPEN=false
 export varICONS=false
 export varFOCUSSEARCH=false
+# IBOL+IBOL in search field ignores all characters to beginning of line.
+IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=F2
 
 # Read / supplement $CONFIG.
@@ -85,7 +87,8 @@ awk '
   # ICON_DIRS initialized from has system values, environment overrides
   /^SEARCHCATEGORIES=/{f6=1}
   /^SEARCHCOMPLETE=/{f7=1}
-  /^HOTKEY_F2=/{f8=1}
+  /^IBOL=/{f8=1}
+  /^HOTKEY_F2=/{f9=1}
   END{
     if(!f1) print "ICONCACHE=\"'"${ICONCACHE}"'\"">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
@@ -94,7 +97,8 @@ awk '
     if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
     if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
     if(!f7) print "SEARCHCOMPLETE=false">>ARGV[1]
-    if(!f8) print "HOTKEY_F2=F2">>ARGV[1]
+    if(!f8) print "IBOL=\"'"${IBOL}"'\" # reserved">>ARGV[1]
+    if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
   }
   ' "${CONFIG}"
 
@@ -136,9 +140,9 @@ for i in ${DESKTOP_FILE_DIRS}; do
 done
 
 # Prepare the database builder script. [[[1
-# Usage: gawk -f "${AWKF}" [-v GREP="string"] [-v ALL_ICONS=true] files
+# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] files
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
-> "${AWKF}" echo '#!/usr/bin/gawk -f
+> "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN {
   if("'${DEBUG}'") print "\nSTARTING AWK builder, ALL_ICONS="ALL_ICONS >"/dev/stderr"
   RS="^~cannot~match~me~" # enable slurp read mode.
@@ -354,7 +358,7 @@ END {
 } '
 
 # Build database of .desktop file entries. [[[1
-gawk -v ALL_ICONS=${varICONS} -f "${AWKF}" ${LOCS} > "${DATF}"
+gawk -v ALL_ICONS=${varICONS} -f "${AWKB}" ${LOCS} > "${DATF}"
 [ "${DEBUG}" ] && { >/tmp/varSEARCH; echo >&2 accepting input from /tmp/varSEARCH; }
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
@@ -460,7 +464,15 @@ start_dialog << EOF
   <vbox>
     <hbox spacing="0">
       <entry auto-refresh="${DEBUG:+true}" tooltip-text="$(gettext "Press ENTER to select")">
-        <default>$(gettext "Type some letters to refine the list")</default>
+        ${REMARK# [[[. Entering IBOL+IBOL makes the search input field}
+        ${REMARK# ignore all characters to the left of IBOL+IBOL included.}
+        ${REMARK# IBOL stands for Ignore To Beginning Of Line. Its default}
+        ${REMARK# value is the soft-hyphen character, which is invisible in}
+        ${REMARK# gtkdialog. Here we append IBOL+IBOL to the default search}
+        ${REMARK# term so that the entire value --which is simply a help tip}
+        ${REMARK# is ignored, and the search engine can perform a clean query.}
+        <default>$(gettext "Type some letters to refine the list")${IBOL}${IBOL}</default>
+        ${REMARK# ]]]}
         <variable>varSEARCH</variable>
         ${DEBUG:+<input file>/tmp/varSEARCH</input>}
         <action>refresh:varLIST</action>
@@ -477,7 +489,7 @@ start_dialog << EOF
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
       <label>Icon|Name|PackedValues</label>
       <variable>varLIST</variable>
-      <input icon-column="0">gawk -f "${AWKQ}" -v GREP="\${varSEARCH}" '${DATF}'${REDIRECT2}</input>
+      <input icon-column="0">${DEBUG:+set -x;} IFS="${IBOL:=,}"; set -- \${varSEARCH}; for i; do term="\$i"; done && gawk -f "${AWKQ}" -v GREP="\${term}" '${DATF}'${REDIRECT2}</input>
       <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
@@ -545,7 +557,7 @@ start_dialog << EOF
         ${DEBUG:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
         ${DEBUG:+<action>if true echo >&2 in true rebuilding database...</action>}
-        <action>if true gawk -v ALL_ICONS=\${varICONS} -f '${AWKF}' ${LOCS} > '${DATF}'</action>
+        <action>if true gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' ${LOCS} > '${DATF}'</action>
         ${DEBUG:+<action>if true echo >&2 in true clear:varLIST</action>}
         <action>if true clear:varLIST</action>
         ${DEBUG:+<action>if true echo >&2 in true refresh:varLIST</action>}
@@ -553,7 +565,7 @@ start_dialog << EOF
         ${DEBUG:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/findnrun-\*</action>}
         <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
         ${DEBUG:+<action>if false echo >&2 in false rebuilding database...</action>}
-        <action>if false gawk -v ALL_ICONS=\${varICONS} -f '${AWKF}' ${LOCS} > '${DATF}'</action>
+        <action>if false gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' ${LOCS} > '${DATF}'</action>
         ${DEBUG:+<action>if false echo >&2 in false clear:varLIST</action>}
         <action>if false clear:varLIST</action>
         ${DEBUG:+<action>if false echo >&2 in false refresh:varLIST</action>}

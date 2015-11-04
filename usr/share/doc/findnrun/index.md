@@ -194,6 +194,9 @@ These values are hidden in the main window. They are intended mostly for power u
     #BROWSER=
     # Pressing HOTKEY_F2 cycles keyboard input focus between the command entry field and the search field.
     HOTKEY_F2=F2
+    # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included.
+    # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
+    IBOL=" "
 
 ## Command-line options
 
