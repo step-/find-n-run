@@ -518,11 +518,11 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varCMD: command history editing.}
     <hbox space-fill="false" space-expand="false">
-      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit.")">
+      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the down-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit.")">
         <variable>varCMD</variable>
-        <default>$(gettext "Press up-arrow key to grab command")</default>
-        <input file>${HSTF}</input>
-        <input>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@"</input>
+        <default>$(gettext "Press down-arrow key to grab command")</default>
+        <input>IFS="${SEP}"; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@"</input>
+        <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
         <output file>${HSTF}</output>
 
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
@@ -548,12 +548,15 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
+      ${REMARK# [[[. varOPEN checkbox}
       <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after starting an item instead of closing this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays.")">
         <label>$(gettext "_Keep window")</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
         <action>awk -v s=defOPEN=\${varOPEN} '/^defOPEN=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
+      ${REMARK# ]]]}
+      ${REMARK# [[[. varICONS checkbox}
       <checkbox use-underline="true" tooltip-text="$(gettext "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.")">
         <label>$(gettext "_Show all icons")</label>
         <default>${varICONS}</default>
@@ -577,21 +580,28 @@ start_dialog << EOF
         ${DEBUG:+<action>if false echo >&2 in false refresh:varLIST</action>}
         <action>if false refresh:varLIST</action>
       </checkbox>
+      ${REMARK# ]]]}
+      ${REMARK# [[[. varFOCUSSEARCH checkbox}
       <checkbox use-underline="true" tooltip-text="$(gettext "Move the keyboard focus to the search input field after starting an item instead of keeping the keyboard focus on the started list item. This option also affects the command input field.")">
         <label>$(gettext "_Focus search")</label>
         <default>${varFOCUSSEARCH}</default>
         <variable>varFOCUSSEARCH</variable>
         <action>awk -v s=varFOCUSSEARCH=\${varFOCUSSEARCH} '/^varFOCUSSEARCH=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
+      ${REMARK# ]]]}
       <text space-fill="true" space-expand="true"><label>""</label></text>
+      ${REMARK# [[[. 'help' button}
       <button tooltip-text="$(gettext "About and help")" stock-icon-size="1">
         <input file stock="gtk-about"></input>
         <action>launch:GUI_ABOUT</action>
       </button>
+      ${REMARK# ]]]}
+      ${REMARK# [[[. 'exit' button}
       <button tooltip-text="$(gettext "Exit")" stock-icon-size="1">
         <input file stock="gtk-quit"></input>
         <action>exit:EXIT</action>
       </button>
+      ${REMARK# ]]]}
     </hbox>
     ${REMARK# ]]]}
     ${REMARK# [[[. Hotkey targets.}
@@ -622,7 +632,7 @@ start_dialog << EOF
 </window>
 EOF
 
-# i18n findnrun's own .desktop file. [[[1
+# i18n This application's own .desktop file. [[[1
 # i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
 # i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
 Name=$(gettext "Find'N'Run ")
