@@ -173,6 +173,8 @@ END {
     if(!name) continue # trap bogus .desktop files
     match(fil, /\nExec=([^\n]+)/, m); exec=m[1]
     if(!exec) continue # trap bogus .desktop files
+    # Delete freedesktop.org %F parameter since Exec= value is going to sh.
+    sub(/[ \t]*%[a-zA-Z][ \t]*$/, "", exec)
     match(fil, /\nIcon=([^\n]*\/)?([^\n.]+)([.][^\n]*)?/, m)
     icnpath=m[1]; icnname=m[2]; icnext=substr(m[3],2)
     match(fil, /\nComment=([^\n]+)/, m); comment=m[1]
@@ -493,7 +495,8 @@ start_dialog << EOF
       <variable>varLIST</variable>
       ${REMARK# [[[. Populate varLIST.}
       <input icon-column="0">${DEBUG:+set -x;} IFS="${IBOL:=,}"; set -- \${varSEARCH}; for i; do term="\$i"; done && gawk -f "${AWKQ}" -v GREP="\${term}" '${DATF}'${REDIRECT2}</input>
-      <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
+      ${REMARK# NOTE: Imitate this command line, up to echo included, in varCMDs input}
+      <action>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
       ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
@@ -521,7 +524,8 @@ start_dialog << EOF
       <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the down-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit.")">
         <variable>varCMD</variable>
         <default>$(gettext "Press down-arrow key to grab command")</default>
-        <input>IFS="${SEP}"; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@"</input>
+        ${REMARK# NOTE: Commands imitate varLISTs action.}
+        <input>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@"</input>
         <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
         <output file>${HSTF}</output>
 
