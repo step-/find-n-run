@@ -462,6 +462,7 @@ gettext 0 >/dev/null # work around an xgettext's limitation
 start_dialog << EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>
+    ${REMARK# [[[. varSEARCH: progressive typing search input field.}
     <hbox spacing="0">
       <entry auto-refresh="${DEBUG:+true}" tooltip-text="$(gettext "Press ENTER to select")">
         ${REMARK# [[[. Entering IBOL+IBOL makes the search input field}
@@ -485,12 +486,15 @@ start_dialog << EOF
         <action>clear:varSEARCH</action>
       </button>
     </hbox>
-
+    ${REMARK# ]]]}
+    ${REMARK# [[[. varLIST: list .desktop records.}
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
       <label>Icon|Name|PackedValues</label>
       <variable>varLIST</variable>
+      ${REMARK# [[[. Populate varLIST.}
       <input icon-column="0">${DEBUG:+set -x;} IFS="${IBOL:=,}"; set -- \${varSEARCH}; for i; do term="\$i"; done && gawk -f "${AWKQ}" -v GREP="\${term}" '${DATF}'${REDIRECT2}</input>
       <action>IFS=${SEP}; set -- \${varLIST}; set -- \${3% \%*}; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
+      ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
       <action signal="changed">clear:varCOMMENT</action>
@@ -498,8 +502,8 @@ start_dialog << EOF
       ${DEBUG:+<action>echo >&2 auto-refreshing varFOCUSGRABBER</action>}
       <action>( sleep 0.1 || sleep 1; echo "\${varFOCUSSEARCH}">"${FCSF}"; ) &</action>
     </tree>
-
-    ${REMARK# handle varLIST on(EnterEnter|double-click)}
+    ${REMARK# ]]]}
+    ${REMARK# [[[. varFOCUSGRABBER: handle varLIST on(EnterEnter|double-click).}
     ${REMARK# input file auto-refresh rate cannot be configured. http://code.google.com/p/gtkdialog/source/detail?r=453}
     ${REMARK# gtkdialog compiled w/o inotify refreshes about once a second. With inotify refreshing is instantaneous.}
     <checkbox auto-refresh="true" visible="false">
@@ -511,7 +515,8 @@ start_dialog << EOF
       <action>if true echo false>"${FCSF}"</action>
       <action>if true clear:varFOCUSGRABBER</action>
     </checkbox>
-
+    ${REMARK# ]]]}
+    ${REMARK# [[[. varCMD: command history editing.}
     <hbox space-fill="false" space-expand="false">
       <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit.")">
         <variable>varCMD</variable>
@@ -540,7 +545,8 @@ start_dialog << EOF
       <variable>varCOMMENT</variable>
       <input>IFS=${SEP}; set -- \${varLIST}; echo "\$4${showcategories:+ \$5}"</input>
     </entry>
-
+    ${REMARK# ]]]}
+    ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
       <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after starting an item instead of closing this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays.")">
         <label>$(gettext "_Keep window")</label>
@@ -587,8 +593,11 @@ start_dialog << EOF
         <action>exit:EXIT</action>
       </button>
     </hbox>
+    ${REMARK# ]]]}
+    ${REMARK# [[[. Hotkey targets.}
     <hbox>
-      ${REMARK# [[[. Key F2 cycles focus between the search field and the command entry field.}
+      ${REMARK# [[[. refresh:varF2 to cycle focus between the search field and the command entry field.}
+      ${REMARK# Key F2 demonstrates how.}
       <checkbox visible="false">
         <default>false</default>
         <label>F2</label>
@@ -599,19 +608,21 @@ start_dialog << EOF
       </checkbox>
       ${REMARK# ]]]}
     </hbox>
+    ${REMARK# ]]]}
   </vbox>
+  ${REMARK# [[[. Hotkeys}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = F1 ] && echo true )">${helpviewer:-:} &</action>
   ${REMARK# [[[. Key F2 cycles focus between the search and the command entry field.}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
   ${REMARK# ]]]}
+  ${REMARK# ]]]}
   <action signal="delete-event">exit:abort</action>
 </window>
 EOF
 
-###############################################################################
-
+# i18n findnrun's own .desktop file. [[[1
 # i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
 # i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
 Name=$(gettext "Find'N'Run ")
