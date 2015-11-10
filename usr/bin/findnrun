@@ -41,7 +41,7 @@ ICON_DIRS="$HOME/.icons ${ICON_DIRS} /usr/share/pixmaps /usr/share/midi-icons /u
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
 HELPFILE=/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.html:/usr/share/doc/findnrun/index.md
 
-# Initialization variables that should not be changed. [[[1
+# Initialize variables that should not be changed. [[[1
 REMARK= # leave unset
 DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-3
 trap 'rm -rf "${TMPF:-/tmp/dummy}"* ${DEBUG:+/tmp/varSEARCH}' INT QUIT TERM HUP 0
@@ -53,7 +53,7 @@ HSTF="${TMPF}/.sh"; >"${HSTF}" # saves combobox command line history
 FCSF="${TMPF}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPF}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 SEP=`echo -e "\b"` # field separator of packed values
-ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG).
+ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG)
 
 # -----------------------------------------------------------------------------
 #LANG=de_DE.UTF-8 # just for demo
@@ -144,12 +144,12 @@ done
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN {
-  if("'${DEBUG}'") print "\nSTARTING AWK builder, ALL_ICONS="ALL_ICONS >"/dev/stderr"
+  if("'${DEBUG:-0}'">0) print "\nstart db builder [[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
   RS="^~cannot~match~me~" # enable slurp read mode.
   # Choose a shell for ongoing command execution - see icon_workaround().
   sh = "'${SH}'" # not used as a coprocess
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
-  if("'${DEBUG}'") print "ICONSTEM="ICONSTEM >"/dev/stderr"
+  if("'${DEBUG:-0}'">1) print "ICONSTEM="ICONSTEM >"/dev/stderr"
 }
 {
   # Slurp NFILES .desktop files.
@@ -163,7 +163,7 @@ END {
     read_icon_index() # creates ICONINDEX map
   }
   # Decode .desktop files.
-  if("'${DEBUG}'") print "awk decoding",NFILES,"files..." > "/dev/stderr"
+  if("'${DEBUG:-0}'">0) print "awk decoding",NFILES,"files..." > "/dev/stderr"
   for(i=1; i<=NFILES; i++) {
     fil=file[i]
     name=exec=icnpath=icnname=icnext=comment=category=""
@@ -202,7 +202,7 @@ END {
   # Close shell.
   print "exit" | sh
   close(sh)
-  if("'${DEBUG}'") print "ENDING AWK" >"/dev/stderr"
+  if("'${DEBUG:-0}'">0) print "]] builder done" >"/dev/stderr"
 }
 
 # Format tree widget item - columns: icon, name, all-packed-values.
@@ -286,13 +286,13 @@ function is_icon_workaround_uptodate(   uptodate,x) {
     if(uptodate = (-1 != (getline < (x = ICONSTEM".uptodate"))))
       close(x)
   }
-  if("'${DEBUG}'") print "is_icon_workaround_uptodate="uptodate > "/dev/stderr"
+  if("'${DEBUG:-0}'">1) print "is_icon_workaround_uptodate="uptodate > "/dev/stderr"
   return(uptodate)
 }
 
 # Read the index file - icon_workaround() helper
 function read_icon_index(   a,b,data,i,x) {
-  if("'${DEBUG}'") print "in read_icon_index" >"/dev/stderr"
+  if("'${DEBUG:-0}'">1) print "in read_icon_index" >"/dev/stderr"
   if(1 == (getline data < (x = ICONSTEM".index"))) {
     close(x)
     na = split(data, a, /\n/) # we slurped the index file
@@ -307,7 +307,7 @@ function read_icon_index(   a,b,data,i,x) {
 function mark_icon_workaround_uptodate( ) {
   if("true" == ALL_ICONS) {
     print "" > (ICONSTEM".uptodate")
-    if("'${DEBUG}'") print "\nmark_icon_workaround created", ICONSTEM".uptodate" > "/dev/stderr"
+    if("'${DEBUG:-0}'">1) print "\nmark_icon_workaround created", ICONSTEM".uptodate" > "/dev/stderr"
   }
 }
 '
@@ -342,8 +342,8 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
 fi
 > "${AWKQ}" echo '#!/usr/bin/gawk -f
 BEGIN {
-  if("'${DEBUG}'">2) {
-    print "\nSTARTING AWK querier, GREP=\""GREP"\"" >"/dev/stderr"
+  if("'${DEBUG:-0}'">2) {
+    print "\nstart db querier [[ GREP=\""GREP"\"" >"/dev/stderr"
     print "expression=('"${subject}${left} ${commleft} ${categ}"')" >"/dev/stderr"
   }
   FS="|"
@@ -356,12 +356,12 @@ BEGIN {
   }
 }
 END {
-  if("'${DEBUG}'">2) print "ENDING AWK" >"/dev/stderr"
+  if("'${DEBUG:-0}'">2) print "]] querier done" >"/dev/stderr"
 } '
 
 # Build database of .desktop file entries. [[[1
 gawk -v ALL_ICONS=${varICONS} -f "${AWKB}" ${LOCS} > "${DATF}"
-[ "${DEBUG}" ] && { >/tmp/varSEARCH; echo >&2 accepting input from /tmp/varSEARCH; }
+[ "${DEBUG:-0}" -gt 0 ] && { >/tmp/varSEARCH; echo >&2 accepting input from /tmp/varSEARCH; }
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
 # Prepare Help system and its GUI button (About). [[[1
@@ -478,6 +478,7 @@ start_dialog << EOF
         ${REMARK# ]]]}
         <variable>varSEARCH</variable>
         ${DEBUG:+<input file>/tmp/varSEARCH</input>}
+        ${DEBUG:+<action>echo>&2 ,,, varSEARCH ,,,</action>}
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
@@ -513,6 +514,7 @@ start_dialog << EOF
       <default>false</default>
       <variable>varFOCUSGRABBER</variable>
       <input file>${FCSF}</input>
+      ${DEBUG:+<action>echo>&2 ,,, varFOCUSGRABBER ,,,</action>}
       ${DEBUG:+<action>if true echo >&2 'grabfocus:varSEARCH'</action>}
       <action>if true grabfocus:varSEARCH</action>
       <action>if true echo false>"${FCSF}"</action>
@@ -528,7 +530,7 @@ start_dialog << EOF
         <input>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@"</input>
         <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
         <output file>${HSTF}</output>
-
+        ${DEBUG:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
         <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
@@ -557,6 +559,7 @@ start_dialog << EOF
         <label>$(gettext "_Keep window")</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
+        ${DEBUG:+<action>echo>&2 ,,, varOPEN ,,,</action>}
         <action>awk -v s=defOPEN=\${varOPEN} '/^defOPEN=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       ${REMARK# ]]]}
@@ -565,6 +568,7 @@ start_dialog << EOF
         <label>$(gettext "_Show all icons")</label>
         <default>${varICONS}</default>
         <variable>varICONS</variable>
+        ${DEBUG:+<action>echo>&2 ,,, varICONS ,,,</action>}
         <action>awk -v s=varICONS=\${varICONS} '/^varICONS=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
         <action>clear:varSEARCH</action>
         ${DEBUG:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
@@ -590,6 +594,7 @@ start_dialog << EOF
         <label>$(gettext "_Focus search")</label>
         <default>${varFOCUSSEARCH}</default>
         <variable>varFOCUSSEARCH</variable>
+        ${DEBUG:+<action>echo>&2 ,,, varFOCUSSEARCH ,,,</action>}
         <action>awk -v s=varFOCUSSEARCH=\${varFOCUSSEARCH} '/^varFOCUSSEARCH=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       ${REMARK# ]]]}
@@ -608,29 +613,29 @@ start_dialog << EOF
       ${REMARK# ]]]}
     </hbox>
     ${REMARK# ]]]}
-    ${REMARK# [[[. Hotkey targets.}
-    <hbox>
-      ${REMARK# [[[. refresh:varF2 to cycle focus between the search field and the command entry field.}
-      ${REMARK# Key F2 demonstrates how.}
-      <checkbox visible="false">
-        <default>false</default>
-        <label>F2</label>
-        <variable>varF2</variable>
-        <input file>${F2SF}</input>
-        <action>if true grabfocus:varCMD</action>
-        <action>if false grabfocus:varSEARCH</action>
-      </checkbox>
-      ${REMARK# ]]]}
-    </hbox>
-    ${REMARK# ]]]}
   </vbox>
-  ${REMARK# [[[. Hotkeys}
+  ${REMARK# Do not vbox/hbox hidden widgets because boxes add some unnecessary (tiny) padding.}
+  ${REMARK# [[[. Hotkey targets (hidden).}
+  ${REMARK#  [[[. refresh:varF2 to cycle focus between the search field and the command entry field.}
+  ${REMARK# Key F2 demonstrates how.}
+  <checkbox visible="false">
+    <default>false</default>
+    <label>F2</label>
+    <variable>varF2</variable>
+    <input file>${F2SF}</input>
+    ${DEBUG:+<action>echo>&2 ,,, varF2 ,,,</action>}
+    <action>if true grabfocus:varCMD</action>
+    <action>if false grabfocus:varSEARCH</action>
+  </checkbox>
+  ${REMARK#  ]]]}
+  ${REMARK# ]]]}
+  ${REMARK# [[[. Hotkey actions (hidden).}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = F1 ] && echo true )">${helpviewer:-:} &</action>
-  ${REMARK# [[[. Key F2 cycles focus between the search and the command entry field.}
+  ${REMARK#  [[[. Key F2 cycles focus between the search and the command entry field.}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
-  ${REMARK# ]]]}
+  ${REMARK#  ]]]}
   ${REMARK# ]]]}
   <action signal="delete-event">exit:abort</action>
 </window>
