@@ -1,0 +1,190 @@
+## Plugins
+
+### Source Plugins
+
+A source plugin comprises a _tap_ and, optionally, its _drain_ and its _default icon filename_. The tap outputs the data records that populate the list widget. The drain consumes the selected record when the user presses ENTER or double-clicks the list view selection. Tap-records consist of fields separated by the pipe character '|':
+````
+    <icon-filename> '|' <label> '|' <tap-data> '|' <comment> '|' <categories>
+````
+
+All fields yield string values, all characters allowed (caveat) except the pipe character. There is no way to include a literal pipe character in a value.  All values can be null except for `<tap-data>`.
+
+ * `<icon-filename>` is the filename only part (no path and no extension) of a suitable image file. Place the file in the `$ICONCACHE` path (default path `~/.icons`, set in `.findnrunrc`). If the value of icon-filename starts with "findnrun-" the file is automatically deleted when findnrun terminates. If you want for an icon file to survive findnrun's termination, do not start its filename by "findnrun-". If the icon-filename value is null findnrun uses the sources's default icon-filename. Examples of valid icon-filename values: `findnrun-my_icon_used_and_removed`, where its complete default path is `~/.icons/findnrun-my_icon_used_and_removed.png`; `this_icon_survives`, with default path `~/.icons/this_icon_survives.svg`.
+
+ * `<label>` is displayed in the list widget. If the label value is null findnrun uses tap-data instead.
+
+ * `<tap-data>` is displayed in the command entry widget. Tap-data is sent to the drain upon activating its entry in the list view.
+
+ * `<comment>` is displayed in the comment widget.
+
+ * `<categories>` is a semicolon-separated list of words and can be displayed in the comment widget.
+
+**Examples of well-formed records**
+
+    american_icon|born to run|mplayer /root/bruce.mp3|the boss|multimedia;audio
+    |command line|xterm -e sh||system
+    ||chrome
+    firefox
+
+The last example is the minimum data a well-formed record must include. Accordingly, findnrun's list view shows a predefined icon, label "firefox" and tap-data "firefox". Similarly, for record `||chrome` the list view shows a predefined icon, title "chrome" and tap-data "chrome". To show an empty icon, set the filename of an empty image. To show an empty label set a space character (" ").
+
+**Installing source plugins**
+
+A source plugin is installed by adding its declaration into `.findnrunrc` as follows:
+```
+    SOURCES='... <source-id> ...' # single variable for all sources
+    SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<source-title>:<options>'
+    TAP_<tap-id>='<tap-command>'
+    DRAIN_<drain-id>='<drain-command>'    # optional
+    ICON_<icon-id>='<icon-filename>'      # optional
+```
+
+ * `<*-id>` must be a valid sh variable name (only letters, digits, and underscore characters are allowed).
+ * Each `<*-id>` identifier must be unique within its declaration group (SOURCE_, TAP_, DRAIN_, ICON_, TITLE_).
+ * `<tap-command>` and `<drain-command>` are valid sh commands (more on this further down).
+ * `<source-title>` is optional and is displayed in the user interface.
+ * To enable a plugin add its `<source-id>` to space-separated list `SOURCES`. The use interface shows the plugins in the order they appear in `SOURCES`.
+ * Paired exterior double quotes work just as well as single quotes, but require escaping interior sh special characters.
+
+You can use any valid sh variable name as an `<*-id>`, but prefix "FNR" is reserved for findnrun's own plugins.
+Examples of valid `<id>`s: myplugin, my\_tap, acme\_drain\_1, acme\_drain\_2, some-iconname.
+Examples of invalid `<id>`s: my-plugin (sh identifiers can't include "-"), FNR\_plugin (prefix "FNR" is reserved), 100 (numbers aren't valid sh variable names).
+
+**Tap and drain command implementation**
+
+A command is implemented as a sh command, script, or external program, something that the shell can execute.
+
+**Source plugin command invocation**
+
+Findnrun invokes two plugin commands. While the user is typing into the search innput field, findnrun invokes the tap-command as follows:
+```
+    eval <tap-command>
+```
+
+The tap-command can use the current value of the search input field by including the string `${term}` in `<tap-command>`.
+On each plugin invocation the tap may output zero or more formatted tap-records.
+
+When the user selects and activates an entry in the list view, findnrun invokes the drain-command as follows:
+```
+    eval <drain-command> <tap-data>
+```
+
+Just before starting the command findnrun saves the whole line, without "eval ", into the history list pull-down widget.[1]
+If the drain-command value is null findnrun starts `<tap-data>` with the sh builtin command `eval`.
+
+The invocation environment provides tap-command and drain-command with the following preset variables:
+
+ * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}` and `${ICON}`, which hold the source's declared values
+ * `${ID}`, which is the source's source-id.
+
+[1] Findnrun also saves two history files: the global history file and the plugin's history file. Currently they are not exposed in the user interface, and the pull-down widget shows the global history. This might change in the future.
+
+**Source plugin user interface**
+
+By default, when findnrun starts and no source plugins are installed, it displays the list of desktop (file) applications, which is connected to the builtin source `ID` "FNRstart". Effectively, the default source installation is:
+```
+    SOURCES='FNRstart'
+```
+
+Since version 1.7 a shell-completion plugin is bundled, so the amended default source installation is:
+```
+    SOURCES='FNRstart FNRsc'
+```
+
+On program start findnrun displays the tap-records of the first element of SOURCES. So declaring `SOURCES='FNRsc FNRstart'` would display the shell-completion plugin on program start. Declaring `SOURCE='FNRsc'` would disable the builtin FNRstart source. There is no requirement to include any builtin source (`FNR*`).
+
+When `SOURCES` includes multiple elements, a status bar appears at the bottom of the main window. The status bar includes the current source's source-title. If the source-title value is null, findnrun displays the plugin's source-id value instead. Pressing F3 cycles the list view through the sources. Pressing Ctrl+_i_, for _i_=1,2,..,9 displays the _i_-th source directly.
+Source-titles can be translated by adding translation strings to the findnrun.mo files in the package.
+
+The first column of the list view displays the tap-record icon-filename. If the icon-filename value is null, findnrun displays the source default icon set by `ICON_<icon-id>`. If also the default icon is null findnrun displays an empty cell.
+
+There is no provision for a plugin to display a user interface of its own. Nor is there a system to signal a plugin important events.
+
+**Formatter**
+
+At the moment, all non-builtin source tap-commands are required to end with `| findnrun-formatter`, that is, they must pipe to the command findnrun-formatter. This contraint might be removed in the future.
+
+If tap-command outputs single records, that is, the records don't include "|" (pipe), then do append `-O s` to findnrun-formatter's command. "-O s" tells the formatter not to decode each tap-record in detail.
+
+If the source default icon is non-null, do append `-I "${ICON}"` to the formatter's command.
+
+Run findnrun-formatter -h to view usage information.
+
+### Source plugin examples
+
+Each example builds over the previous ones, so please add all previous declarations in order to make the next example work.
+
+**Find file**
+
+Save the following script in file `/fnr-find-file.sh`
+```
+    #!/bin/sh
+    find $HOME -type f -name "*$1*"` | findnrun-formatter -O s -I "${ICON}"
+```
+
+Edit `~/.findnrun` and add:
+```
+    TITLE_find_file='open ROX-Filer with file selected'
+    TAP_find_file='export ICON; /fnr-find-file.sh "${term}"'
+    DRAIN_rox='rox -s'
+    ICON='find-file.png'
+    # tap:drain:default_icon:title
+    SOURCE_find_file='find:rox:find:find'
+    SOURCES='FNRstart find_file'
+```
+Don't forget making your script executable: `chmod +x /fnr-find-file.sh`.
+Add your icon: `cp /path/to/find-file.png ${HOME}/.icons/`
+
+Now every time `find_file` is selected in the user interface and the user types a character in the search field, `/fnr-find-file.sh` lists file names that partially match the search term and are located inside and below the user's `$HOME` folder. If the user selects and activates an entry, ROX-Filer is started with the given file selected.
+
+**Find file revisited**
+
+Let's tweak the previous example to avoid the overhead of calling an external script. Let's also start findnrun directly into `find_file`'s view. Edit `~/.findnrun` and replace:
+```
+    TAP_find='find $HOME -type f -name "*${term}*" | findnrun-formatter -O s -I "${ICON}"'
+    SOURCES='find_file FNRstart'
+```
+
+**Find file advanced**
+
+A more powerful file search method might involve case insensitive regular expression matching.
+```
+    TITLE_iregex='Find file with regular expressions'
+    TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -O s -I "${ICON}"'
+    SOURCE_iregex='iregex:rox:find-file:iregex'
+    SOURCES='iregex find_file FNRstart'
+```
+
+tap-command prepends `.*` to `${term}` because find -iregex matches on the whole path. Without `.*` the expression would never match.
+
+### Plugin performance
+
+Please note that the active source plugin's tap-command is invoked on every keypress. So it's very important for tap-commands to return as quickly as possible otherwise they could slow down the user interface to a crawl.
+
+TODO add sh time hooks.
+
+### Debugging plugins
+
+Your plugin can print debugging messages to the standard error stream. Do not write to the standard output stream, which is reserved for tap-records.
+
+Findnrun validates source plugin declarations in various ways. On fatal errors findnrun prints the offending subject's id, when it is known, to the standard error strem, and exits with an error exit status. On recoverable errors, findnrun prints the offending source's id and a warning code to the standard error stream, disables the source, and continues. On warnings findnrun prints a warning code to the standard error stream and continues.
+```
+FATAL ERROR EXIT CODES
+TODO
+
+RECOVERABLE ERROR CODES
+TODO
+
+WARNING CODES
+TODO
+```
+
+To run findnrun in debugging mode use: `DEBUG=<level> findnrun`. Levels 1-9 enable increasingly verbose debugging messages to the standard error stream. Level 10 dumps the gtkdialog definition to the standard output stream and exits.
+
+### Known "official" plugins**
+
+While there is no centralized registration service/authority for plugin IDs, if you send me the ID of your plugin I will publish it in findnrun's github page, so other developers will be able to see it.
+```
+    # Your plugin here...
+```
+

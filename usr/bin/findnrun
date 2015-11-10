@@ -17,7 +17,7 @@
 export TEXTDOMAIN=findnrun
 export OUTPUT_CHARSET=UTF-8
 
-# Initialization variables that can be changed. [[[1
+# Initialize variables that can be changed. [[[1
 # i18n Main window title
 APP_NAME=$(gettext "Find'N'Run")
 APP_TITLE="${APP_NAME}"
@@ -49,11 +49,12 @@ TMPF=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPF}"
 DATF="${TMPF}/.dat" # database of .desktop file entries
 AWKB="${TMPF}/.build.awk" # builds (and queries) database
 AWKQ="${TMPF}/.query.awk" # queries database (faster)
-HSTF="${TMPF}/.sh"; >"${HSTF}" # saves combobox command line history
+HSTF="${TMPF}/.hist-FNR.sh"; >"${HSTF}" # global command line history
 FCSF="${TMPF}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPF}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 SEP=`echo -e "\b"` # field separator of packed values
 ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG)
+SRCSTEM="${TMPF}/.source-" # prefix to source filenames
 
 # -----------------------------------------------------------------------------
 #LANG=de_DE.UTF-8 # just for demo
@@ -62,7 +63,8 @@ LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
 # Unexport these variables before running the selected command.
-UNEXPORT="unset GUI_ABOUT varSEARCH varLIST varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET"
+UNEXPORT="unset GUI_ABOUT varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET"
+# unset varLIST and varF3 separately
 
 # Prepare the configuration file. [[[1
 # Defaults - match same variable/value pairs in the next block.
@@ -72,6 +74,8 @@ export varFOCUSSEARCH=false
 # IBOL+IBOL in search field ignores all characters to beginning of line.
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=F2
+# Builtin sources: "desktop apps"
+SOURCES="FNRstart"
 
 # Read / supplement $CONFIG.
 touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
@@ -89,6 +93,7 @@ awk '
   /^SEARCHCOMPLETE=/{f7=1}
   /^IBOL=/{f8=1}
   /^HOTKEY_F2=/{f9=1}
+  /^SOURCES=/{f11=1}
   END{
     if(!f1) print "ICONCACHE=\"'"${ICONCACHE}"'\"">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
@@ -99,6 +104,7 @@ awk '
     if(!f7) print "SEARCHCOMPLETE=false">>ARGV[1]
     if(!f8) print "IBOL=\"'"${IBOL}"'\" # reserved">>ARGV[1]
     if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
+    if(!f11) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
   }
   ' "${CONFIG}"
 
@@ -139,6 +145,198 @@ for i in ${DESKTOP_FILE_DIRS}; do
   fi
 done
 
+# Declare builtin sources. [[[1
+# $BUILTIN_SOURCES get special treatment
+BUILTIN_SOURCES="FNRstart"
+
+SOURCE_FNRstart="FNRstart:::FNRstart"
+TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
+TITLE_FNRstart=${APP_NAME}
+
+# Prepare sources. [[[1
+SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTEM}" 0 FNRstart
+store_valid_sources() # [[[
+# In: $SOURCES
+# Out: list of valid sources that got stored for gtkdialog sh's use.
+# Return value: a list of valid sources, a subset of SOURCES.
+# Return code: [[[
+# 1-99: fatal; 101-199: recoverable; 201-299: warning.
+# If the offending subject is detected it is printed to stderr.
+# Fatal errors => gawk exit(code).
+# Recoverable errors => print code, disable source and continue.
+# Warning => print code and continue.
+# 101 source-id isn't a valid shell variable name (SOURCES=)
+# 102 null tap-command
+# 103 invalid tap-command sh syntax
+# 104 invalid drain-command sh syntax
+# 111 broken tap-id (leads nowhere)    TODO 111 and up
+# 112 broken drain-id
+# 113 broken title-id
+# 114 broken icon-id
+# 201 unreferenced TAP_ (linked by no one)
+# 202 unreferenced DRAIN_
+# 203 unreferenced TITLE_
+# 204 unreferenced ICON_
+# 205 unreferenced SOURCE_
+#]]]
+{
+# i18n 1.7 Source plugin validation.
+  set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
+    -v MSG1="$(gettext "fatal source error: %d%s\n")" \
+    -v MSG2="$(gettext "recoverable source error: %d%s\n")" \
+    -v MSG3="$(gettext "source warning: %d%s\n")" \
+'#!/usr/bin/gawk -f
+BEGIN {
+  if('${DEBUG:-0}') print "\n=== SOURCE DECLARATIONS" > "/dev/stderr"
+  # Invalid SOURCES syntax? 101 [[[
+  nE = split(SOURCES, E)
+  for(j=1; j <= nE; j++) {
+    s = E[j] # source-id
+    if(match(s, /[^[:alnum:]_ ]|^[[:digit:]]/))
+      recoverable(101, s) # exclude invalid source-id
+    else
+      # include syntactically valid source-id
+      valid_sources = valid_sources" "s
+  }
+  valid_sources = substr(valid_sources, 2)
+  # Fall back to BUILTIN source.
+  if("" == valid_sources) valid_sources = "FNRstart"
+  #]]]
+  pattern = "^(SOURCE|TAP|DRAIN|ICON|TITLE)_([^=]+)=(.*)"
+}
+{
+  if(match($0, pattern, a)) {
+    # Parse declarations [[[
+    # G[] array of groups (a[1]): SOURCE, TAP, DRAIN, ICON, TITLE
+    # I[] array of any type ids (a[2])
+    # VGI[] values by (group, id) (a[3])
+    # S[] array of source-ids (a[1])
+    G[a[1]] = a[1]; I[a[2]] = a[2]
+    # Input stream ("set |") formats all values between single quotes.
+    VGI[a[1], a[2]] = a[3] = substr(a[3], 2, length(a[3])-2) # unquote
+    if("SOURCE" == a[1]) S[a[2]] = a[2]
+    if('${DEBUG:-0}'>2) print a[1],"**",a[2],"**",a[3] > "/dev/stderr"
+    #]]]
+  }
+}
+END {
+  # TS[] array of tap-ids by source-id
+  # DS[] array of drain-ids by source-id
+  for(s in S) {
+    split(VGI["SOURCE",s], a, /:/)
+    if(a[1]) TS[s] = a[1]
+    if(a[2]) DS[s] = a[2]
+    if('${DEBUG:-0}'>2)
+      print "source",s, \
+        "has tap",(s in TS) ?TS[s] :"NULL", \
+        "and drain", (s in DS) ?DS[s] :"NULL" >"/dev/stderr"
+  }
+  # Null tap-command? 102 [[[
+  for(s in S) if(! (("TAP", s) in VGI) || ! VGI["TAP", s]) {
+    recoverable(102, s)
+    delete S[s]
+  }
+  #]]]
+  # Invalid tap-command sh syntax? 103 [[[
+  syntax_check("TAP", TS, S, 103) # deletes elements of S
+  #]]]
+  # Invalid drain-command sh syntax? 104 [[[
+  syntax_check("DRAIN", DS, S, 104) # deletes elements of S
+  #]]]
+  # Store remaining valid sources for gtkdialog shell. [[[
+  # Treat sources as an ordered list.
+  nE = split(valid_sources, E)
+  for(j=1; j <= nE; j++) {
+    if(! (E[j] in S)) continue
+    s = E[j] # source-id
+    store_source(s)
+    return_sources = return_sources" "s
+  }
+  return_sources = substr(return_sources, 2)
+  #]]]
+  # Return list of valid sources, a subset of SOURCES.
+  print return_sources
+}
+function syntax_check(group, A, I, code,   i, checker, status) { # [[[
+  # Deletes elements of I.
+
+  # The best syntax checker that we can get, but still quite limited.
+  checker = "sh -n"
+
+  if('${DEBUG:-0}'>3) { #[[[
+    print "\nsyntax_check",group,":" >"/dev/stderr"
+    for(i in A) print "source",i, \
+      (i in I) ?"to check" :"is already invalid", \
+      "(declares", group, A[i]")" >"/dev/stderr"
+  } #]]]
+  # For each declared source-id as i that is associated with a non-null group-id...
+  #   If source-id i is still in the set of valid ids (I)
+  #   && its group-id A[i] has an associated value in VGI...
+  for(i in A) if(i in I && ((group, A[i]) in VGI)) {
+    if(match(BUILTIN, i)) continue # optimization: skip builtin sources
+    if('${DEBUG:-0}'>3) #[[[
+      print "now checking",i"'"'"'s", group, A[i],"=>", \
+        VGI[group, A[i]] >"/dev/stderr" #]]]
+    print VGI[group, A[i]] | checker
+    if(close(checker)) { # non-zero exit code on invalid syntax
+      recoverable(code, group": "VGI[group, A[i]], i)
+      delete I[i]
+    }
+  }
+}
+#]]]
+function store_source(s, buf, A,   a, g) { #[[[
+  # NOTE store_source increments global static variable _global_store_source.
+  # Call store_source for the ORDERED list of valid sources.
+  # In:
+  #   s source-id
+  #   buf==""      => compose from globals for s; OR
+  #   buf=="array" => compose from A["SOURCE"]=source-id, A["TAP"]=tap-command, ... 
+  # Assert: composed values can be (and will be) safely wrapped in single quotes,
+  # since since they are generated with sh command env.
+  if("" == buf) {
+    buf = sprintf("ID='"'%s'"'", s)
+    for(g in G) if((g, s) in VGI) \
+      buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, s])
+  } else if("array" == buf) {
+    buf = sprintf("ID='"'%s'"'", s)
+    for(a in A)
+      buf = buf sprintf("\n%s='"'%s'"'", a, A[a])
+  }
+  saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", 0+_global_store_source++, s)
+  print buf > saveas
+  if('${DEBUG:-0}'>2) print "\n"buf > "/dev/stderr"
+  return close(saveas)
+}
+#]]]
+function fatal(code, subject, source) { #[[[
+  printf(MSG1, code, \
+    (source ?" "source":" :"") (subject ?" "subject :"")) > "/dev/stderr"
+  exit(code)
+}#]]]
+function recoverable(code, subject, source) { #[[[
+  printf(MSG2, code, \
+    (source ?" "source":" :"") (subject ?" "subject :"")) > "/dev/stderr"
+}#]]]
+function warning(code, subject, source) { #[[[
+  printf(MSG3, code, \
+    (source ?" "source":" :"") (subject ?" "subject :"")) > "/dev/stderr"
+}#]]]
+  '
+}
+#]]]
+
+store_valid_sources > "${TMPF}/.$$"
+x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
+read sources < "${TMPF}/.$$" # all and only valid sources
+# If some sources were disabled display startup warning dialog. [[[
+if [ "${sources}" != "${SOURCES}" ]; then
+   # TODO display gtkdialog window over main window.
+   # i18n 1.7 TEMPORARY
+  Xdialog --title "${APP_NAME}" --msgbox \
+    "$(gettext 'Invalid source plugins found and disabled.')" 0x0
+fi
+#]]]
 # Prepare the database builder script. [[[1
 # Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] files
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
@@ -442,7 +640,86 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
   <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:GUI_ABOUT</action>
 </window>'
 
-start_dialog() # [[[1
+# Helpers [[[1
+
+generate_get_source() # [[[2
+{
+  # Echo sh code that loads the current source's field values.
+#DELETEME  echo -n "set -- ${SOURCES}; shift \${varF3:-0}; . \"${SRCSTEM}\"\${varF3:-0}-*.sh"
+  echo -n ". \"${SRCSTEM}\"\${varF3:-0}-*.sh"
+}
+generate_rotated_sources() # $1-sh-fragment  [[[2 NOT USED
+{
+  # Echo sh code that executes sh-fragment for the current source index (varF3, numeric).
+  # Example (gtkdialog):
+  #<entry>
+  #  <variable>varF3SYM</variable>
+  #  ${REMARK# Cache source-id value until next refresh:varF3SYM.}
+  #  <input>$(generate_rotated_sources "echo -n \"\$1\"")</input>
+  #</entry>
+  local fragment nsources i
+  fragment=$1
+  set -- ${SOURCES:-FNRstart}
+  nsources=$#
+  # Switch rotated source-ids.
+  echo -n 'set -- '"${SOURCES}"'; shift ${varF3:-0}'
+  echo -n '; case $1 in'
+  i=0; while [ $# -gt 0 -a $i -le ${nsources} ]; do
+    echo -n " $i|$1) ${fragment} ;;"
+    shift
+    i=$(($i + 1))
+  done
+  echo -n " esac"
+}
+
+generate_invoke_source_tap() # [[[2
+{
+  # Echo sh code that invokes source[varF3]'s tap-command.
+  # Extract search input value as $term with IBOL+IBOL correction. [[[
+  echo -n 'ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}"'
+  #]]]
+  # Get source[varF3]'s values. [[[
+# Optimization: use cached <variable>TAP</variable>.
+  echo -n '; if [ -z "${TAP}" ]; then '
+  generate_get_source
+  echo -n '; fi'
+  # ]]]
+  # Start tap-command. [[[
+  echo -n ' && case ${HINTS} in'
+  echo -n  ' *term*) eval ${TAP} "${term}" ;;'
+  echo -n  ' *) eval ${TAP} ;;'
+  echo -n ' esac'
+  #]]]
+}
+
+generate_invoke_source_drain() # [[[2
+{
+  # Echo sh code that invokes source[varF3]'s drain-command.
+  # Extract selected list item value as "$@". [[[
+  echo -n 'ifs="${IFS}"'
+  # NOTE: Imitate this command line in varCMD's <input> !
+  echo -n '; IFS="'"${SEP}"'"; set -f; set -- ${varLIST}; set -- $3; set +f'
+  echo -n '; unset varLIST; IFS="${ifs}"'
+  #]]]
+  # Unexport all vars but varF3 and varLIST.
+  echo -n "; ${UNEXPORT}"
+  # Get source[varF3]'s values. [[[
+  echo -n '; '; generate_get_source
+  # ]]]
+  # Save command to history lists. [[[
+  # To the source's own history list file + FNR's global history list file.
+  # ${HSTF} points to one of the two files, and it's used as input to the command history widget.
+  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPF}/.hist-${ID}.sh'"
+  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPF}/.hist-FNR.sh'"
+  #]]]
+  # Start drain-command. [[[
+  echo -n '; set -- ${DRAIN} "$@"'
+  echo -n '; unset TAP DRAIN ICON TITLE HINTS varF3'
+  echo -n '; eval "$@" &'
+  #]]]
+}
+
+start_dialog() # [[[2
 {
   if [ ${DEBUG:-0} -gt 9 ]; then
     cat
@@ -490,14 +767,16 @@ start_dialog << EOF
       </button>
     </hbox>
     ${REMARK# ]]]}
-    ${REMARK# [[[. varLIST: list .desktop records.}
+    ${REMARK# [[[. varLIST: list tap-data records.}
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
       <label>Icon|Name|PackedValues</label>
       <variable>varLIST</variable>
-      ${REMARK# [[[. Populate varLIST.}
-      <input icon-column="0">${DEBUG:+set -x;} IFS="${IBOL:=,}"; set -- \${varSEARCH}; for i; do term="\$i"; done && gawk -f "${AWKQ}" -v GREP="\${term}" '${DATF}'${REDIRECT2}</input>
-      ${REMARK# NOTE: Imitate this command line, up to echo included, in varCMDs input}
-      <action>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@" >>"${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
+      ${REMARK# [[[. Populate list view.}
+      <input icon-column="0">${DEBUG:+set -x; }$(generate_invoke_source_tap)</input>
+      ${REMARK# ]]]}
+      ${DEBUG:+<action>echo>&2 ,,, varLIST ,,,</action>}
+      ${REMARK# [[[. Process list view selection.}
+      <action>${DEBUG:+set -x; }$(generate_invoke_source_drain)</action>
       ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
@@ -526,13 +805,13 @@ start_dialog << EOF
       <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the down-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit.")">
         <variable>varCMD</variable>
         <default>$(gettext "Press down-arrow key to grab command")</default>
-        ${REMARK# NOTE: Commands imitate varLISTs action.}
+        ${REMARK# NOTE: Commands imitate varLISTs action, see generate_invoke_source_drain().}
         <input>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@"</input>
         <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
         <output file>${HSTF}</output>
         ${DEBUG:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
-        <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT}; eval "\$@" &</action>
+        <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT} varLIST varF3; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
         <action signal="activate" condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
         <action signal="activate" condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
@@ -615,6 +894,44 @@ start_dialog << EOF
     ${REMARK# ]]]}
   </vbox>
   ${REMARK# Do not vbox/hbox hidden widgets because boxes add some unnecessary (tiny) padding.}
+  ${REMARK# [[[. Cached source declaration variables (hidden).}
+  <entry visible="false" sensitive="false">
+    <variable>TAP</variable>
+    ${REMARK# Cache TAP until next refresh:TAP.}
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${TAP}"</input>
+    ${DEBUG:+<action>echo>&2 ,,, TAP ,,,</action>}
+  </entry>
+  <entry visible="false" sensitive="false">
+    <variable>DRAIN</variable>
+    ${REMARK# Cache DRAIN until next refresh:DRAIN.}
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${DRAIN}"</input>
+    ${DEBUG:+<action>echo>&2 ,,, DRAIN ,,,</action>}
+  </entry>
+  <entry visible="false" sensitive="false">
+    <variable>ICON</variable>
+    ${REMARK# Cache ICON until next refresh:ICON.}
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${ICON}"</input>
+    ${DEBUG:+<action>echo>&2 ,,, ICON ,,,</action>}
+  </entry>
+  <entry visible="false" sensitive="false">
+    <variable>TITLE</variable>
+    ${REMARK# Cache TITLE until next refresh:TITLE.}
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${TITLE}"</input>
+    ${DEBUG:+<action>echo>&2 ,,, TITLE ,,,</action>}
+  </entry>
+  <entry visible="false" sensitive="false">
+    <variable>SOURCE</variable>
+    ${REMARK# Cache SOURCE until next refresh:SOURCE}
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${SOURCE}"</input>
+    ${DEBUG:+<action>echo>&2 ,,, SOURCE ,,,</action>}
+  </entry>
+  <entry visible="false" sensitive="false">
+    <variable>ID</variable>
+    ${REMARK# Cache ID until next refresh:ID.}
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${ID}"</input>
+    ${DEBUG:+<action>echo>&2 ,,, ID ,,,</action>}
+  </entry>
+  ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey targets (hidden).}
   ${REMARK#  [[[. refresh:varF2 to cycle focus between the search field and the command entry field.}
   ${REMARK# Key F2 demonstrates how.}
