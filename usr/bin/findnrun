@@ -52,6 +52,7 @@ AWKQ="${TMPF}/.query.awk" # queries database (faster)
 HSTF="${TMPF}/.hist-FNR.sh"; >"${HSTF}" # global command line history
 FCSF="${TMPF}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPF}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
+F3SF="${TMPF}/.f3s"; >"${F3SF}" # builtin/plugin source list view cycler
 SEP=`echo -e "\b"` # field separator of packed values
 ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG)
 SRCSTEM="${TMPF}/.source-" # prefix to source filenames
@@ -74,6 +75,7 @@ export varFOCUSSEARCH=false
 # IBOL+IBOL in search field ignores all characters to beginning of line.
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=F2
+HOTKEY_F3=F3
 # Builtin sources: "desktop apps"
 SOURCES="FNRstart"
 
@@ -93,6 +95,7 @@ awk '
   /^SEARCHCOMPLETE=/{f7=1}
   /^IBOL=/{f8=1}
   /^HOTKEY_F2=/{f9=1}
+  /^HOTKEY_F3=/{f10=1}
   /^SOURCES=/{f11=1}
   END{
     if(!f1) print "ICONCACHE=\"'"${ICONCACHE}"'\"">>ARGV[1]
@@ -104,6 +107,7 @@ awk '
     if(!f7) print "SEARCHCOMPLETE=false">>ARGV[1]
     if(!f8) print "IBOL=\"'"${IBOL}"'\" # reserved">>ARGV[1]
     if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
+    if(!f10) print "HOTKEY_F3='"${HOTKEY_F3}"'">>ARGV[1]
     if(!f11) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
   }
   ' "${CONFIG}"
@@ -762,6 +766,21 @@ generate_invoke_source_drain() # [[[2
   #]]]
 }
 
+generate_source_hotkeys() # [[[2
+{
+  #echo '<action signal="key-press-event">echo "MOD=$KEY_MOD RAW=$KEY_RAW SYM=$KEY_SYM UNI=$KEY_UNI VAL=$KEY_VAL">&2</action>'
+  local i p
+  set -- ${SOURCES:-FNRstart}
+  i=0; while [ $# -gt 0 -a $i -lt 9 ]; do
+    p=$(($i + 1))
+    echo '
+  <action signal="key-press-event" condition="command_is_true([ $KEY_MOD = 4 -a $KEY_SYM = '$p' ] && echo true )">echo -n '$i' >"'"${F3SF}"'"</action>
+  <action signal="key-press-event" condition="command_is_true([ $KEY_MOD = 4 -a $KEY_SYM = '$p' ] && echo true )">refresh:varF3</action>'
+    shift
+    i=$p
+  done
+}
+
 start_dialog() # [[[2
 {
   if [ ${DEBUG:-0} -gt 9 ]; then
@@ -1001,6 +1020,25 @@ start_dialog << EOF
     <action>if false grabfocus:varSEARCH</action>
   </checkbox>
   ${REMARK#  ]]]}
+  ${REMARK#  [[[. refresh:varF3 to switch the list view to another source.}
+  ${REMARK# Key F3 demonstrates how.}
+  <entry visible="false" sensitive="false">
+    <variable>varF3</variable>
+    <default>0</default>
+    <input file>${F3SF}</input>
+    ${DEBUG:+<action>echo>&2 ,,, varF3 ,,,</action>}
+    ${REMARK# [[[. Optimization: Cache current source values.}
+    <action>refresh:TAP</action>
+    <action>refresh:DRAIN</action>
+    <action>refresh:ICON</action>
+    <action>refresh:TITLE</action>
+    <action>refresh:SOURCE</action>
+    <action>refresh:ID</action>
+    ${REMARK# ]]]}
+    <action>clear:varSEARCH</action>
+    <action>refresh:varLIST</action>
+  </entry>
+  ${REMARK#  ]]]}
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey actions (hidden).}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
@@ -1009,6 +1047,11 @@ start_dialog << EOF
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
   ${REMARK#  ]]]}
+  ${REMARK#  [[[. Key F3 cycles the list view among builtin and plugin sources.}
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">set -- ${SOURCES}; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">refresh:varF3</action>
+  ${REMARK#  ]]]}
+  $(generate_source_hotkeys)
   ${REMARK# ]]]}
   <action signal="delete-event">exit:abort</action>
 </window>
