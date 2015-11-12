@@ -368,6 +368,9 @@ function warning(code, subject, source) { #[[[
 store_valid_sources > "${TMPF}/.$$"
 x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
 read NSOURCES sources < "${TMPF}/.$$" # all and only valid sources
+# Read first source's values to be used to initialize gtkdialog <default>'s.
+. "${SRCSTEM}0-"*.sh
+
 # If some sources were disabled display startup warning dialog. [[[
 if [ "${sources}" != "${SOURCES}" ]; then
    # TODO display gtkdialog window over main window.
@@ -938,38 +941,51 @@ start_dialog << EOF
   <entry visible="false" sensitive="false">
     <variable>TAP</variable>
     ${REMARK# Cache TAP until next refresh:TAP.}
+    <default>debug1</default>
     <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${TAP}"</input>
     ${DEBUG:+<action>echo>&2 ,,, TAP ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>DRAIN</variable>
+    <default>debug2</default>
     ${REMARK# Cache DRAIN until next refresh:DRAIN.}
     <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${DRAIN}"</input>
     ${DEBUG:+<action>echo>&2 ,,, DRAIN ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>ICON</variable>
+    <default>${ICON:-null}</default>
     ${REMARK# Cache ICON until next refresh:ICON.}
     <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${ICON}"</input>
     ${DEBUG:+<action>echo>&2 ,,, ICON ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>TITLE</variable>
+    <default>debug3</default>
     ${REMARK# Cache TITLE until next refresh:TITLE.}
     <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${TITLE}"</input>
     ${DEBUG:+<action>echo>&2 ,,, TITLE ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>SOURCE</variable>
+    <default>${SOURCE}</default>
     ${REMARK# Cache SOURCE until next refresh:SOURCE}
     <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${SOURCE}"</input>
     ${DEBUG:+<action>echo>&2 ,,, SOURCE ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>ID</variable>
+    <default>${ID}</default>
     ${REMARK# Cache ID until next refresh:ID.}
     <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${ID}"</input>
     ${DEBUG:+<action>echo>&2 ,,, ID ,,,</action>}
+  </entry>
+  <entry visible="false" sensitive="false">
+    <variable>NSOURCES</variable>
+    <default>${NSOURCES}</default>
+    ${REMARK# Cache NSOURCES until next refresh:NSOURCE.}
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${NSOURCES}"</input>
+    ${DEBUG:+<action>echo>&2 ,,, NSOURCES ,,,</action>}
   </entry>
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey targets (hidden).}
