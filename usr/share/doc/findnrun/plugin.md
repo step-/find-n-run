@@ -30,25 +30,34 @@ The last example is the minimum data a well-formed record must include. Accordin
 
 **Installing source plugins**
 
+In the following discussion:
+ * An `<...-id>` is a valid sh variable name: only letters, digits, and underscore characters are allowed.
+ * Characters outside of angle brackets are to be written literally.
+
 A source plugin is installed by adding its declaration into `.findnrunrc` as follows:
 ```
-    SOURCES='... <source-id> ...' # single variable for all sources
-    SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<source-title>:<options>'
+    SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<title-id>'
     TAP_<tap-id>='<tap-command>'
     DRAIN_<drain-id>='<drain-command>'    # optional
     ICON_<icon-id>='<icon-filename>'      # optional
+    TITLE_<title-id>='<source-title>'     # optional
 ```
-
- * `<*-id>` must be a valid sh variable name (only letters, digits, and underscore characters are allowed).
- * Each `<*-id>` identifier must be unique within its declaration group (SOURCE_, TAP_, DRAIN_, ICON_, TITLE_).
- * `<tap-command>` and `<drain-command>` are valid sh commands (more on this further down).
- * `<source-title>` is optional and is displayed in the user interface.
- * To enable a plugin add its `<source-id>` to space-separated list `SOURCES`. The use interface shows the plugins in the order they appear in `SOURCES`.
+ * Each `<...-id>` identifier must be unique within its declaration group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_).
+ * `<tap-command>` is a valid sh command (more on this further down).
+ * `<drain-command>` is also a valid sh command.
+ * `<icon-filename>` is defined as the tap-record `<icon-filename>`.
+ * `<source-title>` is displayed in the user interface.
+ * Declarations marked "optional" can be omitted by leaving their respective `<...-id>` slot empty in their `SOURCE_<source-id>` declaration.
  * Paired exterior double quotes work just as well as single quotes, but require escaping interior sh special characters.
 
-You can use any valid sh variable name as an `<*-id>`, but prefix "FNR" is reserved for findnrun's own plugins.
-Examples of valid `<id>`s: myplugin, my\_tap, acme\_drain\_1, acme\_drain\_2, some-iconname.
+You can use any valid sh variable name as an `<...-id>`, but prefix "FNR" is reserved for findnrun's own plugins.
+Examples of valid `<id>`s: drain27, acme\_1.
 Examples of invalid `<id>`s: my-plugin (sh identifiers can't include "-"), FNR\_plugin (prefix "FNR" is reserved), 100 (numbers aren't valid sh variable names).
+
+To enable a plugin edit `~/.findnrunrc` and add its `<source-id>` to the space-separated list `SOURCES`. The user interface shows enabled plugins in the order they appear in `SOURCES`.
+```
+    SOURCES='... <source-id> ...'    # list of all enabled sources
+```
 
 **Tap and drain command implementation**
 
@@ -110,7 +119,7 @@ Source-titles are looked up for [translations](TRANSLATING.md) using GNU Gettext
 
 At the moment, all non-builtin source tap-commands are required to end with `| findnrun-formatter --`. This constraint might be removed in the future. So the typical tap-command stanza is:
 ```
-  <command> | findnrun-formatter -- <formatter-options>
+    <command> | findnrun-formatter -- <formatter-options>
 ```
 
 If tap-command outputs single records, that is, the records don't include "|" (pipe), then do include `-O s` in findnrun-formatter's options. "-O s" tells the formatter not to decode each tap-record in detail.  If the source default icon is non-null, include `-I "${ICON}"`.
@@ -142,7 +151,7 @@ Edit `~/.findnrun` and add:
 Don't forget to make your script executable and add the declared default icon:
 ```
     chmod +x /fnr-find-file.sh
-    cp -v /usr/share/icons/hicolor/32x32/apps/findnrun.png $HOME/.icons/find-file.png
+    cp -v /usr/share/icons/hicolor/32x32/apps/findnrun.png $HOME/.icons/find-file
 ```
 
 Now every time `find_file` is selected in the user interface and the user types a character in the search field, `/fnr-find-file.sh` lists file names that partially match the search term and are located inside and below the user's `$HOME` folder. If the user selects and activates an entry, ROX-Filer is started with the given file selected (but how clearly marked the selection will depend on your ROX-Filer version).
@@ -163,7 +172,7 @@ A more powerful file search method might involve case insensitive regular expres
 ```
     TITLE_iregex='Find file with regular expressions'
     TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -- -O s -I "${ICON}"'
-    SOURCE_iregex='iregex:rox:find-file:iregex'
+    SOURCE_iregex='iregex:rox:find_file:iregex'
     SOURCES='iregex find_file FNRstart'
 ```
 
