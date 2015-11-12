@@ -35,11 +35,11 @@ BEGIN {
           "  -O options\t\ta string of letters: 's'\n" \
           "  -S source-id\n" \
           "  -T source-title\n" \
-          "  -v level\t\tprint progress info to stderr, level integer > 0"
+          "  -v level\t\tprint progress info to stderr, integer level 1..4"
     exit
   }
   if(opt["v"] > 2) {
-    printf("\nfindnrun-formatter: source='%s' icon='%s' title='%s' hints='%s'\n",
+    printf("\nfindnrun-formatter: -Source '%s' -Icon '%s' -Ttitle '%s' -Options '%s'\n",
            opt["S"], opt["I"], opt["T"], opt["O"]) >"/dev/stderr"
   }
   # Optimize well-known sources and single-field case.
@@ -56,6 +56,8 @@ BEGIN {
 index(opt["O"], "s") {
   for(i=1; i <= NF; i++)
     print opt["I"] "||" $(i) "|path" SEP $(i) SEP $(i) SEP
+  if(opt["v"] > 3)
+    print opt["I"] "||" $(i) > "/dev/stderr"
   exit
 }
 # Multi-field case.
