@@ -74,8 +74,9 @@ If the drain-command value is null findnrun starts `<tap-data>` with the sh buil
 
 The invocation environment provides tap-command and drain-command with the following preset variables:
 
- * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}` and `${ICON}`, which hold the source's declared values
- * `${ID}`, which is the source's source-id.
+ * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}` and `${ICON}`, the source's declared values
+ * `${ID}`, the source-id
+ * `${NSOURCES}, the number of sources.
 
 [1] Findnrun also saves two history files: the global history file and the plugin's history file. Currently they are not exposed in the user interface, and the pull-down widget shows the global history. This might change in the future.
 
@@ -91,24 +92,27 @@ Since version 1.7 a shell-completion plugin is bundled, so the amended default s
     SOURCES='FNRstart FNRsc'
 ```
 
-On program start findnrun displays the tap-records of the first element of SOURCES. So declaring `SOURCES='FNRsc FNRstart'` would display the shell-completion plugin on program start. Declaring `SOURCE='FNRsc'` would disable the builtin FNRstart source. There is no requirement to include any builtin source (`FNR*`).
+On program start findnrun displays the tap-records of the first element of SOURCES. So declaring `SOURCES='FNRsc FNRstart'` would display the shell-completion plugin on program start. Declaring `SOURCES='FNRsc'` would disable the builtin FNRstart source. `SOURCES=MySourceOnly` would be a dedicated "MySourceOnly" application for a suitable MySourceOnly plugin.
 
 When `SOURCES` includes multiple elements, a status bar appears at the bottom of the main window. The status bar includes the current source's source-title. If the source-title value is null, findnrun displays the plugin's source-id value instead. Pressing F3 cycles the list view through the sources. Pressing Ctrl+_i_, for _i_=1,2,..,9 displays the _i_-th source directly.
-Source-titles can be translated by adding translation strings to the findnrun.mo files in the package.
+Source-titles can be translated by adding gettext data to file /usr/share/locale/<language>/LC_MESSAGES/findnrun-plugins.mo.
 
 The first column of the list view displays the tap-record icon-filename. If the icon-filename value is null, findnrun displays the source default icon set by `ICON_<icon-id>`. If also the default icon is null findnrun displays an empty cell.
 
 There is no provision for a plugin to display a user interface of its own. Nor is there a system to signal a plugin important events.
 
+A word of caution: gtkdialog can't display streaming data. A tap-command must close its output stream for gtkdialog to populate the list view.
+
 **Formatter**
 
-At the moment, all non-builtin source tap-commands are required to end with `| findnrun-formatter`, that is, they must pipe to the command findnrun-formatter. This contraint might be removed in the future.
+At the moment, all non-builtin source tap-commands are required to end with `| findnrun-formatter --`. This contraint might be removed in the future. So the typical tap-command stanza is:
+```
+  <command> | findnrun-formatter -- <formatter-options>
+```
 
-If tap-command outputs single records, that is, the records don't include "|" (pipe), then do append `-O s` to findnrun-formatter's command. "-O s" tells the formatter not to decode each tap-record in detail.
+If tap-command outputs single records, that is, the records don't include "|" (pipe), then do include `-O s` in findnrun-formatter's options. "-O s" tells the formatter not to decode each tap-record in detail.  If the source default icon is non-null, include `-I "${ICON}"`.
 
-If the source default icon is non-null, do append `-I "${ICON}"` to the formatter's command.
-
-Run findnrun-formatter -h to view usage information.
+Run `findnrun-formatter -- -h` for usage information. Note again those two dashes in the formatter command line: they are required because the formatter is a gawk script.
 
 ### Source plugin examples
 
@@ -119,7 +123,7 @@ Each example builds over the previous ones, so please add all previous declarati
 Save the following script in file `/fnr-find-file.sh`
 ```
     #!/bin/sh
-    find $HOME -type f -name "*$1*"` | findnrun-formatter -O s -I "${ICON}"
+    find $HOME -type f -name "*$1*" | findnrun-formatter -- -O s -I "${ICON}"
 ```
 
 Edit `~/.findnrun` and add:
@@ -127,22 +131,27 @@ Edit `~/.findnrun` and add:
     TITLE_find_file='open ROX-Filer with file selected'
     TAP_find_file='export ICON; /fnr-find-file.sh "${term}"'
     DRAIN_rox='rox -s'
-    ICON='find-file.png'
+    ICON_find_file='find-file.png'
     # tap:drain:default_icon:title
-    SOURCE_find_file='find:rox:find:find'
+    SOURCE_find_file='find_file:rox:find_file:find_file'
     SOURCES='FNRstart find_file'
 ```
-Don't forget making your script executable: `chmod +x /fnr-find-file.sh`.
-Add your icon: `cp /path/to/find-file.png ${HOME}/.icons/`
+Don't forget to make your script executable and add the declared default icon:
+```
+    chmod +x /fnr-find-file.sh
+    cp -v /usr/share/icons/hicolor/32x32/apps/findnrun.png $HOME/.icons/find-file.png
+```
 
-Now every time `find_file` is selected in the user interface and the user types a character in the search field, `/fnr-find-file.sh` lists file names that partially match the search term and are located inside and below the user's `$HOME` folder. If the user selects and activates an entry, ROX-Filer is started with the given file selected.
+Now every time `find_file` is selected in the user interface and the user types a character in the search field, `/fnr-find-file.sh` lists file names that partially match the search term and are located inside and below the user's `$HOME` folder. If the user selects and activates an entry, ROX-Filer is started with the given file selected (but how clearly marked the selection will depend on your ROX-Filer version).
 
 **Find file revisited**
 
-Let's tweak the previous example to avoid the overhead of calling an external script. Let's also start findnrun directly into `find_file`'s view. Edit `~/.findnrun` and replace:
+Let's tweak the previous example to avoid the overhead of calling an external script. Let's also start findnrun directly into `find_file`'s view. Edit `~/.findnrun` and add:
 ```
-    TAP_find='find $HOME -type f -name "*${term}*" | findnrun-formatter -O s -I "${ICON}"'
-    SOURCES='find_file FNRstart'
+    TITLE_find_file2='find file no script'
+    TAP_find_file2='find $HOME -type f -name "*${term}*" | findnrun-formatter -- -O s -I "${ICON}"'
+    SOURCE_find_file2='find_file2:rox:find_file:find_file2'
+    SOURCES='find_file2 find_file FNRstart'
 ```
 
 **Find file advanced**
@@ -150,7 +159,7 @@ Let's tweak the previous example to avoid the overhead of calling an external sc
 A more powerful file search method might involve case insensitive regular expression matching.
 ```
     TITLE_iregex='Find file with regular expressions'
-    TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -O s -I "${ICON}"'
+    TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -- -O s -I "${ICON}"'
     SOURCE_iregex='iregex:rox:find-file:iregex'
     SOURCES='iregex find_file FNRstart'
 ```
