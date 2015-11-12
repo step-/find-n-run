@@ -31,6 +31,7 @@ The last example is the minimum data a well-formed record must include. Accordin
 **Installing source plugins**
 
 In the following discussion:
+
  * An `<...-id>` is a valid sh variable name: only letters, digits, and underscore characters are allowed.
  * Characters outside of angle brackets are to be written literally.
 
@@ -42,6 +43,7 @@ A source plugin is installed by adding its declaration into `.findnrunrc` as fol
     ICON_<icon-id>='<icon-filename>'      # optional
     TITLE_<title-id>='<source-title>'     # optional
 ```
+
  * Each `<...-id>` identifier must be unique within its declaration group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_).
  * `<tap-command>` is a valid sh command (more on this further down).
  * `<drain-command>` is also a valid sh command.
@@ -148,13 +150,14 @@ Edit `~/.findnrun` and add:
     SOURCE_find_file='find_file:rox:find_file:find_file'
     SOURCES='FNRstart find_file'
 ```
+
 Don't forget to make your script executable and add the declared default icon:
 ```
     chmod +x /fnr-find-file.sh
     cp -v /usr/share/icons/hicolor/32x32/apps/findnrun.png $HOME/.icons/find-file
 ```
 
-Now every time `find_file` is selected in the user interface and the user types a character in the search field, `/fnr-find-file.sh` lists file names that partially match the search term and are located inside and below the user's `$HOME` folder. If the user selects and activates an entry, ROX-Filer is started with the given file selected (but how clearly marked the selection will depend on your ROX-Filer version).
+Now every time source `find_file` is selected in the user interface and the user types a character in the search field, `/fnr-find-file.sh` starts and lists file names that partially match the search term and are located inside and below the user's home folder. If the user selects and activates an entry, ROX-Filer starts with the given file selected (but how visibly selected depends on the ROX-Filer version).
 
 **Find file revisited**
 
@@ -176,13 +179,12 @@ A more powerful file search method might involve case insensitive regular expres
     SOURCES='iregex find_file FNRstart'
 ```
 
-tap-command prepends `.*` to `${term}` because find -iregex matches on the whole path. Without `.*` the expression would never match.
+tap-command prepends `.*` to `${term}`
+Since find option -iregex matches _on the whole path_, we start the search expression with ".*" otherwise find -iregex would never match.
 
 ### Plugin performance
 
 Please note that the active source plugin's tap-command is invoked on every keypress. So it's very important for tap-commands to return as quickly as possible otherwise they could slow down the user interface to a crawl.
-
-TODO add sh time hooks.
 
 ### Debugging plugins
 
@@ -190,21 +192,24 @@ Your plugin can print debugging messages to the standard error stream. Do not wr
 
 Findnrun validates source plugin declarations in various ways. On fatal errors findnrun prints the offending subject's id, when it is known, to the standard error strem, and exits with an error exit status. On recoverable errors, findnrun prints the offending source's id and a warning code to the standard error stream, disables the source, and continues. On warnings findnrun prints a warning code to the standard error stream and continues.
 ```
-FATAL ERROR EXIT CODES
-TODO
-
-RECOVERABLE ERROR CODES
-TODO
-
-WARNING CODES
-TODO
+    FATAL ERROR EXIT CODES 1-99
+    currently none
+    -
+    RECOVERABLE ERROR CODES 101-199
+    101 source-id isn't a valid shell variable name (SOURCES=)
+    102 null tap-command
+    103 invalid tap-command sh syntax
+    104 invalid drain-command sh syntax
+    -
+    WARNING CODES 201-299
+    currently none
 ```
 
 To run findnrun in debugging mode use: `DEBUG=<level> findnrun`. Levels 1-9 enable increasingly verbose debugging messages to the standard error stream. Level 10 dumps the gtkdialog definition to the standard output stream and exits.
 
-### Known "official" plugins**
+### List of known "official" plugins**
 
-While there is no centralized registration service/authority for plugin IDs, if you send me the ID of your plugin I will publish it in findnrun's github page, so other developers will be able to see it.
+While there is no centralized registration service/authority for plugin IDs, if you send me the ID of your plugin I will publish it in findnrun's project page where other developers will be able to see it.
 ```
     # Your plugin here...
 ```
