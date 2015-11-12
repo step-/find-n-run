@@ -158,7 +158,8 @@ SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTE
 store_valid_sources() # [[[
 # In: $SOURCES
 # Out: list of valid sources that got stored for gtkdialog sh's use.
-# Return value: a list of valid sources, a subset of SOURCES.
+# Return value:   <number of valid sources> <list of valid sources>
+#   The list of valid sources is a subset of $SOURCES.
 # Return code: [[[
 # 1-99: fatal; 101-199: recoverable; 201-299: warning.
 # If the offending subject is detected it is printed to stderr.
