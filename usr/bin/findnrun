@@ -842,7 +842,7 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varCMD: command history editing.}
     <hbox space-fill="false" space-expand="false">
-      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the down-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit.")">
+      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the down-arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">
         <variable>varCMD</variable>
         <default>$(gettext "Press down-arrow key to grab command")</default>
         ${REMARK# NOTE: Commands imitate varLISTs action, see generate_invoke_source_drain().}
