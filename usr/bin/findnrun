@@ -187,6 +187,7 @@ store_valid_sources() # [[[
     -v MSG3="$(gettext "source warning: %d%s\n")" \
 '#!/usr/bin/gawk -f
 BEGIN {
+  TEXTDOMAIN="'"${TEXTDOMAIN}"'"
   if('${DEBUG:-0}') print "\n=== SOURCE DECLARATIONS" > "/dev/stderr"
   # Invalid SOURCES syntax? 101 [[[
   nE = split(SOURCES, E)
@@ -242,6 +243,8 @@ END {
     split(VGI["SOURCE",s], a, /:/)
     if(a[1]) TS[s] = a[1] # TODO should use symbols, not number
     if(a[2]) DS[s] = a[2] # ditto
+    # Localize title; ditto
+    if(a[4]) VGI["TITLE", a[4]] = dcgettext(VGI["TITLE", a[4]], "findnrun-plugin-"s)
     if('${DEBUG:-0}'>4)
       printf "source %s: TAP %s DRAIN %s\n", s, \
         (s in TS) ?TS[s] :"NULL", (s in DS) ?DS[s] :"NULL" >"/dev/stderr"
