@@ -4,7 +4,7 @@
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
   Version=1.10.7-RC1
-# authors: March-May 2015 by SFR and L18L; onwards gawk fork by step
+# authors: Jun-Nov 2015 step; March-May 2015 SFR and L18L.
 # license: GNU GPL applies
 # requirements: gtk-dialog >= 0.8.3, gawk, ash (or bash)
 # source: https://github.com/step-/find-n-run
@@ -605,20 +605,21 @@ EOF
 find_help
 
 # i18n About dialog widgets: window text; number of apps text (singular/plural)
+# i18n 1.7 use %s for authors.
 export GUI_ABOUT='
 <window title="'"${APP_TITLE}"'" icon-name="edit-find" window-position="2">
   <vbox>
     <frame>
       <text justify="0" selectable="true" can-focus="false">
         <label>"'"$(printf "$(gettext "%s %s
-authors: SFR, L18L, step
+authors: %s
 Open source - GNU GPL license applies
 
 %s
 %s
 
 configuration: %s
-")" "${APP_NAME}" "${Version}" \
+")" "${APP_NAME}" "${Version}" "SFR, L18L, step" \
 "http://www.murga-linux.com/puppy/viewtopic.php?t=98330" \
 "https://github.com/step-/find-n-run" "${CONFIG}")
 $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")" "${NDATF}"
