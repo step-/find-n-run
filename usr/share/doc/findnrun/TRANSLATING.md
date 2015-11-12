@@ -4,7 +4,12 @@ I will gladly add contributed translations to this git repository if
 translators send them to me. Generate a Github pull request or attach your
 contributed files (see below) to the forum thread.
 
-### Instructions
+Findnrun source code is prepared for translation with GNU Gettext.  Message catalogs are kept separated into multiple text domains (files):
+
+ * "findnrun" for the required base functionality
+ * "findnrun-plugin-PLUGIN-ID" for each contributed [plugin](plugin.md), where PLUGIN-ID stands for the actual plugin unique identifier.
+
+### Instructions for base functionality
 
  * Start from the pre-generated GNU gettext Portable Object format
    template file `usr/share/doc/nls/findnrun/findnrun.pot`
@@ -60,10 +65,10 @@ the _language code_ for your language, i.e., 'de' for German, 'fr' for French,
 These settings should be enough for `findnrun` to show translated
 messages.  However, they are not sufficient for `findnrun` to also
 display translated application comments. (Translated comments are
-included in many `.desktop` files). To be able to also view translated
+included in many `.desktop` files). To also be able to view translated
 comments you do need to set the system locale code _properly_ by
-following the exact procedure of your linux variant. For instance, the
-steps for Fatdog64 linux involve installing the NLS SFS, dropping to
+following the exact procedure of your Linux variant. For instance, the
+steps for Fatdog64 Linux involve installing the NLS SFS, dropping to
 the console, setting the locale code and variables, and restarting X:
 
     # First download fd64-nls_701.sfs with the SFS manager
@@ -95,6 +100,12 @@ recommended.
     Name[es]=Buscar y ejecutar
     Comment=Find and run apps very quickly
     Comment[es]=Buscar y ejecutar aplicaciones muy rápidamente
+
+### Plugins
+
+Each [plugin](plugin.md) has its own `.mo` file, which can be translated
+following steps analogous to the ones given in section _Instructions for
+base functionality_.
 
 ### Help files
 
@@ -162,7 +173,7 @@ files is archived on github as a `tar.gz` file
 ### Thank you
 
 I am committed to enabling software localization. I believe it is
-important in widening the adoption of linux, and it is respectful of
+important in widening the adoption of Linux, and it is respectful of
 other cultures. Your help in providing an array of language translations
 is very much appreciated.  Thank you.
 

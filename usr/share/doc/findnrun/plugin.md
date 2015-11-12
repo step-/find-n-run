@@ -95,7 +95,6 @@ Since version 1.7 a shell-completion plugin is bundled, so the amended default s
 On program start findnrun displays the tap-records of the first element of SOURCES. So declaring `SOURCES='FNRsc FNRstart'` would display the shell-completion plugin on program start. Declaring `SOURCES='FNRsc'` would disable the builtin FNRstart source. `SOURCES=MySourceOnly` would be a dedicated "MySourceOnly" application for a suitable MySourceOnly plugin.
 
 When `SOURCES` includes multiple elements, a status bar appears at the bottom of the main window. The status bar includes the current source's source-title. If the source-title value is null, findnrun displays the plugin's source-id value instead. Pressing F3 cycles the list view through the sources. Pressing Ctrl+_i_, for _i_=1,2,..,9 displays the _i_-th source directly.
-Source-titles can be translated by adding gettext data to file /usr/share/locale/<language>/LC_MESSAGES/findnrun-plugins.mo.
 
 The first column of the list view displays the tap-record icon-filename. If the icon-filename value is null, findnrun displays the source default icon set by `ICON_<icon-id>`. If also the default icon is null findnrun displays an empty cell.
 
@@ -103,9 +102,13 @@ There is no provision for a plugin to display a user interface of its own. Nor i
 
 A word of caution: gtkdialog can't display streaming data. A tap-command must close its output stream for gtkdialog to populate the list view.
 
+**Plugin internationalization**
+
+Source-titles are looked up for [translations](TRANSLATING.md) using GNU Gettext in text domain "findnrun-plugin-PLUGIN-ID", where PLUGIN-ID stands for the `<source-id>` value.
+
 **Formatter**
 
-At the moment, all non-builtin source tap-commands are required to end with `| findnrun-formatter --`. This contraint might be removed in the future. So the typical tap-command stanza is:
+At the moment, all non-builtin source tap-commands are required to end with `| findnrun-formatter --`. This constraint might be removed in the future. So the typical tap-command stanza is:
 ```
   <command> | findnrun-formatter -- <formatter-options>
 ```
