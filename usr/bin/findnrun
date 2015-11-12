@@ -735,6 +735,8 @@ generate_invoke_source_tap() # [[[2
   #]]]
   # Get source[varF3]'s values. [[[
 # Optimization: use cached <variable>TAP</variable>.
+# -z takes care of first source's first typed search case. [[[
+# For it to work correctly <variable>TAP must have NO <default> tag.]]]
   echo -n '; if [ -z "${TAP}" ]; then '
   generate_get_source
   echo -n '; fi'
@@ -1012,7 +1014,6 @@ start_dialog << EOF
   <entry visible="false" sensitive="false">
     <variable>TAP</variable>
     ${REMARK# Cache TAP until next refresh:TAP.}
-    <default>debug1</default>
     <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${TAP}"</input>
     ${DEBUG:+<action>echo>&2 ,,, TAP ,,,</action>}
   </entry>
