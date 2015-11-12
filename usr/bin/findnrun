@@ -43,7 +43,7 @@ HELPFILE=/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.h
 
 # Initialize variables that should not be changed. [[[1
 REMARK= # leave unset
-DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-3
+DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 0-10
 trap 'rm -rf "${TMPF:-/tmp/dummy}"* ${DEBUG:+/tmp/varSEARCH}' INT QUIT TERM HUP 0
 TMPF=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPF}"
 DATF="${TMPF}/.dat" # database of .desktop file entries
@@ -202,34 +202,49 @@ BEGIN {
   # Fall back to BUILTIN source.
   if("" == valid_sources) valid_sources = "FNRstart"
   #]]]
-  pattern = "^(SOURCE|TAP|DRAIN|ICON|TITLE)_([^=]+)=(.*)"
+  # id types
+  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE"
+  # G[] array of types
+  nG = split(ordered_G, G, /\|/)
+  pattern = "^("ordered_G")_([^=]+)=(.*)"
 }
 {
   if(match($0, pattern, a)) {
     # Parse declarations [[[
-    # G[] array of groups (a[1]): SOURCE, TAP, DRAIN, ICON, TITLE
-    # I[] array of any type ids (a[2])
-    # VGI[] values by (group, id) (a[3])
-    # S[] array of source-ids (a[1])
-    G[a[1]] = a[1]; I[a[2]] = a[2]
-    # Input stream ("set |") formats all values between single quotes.
-    VGI[a[1], a[2]] = a[3] = substr(a[3], 2, length(a[3])-2) # unquote
+    # I[] array of any-type ids a[2]
+    # S[] array of source-ids a[1] contained in I[]
+    # VGI[] values a[3] by (group a[1], id a[2])
+    I[a[2]] = a[2]
     if("SOURCE" == a[1]) S[a[2]] = a[2]
-    if('${DEBUG:-0}'>2) print a[1],"**",a[2],"**",a[3] > "/dev/stderr"
+    # Input stream ("set |") formats its output values between single quotes.
+    VGI[a[1], a[2]] = substr(a[3], 2, length(a[3])-2) # unquote
+    if('${DEBUG:-0}'>4) print a[1],"**",a[2],"**",a[3] > "/dev/stderr"
     #]]]
   }
 }
 END {
+    if('${DEBUG:-0}'>3) {
+      printf "# I:" >"/dev/stderr"; for(i in I) printf(" %s", i) >"/dev/stderr"
+      print "" >"/dev/stderr"
+      printf "# S:" >"/dev/stderr"; for(s in S) printf(" %s", s) >"/dev/stderr"
+      print "" >"/dev/stderr"
+      for(i in I) {
+        for(j=1; j<=nG; j++) {
+          g = G[j]
+          if((g, i) in VGI)
+            printf("# <%s, %s> = %s\n", g, i, VGI[g, i]) >"/dev/stderr"
+        }
+      }
+    }
   # TS[] array of tap-ids by source-id
   # DS[] array of drain-ids by source-id
   for(s in S) {
     split(VGI["SOURCE",s], a, /:/)
-    if(a[1]) TS[s] = a[1]
-    if(a[2]) DS[s] = a[2]
-    if('${DEBUG:-0}'>2)
-      print "source",s, \
-        "has tap",(s in TS) ?TS[s] :"NULL", \
-        "and drain", (s in DS) ?DS[s] :"NULL" >"/dev/stderr"
+    if(a[1]) TS[s] = a[1] # TODO should use symbols, not number
+    if(a[2]) DS[s] = a[2] # ditto
+    if('${DEBUG:-0}'>4)
+      printf "source %s: TAP %s DRAIN %s\n", s, \
+        (s in TS) ?TS[s] :"NULL", (s in DS) ?DS[s] :"NULL" >"/dev/stderr"
   }
   # Null tap-command? 102 [[[
   for(s in S) if(! (("TAP", s) in VGI) || ! VGI["TAP", s]) {
@@ -254,11 +269,19 @@ END {
   }
   return_sources = substr(return_sources, 2)
   #]]]
-  # Return list of valid sources, a subset of SOURCES.
-  print return_sources
+  # Append NSOURCES= to all saved files. [[[
+  nsources = split(return_sources, a)
+  for(j=0; j < nsources; j++) {
+    saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", j, a[j+1])
+    printf("NSOURCES='"'%d'"'\n", nsources) >> saveas
+    close(saveas)
+  }
+  #]]]
+  # Return valid sources
+  print nsources, return_sources
 }
 function syntax_check(group, A, I, code,   i, checker, status) { # [[[
-  # Deletes elements of I.
+  # Checks all items of A. Deletes items of I.
 
   # The best syntax checker that we can get, but still quite limited.
   checker = "sh -n"
@@ -285,20 +308,32 @@ function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   }
 }
 #]]]
-function store_source(s, buf, A,   a, g) { #[[[
+function store_source(s, buf, A,   a, g, i, j, I) { #[[[
   # NOTE store_source increments global static variable _global_store_source.
   # Call store_source for the ORDERED list of valid sources.
-  # In:
+  # In => Out:
   #   s source-id
-  #   buf==""      => compose from globals for s; OR
-  #   buf=="array" => compose from A["SOURCE"]=source-id, A["TAP"]=tap-command, ... 
-  # Assert: composed values can be (and will be) safely wrapped in single quotes,
-  # since since they are generated with sh command env.
+  #   buf==""      => compose from globals G and VGI for s; OR
+  #     Note1: on null title-id output source-id as title value
+  #     Note2: on null other-id output null value, i.e., VAR='' << IMPORTANT
+  #   buf=="array" => compose from A["SOURCE"]=source-id, A["TAP"]=tap-command, ...
+  # Note3: output values will be wrapped in single quotes.
+  # Assert: input values can be safely wrapped in single quotes because they
+  # were formatted with (piped from) the sh "env" command.
   if("" == buf) {
     buf = sprintf("ID='"'%s'"'", s)
-    for(g in G) if((g, s) in VGI) \
-      buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, s])
-  } else if("array" == buf) {
+    split(s":"VGI["SOURCE",s], I, /:/)
+    for(j = 1; j <= nG; j++) {
+      g = G[j]; i = (j in I) ?I[j] :"N\x08NULL" # \x08 => never "(g,i) in VGI"
+      if('${DEBUG:-0}'>2) printf ("<%s, %s> ", g, i) > "/dev/stderr"
+      if((g, i) in VGI)
+          buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, i])
+      else if("TITLE" == g)
+          buf = buf sprintf("\n%s='"'%s'"'", g, s) # Note1
+      else
+          buf = buf sprintf("\n%s='"''"'", g) # Note2
+    }
+  } else if("array" == buf) { # NOT USED
     buf = sprintf("ID='"'%s'"'", s)
     for(a in A)
       buf = buf sprintf("\n%s='"'%s'"'", a, A[a])
@@ -328,7 +363,7 @@ function warning(code, subject, source) { #[[[
 
 store_valid_sources > "${TMPF}/.$$"
 x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
-read sources < "${TMPF}/.$$" # all and only valid sources
+read NSOURCES sources < "${TMPF}/.$$" # all and only valid sources
 # If some sources were disabled display startup warning dialog. [[[
 if [ "${sources}" != "${SOURCES}" ]; then
    # TODO display gtkdialog window over main window.
