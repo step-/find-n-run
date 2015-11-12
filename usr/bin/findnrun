@@ -76,8 +76,8 @@ export varFOCUSSEARCH=false
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=F2
 HOTKEY_F3=F3
-# Builtin sources: "desktop apps"
-SOURCES="FNRstart"
+# Builtin sources: "desktop apps" and "shell completion".
+SOURCES="FNRstart FNRsc"
 
 # Read / supplement $CONFIG.
 touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
@@ -151,11 +151,20 @@ done
 
 # Declare builtin sources. [[[1
 # $BUILTIN_SOURCES get special treatment
-BUILTIN_SOURCES="FNRstart"
+BUILTIN_SOURCES="FNRstart|FNRsc"
 
 SOURCE_FNRstart="FNRstart:::FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=${APP_NAME}
+
+SOURCE_FNRsc="FNRsc::FNRsc:FNRsc"
+# compgen requires bash as gtkdialog back-end shell.
+TAP_FNRsc='compgen -ac "${term}" |findnrun-formatter -- -O s -I "${ICON}"'
+ICON_FNRsc=findnrun-FNRsc
+TITLE_FNRsc=$(gettext "shell completion")
+
+# Cache their icons.
+[ -e "${ICONSTEM}FNRsc.png" ] || cp /usr/share/doc/findnrun/shell-completion.png "${ICONSTEM}FNRsc.png"
 
 # Prepare sources. [[[1
 SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTEM}" 0 FNRstart
@@ -692,7 +701,6 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
 generate_get_source() # [[[2
 {
   # Echo sh code that loads the current source's field values.
-#DELETEME  echo -n "set -- ${SOURCES}; shift \${varF3:-0}; . \"${SRCSTEM}\"\${varF3:-0}-*.sh"
   echo -n ". \"${SRCSTEM}\"\${varF3:-0}-*.sh"
 }
 generate_rotated_sources() # $1-sh-fragment  [[[2 NOT USED
