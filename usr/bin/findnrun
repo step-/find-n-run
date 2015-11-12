@@ -766,6 +766,44 @@ generate_invoke_source_drain() # [[[2
   #]]]
 }
 
+generate_status_bar() # [[[2
+{
+  # Echo sh code that loads the current and next source's titles
+  # and sets them as navigation hotkey labels.
+  set -- ${SOURCES:-FNRStart}
+  [ $# -lt 2 ] && return # no status bar unless:
+  # Multiple sources. [[[
+  #i18n 1.7 Status bar: Ctrl+0... and F3... hotkeys
+  local ctrlnkey funckey
+  ctrlnkey=$(gettext "[ctrl+%d]") funckey=$(gettext "[%s]")
+  echo -n '
+    <vbox>
+      <statusbar has-resize-grip="false" sensitive="false">
+        <variable export="false">varSBAR</variable>
+        <input>'
+  echo -n "${DEBUG:+set -x; }"
+  echo -n 'title="${TITLE}"' # This is a gtkdialog sh variable and...
+  # [[[ ... it gets its value from the <input> tag, which is activated only
+  # after refresh:TITLE. Adding a <default> tag value for TITLE doesn't
+  # initialize its **sh value**. It only initializes its **widget** value.
+  # Again, here we deal with the gtkdialog sh value, so we need to be
+  # prepared to the null value case, which manifests itself only once,
+  # when gtkdialog starts. Here it goes.
+  #]]]
+  echo -n '; [ -z "${title}" ] && . "'"${SRCSTEM}"'"${varF3:-0}-*.sh && title="${TITLE}"'
+  # Load next source's values
+  echo -n '; . "'"${SRCSTEM}"'"$(((${varF3:-0} + 1) % ${NSOURCES:-'${NSOURCES}'}))-*.sh'
+  echo -n '; next="${TITLE}"'
+  # Send formatted data to SBAR.
+  echo -n '; printf "'"%s ${ctrlnkey}  »  ${funckey} %s"'" "${title}" $((${varF3}+1)) "'"${HOTKEY_F3}"'" "${next}"'
+#  echo -n '; printf "'"${ctrlnkey} %s  »  %s ${funckey}"'" $((${varF3}+1)) "${title}" "${next}" "'"${HOTKEY_F3}"'"'
+  echo "</input>
+        ${DEBUG:+<action>echo>&2 ,,, varSBAR ,,,</action>}
+      </statusbar>
+    </vbox>"
+  #]]]
+}
+
 generate_source_hotkeys() # [[[2
 {
   #echo '<action signal="key-press-event">echo "MOD=$KEY_MOD RAW=$KEY_RAW SYM=$KEY_SYM UNI=$KEY_UNI VAL=$KEY_VAL">&2</action>'
@@ -954,6 +992,12 @@ start_dialog << EOF
       ${REMARK# ]]]}
     </hbox>
     ${REMARK# ]]]}
+    ${REMARK# [[[. varSBAR statusbar}
+    ${REMARK# Do not vbox the status bar here; keep the vbox under the control}
+    ${REMARK# of generate_status_bar to be able to hide the status bar without}
+    ${REMARK# leaving a tiny empty strip at the bottom of the main window.}
+    $(generate_status_bar)
+    ${REMARK# ]]]}
   </vbox>
   ${REMARK# Do not vbox/hbox hidden widgets because boxes add some unnecessary (tiny) padding.}
   ${REMARK# [[[. Cached source declaration variables (hidden).}
@@ -1035,6 +1079,9 @@ start_dialog << EOF
     <action>refresh:SOURCE</action>
     <action>refresh:ID</action>
     ${REMARK# ]]]}
+    ${DEBUG:+<action>echo>&2 REFRESH varSBAR [[ ,,,</action>}
+    <action>refresh:varSBAR</action>
+    ${DEBUG:+<action>echo>&2 ]] ,,,</action>}
     <action>clear:varSEARCH</action>
     <action>refresh:varLIST</action>
   </entry>
