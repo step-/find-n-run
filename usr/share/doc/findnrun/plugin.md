@@ -144,10 +144,10 @@ Edit `~/.findnrun` and add:
 ```
     TITLE_find_file='open ROX-Filer with file selected'
     TAP_find_file='export ICON; /fnr-find-file.sh "${term}"'
-    DRAIN_rox='rox -s'
+    DRAIN_filer_select='rox -s'
     ICON_find_file='find-file.png'
     # tap:drain:default_icon:title
-    SOURCE_find_file='find_file:rox:find_file:find_file'
+    SOURCE_find_file='find_file:filer_select:find_file:find_file'
     SOURCES='FNRstart find_file'
 ```
 
@@ -165,7 +165,7 @@ Let's tweak the previous example to avoid the overhead of calling an external sc
 ```
     TITLE_find_file2='find file no script'
     TAP_find_file2='find $HOME -type f -name "*${term}*" | findnrun-formatter -- -O s -I "${ICON}"'
-    SOURCE_find_file2='find_file2:rox:find_file:find_file2'
+    SOURCE_find_file2='find_file2:filer_select:find_file:find_file2'
     SOURCES='find_file2 find_file FNRstart'
 ```
 
@@ -175,7 +175,7 @@ A more powerful file search method might involve case insensitive regular expres
 ```
     TITLE_iregex='Find file with regular expressions'
     TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -- -O s -I "${ICON}"'
-    SOURCE_iregex='iregex:rox:find_file:iregex'
+    SOURCE_iregex='iregex:filer_select:find_file:iregex'
     SOURCES='iregex find_file FNRstart'
 ```
 
