@@ -194,7 +194,11 @@ A more powerful file search method might involve case insensitive regular expres
 ```
 
 tap-command prepends `.*` to `${term}`
-Since find option -iregex matches _on the whole path_, we start the search expression with ".*" otherwise find -iregex would never match.
+Since find option -iregex matches _on the whole path_, we start the search expression with `.*` otherwise find -iregex would never match.
+
+### Multi-field tap example
+
+So far we have only seen examples of source taps that output a single column, the tap-data column, for each record. Of course a tap could want to output multi-field records, perhaps to show a different icon for each record or a label that differs from its tap-data. This is possible and there is a fully worked-out example to study. Since it's a more substantial example, it isn't included in this document. You can find it in file [/usr/share/doc/findnrun/examples/multi-field-tap.sh](examples/multi-field-tap.sh).
 
 ### Plugin performance
 
