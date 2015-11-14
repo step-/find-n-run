@@ -48,7 +48,7 @@ BEGIN {
   }
   else
   {
-    IFS="|"
+    FS="|"
   }
   SEP="\x08"
   default_icon = ("I" in opt) ?opt["I"] :""
@@ -65,9 +65,20 @@ index(opt["O"], "s") {
 }
 # Multi-field case. {{{2
 {
-  print "Multiple-field formatting to be implemented." > "/dev/stderr" # TODO
-  print "||Multiple-field formatting to be implemented." # TODO
-  exit
+  # Encodings {{{
+  # In:   <icon-filename> '|' <tap-reserved> '|' <label> '|' <tap-data> '|' <comment> '|' <categories>
+  # Out:  Icon|FNR-Reserved|Label|PackedValues
+  # PackedValues:     for SEP=,
+  #   plugin tap: <icon-filename>,<tap-reserved>,<label>,<tap-data>,<comment>,<categories>
+  #   FNRstart:   icon,filename,name,exec,comment,category
+  # Ref:  In: plugin.md tap-record; Out: $AWKB script format_item(); PackedValues: format_item()
+  #}}}
+  # The second column below, FNR-Reserved, is always empty and it's reserved for future expansion.
+  # The tree widget does display its value.
+  print substr(($1 ?$1 :default_icon) "||" $3 "|" $2 SEP $3 SEP $4 SEP $5 SEP $6, 1, 510)
+  # 510 works around gtkdialog tree widget buffer overflow limit
+  if(verbose > 3)
+    print ($1 ?$1 :default_icon) "||" $3 "|", $2 "**", $3, "**", $4, "**", $5, "**", $6 > "/dev/stderr"
 }
 
 # getopt.awk --- Do C library getopt(3) function in awk {{{1
