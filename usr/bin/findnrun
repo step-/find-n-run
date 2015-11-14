@@ -462,6 +462,8 @@ END {
 # Note: assert data does not include characters "|" and $SEP.
 function format_item(   ic,cols) {
   ic = format_icon_cell()
+  # The second column, always empty, is reserved for future expansion.
+  # The tree widget does display its value.
   cols = sprintf("%s||%s|%s", \
     ic, name, \
     sprintf("%s'${SEP}'%s'${SEP}'%s'${SEP}'%s'${SEP}'%s", \
@@ -879,7 +881,10 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varLIST: list tap-data records.}
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
-      <label>Icon|Name|PackedValues</label>
+      ${REMARK# Column names below. So Reserved and Label only are visible.}
+      ${REMARK# Consider also that there is an icon column, so a full input}
+      ${REMARK# record is defined as Icon|Reserved|Label|PackedValues }
+      <label>Reserved|Label|PackedValues</label>
       <variable>varLIST</variable>
       ${REMARK# [[[. Populate list view.}
       <input icon-column="0">${DEBUG:+set -x; }$(generate_invoke_source_tap)</input>
