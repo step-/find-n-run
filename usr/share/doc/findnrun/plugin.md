@@ -1,5 +1,40 @@
 ## Plugins
 
+Before giving the theory, let's start with a complete example.
+
+### The Find File example
+
+You want to add a new source that lists the files in your home folder. Selecting one of the files in the search result list should open the filer - ROX-Filer in our case - in the folder that contains the file, and with the file selected.
+
+We will be implementing a so called tap/drain pair: the tap outputs search results, the drain starts the filer. Here's how.
+
+Save the following script in your home folder `${HOME}/fnr-find-file.sh`
+```
+    #!/bin/sh
+    find $HOME -type f -name "*$1*" | findnrun-formatter -- -O s -I "${ICON}"
+```
+
+Edit file `${HOME}/.findnrun` and add:
+```
+    TITLE_find_file='open ROX-Filer with file selected'
+    TAP_find_file='export ICON; "${HOME}/fnr-find-file.sh" "${term}"'
+    DRAIN_filer_select='rox -s'
+    ICON_find_file='find-file.png'
+    # tap:drain:default_icon:title
+    SOURCE_find_file='find_file:filer_select:find_file:find_file'
+    SOURCES='FNRstart find_file'
+```
+
+Make your script executable and add the declared default icon:
+```
+    chmod +x ${HOME}/fnr-find-file.sh
+    cp -v /usr/share/icons/hicolor/32x32/apps/findnrun.png $HOME/.icons/find-file
+```
+
+Now every time you select the `find_file` source in the user interface and type a character in the search field, `/fnr-find-file.sh` starts and lists file names that partially match the search term and are located inside and below your home folder. When you activate an entry ROX-Filer starts with the given file selected - but how visibly selected depends on the ROX-Filer version.
+
+Now the boring details.
+
 ### Source Plugins
 
 A source plugin comprises a _tap_ and, optionally, its _drain_ and its _default icon filename_. The tap outputs the data records that populate the list widget. The drain consumes the selected record when the user presses ENTER or double-clicks the list view selection.
@@ -134,40 +169,13 @@ If tap-command outputs single records, that is, the records don't include "|" (p
 
 Run `findnrun-formatter -- -h` for usage information. Note again those two dashes in the formatter command line: they are required because the formatter is a gawk script.
 
-### Source plugin examples
+### More source plugin examples
 
-Each example builds over the previous ones, so please add all previous declarations in order to make the next example work.
-
-**Find file**
-
-Save the following script in file `/fnr-find-file.sh`
-```
-    #!/bin/sh
-    find $HOME -type f -name "*$1*" | findnrun-formatter -- -O s -I "${ICON}"
-```
-
-Edit `~/.findnrun` and add:
-```
-    TITLE_find_file='open ROX-Filer with file selected'
-    TAP_find_file='export ICON; /fnr-find-file.sh "${term}"'
-    DRAIN_filer_select='rox -s'
-    ICON_find_file='find-file.png'
-    # tap:drain:default_icon:title
-    SOURCE_find_file='find_file:filer_select:find_file:find_file'
-    SOURCES='FNRstart find_file'
-```
-
-Don't forget to make your script executable and add the declared default icon:
-```
-    chmod +x /fnr-find-file.sh
-    cp -v /usr/share/icons/hicolor/32x32/apps/findnrun.png $HOME/.icons/find-file
-```
-
-Now every time source `find_file` is selected in the user interface and the user types a character in the search field, `/fnr-find-file.sh` starts and lists file names that partially match the search term and are located inside and below the user's home folder. If the user selects and activates an entry, ROX-Filer starts with the given file selected (but how visibly selected depends on the ROX-Filer version).
+Each example builds over the previous ones, so please add all previous declarations in order to make the next example work. Recall the first example in this section, 'Find file'.
 
 **Find file revisited**
 
-Let's tweak the previous example to avoid the overhead of calling an external script. Let's also start findnrun directly into `find_file`'s view. Edit `~/.findnrun` and add:
+Let's tweak 'Find file' to avoid the overhead of calling an external script. Let's also start findnrun directly into `find_file`'s view. Edit `~/.findnrun` and add:
 ```
     TITLE_find_file2='find file no script'
     TAP_find_file2='find $HOME -type f -name "*${term}*" | findnrun-formatter -- -O s -I "${ICON}"'
