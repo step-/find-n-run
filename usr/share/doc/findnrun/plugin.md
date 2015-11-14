@@ -2,14 +2,20 @@
 
 ### Source Plugins
 
-A source plugin comprises a _tap_ and, optionally, its _drain_ and its _default icon filename_. The tap outputs the data records that populate the list widget. The drain consumes the selected record when the user presses ENTER or double-clicks the list view selection. Tap-records consist of fields separated by the pipe character '|':
+A source plugin comprises a _tap_ and, optionally, its _drain_ and its _default icon filename_. The tap outputs the data records that populate the list widget. The drain consumes the selected record when the user presses ENTER or double-clicks the list view selection.
+
+**Tap-record**
+
+A tap-record consists of fields separated by the pipe character '|':
 ````
-    <icon-filename> '|' <label> '|' <tap-data> '|' <comment> '|' <categories>
+    <icon-filename> '|' <tap-reserved> '|' <label> '|' <tap-data> '|' <comment> '|' <categories>
 ````
 
 All fields yield string values, all characters allowed (caveat) except the pipe character. There is no way to include a literal pipe character in a value.  All values can be null except for `<tap-data>`.
 
  * `<icon-filename>` is the filename only part (no path and no extension) of a suitable image file. Place the file in the `$ICONCACHE` path (default path `~/.icons`, set in `.findnrunrc`). If the value of icon-filename starts with "findnrun-" the file is automatically deleted when findnrun terminates. If you want for an icon file to survive findnrun's termination, do not start its filename by "findnrun-". If the icon-filename value is null findnrun uses the sources's default icon-filename. Examples of valid icon-filename values: `findnrun-my_icon_used_and_removed`, where its complete default path is `~/.icons/findnrun-my_icon_used_and_removed.png`; `this_icon_survives`, with default path `~/.icons/this_icon_survives.svg`.
+
+ * `<tap-reserved>` is available for a plugin to associate special data to the tap-record record for custom activation. Currently this field isn't processed or further exposed in the plugin interface awaiting feedback from plugin developers.
 
  * `<label>` is displayed in the list widget. If the label value is null findnrun uses tap-data instead.
 
@@ -21,12 +27,12 @@ All fields yield string values, all characters allowed (caveat) except the pipe 
 
 **Examples of well-formed records**
 
-    american_icon|born to run|mplayer /root/bruce.mp3|the boss|multimedia;audio
-    |command line|xterm -e sh||system
-    ||chrome
+    american_icon||born to run|mplayer /root/bruce.mp3|the boss|multimedia;audio
+    |command line||xterm -e sh||system
+    |||chrome
     firefox
 
-The last example is the minimum data a well-formed record must include. Accordingly, findnrun's list view shows a predefined icon, label "firefox" and tap-data "firefox". Similarly, for record `||chrome` the list view shows a predefined icon, title "chrome" and tap-data "chrome". To show an empty icon, set the filename of an empty image. To show an empty label set a space character (" ").
+The last example is the minimum data a well-formed record must include. Accordingly, findnrun's list view shows a predefined icon, label "firefox" and tap-data "firefox". Similarly, for record `|||chrome` the list view shows a predefined icon, title "chrome" and tap-data "chrome". To show an empty icon, set the filename of an empty image. To show an empty label set a space character (" ").
 
 **Installing source plugins**
 
