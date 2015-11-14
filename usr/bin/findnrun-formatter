@@ -57,7 +57,7 @@ BEGIN {
 # Optimized single-field case. {{{2
 index(opt["O"], "s") {
   for(i=1; i <= NF; i++)
-    print substr(default_icon "||" $(i) "|" SEP $(i) SEP $(i) SEP, 1, 510)
+    print substr(default_icon "||" $(i) "|" SEP SEP $(i) SEP, 1, 510)
     # 510 works around gtkdialog tree widget buffer overflow limit
   if(verbose > 3)
     print default_icon "||" $(i) > "/dev/stderr"
