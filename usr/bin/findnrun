@@ -163,8 +163,11 @@ TAP_FNRsc='compgen -ac "${term}" |findnrun-formatter -- -O s -I "${ICON}"'
 ICON_FNRsc=findnrun-FNRsc
 TITLE_FNRsc=$(gettext "shell completion") # i18n 1.7
 
-# Cache their icons.
-[ -e "${ICONSTEM}FNRsc.png" ] || cp /usr/share/doc/findnrun/shell-completion.png "${ICONSTEM}FNRsc.png"
+# Cache icons of enabled sources.
+case " ${SOURCES} " in *' FNRsc '*)
+  [ -e "${ICONSTEM}FNRsc.png" ] || cp /usr/share/doc/findnrun/shell-completion.png "${ICONSTEM}FNRsc.png" ;;
+esac
+
 
 # Prepare sources. [[[1
 SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTEM}" 0 FNRstart
