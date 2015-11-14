@@ -1,5 +1,5 @@
 #!/usr/bin/gawk -f
-# vim: foldmarker=[[[,]]]:
+# vim: fdm=marker:
 
 # =============================================================================
 # findnrun-formatter script
@@ -11,7 +11,7 @@
 
 # Usage: source | findnrun-formatter [-S source-id] [-I icon-filename] [-T title] [-O options] [-v verbosity-level]
 
-# Source plugin formatter script [[[1
+# Source plugin formatter script {{{1
 BEGIN {
   Version = "1.0"
   Program = "findnrun-formatter"
@@ -51,23 +51,26 @@ BEGIN {
     IFS="|"
   }
   SEP="\x08"
+  default_icon = ("I" in opt) ?opt["I"] :""
+  verbose = ("v" in opt) ?opt["v"] :0
 }
-# Optimize well-known sources and single-field case.
+# Optimized single-field case. {{{2
 index(opt["O"], "s") {
   for(i=1; i <= NF; i++)
-    print opt["I"] "||" $(i) "|path" SEP $(i) SEP $(i) SEP
-  if(opt["v"] > 3)
-    print opt["I"] "||" $(i) > "/dev/stderr"
+    print substr(default_icon "||" $(i) "|" SEP $(i) SEP $(i) SEP, 1, 510)
+    # 510 works around gtkdialog tree widget buffer overflow limit
+  if(verbose > 3)
+    print default_icon "||" $(i) > "/dev/stderr"
   exit
 }
-# Multi-field case.
+# Multi-field case. {{{2
 {
   print "Multiple-field formatting to be implemented." > "/dev/stderr" # TODO
   print "||Multiple-field formatting to be implemented." # TODO
   exit
 }
 
-# getopt.awk --- Do C library getopt(3) function in awk [[[1
+# getopt.awk --- Do C library getopt(3) function in awk {{{1
 #
 # Arnold Robbins, arnold@skeeve.com, Public Domain
 #
