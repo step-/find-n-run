@@ -160,12 +160,12 @@ Source-titles are looked up for [translations](TRANSLATING.md) using GNU Gettext
 
 **Formatter**
 
-At the moment, all non-builtin source tap-commands are required to end with `| findnrun-formatter --`. This constraint might be removed in the future. So the typical tap-command stanza is:
+At the moment, all non-builtin source tap-commands are **required** to end with `| findnrun-formatter --` optionally followed by formatter options. This constraint might be removed in the future. So the typical tap-command stanza is:
 ```
-    <command> | findnrun-formatter -- <formatter-options>
+    <command> | findnrun-formatter -- [ <formatter-options> ]
 ```
 
-If tap-command outputs single records, that is, the records don't include "|" (pipe), then do include `-O s` in findnrun-formatter's options. "-O s" tells the formatter not to decode each tap-record in detail.  If the source default icon is non-null, include `-I "${ICON}"`.
+If tap-command outputs single records, that is, the records don't include "|" (pipe), then do include `-O s` formatter option. "-O s" tells the formatter not to decode each tap-record in detail.  If the source default icon is non-null, include `-I "${ICON}"`.
 
 Run `findnrun-formatter -- -h` for usage information. Note again those two dashes in the formatter command line: they are required because the formatter is a gawk script.
 
