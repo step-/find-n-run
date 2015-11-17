@@ -2,6 +2,8 @@
 
 Simple and quick application finder for Linux.
 
+[About](https://github.com/step-/find-n-run) | [Downloads](https://github.com/step-/find-n-run/releases) | [Translations](https://github.com/step-/find-n-run/releases)
+
 ## News
 
  * Find-n-run 1.7 beta1 - [documentation about plugins](plugin.md)
