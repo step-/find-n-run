@@ -1036,49 +1036,49 @@ start_dialog << EOF
   <entry visible="false" sensitive="false">
     <variable>TAP</variable>
     ${REMARK# Cache TAP until next refresh:TAP.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${TAP}"</input>
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TAP}"</input>
     ${DEBUG:+<action>echo>&2 ,,, TAP ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>DRAIN</variable>
     <default>debug2</default>
     ${REMARK# Cache DRAIN until next refresh:DRAIN.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${DRAIN}"</input>
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${DRAIN}"</input>
     ${DEBUG:+<action>echo>&2 ,,, DRAIN ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>ICON</variable>
     <default>${ICON:-null}</default>
     ${REMARK# Cache ICON until next refresh:ICON.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${ICON}"</input>
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${ICON}"</input>
     ${DEBUG:+<action>echo>&2 ,,, ICON ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>TITLE</variable>
     <default>debug3</default>
     ${REMARK# Cache TITLE until next refresh:TITLE.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${TITLE}"</input>
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TITLE}"</input>
     ${DEBUG:+<action>echo>&2 ,,, TITLE ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>SOURCE</variable>
     <default>${SOURCE}</default>
     ${REMARK# Cache SOURCE until next refresh:SOURCE}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${SOURCE}"</input>
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${SOURCE}"</input>
     ${DEBUG:+<action>echo>&2 ,,, SOURCE ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>ID</variable>
     <default>${ID}</default>
     ${REMARK# Cache ID until next refresh:ID.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${ID}"</input>
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${ID}"</input>
     ${DEBUG:+<action>echo>&2 ,,, ID ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>NSOURCES</variable>
     <default>${NSOURCES}</default>
     ${REMARK# Cache NSOURCES until next refresh:NSOURCES.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${NSOURCES}"</input>
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${NSOURCES}"</input>
     ${DEBUG:+<action>echo>&2 ,,, NSOURCES ,,,</action>}
   </entry>
   <entry visible="false" sensitive="false">
