@@ -3,7 +3,7 @@
 
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
-  Version=1.10.7-beta1
+  Version=1.10.7-beta2
 # authors: Jun-Nov 2015 step; March-May 2015 SFR and L18L.
 # license: GNU GPL applies
 # requirements: gtk-dialog >= 0.8.3, gawk, ash (or bash)
