@@ -196,6 +196,7 @@ store_valid_sources() # [[[
 # 203 unreferenced TITLE_
 # 204 unreferenced ICON_
 # 205 unreferenced SOURCE_
+# 206 unreferenced INITSEARCH_
 #]]]
 {
 # i18n 1.7 Source plugin validation.
@@ -222,7 +223,7 @@ BEGIN {
   if("" == valid_sources) valid_sources = "FNRstart"
   #]]]
   # id types
-  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE"
+  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH"
   # G[] array of types
   nG = split(ordered_G, G, /\|/)
   pattern = "^("ordered_G")_([^=]+)=(.*)"
@@ -777,7 +778,7 @@ generate_invoke_source_drain() # [[[2
   #]]]
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
-  echo -n '; unset TAP DRAIN ICON TITLE HINTS varF3'
+  echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH HINTS varF3'
   echo -n '; eval "$@" &'
   #]]]
 }
@@ -871,7 +872,7 @@ start_dialog << EOF
         ${REMARK# ]]]}
         <variable>varSEARCH</variable>
         ${REMARK# The entry widget ignores initial input unless it is refreshed, see varSEARCH0.}
-        <input>echo -n ${INITSEARCH}</input>
+        <input>echo -n "\${INITSEARCH}"</input>
         ${DEBUG:+<input file>/tmp/varSEARCH</input>}
         ${DEBUG:+<action>echo>&2 ,,, varSEARCH ,,,</action>}
         <action>refresh:varLIST</action>
@@ -1083,7 +1084,7 @@ start_dialog << EOF
   <entry visible="false" sensitive="false">
     <variable>INITSEARCH</variable>
     ${REMARK# Cache INITSEARCH until next refresh:INITSEARCH}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${INITSEARCH}"</input>
+    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${INITSEARCH}"</input>
     ${DEBUG:+<action>echo>&2 ,,, INITSEARCH ,,,</action>}
   </entry>
   ${REMARK# ]]]}
@@ -1112,6 +1113,7 @@ start_dialog << EOF
     <action>refresh:DRAIN</action>
     <action>refresh:ICON</action>
     <action>refresh:TITLE</action>
+    <action>refresh:INITSEARCH</action>
     <action>refresh:SOURCE</action>
     <action>refresh:ID</action>
     ${REMARK# ]]]}
