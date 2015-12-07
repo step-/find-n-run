@@ -269,7 +269,7 @@ END {
         (s in TS) ?TS[s] :"NULL", (s in DS) ?DS[s] :"NULL" >"/dev/stderr"
   }
   # Null tap-command? 102 [[[
-  for(s in S) if(! (("TAP", s) in VGI) || ! VGI["TAP", s]) {
+  for(s in S) if(! s in TS || ! (("TAP", TS[s]) in VGI) || ! VGI["TAP", TS[s]]) {
     recoverable(102, s)
     delete S[s]
   }
