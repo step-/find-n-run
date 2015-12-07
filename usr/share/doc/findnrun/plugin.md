@@ -80,16 +80,19 @@ A source plugin is installed by adding its declaration into `.findnrunrc` as fol
 ```
     SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<title-id>'
     TAP_<tap-id>='<tap-command>'
-    DRAIN_<drain-id>='<drain-command>'    # optional
-    ICON_<icon-id>='<icon-filename>'      # optional
-    TITLE_<title-id>='<source-title>'     # optional
+    DRAIN_<drain-id>='<drain-command>'          # optional
+    ICON_<icon-id>='<icon-filename>'            # optional
+    TITLE_<title-id>='<source-title>'           # optional
+    INITSEARCH_<init-search-id>='<init-search>' # optional
 ```
 
- * Each `<...-id>` identifier must be unique within its declaration group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_).
+ * Each `<...-id>` identifier must be unique within its declaration group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_).
  * `<tap-command>` is a valid sh command (more on this further down).
  * `<drain-command>` is also a valid sh command.
  * `<icon-filename>` is defined as the tap-record `<icon-filename>`.
  * `<source-title>` is displayed in the user interface.
+ * `<init-search>` can be used to initialize the search input field.
+
  * Declarations marked "optional" can be omitted by leaving their respective `<...-id>` slot empty in their `SOURCE_<source-id>` declaration.
  * Paired exterior double quotes work just as well as single quotes, but require escaping interior sh special characters.
 
@@ -126,9 +129,9 @@ If the drain-command value is null findnrun starts `<tap-data>` with the sh buil
 
 The invocation environment provides tap-command and drain-command with the following preset variables:
 
- * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}` and `${ICON}`, the source's declared values
- * `${ID}`, the source-id
- * `${NSOURCES}, the number of sources.
+ * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}`, `${ICON}` and `${INITSEARCH}` - the source's declared values
+ * `${ID}` - the source-id
+ * `${NSOURCES} - the number of sources.
 
 [1] Findnrun also saves two history files: the global history file and the plugin's history file. Currently they are not exposed in the user interface, and the pull-down widget shows the global history. This might change in the future.
 
@@ -194,7 +197,24 @@ A more powerful file search method might involve case insensitive regular expres
 ```
 
 tap-command prepends `.*` to `${term}`
-Since find option -iregex matches _on the whole path_, we start the search expression with `.*` otherwise find -iregex would never match.
+Since find option -iregex matches _on the whole path_, we start the search expression with `.*` otherwise find -iregex would never match. Note also that in order to match in the middle of a file name you need to explicitly append `.*` to the search input field value.
+
+**Initializing the search input field**
+
+When a plugin is activated - by starting findnrun or by pressing F3 or Ctrl+_i_ - the search input field is initialized with the value of `<init-search>`. Let's apply this to the _Find file advanced_ example.
+```
+    TITLE_iregexinit='Find file with regex and init search'
+    INITSEARCH_regexPNG='\.png'
+    SOURCE_iregexPNG='iregex:filer_select:find_file:iregexinit:regexPNG'
+    SOURCES='iregexPNG iregex find_file FNRstart'
+```
+
+You will notice that the insert cursor is placed in column 1, at the beginning of the input text. This isn't ideal but it is the way gtkdialog works. Get in the habit of pressing the End key if you want to continue entering text after the initialization value.
+
+If you want to initialize the search input field for any of the built-in sources, simply add the appropriate line to `~/.findnrun`. For instance, for the default source use:
+```
+    INITSEARCH_FNRstart='audio'
+```
 
 ### Multi-field tap example
 
