@@ -870,7 +870,7 @@ start_dialog << EOF
         <default>$(gettext "Type some letters to refine the list")${IBOL}${IBOL}</default>
         ${REMARK# ]]]}
         <variable>varSEARCH</variable>
-        ${REMARK#. The entry widget ignores inital input unless it is refreshed, see varSEARCH0.}
+        ${REMARK# The entry widget ignores initial input unless it is refreshed, see varSEARCH0.}
         <input>echo -n ${INITSEARCH}</input>
         ${DEBUG:+<input file>/tmp/varSEARCH</input>}
         ${DEBUG:+<action>echo>&2 ,,, varSEARCH ,,,</action>}
@@ -885,12 +885,12 @@ start_dialog << EOF
       </button>
     </hbox>
     ${REMARK# ]]]}
-    ${REMARK#. varSEARCH0: refresh initial search input. [[[}
+    ${REMARK# varSEARCH0: refresh initial search input. [[[}
     <hbox space-expand="false">
       <timer milliseconds="true" interval="100" visible="true">
         <variable>varSEARCH0</variable>
         <action>refresh:varSEARCH</action>
-        ${REMARK#. varF3 re-enables this timer when another plugin gets loaded.}
+        ${REMARK# varF3 re-enables this timer when another plugin gets loaded.}
         <action>disable:varSEARCH0</action>
       </timer>
     </hbox>
