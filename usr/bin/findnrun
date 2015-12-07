@@ -1064,7 +1064,7 @@ start_dialog << EOF
   <entry visible="false" sensitive="false">
     <variable>NSOURCES</variable>
     <default>${NSOURCES}</default>
-    ${REMARK# Cache NSOURCES until next refresh:NSOURCE.}
+    ${REMARK# Cache NSOURCES until next refresh:NSOURCES.}
     <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo -n "\${NSOURCES}"</input>
     ${DEBUG:+<action>echo>&2 ,,, NSOURCES ,,,</action>}
   </entry>
