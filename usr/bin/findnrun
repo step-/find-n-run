@@ -154,11 +154,11 @@ done
 # $BUILTIN_SOURCES get special treatment
 BUILTIN_SOURCES="FNRstart|FNRsc"
 
-SOURCE_FNRstart="FNRstart:::FNRstart"
+SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=${APP_NAME}
 
-SOURCE_FNRsc="FNRsc::FNRsc:FNRsc"
+SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
 # compgen requires bash as gtkdialog back-end shell.
 TAP_FNRsc='compgen -ac "${term}" |findnrun-formatter -- -O s -I "${ICON}"'
 ICON_FNRsc=findnrun-FNRsc
