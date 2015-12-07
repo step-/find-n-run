@@ -870,6 +870,8 @@ start_dialog << EOF
         <default>$(gettext "Type some letters to refine the list")${IBOL}${IBOL}</default>
         ${REMARK# ]]]}
         <variable>varSEARCH</variable>
+        ${REMARK#. The entry widget ignores inital input unless it is refreshed, see varSEARCH0.}
+        <input>echo -n yass</input>
         ${DEBUG:+<input file>/tmp/varSEARCH</input>}
         ${DEBUG:+<action>echo>&2 ,,, varSEARCH ,,,</action>}
         <action>refresh:varLIST</action>
@@ -883,6 +885,16 @@ start_dialog << EOF
       </button>
     </hbox>
     ${REMARK# ]]]}
+    ${REMARK#. varSEARCH0: refresh initial search input. [[[}
+    <hbox space-expand="false">
+      <timer milliseconds="true" interval="100" visible="true">
+        <variable>varSEARCH0</variable>
+        <action>refresh:varSEARCH</action>
+        ${REMARK#. varF3 re-enables this timer when another plugin gets loaded.}
+        <action>disable:varSEARCH0</action>
+      </timer>
+    </hbox>
+      ${REMARK# - ]]]}
     ${REMARK# [[[. varLIST: list tap-data records.}
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
       ${REMARK# Column names below. So Reserved and Label only are visible.}
@@ -1101,6 +1113,7 @@ start_dialog << EOF
     <action>refresh:varSBAR</action>
     ${DEBUG:+<action>echo>&2 ]] ,,,</action>}
     <action>clear:varSEARCH</action>
+    <action>enable:varSEARCH0</action>
     <action>refresh:varLIST</action>
   </entry>
   ${REMARK#  ]]]}
