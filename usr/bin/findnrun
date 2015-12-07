@@ -1115,7 +1115,7 @@ start_dialog << EOF
     <action>refresh:SOURCE</action>
     <action>refresh:ID</action>
     ${REMARK# ]]]}
-    ${DEBUG:+<action>echo>&2 REFRESH varSBAR [[ ,,,</action>}
+    ${DEBUG:+<action>echo>&2 ,,, refresh varSBAR [[</action>}
     <action>refresh:varSBAR</action>
     ${DEBUG:+<action>echo>&2 ]] ,,,</action>}
     <action>clear:varSEARCH</action>
