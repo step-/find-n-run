@@ -6,7 +6,7 @@ Simple and quick application finder for Linux.
 
 ## News
 
- * Find-n-run 1.7 beta1 - [documentation about plugins](plugin.md)
+ * **2015-12-08** [Find-n-run 1.10.7 beta 2 - now with plugins](https://github.com/step-/find-n-run/tree/source-plugins)
  * [Project home](http://github.com/step-/find-n-run)
  * As of version 1.10.5 this script is featured in the _original_
 [Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
