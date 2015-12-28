@@ -21,8 +21,8 @@ TAP_multi='/usr/share/doc/findnrun/examples/multi-field-tap.sh "${term}" "${TITL
 DRAIN_multi='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
 
 # Trap {{{1
-TMPF="/tmp/${0##*/}.tmp.$$"
-trap 'rm -f ".${TMPF:-/tmp/dummy}"*' HUP INT QUIT TERM ABRT 0
+TMPF="/tmp/.${0##*/}.tmp.$$"
+trap 'rm -f "${TMPF:-/tmp/dummy}"*' HUP INT QUIT TERM ABRT 0
 
 # i18n Localization {{{1
 TEXTDOMAIN="findnrun-plugin-multi"
