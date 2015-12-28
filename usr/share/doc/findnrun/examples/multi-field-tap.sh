@@ -91,9 +91,9 @@ $(
     # Strip name template prefix and print to file for column EOF6.
     print substr($0, 1+length("findnrun-")) > "'"${TMPF}.6"'"
   } ' "${TMPF}.4"
+  # Below leave 2nd column (EOF) empty - it is tap-reserved.
 )
 EOF4
-tap-reserved
 EOF5
 $(
   # Print labels courtesy of column EOF4.
@@ -106,8 +106,12 @@ $(
   cat -n "${TMPF}.6"
 )
 EOF7
-comments
+comments row 1
+comments row 2
+etc.
 EOF8
-categories
+categories row 1
+categories row 2
+etc.
 EOF9
 
