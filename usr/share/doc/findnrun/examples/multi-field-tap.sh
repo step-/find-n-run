@@ -19,7 +19,7 @@
     # Source declaration, manually copy to ~/findnrunrc {{{1
     TITLE_multi='multi-field example'
     SOURCE_multi='multi:multi::multi'
-    TAP_multi='/path/to/multi-field-tap.sh "${term}" "${TITLE}" | findnrun-formatter --'
+    TAP_multi='/usr/share/doc/findnrun/examples/multi-field-tap.sh "${term}" "${TITLE}" | findnrun-formatter --'
     DRAIN_multi='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
 
     # Trap {{{1
