@@ -24,7 +24,7 @@
 
     # Trap {{{1
     TMPF="/tmp/${0##*/}.tmp.$$"
-    trap 'rm -f "${TMPF:-/tmp/dummy}"*' HUP INT QUIT TERM ABRT 0
+    trap 'rm -f ".${TMPF:-/tmp/dummy}"*' HUP INT QUIT TERM ABRT 0
 
     # i18n Localization {{{1
     TEXTDOMAIN="findnrun-plugin-multi"
