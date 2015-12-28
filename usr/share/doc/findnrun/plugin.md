@@ -135,7 +135,7 @@ The invocation environment provides tap-command and drain-command with the follo
 
 [1] Findnrun also saves two history files: the global history file and the plugin's history file. Currently they are not exposed in the user interface, and the pull-down widget shows the global history. This might change in the future.
 
-**Source plugin user interface**
+### Source plugin user interface
 
 By default, when findnrun starts and no source plugins are installed, it displays the list of desktop (file) applications, which is connected to the builtin source `ID` "FNRstart". Effectively, the default source installation is:
 ```
@@ -157,11 +157,11 @@ There is no provision for a plugin to display a user interface of its own. Nor i
 
 A word of caution: gtkdialog can't display streaming data. A tap-command must close its output stream for gtkdialog to populate the list view.
 
-**Plugin internationalization**
+### Plugin internationalization
 
 Source-titles are looked up for [translations](TRANSLATING.md) using GNU Gettext in text domain "findnrun-plugin-PLUGIN-ID", where PLUGIN-ID stands for the `<source-id>` value.
 
-**Formatter**
+### Formatter
 
 At the moment, all non-builtin source tap-commands are **required** to end with `| findnrun-formatter --` optionally followed by formatter options. This constraint might be removed in the future. So the typical tap-command stanza is:
 ```
@@ -172,83 +172,13 @@ If tap-command outputs single records, that is, the records don't include "|" (p
 
 Run `findnrun-formatter -- -h` for usage information. Note again those two dashes in the formatter command line: they are required because the formatter is a gawk script.
 
-### More source plugin examples
-
-Each example builds over the previous ones, so please add all previous declarations in order to make the next example work. Recall the first example in this section, 'Find file'.
-
-**Find file revisited**
-
-Let's tweak 'Find file' to avoid the overhead of calling an external script. Let's also start findnrun directly into `find_file`'s view. Edit `~/.findnrun` and add:
-```
-    TITLE_find_file2='find file no script'
-    TAP_find_file2='find $HOME -type f -name "*${term}*" | findnrun-formatter -- -O s -I "${ICON}"'
-    SOURCE_find_file2='find_file2:filer_select:find_file:find_file2'
-    SOURCES='find_file2 find_file FNRstart'
-```
-
-**Find file advanced**
-
-A more powerful file search method might involve case insensitive regular expression matching.
-```
-    TITLE_iregex='Find file with regular expressions'
-    TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -- -O s -I "${ICON}"'
-    SOURCE_iregex='iregex:filer_select:find_file:iregex'
-    SOURCES='iregex find_file FNRstart'
-```
-
-tap-command prepends `.*` to `${term}`
-Since find option -iregex matches _on the whole path_, we start the search expression with `.*` otherwise find -iregex would never match. Note also that in order to match in the middle of a file name you need to explicitly append `.*` to the search input field value.
-
-**Initializing the search input field**
-
-When a plugin is activated - by starting findnrun or by pressing F3 or Ctrl+_i_ - the search input field is initialized with the value of `<init-search>`. Let's apply this to the _Find file advanced_ example.
-```
-    TITLE_iregexinit='Find file with regex and init search'
-    INITSEARCH_regexPNG='\.png'
-    SOURCE_iregexPNG='iregex:filer_select:find_file:iregexinit:regexPNG'
-    SOURCES='iregexPNG iregex find_file FNRstart'
-```
-
-You will notice that the insert cursor is placed in column 1, at the beginning of the input text. This isn't ideal but it is the way gtkdialog works. Get in the habit of pressing the End key if you want to continue entering text after the initialization value.
-
-If you want to initialize the search input field for any of the built-in sources, simply add the appropriate line to `~/.findnrun`. For instance, for the default source use:
-```
-    INITSEARCH_FNRstart='audio'
-```
-
-### Multi-field tap example
-
-So far we have only seen examples of source taps that output a single column, the tap-data column, for each record. Of course a tap could want to output multi-field records, perhaps to show a different icon for each record or a label that differs from its tap-data. This is possible and there is a fully worked-out example to study. Since it's a more substantial example, it isn't included in this document. You can find it in file [/usr/share/doc/findnrun/examples/multi-field-tap.sh](examples/multi-field-tap.sh).
-
 ### Plugin performance
 
 Please note that the active source plugin's tap-command is invoked on every keypress. So it's very important for tap-commands to return as quickly as possible otherwise they could slow down the user interface to a crawl.
 
-### Debugging plugins
+### See Also
 
-Your plugin can print debugging messages to the standard error stream. Do not write to the standard output stream, which is reserved for tap-records.
-
-Findnrun validates source plugin declarations in various ways. On fatal errors findnrun prints the offending subject's id, when it is known, to the standard error strem, and exits with an error exit status. On recoverable errors, findnrun prints the offending source's id and a warning code to the standard error stream, disables the source, and continues. On warnings findnrun prints a warning code to the standard error stream and continues.
-```
-    FATAL ERROR EXIT CODES 1-99
-    currently none
-    -
-    RECOVERABLE ERROR CODES 101-199
-    101 source-id isn't a valid shell variable name (SOURCES=)
-    102 null tap-command
-    103 invalid tap-command sh syntax
-    104 invalid drain-command sh syntax
-    -
-    WARNING CODES 201-299
-    currently none
-```
-
-To run findnrun in debugging mode use: `DEBUG=<level> findnrun`. Levels 1-9 enable increasingly verbose debugging messages to the standard error stream. Level 10 dumps the gtkdialog definition to the standard output stream and exits.
-
-### List of known "official" plugins**
-
-While there is no centralized registration service/authority for plugin IDs, if you send me the ID of your plugin I will publish it in findnrun's project page where other developers will be able to see it.
-```
-    # Your plugin here...
-```
+* [More advanced plugin examples](plugin-examples.md)
+* [Debugging plugins](plugin-debugging.md)
+* [List of known "official" plugins](plugin-list.md)
 
