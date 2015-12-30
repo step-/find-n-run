@@ -43,8 +43,18 @@ HELPFILE=/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.h
 
 # Initialize variables that should not be changed. [[[1
 REMARK= # leave unset
-DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 0-10
-trap 'rm -rf "${TMPF:-/tmp/dummy}"* ${DEBUG:+/tmp/varSEARCH}' INT QUIT TERM HUP 0
+DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-10
+if [ -n "${DEBUG}" ]; then # set DEBUG1, DEBUG2, ... [[[
+  i= c=
+  while true; do
+    i=$(($i +1))
+    [ $i -le 10 -a $i -le ${DEBUG} ] && c=" $c DEBUG$i=1" || break
+  done
+  eval "$c"
+  unset c i
+fi
+#]]]
+trap 'rm -rf "${TMPF:-/tmp/dummy}"* ${DEBUG1:+/tmp/varSEARCH}' INT QUIT TERM HUP 0
 TMPF=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPF}"
 DATF="${TMPF}/.dat" # database of .desktop file entries
 AWKB="${TMPF}/.build.awk" # builds (and queries) database
@@ -207,7 +217,7 @@ store_valid_sources() # [[[
 '#!/usr/bin/gawk -f
 BEGIN {
   TEXTDOMAIN="'"${TEXTDOMAIN}"'"
-  if('${DEBUG:-0}') print "\n=== SOURCE DECLARATIONS" > "/dev/stderr"
+  if('${DEBUG1:-0}') print "\n=== PROCESS SOURCE DECLARATIONS (set DEBUG= 3-5 for more)" > "/dev/stderr"
   # Invalid SOURCES syntax? 101 [[[
   nE = split(SOURCES, E)
   for(j=1; j <= nE; j++) {
@@ -238,12 +248,12 @@ BEGIN {
     if("SOURCE" == a[1]) S[a[2]] = a[2]
     # Input stream ("set |") formats its output values between single quotes.
     VGI[a[1], a[2]] = substr(a[3], 2, length(a[3])-2) # unquote
-    if('${DEBUG:-0}'>4) print a[1],"**",a[2],"**",a[3] > "/dev/stderr"
+    if('${DEBUG5:-0}') print a[1],"**",a[2],"**",a[3] > "/dev/stderr"
     #]]]
   }
 }
 END {
-    if('${DEBUG:-0}'>3) {
+    if('${DEBUG4:-0}') {
       printf "# I:" >"/dev/stderr"; for(i in I) printf(" %s", i) >"/dev/stderr"
       print "" >"/dev/stderr"
       printf "# S:" >"/dev/stderr"; for(s in S) printf(" %s", s) >"/dev/stderr"
@@ -264,7 +274,7 @@ END {
     if(a[2]) DS[s] = a[2] # ditto
     # Localize title; ditto
     if(a[4]) VGI["TITLE", a[4]] = dcgettext(VGI["TITLE", a[4]], "findnrun-plugin-"s)
-    if('${DEBUG:-0}'>4)
+    if('${DEBUG5:-0}')
       printf "source %s: TAP %s DRAIN %s\n", s, \
         (s in TS) ?TS[s] :"NULL", (s in DS) ?DS[s] :"NULL" >"/dev/stderr"
   }
@@ -308,7 +318,7 @@ function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   # The best syntax checker that we can get, but still quite limited.
   checker = "sh -n"
 
-  if('${DEBUG:-0}'>3) { #[[[
+  if('${DEBUG4:-0}') { #[[[
     print "\nsyntax_check",group,":" >"/dev/stderr"
     for(i in A) print "source",i, \
       (i in I) ?"to check" :"is already invalid", \
@@ -319,7 +329,7 @@ function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   #   && its group-id A[i] has an associated value in VGI...
   for(i in A) if(i in I && ((group, A[i]) in VGI)) {
     if(match(BUILTIN, i)) continue # optimization: skip builtin sources
-    if('${DEBUG:-0}'>3) #[[[
+    if('${DEBUG4:-0}') #[[[
       print "now checking",i"'"'"'s", group, A[i],"=>", \
         VGI[group, A[i]] >"/dev/stderr" #]]]
     print VGI[group, A[i]] | checker
@@ -347,7 +357,7 @@ function store_source(s, buf, A,   a, g, i, j, I) { #[[[
     split(s":"VGI["SOURCE",s], I, /:/)
     for(j = 1; j <= nG; j++) {
       g = G[j]; i = (j in I) ?I[j] :"N\x08NULL" # \x08 => never "(g,i) in VGI"
-      if('${DEBUG:-0}'>2) printf ("<%s, %s> ", g, i) > "/dev/stderr"
+      if('${DEBUG3:-0}') printf ("<%s, %s> ", g, i) > "/dev/stderr"
       if((g, i) in VGI)
           buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, i])
       else if("TITLE" == g)
@@ -362,7 +372,7 @@ function store_source(s, buf, A,   a, g, i, j, I) { #[[[
   }
   saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", 0+_global_store_source++, s)
   print buf > saveas
-  if('${DEBUG:-0}'>2) print "\n"buf > "/dev/stderr"
+  if('${DEBUG3:-0}') print "\n"buf > "/dev/stderr"
   return close(saveas)
 }
 #]]]
@@ -402,12 +412,12 @@ fi
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN {
-  if("'${DEBUG:-0}'">0) print "\nstart db builder [[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
+  if('${DEBUG1:-0}') print "\n=== DB BUILDER (set DEBUG= 2 for more)\n[[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
   RS="^~cannot~match~me~" # enable slurp read mode.
   # Choose a shell for ongoing command execution - see icon_workaround().
   sh = "'${SH}'" # not used as a coprocess
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
-  if("'${DEBUG:-0}'">1) print "ICONSTEM="ICONSTEM >"/dev/stderr"
+  if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
 }
 {
   # Slurp NFILES .desktop files.
@@ -421,7 +431,7 @@ END {
     read_icon_index() # creates ICONINDEX map
   }
   # Decode .desktop files.
-  if("'${DEBUG:-0}'">0) print "awk decoding",NFILES,"files..." > "/dev/stderr"
+  if('${DEBUG1:-0}') print "awk decoding",NFILES,"files..." > "/dev/stderr"
   for(i=1; i<=NFILES; i++) {
     fil=file[i]
     name=exec=icnpath=icnname=icnext=comment=category=""
@@ -460,7 +470,7 @@ END {
   # Close shell.
   print "exit" | sh
   close(sh)
-  if("'${DEBUG:-0}'">0) print "]] builder done" >"/dev/stderr"
+  if('${DEBUG1:-0}') print "]] BUILDER" >"/dev/stderr"
 }
 
 # Format tree widget item - columns: icon, name, all-packed-values.
@@ -546,13 +556,13 @@ function is_icon_workaround_uptodate(   uptodate,x) {
     if(uptodate = (-1 != (getline < (x = ICONSTEM".uptodate"))))
       close(x)
   }
-  if("'${DEBUG:-0}'">1) print "is_icon_workaround_uptodate="uptodate > "/dev/stderr"
+  if('${DEBUG2:-0}') print "is_icon_workaround_uptodate="uptodate > "/dev/stderr"
   return(uptodate)
 }
 
 # Read the index file - icon_workaround() helper
 function read_icon_index(   a,b,data,i,x) {
-  if("'${DEBUG:-0}'">1) print "in read_icon_index" >"/dev/stderr"
+  if('${DEBUG2:-0}') print "in read_icon_index" >"/dev/stderr"
   if(1 == (getline data < (x = ICONSTEM".index"))) {
     close(x)
     na = split(data, a, /\n/) # we slurped the index file
@@ -567,7 +577,7 @@ function read_icon_index(   a,b,data,i,x) {
 function mark_icon_workaround_uptodate( ) {
   if("true" == ALL_ICONS) {
     print "" > (ICONSTEM".uptodate")
-    if("'${DEBUG:-0}'">1) print "\nmark_icon_workaround created", ICONSTEM".uptodate" > "/dev/stderr"
+    if('${DEBUG3:-0}') print "\nmark_icon_workaround_uptodate() created", ICONSTEM".uptodate" > "/dev/stderr"
   }
 }
 '
@@ -602,8 +612,8 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
 fi
 > "${AWKQ}" echo '#!/usr/bin/gawk -f
 BEGIN {
-  if("'${DEBUG:-0}'">2) {
-    print "\nstart db querier [[ GREP=\""GREP"\"" >"/dev/stderr"
+  if('${DEBUG3:-0}') {
+    print "\n=== DB QUERY [[ GREP=\""GREP"\"" >"/dev/stderr"
     print "expression=('"${subject}${left} ${commleft} ${categ}"')" >"/dev/stderr"
   }
   FS="|"
@@ -616,12 +626,12 @@ BEGIN {
   }
 }
 END {
-  if("'${DEBUG:-0}'">2) print "]] querier done" >"/dev/stderr"
+  if('${DEBUG3:-0}') print "]] QUERY" >"/dev/stderr"
 } '
 
 # Build database of .desktop file entries. [[[1
 gawk -v ALL_ICONS=${varICONS} -f "${AWKB}" ${LOCS} > "${DATF}"
-[ "${DEBUG:-0}" -gt 0 ] && { >/tmp/varSEARCH; echo >&2 accepting input from /tmp/varSEARCH; }
+[ "${DEBUG1}" ] && { >/tmp/varSEARCH; echo >&2 === READING SEARCH INPUT ALSO FROM /tmp/varSEARCH; }
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
 # Prepare Help system and its GUI button (About). [[[1
@@ -705,10 +715,15 @@ $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")"
 
 # Helpers [[[1
 
-generate_get_source() # [[[2
+generate_get_source() # [$1-event] [[[2
 {
   # Echo sh code that loads the current source's field values.
+  local eventfmt
+  eventfmt="${1:+ on event:}$1${1:+ }"
+  [ -n "${DEBUG2}" ] && echo -n 'eval ">&2 echo \"GET SOURCE \${varF3:-0}'"${eventfmt}"'\"";'
+  [ -n "${DEBUG3}" ] && echo -n '>&2 echo "[["; set -x;'
   echo -n ". \"${SRCSTEM}\"\${varF3:-0}-*.sh"
+  [ -n "${DEBUG3}" ] && echo -n '; set +x; echo >&2 "]]"'
 }
 generate_rotated_sources() # $1-sh-fragment  [[[2 NOT USED
 {
@@ -748,6 +763,12 @@ generate_invoke_source_tap() # [[[2
   generate_get_source
   echo -n '; fi'
   # ]]]
+  if [ -n "${DEBUG1}" ]; then #[[[
+    echo -n ' && >&2 printf %s "$(date +%H:%M:%S.%N) INVOKE TAP"'
+    [ -n "${DEBUG3}" ] && echo -n ' && eval ">&2 echo -n \" term(hex)=\$(echo -n \${term} |xxd -p)\""'
+    echo -n ' && eval ">&2 echo \" term=\${term} \${TAP}\""'
+  fi
+  #]]]
   # Start tap-command. [[[
   echo -n ' && case ${HINTS} in'
   echo -n  ' *term*) eval ${TAP} "${term}" ;;'
@@ -768,13 +789,18 @@ generate_invoke_source_drain() # [[[2
   # Unexport all vars but varF3 and varLIST.
   echo -n "; ${UNEXPORT}"
   # Get source[varF3]'s values. [[[
-  echo -n '; '; generate_get_source
+  echo -n '; '; generate_get_source invoke_source_drain
   # ]]]
   # Save command to history lists. [[[
   # To the source's own history list file + FNR's global history list file.
   # ${HSTF} points to one of the two files, and it's used as input to the command history widget.
   echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPF}/.hist-${ID}.sh'"
   echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPF}/.hist-FNR.sh'"
+  #]]]
+  if [ -n "${DEBUG1}" ]; then #[[[
+    echo -n ' && >&2 printf %s $(date +%H:%M:%S.%N)'
+    echo -n ' && eval ">&2 echo \" INVOKE DRAIN \${DRAIN} \$@ \""'
+  fi
   #]]]
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
@@ -798,7 +824,7 @@ generate_status_bar() # [[[2
       <statusbar has-resize-grip="false" sensitive="false">
         <variable export="false">varSBAR</variable>
         <input>'
-  echo -n "${DEBUG:+set -x; }"
+  [ -n "${DEBUG3}" ] && echo -n 'echo >&2 "=== GENERATE STATUS BAR [["; set -x;'
   echo -n 'title="${TITLE}"' # This is a gtkdialog sh variable and...
   # [[[ ... it gets its value from the <input> tag, which is activated only
   # after refresh:TITLE. Adding a <default> tag value for TITLE doesn't
@@ -814,8 +840,9 @@ generate_status_bar() # [[[2
   # Send formatted data to SBAR.
   echo -n '; printf "'"%s ${ctrlnkey}  »  ${funckey} %s"'" "${title}" $((${varF3}+1)) "'"${HOTKEY_F3}"'" "${next}"'
 #  echo -n '; printf "'"${ctrlnkey} %s  »  %s ${funckey}"'" $((${varF3}+1)) "${title}" "${next}" "'"${HOTKEY_F3}"'"'
+  [ -n "${DEBUG3}" ] && echo -n 'set +x; echo >&2 "]]";'
   echo "</input>
-        ${DEBUG:+<action>echo>&2 ,,, varSBAR ,,,</action>}
+        ${DEBUG2:+<action>echo>&2 ,,, varSBAR ,,,</action>}
       </statusbar>
     </vbox>"
   #]]]
@@ -860,7 +887,7 @@ start_dialog << EOF
   <vbox>
     ${REMARK# [[[. varSEARCH: progressive typing search input field.}
     <hbox spacing="0">
-      <entry auto-refresh="${DEBUG:+true}" tooltip-text="$(gettext "Press ENTER to select")">
+      <entry auto-refresh="${DEBUG1:+true}" tooltip-text="$(gettext "Press ENTER to select")">
         ${REMARK# [[[. Entering IBOL+IBOL makes the search input field}
         ${REMARK# ignore all characters to the left of IBOL+IBOL included.}
         ${REMARK# IBOL stands for Ignore To Beginning Of Line. Its default}
@@ -873,8 +900,8 @@ start_dialog << EOF
         <variable>varSEARCH</variable>
         ${REMARK# The entry widget ignores initial input unless it is refreshed, see varSEARCH0.}
         <input>echo -n "\${INITSEARCH}"</input>
-        ${DEBUG:+<input file>/tmp/varSEARCH</input>}
-        ${DEBUG:+<action>echo>&2 ,,, varSEARCH ,,,</action>}
+        ${DEBUG1:+<input file>/tmp/varSEARCH</input>}
+        ${DEBUG2:+<action>echo>&2 ,,, varSEARCH ,,,</action>}
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
@@ -894,17 +921,17 @@ start_dialog << EOF
       <label>Reserved|Label|PackedValues</label>
       <variable>varLIST</variable>
       ${REMARK# [[[. Populate list view.}
-      <input icon-column="0">${DEBUG:+set -x; }$(generate_invoke_source_tap)</input>
+      <input icon-column="0">$(generate_invoke_source_tap)</input>
       ${REMARK# ]]]}
-      ${DEBUG:+<action>echo>&2 ,,, varLIST ,,,</action>}
+      ${DEBUG2:+<action>echo>&2 ,,, varLIST ,,,</action>}
       ${REMARK# [[[. Process list view selection.}
-      <action>${DEBUG:+set -x; }$(generate_invoke_source_drain)</action>
+      <action>$(generate_invoke_source_drain)</action>
       ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
       <action signal="changed">clear:varCOMMENT</action>
       <action signal="changed">refresh:varCOMMENT</action>
-      ${DEBUG:+<action>echo >&2 auto-refreshing varFOCUSGRABBER</action>}
+      ${DEBUG2:+<action>echo >&2 auto-refreshing varFOCUSGRABBER</action>}
       <action>( sleep 0.1 || sleep 1; echo "\${varFOCUSSEARCH}">"${FCSF}"; ) &</action>
     </tree>
     ${REMARK# ]]]}
@@ -915,8 +942,8 @@ start_dialog << EOF
       <default>false</default>
       <variable>varFOCUSGRABBER</variable>
       <input file>${FCSF}</input>
-      ${DEBUG:+<action>echo>&2 ,,, varFOCUSGRABBER ,,,</action>}
-      ${DEBUG:+<action>if true echo >&2 'grabfocus:varSEARCH'</action>}
+      ${DEBUG2:+<action>echo>&2 ,,, varFOCUSGRABBER ,,,</action>}
+      ${DEBUG2:+<action>if true echo >&2 'grabfocus:varSEARCH'</action>}
       <action>if true grabfocus:varSEARCH</action>
       <action>if true echo false>"${FCSF}"</action>
       <action>if true clear:varFOCUSGRABBER</action>
@@ -931,7 +958,7 @@ start_dialog << EOF
         <input>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@"</input>
         <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
         <output file>${HSTF}</output>
-        ${DEBUG:+<action>echo>&2 ,,, varCMD ,,,</action>}
+        ${DEBUG2:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
         <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT} varLIST varF3; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
@@ -960,7 +987,7 @@ start_dialog << EOF
         <label>$(gettext "_Keep window")</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
-        ${DEBUG:+<action>echo>&2 ,,, varOPEN ,,,</action>}
+        ${DEBUG2:+<action>echo>&2 ,,, varOPEN ,,,</action>}
         <action>awk -v s=defOPEN=\${varOPEN} '/^defOPEN=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       ${REMARK# ]]]}
@@ -969,24 +996,24 @@ start_dialog << EOF
         <label>$(gettext "_Show all icons")</label>
         <default>${varICONS}</default>
         <variable>varICONS</variable>
-        ${DEBUG:+<action>echo>&2 ,,, varICONS ,,,</action>}
+        ${DEBUG2:+<action>echo>&2 ,,, varICONS ,,,</action>}
         <action>awk -v s=varICONS=\${varICONS} '/^varICONS=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
         <action>clear:varSEARCH</action>
-        ${DEBUG:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
+        ${DEBUG2:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
-        ${DEBUG:+<action>if true echo >&2 in true rebuilding database...</action>}
+        ${DEBUG2:+<action>if true echo >&2 in true rebuilding database...</action>}
         <action>if true gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' ${LOCS} > '${DATF}'</action>
-        ${DEBUG:+<action>if true echo >&2 in true clear:varLIST</action>}
+        ${DEBUG2:+<action>if true echo >&2 in true clear:varLIST</action>}
         <action>if true clear:varLIST</action>
-        ${DEBUG:+<action>if true echo >&2 in true refresh:varLIST</action>}
+        ${DEBUG2:+<action>if true echo >&2 in true refresh:varLIST</action>}
         <action>if true refresh:varLIST</action>
-        ${DEBUG:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/findnrun-\*</action>}
+        ${DEBUG2:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/findnrun-\*</action>}
         <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
-        ${DEBUG:+<action>if false echo >&2 in false rebuilding database...</action>}
+        ${DEBUG2:+<action>if false echo >&2 in false rebuilding database...</action>}
         <action>if false gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' ${LOCS} > '${DATF}'</action>
-        ${DEBUG:+<action>if false echo >&2 in false clear:varLIST</action>}
+        ${DEBUG2:+<action>if false echo >&2 in false clear:varLIST</action>}
         <action>if false clear:varLIST</action>
-        ${DEBUG:+<action>if false echo >&2 in false refresh:varLIST</action>}
+        ${DEBUG2:+<action>if false echo >&2 in false refresh:varLIST</action>}
         <action>if false refresh:varLIST</action>
       </checkbox>
       ${REMARK# ]]]}
@@ -995,7 +1022,7 @@ start_dialog << EOF
         <label>$(gettext "_Focus search")</label>
         <default>${varFOCUSSEARCH}</default>
         <variable>varFOCUSSEARCH</variable>
-        ${DEBUG:+<action>echo>&2 ,,, varFOCUSSEARCH ,,,</action>}
+        ${DEBUG2:+<action>echo>&2 ,,, varFOCUSSEARCH ,,,</action>}
         <action>awk -v s=varFOCUSSEARCH=\${varFOCUSSEARCH} '/^varFOCUSSEARCH=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       ${REMARK# ]]]}
@@ -1037,56 +1064,56 @@ start_dialog << EOF
   <entry visible="false" sensitive="false">
     <variable>TAP</variable>
     ${REMARK# Cache TAP until next refresh:TAP.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TAP}"</input>
-    ${DEBUG:+<action>echo>&2 ,,, TAP ,,,</action>}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TAP}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE TAP [\$varF3] \$TAP</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>DRAIN</variable>
     <default>debug2</default>
     ${REMARK# Cache DRAIN until next refresh:DRAIN.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${DRAIN}"</input>
-    ${DEBUG:+<action>echo>&2 ,,, DRAIN ,,,</action>}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${DRAIN}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE DRAIN [\$varF3] \$DRAIN</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>ICON</variable>
     <default>${ICON:-null}</default>
     ${REMARK# Cache ICON until next refresh:ICON.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${ICON}"</input>
-    ${DEBUG:+<action>echo>&2 ,,, ICON ,,,</action>}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${ICON}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE ICON [\$varF3] \$ICON</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>TITLE</variable>
     <default>debug3</default>
     ${REMARK# Cache TITLE until next refresh:TITLE.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TITLE}"</input>
-    ${DEBUG:+<action>echo>&2 ,,, TITLE ,,,</action>}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TITLE}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE TITLE [\$varF3] \$TITLE</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>SOURCE</variable>
     <default>${SOURCE}</default>
     ${REMARK# Cache SOURCE until next refresh:SOURCE}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${SOURCE}"</input>
-    ${DEBUG:+<action>echo>&2 ,,, SOURCE ,,,</action>}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${SOURCE}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE SOURCE [\$varF3] \$SOURCE</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>ID</variable>
     <default>${ID}</default>
     ${REMARK# Cache ID until next refresh:ID.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${ID}"</input>
-    ${DEBUG:+<action>echo>&2 ,,, ID ,,,</action>}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${ID}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE ID [\$varF3] \$ID</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>NSOURCES</variable>
     <default>${NSOURCES}</default>
     ${REMARK# Cache NSOURCES until next refresh:NSOURCES.}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${NSOURCES}"</input>
-    ${DEBUG:+<action>echo>&2 ,,, NSOURCES ,,,</action>}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${NSOURCES}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE NSOURCES [\$varF3] \$NSOURCES</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>INITSEARCH</variable>
     ${REMARK# Cache INITSEARCH until next refresh:INITSEARCH}
-    <input>${DEBUG:+set +x; }. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${INITSEARCH}"</input>
-    ${DEBUG:+<action>echo>&2 ,,, INITSEARCH ,,,</action>}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${INITSEARCH}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE INITSEARCH [\$varF3] \$INITSEARCH</action>}
   </entry>
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey targets (hidden).}
@@ -1097,7 +1124,7 @@ start_dialog << EOF
     <label>F2</label>
     <variable>varF2</variable>
     <input file>${F2SF}</input>
-    ${DEBUG:+<action>echo>&2 ,,, varF2 ,,,</action>}
+    ${DEBUG2:+<action>echo>&2 ,,, varF2 ,,,</action>}
     <action>if true grabfocus:varCMD</action>
     <action>if false grabfocus:varSEARCH</action>
   </checkbox>
@@ -1108,7 +1135,7 @@ start_dialog << EOF
     <variable>varF3</variable>
     <default>0</default>
     <input file>${F3SF}</input>
-    ${DEBUG:+<action>echo>&2 ,,, varF3 ,,,</action>}
+    ${DEBUG2:+<action>echo>&2 ,,, varF3 ,,,</action>}
     ${REMARK# [[[. Optimization: Cache current source values.}
     <action>refresh:TAP</action>
     <action>refresh:DRAIN</action>
@@ -1118,9 +1145,9 @@ start_dialog << EOF
     <action>refresh:SOURCE</action>
     <action>refresh:ID</action>
     ${REMARK# ]]]}
-    ${DEBUG:+<action>echo>&2 ,,, refresh varSBAR [[</action>}
+    ${DEBUG2:+<action>echo>&2 ,,, refresh varSBAR [[</action>}
     <action>refresh:varSBAR</action>
-    ${DEBUG:+<action>echo>&2 ]] ,,,</action>}
+    ${DEBUG2:+<action>echo>&2 ]] ,,,</action>}
     <action>clear:varSEARCH</action>
     <action>enable:varSEARCH0</action>
     <action>refresh:varLIST</action>
