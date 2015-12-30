@@ -753,7 +753,7 @@ generate_invoke_source_tap() # [[[2
 {
   # Echo sh code that invokes source[varF3]'s tap-command.
   # Extract search input value as $term with IBOL+IBOL correction. [[[
-  echo -n 'ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}"'
+  echo -n 'ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}";'
   #]]]
   # Get source[varF3]'s values. [[[
 # Optimization: use cached <variable>TAP</variable>.
