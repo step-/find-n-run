@@ -760,7 +760,7 @@ generate_invoke_source_tap() # [[[2
 # -z takes care of first source's first typed search case. [[[
 # For it to work correctly <variable>TAP must have NO <default> tag.]]]
   echo -n '; if [ -z "${TAP}" ]; then '
-  generate_get_source
+  generate_get_source invoke_source_tap
   echo -n '; fi'
   # ]]]
   if [ -n "${DEBUG1}" ]; then #[[[
