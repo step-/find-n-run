@@ -115,7 +115,6 @@ Findnrun invokes two plugin commands. While the user is typing into the search i
 ```
     eval <tap-command>
 ```
-
 The tap-command can use the current value of the search input field by including the string `${term}` in `<tap-command>`.
 On each plugin invocation the tap may output zero or more formatted tap-records.
 
@@ -131,9 +130,18 @@ The invocation environment provides tap-command and drain-command with the follo
 
  * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}`, `${ICON}` and `${INITSEARCH}` - the source's declared values
  * `${ID}` - the source-id
- * `${NSOURCES} - the number of sources.
+ * `${NSOURCES} - the number of sources
+ * `${FNRPID}` - findnrun process id[2]
+ * `${FNRTMP}` - findnrun temporary folder id[2][3]
 
 [1] Findnrun also saves two history files: the global history file and the plugin's history file. Currently they are not exposed in the user interface, and the pull-down widget shows the global history. This might change in the future.
+
+[2] These variables are provided in support of tasks such as naming files that need to persist across invocations of plugin commands; implementing a plugin as multiple independent programs that share data.
+
+[3] Findnrun's own temporary folder persists across invocations of plugin commands. It is automatically deleted when findnrun terminates. It is recommended for a plugin to create a sub-folder within findnrun's own temporary folder, i.e.,
+```
+    TMPD="${FNRTMP:-/tmp}/${ID}-${0##*/}" && mkdir -p "${TMPD}" && chmod 700 "${TMPD}"
+```
 
 ### Source plugin user interface
 
