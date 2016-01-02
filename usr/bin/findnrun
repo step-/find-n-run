@@ -54,7 +54,16 @@ if [ -n "${FNRDEBUG}" ]; then # set DEBUG1, DEBUG2, ... [[[
   unset c i
 fi
 #]]]
-trap 'rm -rf "${TMPD:-/tmp/dummy}"* ${DEBUG1:+/tmp/varSEARCH}' INT QUIT TERM HUP 0
+trap_handler() # [[[
+{
+  trap - HUP INT QUIT TERM ABRT 0
+  local tmpd
+  tmpd=$(readlink -f "${TMPD}")
+  [ -d "${tmpd}" ] || exit
+  rm -rf "${tmpd}"* ${DEBUG1:+/tmp/varSEARCH}
+}
+#]]]
+trap trap_handler INT QUIT TERM HUP ABRT 0
 TMPD=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPD}"
 DATF="${TMPD}/.dat" # database of .desktop file entries
 AWKB="${TMPD}/.build.awk" # builds (and queries) database
