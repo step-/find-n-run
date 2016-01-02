@@ -43,12 +43,12 @@ HELPFILE=/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.h
 
 # Initialize variables that should not be changed. [[[1
 REMARK= # leave unset
-DEBUG=${DEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-10
-if [ -n "${DEBUG}" ]; then # set DEBUG1, DEBUG2, ... [[[
+FNRDEBUG=${FNRDEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-10
+if [ -n "${FNRDEBUG}" ]; then # set DEBUG1, DEBUG2, ... [[[
   i= c=
   while true; do
     i=$(($i +1))
-    [ $i -le 10 -a $i -le ${DEBUG} ] && c=" $c DEBUG$i=1" || break
+    [ $i -le 10 -a $i -le ${FNRDEBUG} ] && c=" $c DEBUG$i=1" || break
   done
   eval "$c"
   unset c i
@@ -217,7 +217,7 @@ store_valid_sources() # [[[
 '#!/usr/bin/gawk -f
 BEGIN {
   TEXTDOMAIN="'"${TEXTDOMAIN}"'"
-  if('${DEBUG1:-0}') print "\n=== PROCESS SOURCE DECLARATIONS (set DEBUG= 3-5 for more)" > "/dev/stderr"
+  if('${DEBUG1:-0}') print "\n=== PROCESS SOURCE DECLARATIONS (set FNRDEBUG= 3-5 for more)" > "/dev/stderr"
   # Invalid SOURCES syntax? 101 [[[
   nE = split(SOURCES, E)
   for(j=1; j <= nE; j++) {
@@ -432,7 +432,7 @@ fi
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN {
-  if('${DEBUG1:-0}') print "\n=== DB BUILDER (set DEBUG= 2 for more)\n[[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
+  if('${DEBUG1:-0}') print "\n=== DB BUILDER (set FNRDEBUG= 2 for more)\n[[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
   RS="^~cannot~match~me~" # enable slurp read mode.
   # Choose a shell for ongoing command execution - see icon_workaround().
   sh = "'${SH}'" # not used as a coprocess
@@ -881,7 +881,7 @@ generate_source_hotkeys() # [[[2
 
 start_dialog() # [[[2
 {
-  if [ ${DEBUG:-0} -gt 9 ]; then
+  if [ ${FNRDEBUG:-0} -gt 9 ]; then
     cat
     return
   fi

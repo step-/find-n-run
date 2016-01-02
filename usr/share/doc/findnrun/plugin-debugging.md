@@ -17,4 +17,4 @@ Findnrun validates source plugin declarations in various ways. On fatal errors f
     currently none
 ```
 
-To run findnrun in debugging mode use: `DEBUG=<level> findnrun`. Levels 1-9 enable increasingly verbose debugging messages to the standard error stream. Level 10 dumps the gtkdialog definition to the standard output stream and exits.
+Use `FNRDEBUG=<level> findnrun` to run findnrun in debugging mode. Levels 1-9 enable increasingly verbose debugging messages to the standard error stream. Level 10 dumps the gtkdialog definition to the standard output stream and exits.
