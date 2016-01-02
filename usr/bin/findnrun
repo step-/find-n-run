@@ -54,18 +54,18 @@ if [ -n "${FNRDEBUG}" ]; then # set DEBUG1, DEBUG2, ... [[[
   unset c i
 fi
 #]]]
-trap 'rm -rf "${TMPF:-/tmp/dummy}"* ${DEBUG1:+/tmp/varSEARCH}' INT QUIT TERM HUP 0
-TMPF=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPF}"
-DATF="${TMPF}/.dat" # database of .desktop file entries
-AWKB="${TMPF}/.build.awk" # builds (and queries) database
-AWKQ="${TMPF}/.query.awk" # queries database (faster)
-HSTF="${TMPF}/.hist-FNR.sh"; >"${HSTF}" # global command line history
-FCSF="${TMPF}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
-F2SF="${TMPF}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
-F3SF="${TMPF}/.f3s"; >"${F3SF}" # builtin/plugin source list view cycler
+trap 'rm -rf "${TMPD:-/tmp/dummy}"* ${DEBUG1:+/tmp/varSEARCH}' INT QUIT TERM HUP 0
+TMPD=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPD}"
+DATF="${TMPD}/.dat" # database of .desktop file entries
+AWKB="${TMPD}/.build.awk" # builds (and queries) database
+AWKQ="${TMPD}/.query.awk" # queries database (faster)
+HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
+FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
+F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
+F3SF="${TMPD}/.f3s"; >"${F3SF}" # builtin/plugin source list view cycler
 SEP=`echo -e "\b"` # field separator of packed values
 ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG)
-SRCSTEM="${TMPF}/.source-" # prefix to source filenames
+SRCSTEM="${TMPD}/.source-" # prefix to source filenames
 
 # -----------------------------------------------------------------------------
 #LANG=de_DE.UTF-8 # just for demo
@@ -133,7 +133,7 @@ while ! [ "${1#--}" = "$1" ]; do
       o=${1#--geometry=}; GEOMETRY=${o%--geometry}
       ;;
     --perm=*|--perm) # Tighten tempdir permissions from 755
-      o=${1#--perm=}; o=${o%--perm}; chmod "${o:-700}" "${TMPF}"
+      o=${1#--perm=}; o=${o%--perm}; chmod "${o:-700}" "${TMPD}"
       ;;
     --) shift; CMDLINEOPTS="$@"; break ;; # pass CMDLINEOPTS to gtkdialog
     --stdout) ENABLESTDOUT=1 ;; # Don't redirect gtkdialog's stdout to null
@@ -411,9 +411,9 @@ list_diff() # $1-list1 $2-list2 - space-separated. Output: $1 - $2 [[[
 }
 #]]]
 
-store_valid_sources > "${TMPF}/.$$"
+store_valid_sources > "${TMPD}/.$$"
 x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
-read NSOURCES sources < "${TMPF}/.$$" # all and only valid sources
+read NSOURCES sources < "${TMPD}/.$$" # all and only valid sources
 # Read first source's values to be used to initialize gtkdialog <default>'s.
 . "${SRCSTEM}0-"*.sh
 
@@ -668,7 +668,7 @@ find_help() #[[[
       [ -e "$p${LL}$s" ] && hf="$p${LL}$s"; [ -e "$p${LR}$s" ] && hf="$p${LR}$s"; [ -e "$p${LANG}$s" ] && hf="$p${LANG}$s" ;;
     esac
     if [ -e "${hf}" ]; then
-      hd="${TMPF}/help" && mkdir -p "${hd}" &&
+      hd="${TMPD}/help" && mkdir -p "${hd}" &&
       case "${hf##*.}" in t[gx]z|[gx]z) tar -C "${hd}" -xaf "${hf}" && hf=$(set +f; echo "${hd}"/index.*) ;; esac &&
       case "${hf##*.}" in md) x=mdview ;; htm*) x=defaultbrowser;; esac
       read -t 1 helpviewer << EOF
@@ -787,8 +787,8 @@ generate_invoke_source_tap() # [[[2
   #]]]
   # Start tap-command. [[[
   echo -n ' && case ${HINTS} in'
-  echo -n  ' *term*) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPF}"' FNRPID='$$' eval ${TAP} "${term}" ;;'
-  echo -n  ' *) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPF}"' FNRPID='$$' eval ${TAP} ;;'
+  echo -n  ' *term*) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID='$$' eval ${TAP} "${term}" ;;'
+  echo -n  ' *) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID='$$' eval ${TAP} ;;'
   echo -n ' esac'
   #]]]
 }
@@ -810,8 +810,8 @@ generate_invoke_source_drain() # [[[2
   # Save command to history lists. [[[
   # To the source's own history list file + FNR's global history list file.
   # ${HSTF} points to one of the two files, and it's used as input to the command history widget.
-  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPF}/.hist-${ID}.sh'"
-  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPF}/.hist-FNR.sh'"
+  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-${ID}.sh'"
+  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-FNR.sh'"
   #]]]
   if [ -n "${DEBUG1}" ]; then #[[[
     echo -n ' && >&2 printf %s $(date +%H:%M:%S.%N)'
@@ -821,7 +821,7 @@ generate_invoke_source_drain() # [[[2
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
   echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH HINTS varF3'
-  echo -n '; FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPF}"' FNRPID='$$' eval "$@" &'
+  echo -n '; FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID='$$' eval "$@" &'
   #]]]
 }
 
