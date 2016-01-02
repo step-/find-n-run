@@ -133,6 +133,7 @@ The invocation environment provides tap-command and drain-command with the follo
  * `${NSOURCES} - the number of sources
  * `${FNRPID}` - findnrun process id[2]
  * `${FNRTMP}` - findnrun temporary folder id[2][3]
+ * `${FNRDEBUG}` - findnrun debugging level 1-9.
 
 [1] Findnrun also saves two history files: the global history file and the plugin's history file. Currently they are not exposed in the user interface, and the pull-down widget shows the global history. This might change in the future.
 

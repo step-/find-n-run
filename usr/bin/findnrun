@@ -787,8 +787,8 @@ generate_invoke_source_tap() # [[[2
   #]]]
   # Start tap-command. [[[
   echo -n ' && case ${HINTS} in'
-  echo -n  ' *term*) FNRTMP='"${TMPF}"' FNRPID='$$' eval ${TAP} "${term}" ;;'
-  echo -n  ' *) FNRTMP='"${TMPF}"' FNRPID='$$' eval ${TAP} ;;'
+  echo -n  ' *term*) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPF}"' FNRPID='$$' eval ${TAP} "${term}" ;;'
+  echo -n  ' *) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPF}"' FNRPID='$$' eval ${TAP} ;;'
   echo -n ' esac'
   #]]]
 }
@@ -821,7 +821,7 @@ generate_invoke_source_drain() # [[[2
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
   echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH HINTS varF3'
-  echo -n '; FNRTMP='"${TMPF}"' FNRPID='$$' eval "$@" &'
+  echo -n '; FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPF}"' FNRPID='$$' eval "$@" &'
   #]]]
 }
 
