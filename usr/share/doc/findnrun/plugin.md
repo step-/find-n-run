@@ -144,7 +144,7 @@ The invocation environment provides tap-command and drain-command with the follo
     TMPD="${FNRTMP:-/tmp}/${ID}-${0##*/}" && mkdir -p "${TMPD}" && chmod 700 "${TMPD}"
 ```
 
-### Source plugin user interface
+### Findnrun user interface and source plugins
 
 By default, when findnrun starts and no source plugins are installed, it displays the list of desktop (file) applications, which is connected to the builtin source `ID` "FNRstart". Effectively, the default source installation is:
 ```
@@ -162,9 +162,18 @@ When `SOURCES` includes multiple elements, a status bar appears at the bottom of
 
 The first column of the list view displays the tap-record icon-filename. If the icon-filename value is null, findnrun displays the source default icon set by `ICON_<icon-id>`. If also the default icon is null findnrun displays an empty cell.
 
-There is no provision for a plugin to display a user interface of its own. Nor is there a system to signal a plugin important events.
+A word of caution: since gtkdialog can't display streaming data, a tap-command must close its output stream for gtkdialog to start populating the search list view.
 
-A word of caution: gtkdialog can't display streaming data. A tap-command must close its output stream for gtkdialog to populate the list view.
+### Findnrun termination and plugins
+
+When findnrun terminates it deletes its temporary folder and all files/folder within, which become inaccessible to running plugins. Of course, also the plugins terminate. However, if a plugin spawned a running sub-process, i.e., a user interface module, such as a plugin's own gtkdialog, that sub-process will keep running. Findnrun does nothing to stop it.
+
+There is a way to make findnrun terminate sub-processes automatically. Before exiting findnrun looks under its temporary folder for files named `.pidof_*` and gathers their contents, which must consist solely of process and process groups ids. Then findnrun sends a termination signal to those ids:
+```
+    /bin/kill -TERM -- ${ids}
+```
+
+So, if a plugin needs for its sub-process to be automatically terminated when findnrun exits it should save the sub-process id in a suitably-named `.pidof_*` file under findnrun's temporary folder.
 
 ### Plugin internationalization
 

@@ -57,9 +57,17 @@ fi
 trap_handler() # [[[
 {
   trap - HUP INT QUIT TERM ABRT 0
-  local tmpd
+  local tmpd ids id
   tmpd=$(readlink -f "${TMPD}")
   [ -d "${tmpd}" ] || exit
+  if cd "${tmpd}"; then
+    # kill process / process group pids; guard system processes such as init (1).
+    for id in $(grep --include .pidof_\* -hr .); do
+      case ${id} in 1) ;; *) ids="${ids} ${id}" ;; esac
+    done
+    [ -n "${ids}" ] && /bin/kill -TERM -- ${ids} # not the shell builtin!
+    cd - >/dev/null
+  fi
   rm -rf "${tmpd}"* ${DEBUG1:+/tmp/varSEARCH}
 }
 #]]]
