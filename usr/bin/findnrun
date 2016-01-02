@@ -183,6 +183,7 @@ esac
 # Prepare sources. [[[1
 SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTEM}" 0 FNRstart
 store_valid_sources() # [[[
+{
 # In: $SOURCES
 # Out: list of valid sources that got stored for gtkdialog sh's use.
 # Return value:   <number of valid sources> <list of valid sources>
@@ -208,7 +209,6 @@ store_valid_sources() # [[[
 # 205 unreferenced SOURCE_
 # 206 unreferenced INITSEARCH_
 #]]]
-{
 # i18n 1.7 Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
     -v MSG1="$(gettext "fatal source error: %d%s\n")" \
@@ -246,8 +246,12 @@ BEGIN {
     # VGI[] values a[3] by (group a[1], id a[2])
     I[a[2]] = a[2]
     if("SOURCE" == a[1]) S[a[2]] = a[2]
-    # Input stream ("set |") formats its output values between single quotes.
-    VGI[a[1], a[2]] = substr(a[3], 2, length(a[3])-2) # unquote
+    # Assert: Input stream ("set |") single quoted all values.
+    # Note the difference between ash and bash: bash "env" single quotes
+    # just the values that include spaces, while ash "env" single
+    # quote all values regardless. So we strip exterior single quotes
+    # conditionally to keep compatibility with both shells.
+    VGI[a[1], a[2]] = unquote(a[3])
     if('${DEBUG5:-0}') print a[1],"**",a[2],"**",a[3] > "/dev/stderr"
     #]]]
   }
@@ -349,9 +353,8 @@ function store_source(s, buf, A,   a, g, i, j, I) { #[[[
   #     Note1: on null title-id output source-id as title value
   #     Note2: on null other-id output null value, i.e., VAR='' << IMPORTANT
   #   buf=="array" => compose from A["SOURCE"]=source-id, A["TAP"]=tap-command, ...
-  # Note3: output values will be wrapped in single quotes.
-  # Assert: input values can be safely wrapped in single quotes because they
-  # were formatted with (piped from) the sh "env" command.
+  # Note3: All output values are wrapped in single quotes.
+  # Assert: Main input loop stripped exterior single quotes.
   if("" == buf) {
     buf = sprintf("ID='"'%s'"'", s)
     split(s":"VGI["SOURCE",s], I, /:/)
@@ -388,6 +391,13 @@ function recoverable(code, subject, source) { #[[[
 function warning(code, subject, source) { #[[[
   printf(MSG3, code, \
     (source ?" "source":" :"") (subject ?" "subject :"")) > "/dev/stderr"
+}#]]]
+function unquote(s,   p,t,l) { # [[[
+  if((p = index("\x27", t = substr(s,1,1))) && p < 2) {
+    if(t == substr(s, l = length(s)))
+      return(substr(s, 2, l-2))
+  }
+  return(s)
 }#]]]
   '
 }
