@@ -131,7 +131,7 @@ The invocation environment provides tap-command and drain-command with the follo
  * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}`, `${ICON}` and `${INITSEARCH}` - the source's declared values
  * `${ID}` - the source-id
  * `${NSOURCES} - the number of sources
- * `${FNRPID}` - findnrun process id[2]
+ * `${FNRPID}` - findnrun's gtkdialog process id[2]
  * `${FNRTMP}` - findnrun temporary folder id[2][3]
  * `${FNRDEBUG}` - findnrun debugging level 1-9.
 
