@@ -78,7 +78,7 @@ In the following discussion:
 
 A source plugin is installed by adding its declaration into `.findnrunrc` as follows:
 ```
-    SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<title-id>'
+    SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<title-id>:<init-search-id>'
     TAP_<tap-id>='<tap-command>'
     DRAIN_<drain-id>='<drain-command>'          # optional
     ICON_<icon-id>='<icon-filename>'            # optional
@@ -93,7 +93,7 @@ A source plugin is installed by adding its declaration into `.findnrunrc` as fol
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
 
- * Declarations marked "optional" can be omitted by leaving their respective `<...-id>` slot empty in their `SOURCE_<source-id>` declaration.
+ * Declarations marked "optional" can be omitted by leaving their respective `<...-id>` slot empty in the `SOURCE_<source-id>` declaration.
  * Paired exterior double quotes work just as well as single quotes, but require escaping interior sh special characters.
 
 You can use any valid sh variable name as an `<...-id>`, but prefix "FNR" is reserved for findnrun's own plugins.
