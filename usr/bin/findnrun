@@ -1097,14 +1097,14 @@ start_dialog << EOF
   ${REMARK# [[[. Cached source declaration variables (hidden).}
   <entry visible="false" sensitive="false">
     <variable>TAP</variable>
-    <default>debug1</default>
+    <default>${TAP}</default>
     ${REMARK# Cache TAP until next refresh:TAP.}
     <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TAP}"</input>
     ${DEBUG2:+<action>echo>&2 === CACHE TAP [\$varF3] \$TAP</action>}
   </entry>
   <entry visible="false" sensitive="false">
     <variable>DRAIN</variable>
-    <default>debug2</default>
+    <default>${DRAIN:-null}</default>
     ${REMARK# Cache DRAIN until next refresh:DRAIN.}
     <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${DRAIN}"</input>
     ${DEBUG2:+<action>echo>&2 === CACHE DRAIN [\$varF3] \$DRAIN</action>}
@@ -1118,7 +1118,7 @@ start_dialog << EOF
   </entry>
   <entry visible="false" sensitive="false">
     <variable>TITLE</variable>
-    <default>debug3</default>
+    <default>${TITLE:-null}</default>
     ${REMARK# Cache TITLE until next refresh:TITLE.}
     <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TITLE}"</input>
     ${DEBUG2:+<action>echo>&2 === CACHE TITLE [\$varF3] \$TITLE</action>}
