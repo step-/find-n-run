@@ -948,7 +948,7 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varLIST: list tap-data records.}
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
-      ${REMARK# Column names below. So Reserved and Label only are visible.}
+      ${REMARK# Column names below. Only Reserved and Label are visible.}
       ${REMARK# Consider also that there is an icon column, so a full input}
       ${REMARK# record is defined as Icon|Reserved|Label|PackedValues }
       <label>Reserved|Label|PackedValues</label>
@@ -1196,8 +1196,12 @@ start_dialog << EOF
   ${REMARK#  ]]]}
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey actions (hidden).}
+  ${REMARK#  [[[. Key ESC terminates findnrun.}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
+  ${REMARK#  ]]]}
+  ${REMARK#  [[[. Key F1 invokes the help viewer.}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = F1 ] && echo true )">${helpviewer:-:} &</action>
+  ${REMARK#  ]]]}
   ${REMARK#  [[[. Key F2 cycles focus between the search and the command entry field.}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
@@ -1206,7 +1210,9 @@ start_dialog << EOF
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">set -- ${SOURCES}; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">refresh:varF3</action>
   ${REMARK#  ]]]}
+  ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
   $(generate_source_hotkeys)
+  ${REMARK#  ]]]}
   ${REMARK# ]]]}
   <action signal="delete-event">exit:abort</action>
 </window>
