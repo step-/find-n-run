@@ -911,6 +911,9 @@ start_dialog() # [[[2
 }
 
 # Prepare and show the main window. [[[1
+# Tip: if your /bin/sh is bash you can use the following stanza in
+# <action>s, <input>s, etc. to print the execution line on stderr:
+#   <action>${DEBUG1:+echo >&2 \$BASH_EXECUTION_STRING;}commands...</action>
 unset showcategories
 [ true = "${SEARCHCATEGORIES}" ] && showcategories=true
 # i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
