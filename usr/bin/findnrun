@@ -803,6 +803,7 @@ generate_invoke_source_tap() # [[[2
   fi
   #]]]
   # Start tap-command. [[[
+  echo -n ' && '"${UNEXPORT}"' varLIST varF3'
   echo -n ' && case ${HINTS} in'
   echo -n  ' *term*) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} "${term}" ;;'
   echo -n  ' *) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} ;;'
