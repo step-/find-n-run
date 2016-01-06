@@ -805,10 +805,10 @@ generate_invoke_source_tap() # [[[2
   #]]]
   # Start tap-command. [[[
   echo -n ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}' # trim timestamp
-  echo -n ' && '"${UNEXPORT}"' varLIST varF3'
+  echo -n ' && '"${UNEXPORT}"' varLIST varF3 invokeTAP'
   echo -n ' && case ${HINTS} in'
-  echo -n  ' *term*) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} "${term}" ;;'
-  echo -n  ' *) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} ;;'
+  echo -n  ' *term*) FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} "${term}" ;;'
+  echo -n  ' *) FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} ;;'
   echo -n ' esac'
   #]]]
 }
@@ -845,8 +845,8 @@ generate_invoke_source_drain() # [[[2
   # pretend that invokeDRAIN is implemented, and handle it similarly to
   # what we do for invokeTAP, which is fully implemented.
   echo -n '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}' # trim timestamp
-  echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH HINTS varF3'
-  echo -n '; FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval "$@" &'
+  echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH HINTS varF3 invokeDRAIN'
+  echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval "$@" &'
   #]]]
 }
 
@@ -965,7 +965,7 @@ start_dialog << EOF
       </button>
     </hbox>
     ${REMARK# ]]]}
-    ${REMARK# [[[. varLIST: list tap-data records.}
+    ${REMARK# [[[. varLIST: list tap-data records; invoke selected.}
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
       ${REMARK# Column names below. Only Reserved and Label are visible.}
       ${REMARK# Consider also that there is an icon column, so a full input}
@@ -976,7 +976,7 @@ start_dialog << EOF
       <input icon-column="0">$(generate_invoke_source_tap)</input>
       ${REMARK# ]]]}
       ${DEBUG2:+<action>echo>&2 ,,, varLIST ,,,</action>}
-      ${REMARK# [[[. Process list view selection.}
+      ${REMARK# [[[. Invoke list view selection.}
       <action>$(generate_invoke_source_drain)</action>
       ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
