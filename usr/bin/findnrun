@@ -1090,7 +1090,7 @@ start_dialog << EOF
   ${REMARK# [[[. Timers (hidden).}
   ${REMARK#  [[[. varSEARCH0: refresh initial search input.}
   <timer milliseconds="true" interval="100" visible="false">
-    <variable>varSEARCH0</variable>
+    <variable export="false">varSEARCH0</variable>
     <action>refresh:varSEARCH</action>
     ${REMARK# varF3 re-enables this timer when another plugin gets loaded.}
     <action>disable:varSEARCH0</action>
