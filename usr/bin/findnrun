@@ -80,6 +80,7 @@ HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
 FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 F3SF="${TMPD}/.f3s"; >"${F3SF}" # builtin/plugin source list view cycler
+ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 SEP=`echo -e "\b"` # field separator of packed values
 ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG)
 SRCSTEM="${TMPD}/.source-" # prefix to source filenames
@@ -803,6 +804,7 @@ generate_invoke_source_tap() # [[[2
   fi
   #]]]
   # Start tap-command. [[[
+  echo -n ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}' # trim timestamp
   echo -n ' && '"${UNEXPORT}"' varLIST varF3'
   echo -n ' && case ${HINTS} in'
   echo -n  ' *term*) FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} "${term}" ;;'
@@ -838,6 +840,11 @@ generate_invoke_source_drain() # [[[2
   #]]]
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
+  # NOTE: v.1.7 main window's gtkdialog doesn't implement variable
+  # invokeDRAIN. So, for the plugin interface, here it's sufficient to
+  # pretend that invokeDRAIN is implemented, and handle it similarly to
+  # what we do for invokeTAP, which is fully implemented.
+  echo -n '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}' # trim timestamp
   echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH HINTS varF3'
   echo -n '; FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval "$@" &'
   #]]]
@@ -942,6 +949,14 @@ start_dialog << EOF
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
+        ${REMARK#  [[[. Key PageUp invokes the current source plugin tap.}
+        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
+        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Page_Up ] && echo true )">date '+PageUp %s'>"${ETAP}"</action>
+        ${REMARK#  ]]]}
+        ${REMARK#  [[[. Key PageDown invokes the current source plugin tap.}
+        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
+        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Page_Down ] && echo true )">date '+PageDown %s'>"${ETAP}"</action>
+        ${REMARK#  ]]]}
       </entry>
       <button tooltip-text="$(gettext "Clear entry")" stock-icon-size="1">
         <input file stock="gtk-clear"></input>
@@ -1195,6 +1210,16 @@ start_dialog << EOF
     ${DEBUG2:+<action>echo>&2 ]] ,,,</action>}
     <action>clear:varSEARCH</action>
     <action>enable:varSEARCH0</action>
+    <action>refresh:varLIST</action>
+  </entry>
+  ${REMARK#  ]]]}
+  ${REMARK#  [[[. Write event name to file $ETAP to invoke the current tap.}
+  ${REMARK# Keys PageDown/PageUp demonstrate how.}
+  <entry visible="false" auto-refresh="true">
+    <default>Search</default>
+    <variable>invokeTAP</variable>
+    <input file>${ETAP}</input>
+    ${DEBUG1:+<action>echo>&2 ,,, invokeTAP \$invokeTAP ,,,</action>}
     <action>refresh:varLIST</action>
   </entry>
   ${REMARK#  ]]]}

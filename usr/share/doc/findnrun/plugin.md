@@ -133,7 +133,8 @@ The invocation environment provides tap-command and drain-command with the follo
  * `${NSOURCES} - the number of sources
  * `${FNRPID}` - findnrun's gtkdialog process id[2]
  * `${FNRTMP}` - findnrun temporary folder id[2][3]
- * `${FNRDEBUG}` - findnrun debugging level 1-9.
+ * `${FNRDEBUG}` - findnrun debugging level 1-9
+ * `${FNREVENT}` - invocation event name[4].
 
 [1] Findnrun also saves two history files: the global history file and the plugin's history file. Currently they are not exposed in the user interface, and the pull-down widget shows the global history. This might change in the future.
 
@@ -143,6 +144,12 @@ The invocation environment provides tap-command and drain-command with the follo
 ```
     TMPD="${FNRTMP:-/tmp}/${ID}-${0##*/}" && mkdir -p "${TMPD}" && chmod 700 "${TMPD}"
 ```
+
+[4] Name of the event that led to the invocation of a tap or drain. Currently the following names are defined:
+ * **Search** - Tap - Input entered in the search input field. When a tap is first invoked this event fires even without pressing an input key.
+ * **PageUp** - Tap - PageDown key pressed when the search input field has the focus.
+ * **PageDown** - Tap - PageUp key pressed when the search input field has the focus.
+ * **Activate** - Drain - Enter key pressed or mouse left-clicked when a search result list item has the focus.
 
 ### Findnrun user interface and source plugins
 
@@ -163,6 +170,16 @@ When `SOURCES` includes multiple elements, a status bar appears at the bottom of
 The first column of the list view displays the tap-record icon-filename. If the icon-filename value is null, findnrun displays the source default icon set by `ICON_<icon-id>`. If also the default icon is null findnrun displays an empty cell.
 
 A word of caution: since gtkdialog can't display streaming data, a tap-command must close its output stream for gtkdialog to start populating the search list view.
+
+**Paginating Search Results**
+
+When a tap returns more items that can fit in the search result list widget, the user can paginate through the list. There are two cases, with the second case of greater relevance to plugin development.
+
+First case: The search result list has the focus and the user presses the PageUp or PageDown key to paginate through the list. The list widget scrolls up and down the list accordingly. Nothing new here, it's the standard handling of Page keys for a list widget.
+
+Second case: The seach _input_ field has the focus and the user presses the PageUp or PageDown keys. Findnrun invokes the tap with variable `$FNREVENT` set to the event name, either `PageUp` or `PageDown`. It is up to the source tap implementation to respond appropriately to the event:
+ * Ignore the event name altogether and return its standard search output. This is what the default source `FNRstart` does.
+ * Return a subset of its search results to represent a "page" of data. This is what the example source `filmstrip` does, see [More source plugin examples](plugin-examples.md). It's worth noting that the definition of a "page" is left entirely to the tap implementation. For example, `filmstrip` defines the page as the number of thumbnails, five, that fit in its viewer window, and pages the search result list up/down by five lines each time the PageDown/PageUp key is pressed.
 
 ### Findnrun termination and plugins
 
