@@ -1,24 +1,32 @@
 #!/bin/bash
 
-# The 'multi' source outputs maximum 500 records to the tree list
-# widget.  Each row displays its own icon, which is chosen in
+[ "${FNRDEBUG:-0}" -gt 1 ] && set -x
+
+# Synopsis {{{1
+# The 'multi' source outputs at most $MAXREC (500) records to the tree
+# list widget.  Each row displays its own icon, which is chosen in
 # alphabetical order from the icon cache.  The row label is the icon
-# name.  Activating a row brings up an Xdialog message with the numbered
-# icon name.  Handled error cases:
+# name.  Activating a row brings up a demo Xdialog message showing the
+# numbered icon name.  Handled error cases:
 #  1. Invalid/not found ICONCACHE directory.
 #  2. Empty icon cache.
 # Source title and error messages can be localized by installing a
 # suitable .mo file, findnrun-plugin-multi.mo
 
+# User may change. {{{1
+MAXREC=500 # output records
+
+# Source declaration, manually copy to ~/.findnrunrc {{{1
+# And add source 'multi' to variable SOURCES in ~/.findnrunrc.
+# Uncomment each line when copying.
+#SOURCE_multi='multi:multi::multi:'
+#TAP_multi='/usr/share/doc/findnrun/examples/multi-field-tap.sh "${term}" "${TITLE}" | findnrun-formatter --'
+#DRAIN_multi='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
+#TITLE_multi='multi-field example'
+
+# No change below. {{{1
 term=$1 # search term
 title=$2
-max=500 # output records
-
-# Source declaration, manually copy to ~/findnrunrc {{{1
-TITLE_multi='multi-field example'
-SOURCE_multi='multi:multi::multi'
-TAP_multi='/usr/share/doc/findnrun/examples/multi-field-tap.sh "${term}" "${TITLE}" | findnrun-formatter --'
-DRAIN_multi='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
 
 # Trap {{{1
 TMPF="/tmp/.${0##*/}.tmp.$$"
@@ -26,7 +34,7 @@ trap 'rm -f "${TMPF:-/tmp/dummy}"*' HUP INT QUIT TERM ABRT 0
 
 # i18n Localization {{{1
 TEXTDOMAIN="findnrun-plugin-multi"
-gettext "multi" >/dev/null # this source's TITLE
+#gettext "multi" # this source's TITLE
 
 # Load findnrun settings. {{{1
 ICONCACHE=
@@ -83,7 +91,7 @@ $(
   awk '
   {
     # Exit on reaching the maximum output record count.
-    if( ++n > '"$max"') exit
+    if( ++n > '"${MAXREC}"') exit
 
     # Take basename and print to this column (EOF4).
     gsub(/^.*\/|\.png$/, ""); print
