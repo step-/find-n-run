@@ -1,0 +1,148 @@
+#!/usr/bin/gawk -f
+# vim: fdm=marker:
+
+# =============================================================================
+# findnrun-formatter script
+# Version=1.0
+# Author: step
+# license: GNU GPL applies
+# source: https://github.com/step-/find-n-run
+# =============================================================================
+
+# Usage: source | findnrun-formatter [-S source-id] [-I icon-filename] [-T title] [-O options] [-v verbosity-level]
+
+# Source plugin formatter script {{{1
+BEGIN {
+  Version = "1.0"
+  Program = "findnrun-formatter"
+  Opterr = 1    # default is to diagnose
+  Optind = 1    # skip ARGV[0]
+
+  while ((_go_c = getopt(ARGC, ARGV, "S:I:T:O:hv:")) != -1)
+    opt[_go_c] = Optarg
+#  printf("non-option arguments:\n")
+#  for (; Optind < ARGC; Optind++)
+#    printf("\tARGV[%d] = <%s>\n", Optind, ARGV[Optind])
+
+  # Clear out all option args so they aren't interpreted as filenames.
+  for(i = 0; i <= Optind; i++) delete ARGV[i]
+
+  if("h" in opt) {
+    printf("%s %s\nusage: <command> | %s -- [ <options> ]\n<options>:\n", \
+           Program, Version, Program)
+    print "  -h\t\t\tprint this message and exit\n" \
+          "  -I icon-filename\n" \
+          "  -O options\t\ta string of letters: 's'\n" \
+          "  -S source-id\n" \
+          "  -T source-title\n" \
+          "  -v level\t\tprint progress info to stderr, integer level 1..4"
+    exit
+  }
+  if(opt["v"] > 2) {
+    printf("\nfindnrun-formatter: -Source '%s' -Icon '%s' -Ttitle '%s' -Options '%s'\n",
+           opt["S"], opt["I"], opt["T"], opt["O"]) >"/dev/stderr"
+  }
+  # Optimize well-known sources and single-field case.
+  if(index(opt["O"], "s")) {
+    RS="^~cannot~match~me~" # enable slurp read mode.
+  }
+  else
+  {
+    FS="|"
+  }
+  SEP="\x08"
+  default_icon = ("I" in opt) ?opt["I"] :""
+  verbose = ("v" in opt) ?opt["v"] :0
+}
+# Optimized single-field case. {{{2
+index(opt["O"], "s") {
+  for(i=1; i <= NF; i++)
+    print substr(default_icon "||" $(i) "|" SEP SEP $(i) SEP, 1, 510)
+    # 510 works around gtkdialog tree widget buffer overflow limit
+  if(verbose > 3)
+    print default_icon "||" $(i) > "/dev/stderr"
+  exit
+}
+# Multi-field case. {{{2
+{
+  # Encodings {{{
+  # In:   <icon-filename> '|' <tap-reserved> '|' <label> '|' <tap-data> '|' <comment> '|' <categories>
+  # Out:  Icon|FNR-Reserved|Label|PackedValues
+  # PackedValues:     for SEP=,
+  #   plugin tap: <icon-filename>,<tap-reserved>,<label>,<tap-data>,<comment>,<categories>
+  #   FNRstart:   icon,filename,name,exec,comment,category
+  # Ref:  In: plugin.md tap-record; Out: $AWKB script format_item(); PackedValues: format_item()
+  #}}}
+  # The second column below, FNR-Reserved, is always empty and it's reserved for future expansion.
+  # The tree widget does display its value.
+  print substr(($1 ?$1 :default_icon) "||" $3 "|" $2 SEP $3 SEP $4 SEP $5 SEP $6, 1, 510)
+  # 510 works around gtkdialog tree widget buffer overflow limit
+  if(verbose > 3)
+    print ($1 ?$1 :default_icon) "||" $3 "|", $2 "**", $3, "**", $4, "**", $5, "**", $6 > "/dev/stderr"
+}
+
+# getopt.awk --- Do C library getopt(3) function in awk {{{1
+#
+# Arnold Robbins, arnold@skeeve.com, Public Domain
+#
+# Initial version: March, 1991
+# Revised: May, 1993
+
+# External variables:
+#    Optind -- index in ARGV of first nonoption argument
+#    Optarg -- string value of argument to current option
+#    Opterr -- if nonzero, print our own diagnostic
+#    Optopt -- current option letter
+
+# Returns:
+#    -1     at end of options
+#    "?"    for unrecognized option
+#    <c>    a character representing the current option
+
+# Private Data:
+#    _opti  -- index in multiflag option, e.g., -abc
+function getopt(argc, argv, options,    thisopt, i)
+{
+    if (length(options) == 0)    # no options given
+        return -1
+
+    if (argv[Optind] == "--") {  # all done
+        Optind++
+        _opti = 0
+        return -1
+    } else if (argv[Optind] !~ /^-[^:[:space:]]/) {
+        _opti = 0
+        return -1
+    }
+    if (_opti == 0)
+        _opti = 2
+    thisopt = substr(argv[Optind], _opti, 1)
+    Optopt = thisopt
+    i = index(options, thisopt)
+    if (i == 0) {
+        if (Opterr)
+            printf("%c -- invalid option\n", thisopt) > "/dev/stderr"
+        if (_opti >= length(argv[Optind])) {
+            Optind++
+            _opti = 0
+        } else
+            _opti++
+        return "?"
+    }
+    if (substr(options, i + 1, 1) == ":") {
+        # get option argument
+        if (length(substr(argv[Optind], _opti + 1)) > 0)
+            Optarg = substr(argv[Optind], _opti + 1)
+        else
+            Optarg = argv[++Optind]
+        _opti = 0
+    } else
+        Optarg = ""
+    if (_opti == 0 || _opti >= length(argv[Optind])) {
+        Optind++
+        _opti = 0
+    } else
+        _opti++
+    return thisopt
+}
+

@@ -1,0 +1,13 @@
+style "styleWindow" {
+	bg[NORMAL] = "#fff"
+}
+style "stylePictureFrame" {
+	bg[NORMAL] = "#fff"
+}
+style "styleCaption" {
+	bg[NORMAL] = "#fff"
+}
+
+widget "*filmstripWindow" style "styleWindow"
+widget "*filmstripPictureFrame" style "stylePictureFrame"
+widget "*filmstripCaption" style "styleCaption"

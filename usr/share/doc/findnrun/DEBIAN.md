@@ -34,7 +34,7 @@ To use find-n-run on a plain Debian/Ubuntu/Mint system you need to install
 three packages, which might themselves pull in additional dependencies:
 
  * GNU awk, **gawk**
- * **gtk-dialog**
+ * **gtk-dialog 0.8.3**
  * the **ash** shell (with some precautions, see further down)
 
 ### GNU awk
