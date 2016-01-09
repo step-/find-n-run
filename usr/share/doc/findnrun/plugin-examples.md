@@ -1,10 +1,14 @@
 ## More source plugin examples
 
-Each example builds over the previous ones, so please add all previous declarations in order to make the next example work. Recall the [Find file](plugin.md) example.
+Each example builds over the previous ones, so please add all previous
+declarations in order to make the next example work. Recall the
+[Find file](plugin.md) example.
 
 ### Find file revisited
 
-Let's tweak 'Find file' to avoid the overhead of calling an external script. Let's also start findnrun directly into `find_file`'s view. Edit `~/.findnrun` and add:
+Let's tweak 'Find file' to avoid the overhead of calling an external
+script. Let's also start findnrun directly into `find_file`'s view.
+Edit `~/.findnrun` and add:
 ```
     TITLE_find_file2='find file no script'
     TAP_find_file2='find $HOME -type f -name "*${term}*" | findnrun-formatter -- -O s -I "${ICON}"'
@@ -14,7 +18,8 @@ Let's tweak 'Find file' to avoid the overhead of calling an external script. Let
 
 ### Find file advanced
 
-A more powerful file search method might involve case insensitive regular expression matching.
+A more powerful file search method might involve case insensitive
+regular expression matching.
 ```
     TITLE_iregex='Find file with regular expressions'
     TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -- -O s -I "${ICON}"'
@@ -23,11 +28,16 @@ A more powerful file search method might involve case insensitive regular expres
 ```
 
 tap-command prepends `.*` to `${term}`
-Since find option -iregex matches _on the whole path_, we start the search expression with `.*` otherwise find -iregex would never match. Note also that in order to match in the middle of a file name you need to explicitly append `.*` to the search input field value.
+Since find option -iregex matches _on the whole path_, we start
+the search expression with `.*` otherwise find -iregex would never
+match. Note also that in order to match in the middle of a file name you
+need to explicitly append `.*` to the search input field value.
 
 ### Initializing the search input field
 
-When a plugin is activated - by starting findnrun or by pressing F3 or Ctrl+_i_ - the search input field is initialized with the value of `<init-search>`. Let's apply this to the _Find file advanced_ example.
+When a plugin is activated - by starting findnrun or by pressing F3
+or Ctrl+_i_ - the search input field is initialized with the value of
+`<init-search>`. Let's apply this to the _Find file advanced_ example.
 ```
     TITLE_iregexinit='Find file with regex and init search'
     INITSEARCH_regexPNG='\.png'
@@ -35,13 +45,44 @@ When a plugin is activated - by starting findnrun or by pressing F3 or Ctrl+_i_ 
     SOURCES='iregexPNG iregex find_file FNRstart'
 ```
 
-You will notice that the insert cursor is placed in column 1, at the beginning of the input text. This isn't ideal but it is the way gtkdialog works. Get in the habit of pressing the End key if you want to continue entering text after the initialization value.
+You will notice that the insert cursor is placed in column 1, at
+the beginning of the input text. This isn't ideal but it is the way
+gtkdialog works. Get in the habit of pressing the End key if you want to
+continue entering text after the initialization value.
 
-If you want to initialize the search input field for any of the built-in sources, simply add the appropriate line to `~/.findnrun`. For instance, for the default source use:
+If you want to initialize the search input field for any of the built-in
+sources, simply add the appropriate line to `~/.findnrun`. For instance,
+for the default source use:
 ```
     INITSEARCH_FNRstart='audio'
 ```
 
 ### Multi-field tap
 
-So far we have only seen examples of source taps that output a single column, the tap-data column, for each record. Of course you could want to implement a tap that outputs multi-field records, perhaps to show a different icon for each record or label text that differs from its tap-data value. This is possible and there is a fully worked-out example to study. Since it's a more substantial example, it isn't included in this document. You can find it in file [/usr/share/doc/findnrun/examples/multi-field-tap.sh](examples/multi-field-tap.sh).
+So far we have only seen examples of source taps that output a single
+column, the tap-data column, for each record. Of course you could want
+to implement a tap that outputs multi-field records, perhaps to show
+a different icon for each record or label text that differs from its
+tap-data value. This is possible and there is a fully worked-out example
+to study. Since it's a more substantial example, it isn't included in
+this document. You can find it in file
+[/usr/share/doc/findnrun/examples/multi-field-tap.sh](examples/multi-field-tap.sh).
+
+### Filmstrip viewer
+
+The filmstrip source plugin demonstrates how to paginate search results.
+It's a completely worked-out example of an independent GUI that syncs
+with findnrun keyboard events. On the practical side, it is also an
+application that can be used to search through a collection of pictures
+by filename and embedded image caption/comments.  Extending search to
+other metadata contents (EXIF and IPCT tags, etc.), such as camera
+settings, geotags and so on, should be relatively simple - given some
+knowledge of shell scripting and of the exiftool command-line utility.
+Filmstrip search results are refined incrementally, as in all findnrun
+searches. Results are presented visually in a spartan image viewer, and
+textually in the findnrun search result list.
+
+The filmstrip plugin/application comprises several files located in
+`/usr/share/doc/findnrun/examples/filmstrip/`.
+
+[/usr/share/doc/findnrun/examples/filmstrip/README.md](Plugin README) file.

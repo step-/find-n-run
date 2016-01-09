@@ -1,0 +1,124 @@
+# This file is sourced not run.
+# Film-strip source plugin default configuration file.
+# vim:ft=sh:
+
+# Source declaration, manually copy to ~/.findnrunrc {{{1
+# And add source 'filmstrip' to variable SOURCES in ~/.findnrunrc.
+# Uncomment each line when copying.
+#SOURCE_filmstrip='filmstrip:filmstrip::filmstrip:filmstrip'
+#TAP_filmstrip='/usr/share/doc/findnrun/examples/filmstrip/tap.sh /usr/share/doc/findnrun/examples/filmstrip/taprc "${term}" "${TITLE}" | findnrun-formatter --'
+#DRAIN_filmstrip='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
+#TITLE_filmstrip='Filmstrip'
+#INITSEARCH_filmstrip=''
+
+# ------ Basic settings ------ {{{1
+# Find image files using $FIND_* values:
+FIND_IN=~/Pictures
+FIND_TYPE='\.jpg$' # regex
+FIND_IN_SUBFOLDERS=false
+# Whether to look for pictures in sub-folders of $FIND_IN.
+FIND_SORTED=true
+FIND_OPTS='-L' # follow symlinks
+FIND_EXPR_OPTS=
+# How many pictures to show and paginate.
+VIEWER_FRAMES=5
+# Whether each frame shows vertical/horizontal scrollbars.
+SHOW_SCROLLBARS=false
+PICTURE_WIDTH=180
+PICTURE_HEIGHT=120
+CAPTION_WIDTH=200
+# Caption height: the first value is used when $CUSTOM_CAPTION is null or
+# undefined; the second value is used otherwise.
+CAPTION_HEIGHT=40:340
+# Cap findnrun search result list at these many lines (hide remaining results).
+LIST_LINES=60
+
+# ------ Advanced settings ------ {{{1
+# Whether to cache the image list after the first tap invocation.
+CACHE_LIST=true
+
+# Optional custom click command.
+# Leave empty for default command (rox).
+# Examples of custom click commands.
+#CUSTOM_CLICK=rox
+#CUSTOM_CLICK=defaultimageviewer
+#CUSTOM_CLICK=/path/to/my-image-viewer-script.sh
+
+# Optional custom caption creation function.
+# Leave empty for default caption from image file name.
+# Some predefined custom functions are included further down.
+CUSTOM_CAPTION=exif_caption_abstract
+
+# For gtkdialog styles
+# Puppy and Fatdog use GTK2 (default), Slacko uses GTK3 (uncomment).
+GTK_STYLES="--styles=${0%/*}/gtkrc-2.0"
+#GTK_STYLES="--styles=${0%/*}/gtk3.css"
+#
+# GTK2 gtkdialog supports rc style file priority (uncomment).
+#GTK2_RC_FILES="~/.gtkrc-2.0:${0%/*}/gtkrc-2.0"
+#export GTK2_RC_FILES
+
+# Predefined custom caption functions. No change below. {{{1
+# A custom caption function must output a list of records and nothing
+# else.  Record format:
+#  <record> ::=  <image full pathname>'|'<caption text>
+# Characters '/', '|', newline (\n) and carriage return (\r) aren't
+# allowed in <caption text>.  Do not output empty lines.
+#
+# The custom caption function is invoked when the search result cache is
+# being built if $CACHE_LIST is 'true', and on each character typed into
+# the search input field otherwise. The invocation command is:
+#
+#     ${CUSTOM_CAPTION} <file pathname>
+# where <file pathname> is an input file that lists the pathnames of all
+# found image files, one pathname per line. Do not overwrite or delete
+# the contents of <file pathname>.
+
+exif_caption_abstract () # $1-image-list-filepath [$2-ExifTool-tag] {{{2
+# $1 is an input file that lists the pathnames of all found image files,
+# one pathname per line.
+# $2 is optional (default value Caption-Abstract). It is the name of an
+# ExifTool tag that is use to fill the caption. If you want to re-use
+# this function but need to combine multiple metadata fields for the
+# caption, you have two options: 1) rolling your own custom function;
+# 2) defining a custom ExifTool tag for this function. These are the
+# steps for the second option:
+# - Define a custom tag in your ~/.ExifTool_config file.
+# - Define a custom caption function as:
+#
+#      exif_caption_foo () exif_caption_abstract 'MyExifToolTag'
+#
+#   where 'MyExifToolTag' is the custom tag defined in ~/.ExifTool_config.
+# - Finally set CUSTOM_CAPTION=exif_caption_foo in ~/.findnrunrc.
+#
+{
+  local infile tagname tagexpr mod do_not_change_this custom_exiftool_expr
+  infile=$1
+  tagname=${2:-Caption-Abstract}
+  if [ -n "${tagname}" ] && which exiftool >/dev/null 2>&1; then
+    # Mandatory replacements: {{{
+    # \r might come from Windows => delete it
+    # \n might be embedded in the caption text => to ' '
+    # / isn't allowed in captions => to Unicode U+2215
+    # | isn't allowed in output records => to Unicode U+2215 [sic]
+    # U+2215 is the division slash character. It looks like the forward
+    # slash character.
+    # NOTE: generate-records.awk undoes the U+2215 replacement, so in
+    # the end forward-slashed will be forward-slashes, which could be
+    # imporant if the caption text includes a URL and is copy-pasted.
+    # Generating division slash character:
+    # in  ash: printf "\xe2\x88\x95"
+    # in bash: printf "\u2215" and also the ash way
+    #}}}
+    mod='s/\n/ /g;s/\r//g;s/[|\/]/'$(printf '\xe2\x88\x95')'/g'
+
+    do_not_change_this="\$Directory/\$FileName|" # Really, don't!
+    # But this you can change.
+    custom_exiftool_expr="\${${tagname};${mod}}:- \${FileName;${mod}}"
+
+    tagexpr="${do_not_change_this}${custom_exiftool_expr}"
+    # -m makes exiftool ignore errors extracting ${tagname}.
+    exiftool -m -q -p "${tagexpr}" -@ "${infile}"
+  fi
+}
+
