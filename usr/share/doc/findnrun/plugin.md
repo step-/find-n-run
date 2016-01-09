@@ -192,9 +192,11 @@ There is a way to make findnrun terminate sub-processes automatically. Before ex
 
 So, if a plugin needs for its sub-process to be automatically terminated when findnrun exits it should save the sub-process id in a suitably-named `.pidof_*` file under findnrun's temporary folder.
 
-### Plugin internationalization
+### Plugin internationalization (i18n)
 
-Source-titles are looked up for [translations](TRANSLATING.md) using GNU Gettext in text domain "findnrun-plugin-PLUGIN-ID", where PLUGIN-ID stands for the `<source-id>` value.
+Source-titles are looked up for using GNU Gettext in text domain "findnrun-plugin-PLUGIN-ID", where _PLUGIN-ID_ stands for the `<source-id>` value.
+
+As a minimum translators should add a translation for the plugin title defined with TITLE\_PLUGIN-ID=... in the plugin installed definition section of file `~/.findnrunrc`. Plugin developers must provide such installation information to translators. Further reading about [translations](TRANSLATING.md).
 
 ### Formatter
 

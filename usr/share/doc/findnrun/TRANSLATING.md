@@ -7,7 +7,7 @@ contributed files (see below) to the forum thread.
 Findnrun source code is prepared for translation with GNU Gettext.  Message catalogs are kept separated into multiple text domains (files):
 
  * "findnrun" for the required base functionality
- * "findnrun-plugin-PLUGIN-ID" for each contributed [plugin](plugin.md), where PLUGIN-ID stands for the actual plugin unique identifier.
+ * "findnrun-plugin-PLUGIN-ID" for each contributed [plugin](plugin.md), where _PLUGIN-ID_ stands for the unique identifier of a plugin.
 
 ### Instructions for base functionality
 
@@ -106,6 +106,18 @@ recommended.
 Each [plugin](plugin.md) has its own `.mo` file, which can be translated
 following steps analogous to the ones given in section _Instructions for
 base functionality_.
+
+A plugin's `.mo` file is named "findnrun-plugin-PLUGIN-ID.mo", where
+_PLUGIN-ID_ stands for the unique identifier of the plugin.
+
+As a minimum translators should add a translation for the plugin title
+defined with `TITLE_`_PLUGIN-ID_=... in the plugin installation section
+of file `~/.findnrunrc`. Translators can retrieve plugin installation
+information (PLUGIN-ID, title, etc.) from the plugin developer.
+
+Plugin source code files may include other GetText resources to be
+translated in the same `.mo` file. A plugin developer may optionally
+provide a corresponding `.po` file to ease up the translator's task.
 
 ### Help files
 
