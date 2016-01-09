@@ -63,7 +63,7 @@ trap_handler() # [[[
   if cd "${tmpd}"; then
     # kill process / process group pids; guard system processes such as init (1).
     for id in $(grep --include .pidof_\* -hr .); do
-      case ${id} in 1) ;; *) ids="${ids} ${id}" ;; esac
+      case ${id} in 0|1) ;; *) ids="${ids} ${id}" ;; esac
     done
     [ -n "${ids}" ] && /bin/kill -TERM -- ${ids} 2>/dev/null # not the shell builtin!
     cd - >/dev/null
