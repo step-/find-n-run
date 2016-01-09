@@ -20,13 +20,12 @@ MAXREC=500 # output records
 # And add source 'multi' to variable SOURCES in ~/.findnrunrc.
 # Uncomment each line when copying.
 #SOURCE_multi='multi:multi::multi:'
-#TAP_multi='/usr/share/doc/findnrun/examples/multi-field-tap.sh "${term}" "${TITLE}" | findnrun-formatter --'
+#TAP_multi='/usr/share/doc/findnrun/examples/multi-field-tap.sh "${term}" | findnrun-formatter --'
 #DRAIN_multi='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
 #TITLE_multi='multi-field example'
 
 # No change below. {{{1
 term=$1 # search term
-title=$2
 
 # Trap {{{1
 TMPF="/tmp/.${0##*/}.tmp.$$"
@@ -34,7 +33,6 @@ trap 'rm -f "${TMPF:-/tmp/dummy}"*' HUP INT QUIT TERM ABRT 0
 
 # i18n Localization {{{1
 TEXTDOMAIN="findnrun-plugin-multi"
-#gettext "multi" # this source's TITLE
 
 # Load findnrun settings. {{{1
 ICONCACHE=
@@ -58,13 +56,19 @@ if [ -z "${term}" ]; then
   line=
   printf "%s\n" "${ICONCACHE}/findnrun"-*.png >"${TMPF}" && # list icon filenames
     read line < "${TMPF}" # read first filename
+  # Filename ends with '*.png' if there were no matches.
   if case "${line}" in *-\*.png) true ;; *) false ;; esac; then
     # Error: no matching filename. {{{
-    # i18n [%s] is 'Show all icons' in TEXTDOMAIN=findnrun.
-    # i18n '%s' is the source TITLE in TEXTDOMAIN=findnrun-plugin-multi.
+    # i18n Please translate just the first gettext in
+    # i18n TEXTDOMAIN=findnrun-plugin-multi. The second gettext is
+    # i18n re-cycled from TEXTDOMAIN=findnrun by design to keep translated
+    # i18n text in sync.
+    # i18n Fyi, $TITLE is the value of $TITLE_multi in ~/.findnrunrc and
+    # i18n here it's already translated, provided that a translation for
+    # i18n $TITLE_multi exists in TEXTDOMAIN=findnrun-plugin-multi.
     printf "$(gettext \
-      "%sNo icons?\n%sPlease untick [%s] and tick it again.\n%sThen refresh the list for source '%s'.")" \
-      '||' '||' "$(gettext -d findnrun "_Show all icons")" '||' "${title}" # 3 records
+      "%sPlugin '%s' found no icons to display.\n%sPlease untick [%s] and tick it again.\n%sThen clear the search input field to refresh search results.")" \
+      '||' "${TITLE}" '||' "$(gettext -d findnrun "_Show all icons")" '||' # 3 records
     #}}}
     exit
   fi
