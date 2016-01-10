@@ -82,7 +82,7 @@ F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 F3SF="${TMPD}/.f3s"; >"${F3SF}" # builtin/plugin source list view cycler
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 SEP=`echo -e "\b"` # field separator of packed values
-ICONCACHE="${HOME}/.icons" # location of icon cache files (in $CONFIG)
+XDGHOMEICONS="${HOME}/.icons" # freedesktop.org standard user's icon location
 SRCSTEM="${TMPD}/.source-" # prefix to source filenames
 
 # -----------------------------------------------------------------------------
@@ -96,7 +96,7 @@ UNEXPORT="unset GUI_ABOUT varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN va
 # unset varLIST and varF3 separately
 
 # Prepare the configuration file. [[[1
-# Defaults - match same variable/value pairs in the next block.
+# Defaults - match same variable/value pairs in the next block. [[[2
 defOPEN=false
 export varICONS=false
 export varFOCUSSEARCH=false
@@ -108,7 +108,7 @@ HOTKEY_F3=F3
 # space separated list
 SOURCES="FNRstart FNRsc"
 
-# Read / supplement $CONFIG.
+# Read / supplement $CONFIG. [[[2
 touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
 # Add missing/hidden defaults.
 awk '
@@ -127,7 +127,7 @@ awk '
   /^HOTKEY_F3=/{f10=1}
   /^SOURCES=/{f11=1}
   END{
-    if(!f1) print "ICONCACHE=\"'"${ICONCACHE}"'\"">>ARGV[1]
+    if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
     if(!f3) print "SEARCHFROMLEFT=false">>ARGV[1]
     if(!f4) print "SEARCHREGEX=false">>ARGV[1]
@@ -142,6 +142,15 @@ awk '
   ' "${CONFIG}"
 
 # Values that depend on defaults.
+if [ -z "${ICONCACHE}" ]; then # [[[2
+  ICONCACHE="${XDGHOMEICONS}"
+else
+  # For XDG/GTK to be able to find icons in a non-standard icon path,
+  # the path must end in '/icons' and XDG_DATA_DIRS must include the
+  # parent folder path.
+  XDG_DATA_DIRS="${XDG_DATA_DIRS}:${ICONCACHE}"
+  ICONCACHE="${ICONCACHE}/icons"
+fi
 ICONSTEM="${ICONCACHE}/findnrun-" # prefix to worked-around icons.
 mkdir -p "${ICONCACHE}"
 
