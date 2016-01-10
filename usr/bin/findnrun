@@ -200,8 +200,8 @@ TITLE_FNRstart=${APP_NAME}
 
 # Builtin source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
-# compgen requires bash as gtkdialog back-end shell.
-TAP_FNRsc='compgen -ac "${term}" |findnrun-formatter -- -O s -I "${ICON}"'
+# Embedded newline characters not allowed.
+TAP_FNRsc='set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su -I "${ICON}";'
 ICON_FNRsc=findnrun-FNRsc
 TITLE_FNRsc=$(gettext "shell completion") # i18n 1.7
 
