@@ -32,7 +32,9 @@ BEGIN {
            Program, Version, Program)
     print "  -h\t\t\tprint this message and exit\n" \
           "  -I icon-filename\n" \
-          "  -O options\t\ta string of letters: 's'\n" \
+          "  -O options\t\ta string of letters:\n" \
+          "     's' (s)ingle field input\n" \
+          "     'u' sort -(u)nique output, implies 's'\n" \
           "  -S source-id\n" \
           "  -T source-title\n" \
           "  -v level\t\tprint progress info to stderr, integer level 1..4"
@@ -56,11 +58,26 @@ BEGIN {
 }
 # Optimized single-field case. {{{2
 index(opt["O"], "s") {
-  for(i=1; i <= NF; i++)
-    print substr(default_icon "||" $(i) "|" SEP SEP $(i) SEP, 1, 510)
-    # 510 works around gtkdialog tree widget buffer overflow limit
-  if(verbose > 3)
-    print default_icon "||" $(i) > "/dev/stderr"
+  if(! index(opt["O"], "u")) {
+    for(i=1; i <= NF; i++)
+      print substr(default_icon "||" $(i) "|" SEP SEP $(i) SEP, 1, 510)
+      # 510 works around gtkdialog tree widget buffer overflow limit.
+    if(verbose > 3)
+      print default_icon "||" $(i) > "/dev/stderr"
+  } else { # sort -unique
+    split($0, a)
+    asort(a)
+    a0=""
+    for(i=1; i <= NF; i++) {
+      ai = a[i]
+      if(a0 != ai) {
+        a0 = ai
+        print substr(default_icon "||" ai "|" SEP SEP ai SEP, 1, 510)
+        if(verbose > 3)
+          print default_icon "||" ai > "/dev/stderr"
+      }
+    }
+  }
   exit
 }
 # Multi-field case. {{{2
