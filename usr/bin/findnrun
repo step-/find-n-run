@@ -184,19 +184,19 @@ done
 # pipe-separated list
 BUILTIN_SOURCES="FNRstart|FNRsc"
 
-# Default builtin source "Desktop Apps"
+# Default builtin source "Desktop Apps" [[[2
 SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=${APP_NAME}
 
-# Builtin source "Shell Completion"
+# Builtin source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
 # compgen requires bash as gtkdialog back-end shell.
 TAP_FNRsc='compgen -ac "${term}" |findnrun-formatter -- -O s -I "${ICON}"'
 ICON_FNRsc=findnrun-FNRsc
 TITLE_FNRsc=$(gettext "shell completion") # i18n 1.7
 
-# Cache icons of enabled sources.
+# Cache icons of enabled sources. [[[2
 case " ${SOURCES} " in *' FNRsc '*)
   [ -e "${ICONSTEM}FNRsc.png" ] || cp /usr/share/doc/findnrun/FNRsc.png "${ICONSTEM}FNRsc.png" ;;
 esac
@@ -809,10 +809,7 @@ generate_invoke_source_tap() # [[[2
   # Start tap-command. [[[
   echo -n ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}' # trim timestamp
   echo -n ' && '"${UNEXPORT}"' varLIST varF3 invokeTAP'
-  echo -n ' && case ${HINTS} in'
-  echo -n  ' *term*) FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} "${term}" ;;'
-  echo -n  ' *) FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP} ;;'
-  echo -n ' esac'
+  echo -n ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval ${TAP}'
   #]]]
 }
 
@@ -848,7 +845,7 @@ generate_invoke_source_drain() # [[[2
   # pretend that invokeDRAIN is implemented, and handle it similarly to
   # what we do for invokeTAP, which is fully implemented.
   echo -n '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}' # trim timestamp
-  echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH HINTS varF3 invokeDRAIN'
+  echo -n '; set >&2; unset TAP DRAIN ICON TITLE INITSEARCH varF3 invokeDRAIN'
   echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval "$@" &'
   #]]]
 }
