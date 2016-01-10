@@ -104,7 +104,8 @@ export varFOCUSSEARCH=false
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=F2
 HOTKEY_F3=F3
-# Builtin sources: "desktop apps" and "shell completion".
+# Builtin sources
+# space separated list
 SOURCES="FNRstart FNRsc"
 
 # Read / supplement $CONFIG.
@@ -180,12 +181,15 @@ done
 
 # Declare builtin sources. [[[1
 # $BUILTIN_SOURCES get special treatment
+# pipe-separated list
 BUILTIN_SOURCES="FNRstart|FNRsc"
 
+# Default builtin source "Desktop Apps"
 SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=${APP_NAME}
 
+# Builtin source "Shell Completion"
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
 # compgen requires bash as gtkdialog back-end shell.
 TAP_FNRsc='compgen -ac "${term}" |findnrun-formatter -- -O s -I "${ICON}"'
@@ -196,7 +200,6 @@ TITLE_FNRsc=$(gettext "shell completion") # i18n 1.7
 case " ${SOURCES} " in *' FNRsc '*)
   [ -e "${ICONSTEM}FNRsc.png" ] || cp /usr/share/doc/findnrun/FNRsc.png "${ICONSTEM}FNRsc.png" ;;
 esac
-
 
 # Prepare sources. [[[1
 SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTEM}" 0 FNRstart
