@@ -84,5 +84,4 @@ textually in the findnrun search result list.
 
 The filmstrip plugin/application comprises several files located in
 `/usr/share/doc/findnrun/examples/filmstrip/`.
-
-[/usr/share/doc/findnrun/examples/filmstrip/README.md](Plugin README) file.
+[Plugin README](examples/filmstrip/README.md) file.
