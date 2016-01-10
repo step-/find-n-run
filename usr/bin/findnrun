@@ -194,7 +194,7 @@ TITLE_FNRsc=$(gettext "shell completion") # i18n 1.7
 
 # Cache icons of enabled sources.
 case " ${SOURCES} " in *' FNRsc '*)
-  [ -e "${ICONSTEM}FNRsc.png" ] || cp /usr/share/doc/findnrun/shell-completion.png "${ICONSTEM}FNRsc.png" ;;
+  [ -e "${ICONSTEM}FNRsc.png" ] || cp /usr/share/doc/findnrun/FNRsc.png "${ICONSTEM}FNRsc.png" ;;
 esac
 
 
