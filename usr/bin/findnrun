@@ -845,7 +845,7 @@ generate_invoke_source_drain() # [[[2
   # pretend that invokeDRAIN is implemented, and handle it similarly to
   # what we do for invokeTAP, which is fully implemented.
   echo -n '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}' # trim timestamp
-  echo -n '; set >&2; unset TAP DRAIN ICON TITLE INITSEARCH varF3 invokeDRAIN'
+  echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH varF3 invokeDRAIN'
   echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} eval "$@" &'
   #]]]
 }
