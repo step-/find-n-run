@@ -94,7 +94,8 @@ A source plugin is installed by adding its declaration into `.findnrunrc` as fol
  * `<init-search>` can be used to initialize the search input field.
 
  * Declarations marked "optional" can be omitted by leaving their respective `<...-id>` slot empty in the `SOURCE_<source-id>` declaration.
- * Paired exterior double quotes work just as well as single quotes, but require escaping interior sh special characters.
+ * Embedded newline or carriage return characters are not allowed in `<...-command>` values.
+ * All values are quoted strings. Paired exterior double quotes work just as well as single quotes, but require escaping interior sh special characters.
 
 You can use any valid sh variable name as an `<...-id>`, but prefix "FNR" is reserved for findnrun's own plugins.
 Examples of valid `<id>`s: drain27, acme\_1.
@@ -158,7 +159,7 @@ By default, when findnrun starts and no source plugins are installed, it display
     SOURCES='FNRstart'
 ```
 
-Since version 1.7 a shell-completion plugin is bundled, so the amended default source installation is:
+Since version 1.7 the "shell completion" plugin is bundled, so the amended default source installation is:
 ```
     SOURCES='FNRstart FNRsc'
 ```
