@@ -114,7 +114,7 @@ exif_caption_abstract () # $1-image-list-filepath [$2-ExifTool-tag] {{{2
 
     do_not_change_this="\$Directory/\$FileName|" # Really, don't!
     # But this you can change.
-    custom_exiftool_expr="\${${tagname};${mod}} source:\${Source;${mod}} - \${FileName;${mod}}"
+    custom_exiftool_expr="\${${tagname};${mod}} \${Source;${mod}} \$ImageSize \$FileSize \${FileName;${mod}}"
 
     tagexpr="${do_not_change_this}${custom_exiftool_expr}"
     # -m makes exiftool ignore errors extracting ${tagname}.
