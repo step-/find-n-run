@@ -48,7 +48,9 @@ splash () # $1-single-line-message, non-blocking {{{1
 if ! [ -s "${ALLF}" ]; then
   # Find image files {{{
   [ true = "${FIND_IN_SUBFOLDERS}" ] || FIND_EXPR_OPTS="-maxdepth 1 ${FIND_EXPR_OPTS}"
-  find ${FIND_OPTS} "${FIND_IN}" ${FIND_EXPR_OPTS} -type f -iregex ".*${FIND_TYPE}" >"${ALLF}"
+  ifs=${IFS}; IFS=: # $FIND_PATH is formatted like $PATH
+  set -- ${FIND_PATH}; IFS=${ifs}
+  find ${FIND_OPTS} "$@" ${FIND_EXPR_OPTS} -type f -iregex ".*${FIND_TYPE}" >"${ALLF}"
   [ true = "${FIND_SORTED}" ] && sort -o "${ALLF}" "${ALLF}"
   #}}}
   # Warn against finding no files. {{{
@@ -75,7 +77,7 @@ fi
 # 'On needing to generate new records' further down.
 RESF_ready=false
 : On event PageUp/Down... #{{{1
-# ... and availability of previously-generated records.
+# ... and availability of previously-generated records in $RESF.
 # Paginate those records, and send image to the viewer component.
 [ -s "${RESF}" ] && case "${FNREVENT}" in
   PageDown|PageUp)
@@ -93,13 +95,20 @@ esac
 
 : On needing to generate new records... # {{{1
 # ... due to event 'Search' or no previously-generated records for events 'PageUp/Down'.
-# Generate new records, and send image references to the viewer component.
-[ false = ${RESF_ready} ] &&
+# Save new records to $RESF, and send image references to the viewer component.
+if [ false = ${RESF_ready} ]; then
+  # Set basedir but only if it's a single path. {{{2
+  # Multi-path value with embedded colons will very likely fail the test.
+  [ -e "${FIND_PATH}" ] && basedir=${FIND_PATH} || basedir=
+  basedir=${basedir%/}
+
+  # generate-records.awk filters and formats $ALLF to create $RESF. {{{2
   AWKPATH="${0%/*}" gawk -F '[/|]' \
-    -v OUTF="${RESF}" -v TERM="${term}" -v MAXREC=${MAXREC} \
-    -v MAXSLOT=${MAXSLOT} -v STEM="${INPUTSTEM}" \
+    -v OUTF="${RESF}" -v TERM="${term}" -v BASEDIR="${basedir}" \
+    -v MAXREC=${MAXREC} -v MAXSLOT=${MAXSLOT} -v STEM="${INPUTSTEM}" \
     -f generate-records.awk "${ALLF}" &&
   RESF_ready=true
+fi
 
 : Manage the cache. #{{{1
 # Note that $RESF, if existing, is left untouched because we want to

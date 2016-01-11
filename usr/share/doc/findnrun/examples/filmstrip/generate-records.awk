@@ -1,6 +1,7 @@
 # Arguments {{{1
 # -v OUTF=<output file> which eventually will be sent to findnrun
 # -v TERM=<search term>
+# -v BASEDIR=<SEARCH_IN path>   "" or !"" without trailing slash
 # -v MAXREC=<max> return at most <max> lines to the search list
 # -v MAXSLOT=<viewer slots>  [1..n]
 # -v STEM=<filepath>
@@ -43,11 +44,18 @@ matched && matched <= MAXSLOT { # Send image to viewer component. {{{2
 function format_fnr_record(abspath, caption,   na, a, label, NONE) # {{{1
 {
   # Out:   <icon-filename> | <tap-reserved> | <label> | <tap-data> | <comment> | <categories>
-  na = split(abspath, a, /\//)
-  label = na < 5 ?abspath :("/" a[2] "/.../" a[na-1] "/" a[na])
-  # We use the caption for <comment>.
+
+  # Format label as <1st>/.../<(N-1)th>/<Nth> path component
+  # with 1st component relative to $FIND_IN path, and
+  # "..." included only if there are more than 3 components.
+  label = abspath
+  if("" != BASEDIR) sub("^"BASEDIR"/", "", label)
+  na = split(label, a, /\//)
+  label = na < 5 ?label :("/" a[2] "/.../" a[na-1] "/" a[na])
+
+  # Use caption for <comment>.
   if("" == caption) {
-    caption = a[na] # picture filename as default caption
+    caption = a[na] # use picture filename as default caption
   } else {
     ; # CUSTOM_CAPTION
   }

@@ -12,16 +12,16 @@
 #INITSEARCH_filmstrip=''
 
 # ------ Basic settings ------ {{{1
-# Find image files using $FIND_* values:
-FIND_IN=~/Pictures
-FIND_TYPE='\.jpg$' # regex
+# Search for pictures inside these paths (separate multiple with ':').
+FIND_PATH="${HOME}/Pictures:${HOME}/Downloads:/usr/share/backgrounds"
+FIND_TYPE='\.\(jpg\|png\)$' # regex
 FIND_IN_SUBFOLDERS=false
-# Whether to look for pictures in sub-folders of $FIND_IN.
+# Whether to search also in sub-folders of $FIND_PATH elements.
 FIND_SORTED=true
 FIND_OPTS='-L' # follow symlinks
 FIND_EXPR_OPTS=
 # How many pictures to show and paginate.
-VIEWER_FRAMES=5
+VIEWER_FRAMES=4
 # Whether each frame shows vertical/horizontal scrollbars.
 SHOW_SCROLLBARS=false
 PICTURE_WIDTH=180
@@ -29,7 +29,7 @@ PICTURE_HEIGHT=120
 CAPTION_WIDTH=200
 # Caption height: the first value is used when $CUSTOM_CAPTION is null or
 # undefined; the second value is used otherwise.
-CAPTION_HEIGHT=40:340
+CAPTION_HEIGHT=40:60
 # Cap findnrun search result list at these many lines (hide remaining results).
 LIST_LINES=60
 
@@ -114,7 +114,7 @@ exif_caption_abstract () # $1-image-list-filepath [$2-ExifTool-tag] {{{2
 
     do_not_change_this="\$Directory/\$FileName|" # Really, don't!
     # But this you can change.
-    custom_exiftool_expr="\${${tagname};${mod}}:- \${FileName;${mod}}"
+    custom_exiftool_expr="\${${tagname};${mod}} source:\${Source;${mod}} - \${FileName;${mod}}"
 
     tagexpr="${do_not_change_this}${custom_exiftool_expr}"
     # -m makes exiftool ignore errors extracting ${tagname}.
