@@ -915,14 +915,17 @@ generate_source_hotkeys() # [[[2
 
 start_dialog() # [[[2
 {
+  local dialog
+  dialog="${TMPD}/.main.xml"
+  cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
     cat
     return
-  fi
+  fi &&
   if [ "${ENABLESTDOUT}" ]; then
-    $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s
+    $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}"
   else
-    $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -s >/dev/null
+    $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null
   fi
 }
 
