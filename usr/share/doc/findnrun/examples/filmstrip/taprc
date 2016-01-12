@@ -26,7 +26,7 @@ VIEWER_FRAMES=4
 SHOW_SCROLLBARS=false
 PICTURE_WIDTH=180
 PICTURE_HEIGHT=120
-CAPTION_WIDTH=200
+CAPTION_WIDTH=190 # 10+$PICTURE_WIDTH gives best look
 # Caption height: the first value is used when $CUSTOM_CAPTION is null or
 # undefined; the second value is used otherwise.
 CAPTION_HEIGHT=40:60

@@ -5,12 +5,12 @@
 [ "${FNRDEBUG:-0}" -gt 1 ] && set -x
 
 
-# $1-$2 are required.
+# $1-$2 are required. {{{1
 CONFIG=$1; . "${CONFIG}"
 INPUTSTEM=$2
 shift 2
 
-# From $CONFIG file.
+# From $CONFIG file. # {{{1
 MAXSLOT=${VIEWER_FRAMES:-5}
 PICTURE_WIDTH=${PICTURE_WIDTH:-96}
 PICTURE_HEIGHT=${PICTURE_HEIGHT:-96}
@@ -54,7 +54,7 @@ generate_pixmap() { # $1-varname [$2-indent] {{{1
 
 generate_caption() { # $1-varname [$2-indent] {{{1
 	printf "${2#*:}%s\\n" \
-'<edit name="filmstripCaption" cursor-visible="false" editable="false" accepts-tab="false" wrap-mode="2"'"${scrollbars}"'>' \
+'<edit name="filmstripCaption" cursor-visible="false" editable="false" accepts-tab="false" wrap-mode="2" left-margin="5" right-margin="5"'"${scrollbars}"'>' \
 '  <variable export="false">'$1'c</variable>' \
 '  <input file>'"${INPUTSTEM}-$1"c'</input>' \
 "  <width>${CAPTION_WIDTH}</width>" \
@@ -69,6 +69,15 @@ generate_action() { # $1-varname [$2-indent] {{{1
 '<action signal="button-press-event">'${click_command}' "$(readlink -f "'"${INPUTSTEM}-$1"'")" & </action>'
 }
 
+generate_horizontal_band() { # $1-varname [$2-indent] {{{1
+	printf "${2#*:}%s\\n" \
+'<edit name="filmstripPictureFrame" cursor-visible="false" editable="false" accepts-tab="false" hscrollbar-policy="2" vscrollbar-policy="2">' \
+'  <variable export="false">'$1'p</variable>' \
+"  <width>${CAPTION_WIDTH}</width>" \
+"  <height>5</height>" \
+'</edit>'
+}
+
 # Main window {{{1
 maxcol=${MAXSLOT}
 maxrow=1
@@ -77,21 +86,23 @@ width_request=$(( ((${CAPTION_WIDTH} > ${PICTURE_WIDTH} ? ${CAPTION_WIDTH} : ${P
 # $TITLE is inherited from tap.sh's environment.
 # Widget 'name' attributes are defined in files gtkrc-2.0 and gtk3.css in this folder.
 cat > "${INPUTSTEM%/*}/.viewer.xml" << EOF
-<window name="filmstripWindow" title="${TITLE}" icon-name="edit-find" width-request="${width_request}">
+<window name="filmstripWindow" title="${TITLE}" icon-name="edit-find" width-request="${width_request}" resizable="false">
   <vbox>
 $(y=0; while [ $y -lt $maxrow ]; do
 echo '    <hbox>'
   x=0; while [ $x -lt $maxcol ]; do
     v=y${y}x${x}
-echo '      <vbox>'
-echo '        <frame>'
+echo '      <frame>'
+echo '        <vbox spacing="0">'
+                generate_horizontal_band $v 10:'          '
 echo '          <eventbox name="filmstripPictureFrame">'
                   generate_pixmap $v 12:'            '
                   generate_action $v 12:'            '
 echo '          </eventbox>'
+                generate_horizontal_band $v 10:'          '
                 generate_caption $v 10:'          '
-echo '        </frame>'
-echo '      </vbox>'
+echo '        </vbox>'
+echo '      </frame>'
     x=$((x + 1))
   done
 echo '    </hbox>'

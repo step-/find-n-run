@@ -1,5 +1,5 @@
 style "styleWindow" {
-	bg[NORMAL] = "#fff"
+	bg[NORMAL] = "#dcdad5"
 }
 style "stylePictureFrame" {
 	bg[NORMAL] = "#fff"
@@ -11,3 +11,4 @@ style "styleCaption" {
 widget "*filmstripWindow" style "styleWindow"
 widget "*filmstripPictureFrame" style "stylePictureFrame"
 widget "*filmstripCaption" style "styleCaption"
+
