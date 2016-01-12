@@ -1201,6 +1201,11 @@ start_dialog << EOF
     ${REMARK#  Will do nothing if xdotool is not installed.}
     <action  condition="command_is_true(case \${RPC% *} in *RaiseMainWindow*) echo 1;; esac)">exec >/dev/null 2>&1; which xdotool && xdotool search --all --pid \${FNRPID} --onlyvisible --name . windowactivate</action>
     ${REMARK#  ]]]}
+    ${REMARK#  [[[. RestartSearch}
+    ${REMARK# This call forces a tap-command invocation with INITSEARCH input.}
+    <action  condition="command_is_true(case \${RPC% *} in *RestartSearch*) echo 1;; esac)">clear:varSEARCH</action>
+    <action  condition="command_is_true(case \${RPC% *} in *RestartSearch*) echo 1;; esac)">refresh:varSEARCH</action>
+    ${REMARK#  ]]]}
     ${REMARK#  [[[. Exit}
     <action condition="command_is_true(case \${RPC% *} in *ExitFNR*) echo 1;; esac)">exit:EXIT</action>
     ${REMARK#  ]]]}

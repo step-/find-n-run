@@ -206,6 +206,7 @@ separate calls.
 Recognized calls:
  * `ExitFNR` - exit findnrun (this function is always executed last)
  * `RaiseMainWindow` - raise findnrun's main window to top and give it the focus
+ * `RestartSearch` - reset search input field to `<init-search>` and invoke `<tap-command>`
 
 ### Findnrun termination and plugins
 
