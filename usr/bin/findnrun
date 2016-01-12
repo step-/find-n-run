@@ -81,6 +81,7 @@ FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 F3SF="${TMPD}/.f3s"; >"${F3SF}" # builtin/plugin source list view cycler
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
+FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 SEP=`echo -e "\b"` # field separator of packed values
 XDGHOMEICONS="${HOME}/.icons" # freedesktop.org standard user's icon location
 SRCSTEM="${TMPD}/.source-" # prefix to source filenames
@@ -1186,6 +1187,19 @@ start_dialog << EOF
     <variable>FNRPID</variable>
     ${REMARK# gtkdialog process id.}
     <input>ps -ho ppid:1 \$\$</input>
+  </entry>
+  ${REMARK# ]]]}
+  ${REMARK# [[[. Remote interface (hidden).}
+  ${REMARK# Note that input events are serialized to ensure RPC detects the call event.}
+  ${REMARK# External processes call RPC with: date '+FUNCTION1[ FUNCTION2...] %s'>"$FNRRPC"}
+  <entry visible="false" auto-refresh="true">
+    <default>ACCEPTING</default>
+    <variable>RPC</variable>
+    <input file>${FNRRPC}</input>
+    ${DEBUG1:+<action>echo>&2 "RPC [ \$RPC ]"</action>}
+    ${REMARK#  [[[. Exit findnrun.}
+    <action condition="command_is_true(case \${RPC% *} in exit*) echo 1;; esac)">exit:EXIT</action>
+    ${REMARK#  ]]]}
   </entry>
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey targets (hidden).}

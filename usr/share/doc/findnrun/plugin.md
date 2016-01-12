@@ -136,6 +136,7 @@ The invocation environment provides tap-command and drain-command with the follo
  * `${FNRTMP}` - findnrun temporary folder id[2][3]
  * `${FNRDEBUG}` - findnrun debugging level 1-9
  * `${FNREVENT}` - invocation event name[4].
+ * `${FNRRPC}` - remote call mailbox file, see section _Remote call interface_.
 
 [1] Findnrun also saves two history files: the global history file and the plugin's history file. Currently they are not exposed in the user interface, and the pull-down widget shows the global history. This might change in the future.
 
@@ -181,6 +182,29 @@ First case: The search result list has the focus and the user presses the PageUp
 Second case: The seach _input_ field has the focus and the user presses the PageUp or PageDown keys. Findnrun invokes the tap with variable `$FNREVENT` set to the event name, either `PageUp` or `PageDown`. It is up to the source tap implementation to respond appropriately to the event:
  * Ignore the event name altogether and return its standard search output. This is what the default source `FNRstart` does.
  * Return a subset of its search results to represent a "page" of data. This is what the example source `filmstrip` does, see [More source plugin examples](plugin-examples.md). It's worth noting that the definition of a "page" is left entirely to the tap implementation. For example, `filmstrip` defines the page as the number of thumbnails, five, that fit in its viewer window, and pages the search result list up/down by five lines each time the PageDown/PageUp key is pressed.
+
+### Remote call interface
+
+Write function calls to the mailbox file `${FNRRPC}`.  A call consist of
+a list of function names - each name is a single word - followed by a
+serialization number. Findnrun executes recognized calls. For instance,
+a remote process could ask findnrun to execute functions foo1 and foo2
+in this way:
+```
+    date +"foo1 foo2 %s" > "${FNRRPC}"
+```
+
+The Linux date command interprets '+' as introducing a format string,
+and replaces '%s' with the serialization number. So, for example
+"foo1 foo2 1234567890" (any number) is written into the mailbox file.
+
+Caveat: the order of execution of `foo1` and `foo2` is undefined
+within the same call. Thus findnrun could execute `foo1` before or
+after `foo2`. If your plugin relies on a fixed order of execution send
+separate calls.
+
+Recognized calls:
+ * `exit` - exit findnrun (this function is always executed last).
 
 ### Findnrun termination and plugins
 
