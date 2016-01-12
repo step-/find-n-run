@@ -1198,9 +1198,8 @@ start_dialog << EOF
     <variable>RPC</variable>
     <input file>${FNRRPC}</input>
     ${DEBUG1:+<action>echo>&2 "RPC [ \$RPC ]"</action>}
-    ${REMARK#  [[[. RaiseMainWindow}
-    ${REMARK#  Will do nothing if xdotool is not installed.}
-    <action  condition="command_is_true(case \${RPC% *} in *RaiseMainWindow*) echo 1;; esac)">exec >/dev/null 2>&1; which xdotool && xdotool search --all --pid \${FNRPID} --onlyvisible --name . windowactivate</action>
+    ${REMARK#  [[[. PresentMainWindow}
+    <action condition="command_is_true(case \${RPC% *} in *PresentMainWindow*) echo 1;; esac)">presentwindow:MAINWINDOW</action>
     ${REMARK#  ]]]}
     ${REMARK#  [[[. RestartSearch}
     ${REMARK# This call forces a tap-command invocation with INITSEARCH input.}
@@ -1280,6 +1279,7 @@ start_dialog << EOF
   ${REMARK#  ]]]}
   ${REMARK# ]]]}
   <action signal="delete-event">exit:abort</action>
+  <variable export="false">MAINWINDOW</variable>
 </window>
 EOF
 

@@ -151,7 +151,7 @@ EOF
 
 #{{{1}}}
 # Give focus to findnrun's search input widget.
-date +"RaiseMainWindow %s" > "${FNRRPC}"
+date +"PresentMainWindow %s" > "${FNRRPC}"
 
 wait # to handle trap
 
