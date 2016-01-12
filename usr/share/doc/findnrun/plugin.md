@@ -205,6 +205,7 @@ separate calls.
 
 Recognized calls:
  * `Exit` - exit findnrun (this function is always executed last)
+ * `RaiseMainWindow` - raise findnrun's main window to top and give it the focus
 
 ### Findnrun termination and plugins
 

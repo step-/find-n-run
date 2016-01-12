@@ -1197,6 +1197,10 @@ start_dialog << EOF
     <variable>RPC</variable>
     <input file>${FNRRPC}</input>
     ${DEBUG1:+<action>echo>&2 "RPC [ \$RPC ]"</action>}
+    ${REMARK#  [[[. RaiseMainWindow}
+    ${REMARK#  Will do nothing if xdotool is not installed.}
+    <action  condition="command_is_true(case \${RPC% *} in RaiseMainWindow*) echo 1;;esac)">exec >/dev/null 2>&1; which xdotool && xdotool search --all --pid \${FNRPID} --onlyvisible --name . windowactivate</action>
+    ${REMARK#  ]]]}
     ${REMARK#  [[[. Exit}
     <action condition="command_is_true(case \${RPC% *} in Exit*) echo 1;; esac)">exit:EXIT</action>
     ${REMARK#  ]]]}
