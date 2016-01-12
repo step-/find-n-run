@@ -204,7 +204,7 @@ after `foo2`. If your plugin relies on a fixed order of execution send
 separate calls.
 
 Recognized calls:
- * `Exit` - exit findnrun (this function is always executed last)
+ * `ExitFNR` - exit findnrun (this function is always executed last)
  * `RaiseMainWindow` - raise findnrun's main window to top and give it the focus
 
 ### Findnrun termination and plugins
