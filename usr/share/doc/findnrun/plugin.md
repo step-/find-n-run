@@ -199,12 +199,12 @@ and replaces '%s' with the serialization number. So, for example
 "foo1 foo2 1234567890" (any number) is written into the mailbox file.
 
 Caveat: the order of execution of `foo1` and `foo2` is undefined
-within the same call. Thus findnrun could execute `foo1` before or
+within the same call. Thus, findnrun could execute `foo1` before or
 after `foo2`. If your plugin relies on a fixed order of execution send
 separate calls.
 
 Recognized calls:
- * `exit` - exit findnrun (this function is always executed last).
+ * `Exit` - exit findnrun (this function is always executed last)
 
 ### Findnrun termination and plugins
 

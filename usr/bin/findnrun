@@ -1197,8 +1197,8 @@ start_dialog << EOF
     <variable>RPC</variable>
     <input file>${FNRRPC}</input>
     ${DEBUG1:+<action>echo>&2 "RPC [ \$RPC ]"</action>}
-    ${REMARK#  [[[. Exit findnrun.}
-    <action condition="command_is_true(case \${RPC% *} in exit*) echo 1;; esac)">exit:EXIT</action>
+    ${REMARK#  [[[. Exit}
+    <action condition="command_is_true(case \${RPC% *} in Exit*) echo 1;; esac)">exit:EXIT</action>
     ${REMARK#  ]]]}
   </entry>
   ${REMARK# ]]]}
