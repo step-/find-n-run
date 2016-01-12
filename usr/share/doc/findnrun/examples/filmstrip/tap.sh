@@ -130,6 +130,9 @@ fi
 : Start viewer component once only. #{{{1
 # $VIEWER itself creates/deletes .pidof_viewer when it starts/terminates.
 if ! [ -e "${INPUTSTEM%/*}/.pidof_viewer" ]; then
+  # Helpers for viewer buttons.
+  echo "rm -f '"${ALLF}"'" > "${INPUTSTEM%/*}/.btn-restart-search.sh"
+
   cp "${BLANKIMG}" "${TMPD}/.blankimg"
   (
     [ "${FNRDEBUG}" ] && >&2 echo starting "'${VIEWER}' '${INPUTSTEM}'"

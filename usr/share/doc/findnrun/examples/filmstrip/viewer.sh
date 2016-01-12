@@ -108,6 +108,17 @@ echo '      </frame>'
 echo '    </hbox>'
   y=$((y + 1))
 done)
+    <hbox space-fill="false" space-expand="false">
+      <text name="filmstripButtonBar" space-fill="true" space-expand="true"><label>""</label></text>
+      <button tooltip-text="$(gettext "Restart Search")" stock-icon-size="1">
+        <input file stock="gtk-refresh"></input>
+        <action>. "${INPUTSTEM%/*}/.btn-restart-search.sh"; date +'RestartSearch %s' >'${FNRRPC}'</action>
+      </button>
+      <button tooltip-text="$(gettext "Exit Filmstrip")" stock-icon-size="1">
+        <input file stock="gtk-quit"></input>
+        <action>exit:EXIT</action>
+      </button>
+    </hbox>
   </vbox>
   <entry visible="false" sensitive="false" auto-refresh="true">
     <variable export="false">REFRESHPIXMAPS</variable>
