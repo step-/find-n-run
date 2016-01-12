@@ -1039,7 +1039,8 @@ start_dialog << EOF
         <action>refresh:varCMD</action>
       </button>
     </hbox>
-
+    ${REMARK# ]]]}
+    ${REMARK# [[[. varCOMMENT: display item comment.}
     <entry sensitive="false" tooltip-text="$(gettext "Comment about current item")">
       <variable>varCOMMENT</variable>
       <input>IFS=${SEP}; set -- \${varLIST}; echo "\$4${showcategories:+ \$5}"</input>
