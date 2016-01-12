@@ -134,7 +134,7 @@ if ! [ -e "${INPUTSTEM%/*}/.pidof_viewer" ]; then
   (
     [ "${FNRDEBUG}" ] && >&2 echo starting "'${VIEWER}' '${INPUTSTEM}'"
 
-    FNRDEBUG=${FNRDEBUG} FNRPID=${FNRPID} "${VIEWER}" \
+    FNRDEBUG=${FNRDEBUG} FNRRPC=${FNRRPC} "${VIEWER}" \
       "${CONFIG}" "${INPUTSTEM}" 1>&2 &
 
     [ "${FNRDEBUG}" ] && >&2 echo bg pid $!

@@ -138,13 +138,9 @@ EOF
 "${GTKDIALOG:-gtkdialog}" --space-expand=true --space-fill=true \
   "${GTK_STYLES}" -s < "${INPUTSTEM%/*}/.viewer.xml" >/dev/null &
 
-# Raise findnrun's own window (requires xdotool installed). {{{1
-if which xdotool >/dev/null 2>&1; then
-  sleep 0.5s # to give gtkdialog enough time to map its window
-  2>/dev/null xdotool search --all --pid ${FNRPID} \
-    --onlyvisible --name . windowactivate
-fi
-
 #{{{1}}}
+# Give focus to findnrun's search input widget.
+date +"RaiseMainWindow %s" > "${FNRRPC}"
+
 wait # to handle trap
 
