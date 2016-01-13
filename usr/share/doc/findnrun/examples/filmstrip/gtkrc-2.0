@@ -1,14 +1,39 @@
 style "styleWindow" {
 	bg[NORMAL] = "#dcdad5"
+	base[NORMAL] = "#dcdad5"
 }
 style "stylePictureFrame" {
-	bg[NORMAL] = "#fff"
+	bg[NORMAL] = "#dcdad5"
+	base[NORMAL] = "#dcdad5"
 }
 style "styleCaption" {
-	bg[NORMAL] = "#fff"
+	bg[NORMAL] = "#dcdad5"
+	base[NORMAL] = "#dcdad5"
+}
+style "styleButtonBar" {
+	bg[NORMAL] = "#dcdad5"
+	base[NORMAL] = "#dcdad5"
 }
 
-widget "*filmstripWindow" style "styleWindow"
-widget "*filmstripPictureFrame" style "stylePictureFrame"
-widget "*filmstripCaption" style "styleCaption"
+widget "*FilmstripWindow" style "styleWindow"
+widget "*FilmstripPictureFrame" style "stylePictureFrame"
+widget "*FilmstripCaption" style "styleCaption"
+widget "*FilmstripButtonBar" style "styleButtonBar"
+
+style "styleBlue" {
+	bg[NORMAL] = "#007"
+  base[NORMAL] = "#007"
+}
+style "styleGreen" {
+	bg[NORMAL] = "#0A0"
+  base[NORMAL] = "#0A0"
+}
+style "styleRed" {
+	bg[NORMAL] = "#500"
+  base[NORMAL] = "#500"
+}
+
+widget "*TestBlue" style "styleBlue"
+widget "*TestGreen" style "styleGreen"
+widget "*TestRed" style "styleRed"
 
