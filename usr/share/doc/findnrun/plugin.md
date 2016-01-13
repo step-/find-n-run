@@ -171,7 +171,7 @@ When `SOURCES` includes multiple elements, a status bar appears at the bottom of
 
 The first column of the list view displays the tap-record icon-filename. If the icon-filename value is null, findnrun displays the source default icon set by `ICON_<icon-id>`. If also the default icon is null findnrun displays an empty cell.
 
-A word of caution: since gtkdialog can't display streaming data, a tap-command must close its output stream for gtkdialog to start populating the search list view.
+Caveat: since gtkdialog can't display streaming data, a tap-command must close its output stream for gtkdialog to start populating the search list view.
 
 **Paginating Search Results**
 
@@ -204,6 +204,7 @@ after `foo2`. If your plugin relies on a fixed order of execution send
 separate calls.
 
 Recognized calls:
+
  * `ExitFNR` - exit findnrun (this function is always executed last)
  * `PresentMainWindow` - raise findnrun's main window to top and give it the focus
  * `RestartSearch` - reset search input field to `<init-search>` and invoke `<tap-command>`
@@ -232,9 +233,9 @@ At the moment, all non-builtin source tap-commands are **required** to end with 
     <command> | findnrun-formatter -- [ <formatter-options> ]
 ```
 
-If tap-command outputs single records, that is, the records don't include "|" (pipe), then do include `-O s` formatter option. "-O s" tells the formatter not to decode each tap-record in detail.  If the source default icon is non-null, include `-I "${ICON}"`.
+If tap-command outputs single records, that is, the records don't include "|" (pipe), then do include option `-O s`, which tells the formatter not to decode each tap-record in detail.  If the source default icon is non-null, include `-I "${ICON}"`.
 
-Run `findnrun-formatter -- -h` for usage information. Note again those two dashes in the formatter command line: they are required because the formatter is a gawk script.
+Run `findnrun-formatter -- -h` for usage information. Note again the double dashes in the formatter command line: they are required before any other options.
 
 ### Plugin performance
 

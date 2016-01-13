@@ -65,23 +65,29 @@ to implement a tap that outputs multi-field records, perhaps to show
 a different icon for each record or label text that differs from its
 tap-data value. This is possible and there is a fully worked-out example
 to study. Since it's a more substantial example, it isn't included in
-this document. You can find it in file
+this document.
+
+The multi-field plugin code and documentation consists of a single file
 [/usr/share/doc/findnrun/examples/multi-field-tap.sh](examples/multi-field-tap.sh).
 
 ### Filmstrip viewer
 
-The filmstrip source plugin demonstrates how to paginate search results.
-It's a completely worked-out example of an independent GUI that syncs
+The filmstrip source plugin demonstrates several advanced features of
+the plugin interface:
+
+  * paginating search results
+  * remote interface calls
+  * an independent GUI
+
+The filmstrip viewer is a full example of an independent GUI that syncs
 with findnrun keyboard events. On the practical side, it is also an
 application that can be used to search through a collection of pictures
 by filename and embedded image caption/comments.  Extending search to
 other metadata contents (EXIF and IPCT tags, etc.), such as camera
 settings, geotags and so on, should be relatively simple - given some
 knowledge of shell scripting and of the exiftool command-line utility.
-Filmstrip search results are refined incrementally, as in all findnrun
-searches. Results are presented visually in a spartan image viewer, and
-textually in the findnrun search result list.
 
-The filmstrip plugin/application comprises several files located in
+The filmstrip plugin/application consists of several files located in
 `/usr/share/doc/findnrun/examples/filmstrip/`.
 [Plugin README](examples/filmstrip/README.md) file.
+
