@@ -49,7 +49,7 @@ generate_pixmap() { # $1-varname [$2-indent] {{{1
 '<eventbox name="FilmstripPictureFrame">' \
 '  <vbox spacing="0" margin="'$margin'" width-request="'$width'" height-request="'$height'">' \
 '    <pixmap yalign="0">' \
-'      <variable export="false">w'$1'</variable>' \
+'      <variable export="false">'$1'</variable>' \
 '      <input file>'"${INPUTSTEM}-$1"'</input>' \
 "      <width>${PICTURE_WIDTH}</width>" \
 '    </pixmap>' \
