@@ -15,16 +15,21 @@
 # Search for pictures inside these paths (separate multiple with ':').
 FIND_PATH="${HOME}/Pictures:${HOME}/Downloads:/usr/share/backgrounds"
 FIND_TYPE='\.\(jpg\|png\)$' # regex
+# Search also in sub-folders of $FIND_PATH elements.
 FIND_IN_SUBFOLDERS=false
-# Whether to search also in sub-folders of $FIND_PATH elements.
+# Sort search results.
 FIND_SORTED=true
 FIND_OPTS='-L' # follow symlinks
 FIND_EXPR_OPTS=
 # How many pictures to show and paginate.
 VIEWER_FRAMES=4
-# Whether each frame shows vertical/horizontal scrollbars.
+# Should image frame show vertical/horizontal scrollbars?
 SHOW_SCROLLBARS=false
+# Image horizontal width. The image will fit entirely within.
+# The image never scales whether the main window is resized or not.
 PICTURE_WIDTH=180
+# Image vertical viewport on plugin start up.
+# It can be increased by resizing the main window vertically.
 PICTURE_HEIGHT=120
 CAPTION_WIDTH=190 # 10+$PICTURE_WIDTH gives best look
 # Caption height: the first value is used when $CUSTOM_CAPTION is null or
