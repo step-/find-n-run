@@ -37,69 +37,74 @@ echo $$ > "${PIDF}"
 trap 'rm -f "${PIDF}"' HUP INT QUIT TERM ABRT 0
 
 generate_pixmap() { # $1-varname [$2-indent] {{{1
-  # pixmap and its path
+  # The image fits horizontally with a fixed $width.  Vertical overflow,
+  # if any, is hidden and can be revealed by resizing the main window
+  # vertically.  The image never scales.
+  local margin width height fit click_command
+  margin=${GENERATED_MARGIN}
+  width=$((${margin}*2 + ${PICTURE_WIDTH}))
+  height=$((${margin}*2 + ${PICTURE_HEIGHT}))
+  click_command="${CUSTOM_CLICK:-rox}"
 	printf "${2#*:}%s\\n" \
-'<pixmap yalign="0">' \
-'  <variable export="false">'$1'</variable>' \
-'  <width>'"${PICTURE_WIDTH}"'</width>' \
-'  <height>'"${PICTURE_HEIGHT}"'</height>' \
-'  <input file>'"${INPUTSTEM}-$1"'</input>' \
-'</pixmap>'
-#'  <action signal="refresh" condition="command_is_true(echo ${#'$1'})">show:'$1'</action>' \
-#'  <action signal="refresh" condition="command_is_true(echo ${#'$1'})">echo >&2 true ${#'$1'}</action>' \
-#'  <action signal="refresh">echo >&2 true/false ${#'$1'}</action>' \
-#'  <action signal="refresh" condition="command_is_false(echo ${#'$1'})">hide:'$1'</action>' \
-#'  <action signal="refresh" condition="command_is_false(echo ${#'$1'})">echo >&2 false ${#'$1'}</action>' \
+'<eventbox name="FilmstripPictureFrame">' \
+'  <vbox spacing="0" margin="'$margin'" width-request="'$width'" height-request="'$height'">' \
+'    <pixmap yalign="0">' \
+'      <variable export="false">w'$1'</variable>' \
+'      <input file>'"${INPUTSTEM}-$1"'</input>' \
+"      <width>${PICTURE_WIDTH}</width>" \
+'    </pixmap>' \
+'  </vbox>' \
+'  <action signal="button-press-event">'${click_command}' "$(readlink -f "'"${INPUTSTEM}-$1"'")" & </action>' \
+'</eventbox>'
 }
 
 generate_caption() { # $1-varname [$2-indent] {{{1
+  local margin=${GENERATED_MARGIN}
+  local width=$((${margin}*2 + ${CAPTION_WIDTH}))
+  local height=$((${margin}*2 + ${CAPTION_HEIGHT}))
 	printf "${2#*:}%s\\n" \
-'<edit name="filmstripCaption" cursor-visible="false" editable="false" accepts-tab="false" wrap-mode="2" left-margin="5" right-margin="5"'"${scrollbars}"'>' \
-'  <variable export="false">'$1'c</variable>' \
-'  <input file>'"${INPUTSTEM}-$1"c'</input>' \
-"  <width>${CAPTION_WIDTH}</width>" \
-"  <height>${CAPTION_HEIGHT}</height>" \
-'</edit>'
-}
-
-generate_action() { # $1-varname [$2-indent] {{{1
-  local click_command
-  click_command="${CUSTOM_CLICK:-rox}"
-  printf "${2#*:}%s\\n" \
-'<action signal="button-press-event">'${click_command}' "$(readlink -f "'"${INPUTSTEM}-$1"'")" & </action>'
-}
-
-generate_horizontal_band() { # $1-varname [$2-indent] {{{1
-	printf "${2#*:}%s\\n" \
-'<edit name="filmstripPictureFrame" cursor-visible="false" editable="false" accepts-tab="false" hscrollbar-policy="2" vscrollbar-policy="2">' \
-'  <variable export="false">'$1'p</variable>' \
-"  <width>${CAPTION_WIDTH}</width>" \
-"  <height>5</height>" \
-'</edit>'
+'<eventbox name="FilmstripCaption">' \
+'  <vbox spacing="0" margin="'$margin'" width-request="'$width'" height-request="'$height'">' \
+'    <edit name="FilmstripCaption" cursor-visible="false" editable="false" accepts-tab="false" wrap-mode="2" left-margin="5" right-margin="5"'"${scrollbars}"'>' \
+'      <variable export="false">'$1'c</variable>' \
+'      <input file>'"${INPUTSTEM}-$1"c'</input>' \
+"      <width>${CAPTION_WIDTH}</width>" \
+"      <height>${CAPTION_HEIGHT}</height>" \
+'    </edit>' \
+'  </vbox>' \
+'</eventbox>'
 }
 
 # Main window {{{1
 maxcol=${MAXSLOT}
 maxrow=1
-width_request=$(( ((${CAPTION_WIDTH} > ${PICTURE_WIDTH} ? ${CAPTION_WIDTH} : ${PICTURE_WIDTH}) + 20) * ${MAXSLOT} ))
+# Calculate starting window dimensions (window IS resizable). {{{
+WINDOW_SPACING=5 # gtkdialog default (value can be changed)
+GENERATED_MARGIN=1 # by the generate_* functions (value can be changed)
+GTK_FRAME_MARGIN=7 # constant, value taken from on-screen measure (don't change)
+width_request=$((
+  ${MAXSLOT} * ( (${CAPTION_WIDTH} > ${PICTURE_WIDTH} ? ${CAPTION_WIDTH} : ${PICTURE_WIDTH}) )
+  + 2 * ${MAXSLOT} * ( ${GTK_FRAME_MARGIN} + ${GENERATED_MARGIN} -2) +1
+))
+# Pixel-perfect corrections: -2 and +1 are empirical corrections for
+# a 180x120 picture size with GENERATED_MARGIN=0.  Possibly these
+# corrections are needed because gtkdialog's calculations are off by
+# some amount?
 
+height_request=$(( 77 + ${CAPTION_HEIGHT} + ${PICTURE_HEIGHT} ))
+#}}}
 # $TITLE is inherited from tap.sh's environment.
 # Widget 'name' attributes are defined in files gtkrc-2.0 and gtk3.css in this folder.
 cat > "${INPUTSTEM%/*}/.viewer.xml" << EOF
-<window name="filmstripWindow" title="${TITLE}" icon-name="edit-find" width-request="${width_request}" resizable="false">
-  <vbox>
+<window name="FilmstripWindow" title="${TITLE}" icon-name="edit-find" width-request="${width_request}" height-request="${height_request}">
+  <vbox spacing="${WINDOW_SPACING}">
 $(y=0; while [ $y -lt $maxrow ]; do
 echo '    <hbox>'
   x=0; while [ $x -lt $maxcol ]; do
     v=y${y}x${x}
 echo '      <frame>'
 echo '        <vbox spacing="0">'
-                generate_horizontal_band $v 10:'          '
-echo '          <eventbox name="filmstripPictureFrame">'
-                  generate_pixmap $v 12:'            '
-                  generate_action $v 12:'            '
-echo '          </eventbox>'
-                generate_horizontal_band $v 10:'          '
+                generate_pixmap $v 10:'          '
                 generate_caption $v 10:'          '
 echo '        </vbox>'
 echo '      </frame>'
@@ -108,18 +113,23 @@ echo '      </frame>'
 echo '    </hbox>'
   y=$((y + 1))
 done)
-    <hbox space-fill="false" space-expand="false">
-      <text name="filmstripButtonBar" space-fill="true" space-expand="true"><label>""</label></text>
-      <button tooltip-text="$(gettext "Restart Search")" stock-icon-size="1">
-        <input file stock="gtk-refresh"></input>
-        <action>. "${INPUTSTEM%/*}/.btn-restart-search.sh"; date +'RestartSearch %s' >'${FNRRPC}'</action>
-      </button>
-      <button tooltip-text="$(gettext "Exit Filmstrip")" stock-icon-size="1">
-        <input file stock="gtk-quit"></input>
-        <action>exit:EXIT</action>
-      </button>
-    </hbox>
+    <eventbox name="FilmstripButtonBar">
+      <hbox space-fill="false" space-expand="false">
+        <text space-fill="true" space-expand="true"><label>""</label></text>
+        <button tooltip-text="$(gettext "Restart Search")" stock-icon-size="1">
+          <input file stock="gtk-refresh"></input>
+          <action>. "${INPUTSTEM%/*}/.btn-restart-search.sh"; date +'RestartSearch %s' >'${FNRRPC}'</action>
+        </button>
+        <button tooltip-text="$(gettext "Exit Filmstrip")" stock-icon-size="1">
+          <input file stock="gtk-quit"></input>
+          <action>exit:EXIT</action>
+        </button>
+      </hbox>
+    </eventbox>
   </vbox>
+  ${REMARK# --------------------------------------------}
+  ${REMARK#   Only invisible widgets below this line.   }
+  ${REMARK# --------------------------------------------}
   <entry visible="false" sensitive="false" auto-refresh="true">
     <variable export="false">REFRESHPIXMAPS</variable>
     <input file>"${INPUTSTEM}-refresh"</input>
