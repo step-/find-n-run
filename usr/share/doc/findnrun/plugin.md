@@ -213,12 +213,12 @@ Recognized calls:
 
 When findnrun terminates it deletes its temporary folder and all files/folder within, which become inaccessible to running plugins. Of course, also the plugins terminate. However, if a plugin spawned a running sub-process, i.e., a user interface module, such as a plugin's own gtkdialog, that sub-process will keep running. Findnrun does nothing to stop it.
 
-There is a way to make findnrun terminate sub-processes automatically. Before exiting findnrun looks under its temporary folder for files named `.pidof_*` and gathers their contents, which must consist solely of process and process groups ids. Then findnrun sends a termination signal to those ids:
+Findnrun's _killing service_ can terminate other processes automatically. Before exiting findnrun looks under its temporary folder for files named `.pidof_*` and gathers their contents, which must consist solely of process and process groups ids. Then findnrun sends a termination signal to those ids:
 ```
     /bin/kill -TERM -- ${ids}
 ```
 
-So, if a plugin needs for its sub-process to be automatically terminated when findnrun exits it should save the sub-process id in a suitably-named `.pidof_*` file under findnrun's temporary folder.
+So a plugin can subscribe to findnrun's killing service if it needs for its sub-process(es) to be automatically terminated when findnrun exits. To subscribe write the sub-process id(s) to a suitably-named `.pidof_*` file under findnrun's temporary folder.
 
 ### Plugin internationalization (i18n)
 
