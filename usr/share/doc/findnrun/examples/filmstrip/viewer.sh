@@ -145,10 +145,21 @@ y=$((y + 1))
 done
 )
   </entry>
+  ${REMARK#  [[[. One-time start-up actions.}
+  ${REMARK# --- Before showing this window ---}
+  ${REMARK# Subscribe to findnruns killing service.}
   <entry visible="false" sensitive="false">
     <variable export="false">KILLPID</variable>
     <input>ps -ho ppid:1 \$\$ >> "${PIDF}"</input>
   </entry>
+  ${REMARK# --- After showing this window ---}
+  <timer milliseconds="true" interval="100" visible="false">
+    <variable export="false">TIMER0</variable>
+    <action>disable:TIMER0</action>
+    ${REMARK# Give focus to findnruns search input widget.}
+    <action>command:date +"PresentMainWindow %s" > "${FNRRPC}"</action>
+  </timer>
+  ${REMARK# -]]]}
   <action signal="delete-event">exit:abort</action>
   <variable>GUI_FILMSTRIP</variable>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">closewindow:GUI_FILMSTRIP</action>
@@ -157,11 +168,7 @@ EOF
 
 #{{{1}}}
 "${GTKDIALOG:-gtkdialog}" --space-expand=true --space-fill=true \
-  "${GTK_STYLES}" -s < "${INPUTSTEM%/*}/.viewer.xml" >/dev/null &
+  "${GTK_STYLES}" -s < "${INPUTSTEM%/*}/.viewer.xml" >/dev/null
 
-#{{{1}}}
-# Give focus to findnrun's search input widget.
-date +"PresentMainWindow %s" > "${FNRRPC}"
-
-wait # to handle trap
+# wait # to handle trap
 
