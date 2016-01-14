@@ -5,12 +5,12 @@
 [ "${FNRDEBUG:-0}" -gt 1 ] && set -x
 
 
-# $1-$2 are required. {{{1
+# $1-$2 are required. [[[1
 CONFIG=$1; . "${CONFIG}"
 INPUTSTEM=$2
 shift 2
 
-# From $CONFIG file. # {{{1
+# From $CONFIG file. # [[[1
 MAXSLOT=${VIEWER_FRAMES:-5}
 PICTURE_WIDTH=${PICTURE_WIDTH:-96}
 PICTURE_HEIGHT=${PICTURE_HEIGHT:-96}
@@ -20,23 +20,23 @@ CAPTION_HEIGHT=${CAPTION_HEIGHT:-20:}
 [ -n "${CUSTOM_CAPTION}" ] && CAPTION_HEIGHT=${CAPTION_HEIGHT#*:} || CAPTION_HEIGHT=${CAPTION_HEIGHT%:*}
 [ "${SHOW_SCROLLBARS}" = true ] && scrollbars= || scrollbars=' hscrollbar-policy="2" vscrollbar-policy="2"'
 
-# i18n Localization {{{1
+# i18n Localization [[[1
 TEXTDOMAIN="findnrun-plugin-filmstrip"
 #gettext "filmstrip" # plugin TITLE
 
-# Kill my process when findnrun exits. {{{1
+# Kill my process when findnrun exits. [[[1
 # We want to kill this shell and its gtkdialog window. $$ is for this shell.
 # For the window look for KILLPID in section 'Main window' further down.
 PIDF="${INPUTSTEM%/*}/.pidof_viewer"
 echo $$ > "${PIDF}"
 
-# Install traps. {{{1
+# Install traps. [[[1
 # If this viewer exits regardless of findnrun's state, the tap could
 # re-start a new viewer provided that $PIDF doesn't exist, so let's
 # delete $PIDF.
 trap 'rm -f "${PIDF}"' HUP INT QUIT TERM ABRT 0
 
-generate_pixmap() { # $1-varname [$2-indent] {{{1
+generate_pixmap() { # $1-varname [$2-indent] [[[1
   # The image fits horizontally with a fixed $width.  Vertical overflow,
   # if any, is hidden and can be revealed by resizing the main window
   # vertically.  The image never scales.
@@ -58,7 +58,7 @@ generate_pixmap() { # $1-varname [$2-indent] {{{1
 '</eventbox>'
 }
 
-generate_caption() { # $1-varname [$2-indent] {{{1
+generate_caption() { # $1-varname [$2-indent] [[[1
   local margin=${GENERATED_MARGIN}
   local width=$((${margin}*2 + ${CAPTION_WIDTH}))
   local height=$((${margin}*2 + ${CAPTION_HEIGHT}))
@@ -75,10 +75,10 @@ generate_caption() { # $1-varname [$2-indent] {{{1
 '</eventbox>'
 }
 
-# Main window {{{1
+# Main window [[[1
 maxcol=${MAXSLOT}
 maxrow=1
-# Calculate starting window dimensions (window IS resizable). {{{
+# Calculate starting window dimensions (window IS resizable). [[[
 WINDOW_SPACING=5 # gtkdialog default (value can be changed)
 GENERATED_MARGIN=1 # by the generate_* functions (value can be changed)
 GTK_FRAME_MARGIN=7 # constant, value taken from on-screen measure (don't change)
@@ -92,7 +92,7 @@ width_request=$((
 # some amount?
 
 height_request=$(( 77 + ${CAPTION_HEIGHT} + ${PICTURE_HEIGHT} ))
-#}}}
+#]]]
 # $TITLE is inherited from tap.sh's environment.
 # Widget 'name' attributes are defined in files gtkrc-2.0 and gtk3.css in this folder.
 cat > "${INPUTSTEM%/*}/.viewer.xml" << EOF
@@ -166,9 +166,10 @@ done
 </window>
 EOF
 
-#{{{1}}}
+#[[[1]]]
 "${GTKDIALOG:-gtkdialog}" --space-expand=true --space-fill=true \
   "${GTK_STYLES}" -s < "${INPUTSTEM%/*}/.viewer.xml" >/dev/null
 
 # wait # to handle trap
 
+# vim: foldmarker=[[[,]]]:
