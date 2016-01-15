@@ -496,6 +496,17 @@ END {
     sub(/[ \t]*%[a-zA-Z][ \t]*$/, "", exec)
     match(fil, /\nIcon=([^\n]*\/)?([^\n.]+)([.][^\n]*)?/, m)
     icnpath=m[1]; icnname=m[2]; icnext=substr(m[3],2)
+    if(index(icnext, ".")) {
+      # case "filename.any[.any ...].EXT"
+      nic = split(icnext, ic, /\./)
+      icnname = icnname "." substr(icnext, 1, length(icnext)-length(ic[nic])-1)
+      icnext = ic[nic]
+    }
+    if(icnext && ! match(icnext, /png|svg|xpm/)) {
+      # case "file.name" implicit icon EXT
+      icnname = icnname "." icnext
+      icnext = ""
+    }
     match(fil, /\nComment=([^\n]+)/, m); comment=m[1]
     if(match(fil, /\nComment\[('"${LR:-@}|${LL:-@}"')\]=([^\n]+)/, m)) comment=m[2]
     match(fil, /\nCategories=([^\n]+)/, m); category=";"m[1]
