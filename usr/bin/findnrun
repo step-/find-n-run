@@ -1092,6 +1092,7 @@ start_dialog << EOF
         <action>awk -v s=varFOCUSSEARCH=\${varFOCUSSEARCH} '/^varFOCUSSEARCH=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
       </checkbox>
       ${REMARK# ]]]}
+      ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
       <text space-fill="true" space-expand="true"><label>""</label></text>
       ${REMARK# [[[. 'help' button}
       <button tooltip-text="$(gettext "About and help")" stock-icon-size="1">
@@ -1203,8 +1204,8 @@ start_dialog << EOF
     ${REMARK#  ]]]}
     ${REMARK#  [[[. RestartSearch}
     ${REMARK# This call forces a tap-command invocation with INITSEARCH input.}
-    <action  condition="command_is_true(case \${RPC% *} in *RestartSearch*) echo 1;; esac)">clear:varSEARCH</action>
-    <action  condition="command_is_true(case \${RPC% *} in *RestartSearch*) echo 1;; esac)">refresh:varSEARCH</action>
+    <action condition="command_is_true(case \${RPC% *} in *RestartSearch*) echo 1;; esac)">clear:varSEARCH</action>
+    <action condition="command_is_true(case \${RPC% *} in *RestartSearch*) echo 1;; esac)">refresh:varSEARCH</action>
     ${REMARK#  ]]]}
     ${REMARK#  [[[. Exit}
     <action condition="command_is_true(case \${RPC% *} in *ExitFNR*) echo 1;; esac)">exit:EXIT</action>
