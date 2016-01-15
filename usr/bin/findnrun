@@ -127,6 +127,7 @@ awk '
   /^HOTKEY_F2=/{f9=1}
   /^HOTKEY_F3=/{f10=1}
   /^SOURCES=/{f11=1}
+  /^SHOWNODISPLAY=/{f12=1}
   END{
     if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
@@ -139,6 +140,7 @@ awk '
     if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
     if(!f10) print "HOTKEY_F3='"${HOTKEY_F3}"'">>ARGV[1]
     if(!f11) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
+    if(!f12) print "SHOWNODISPLAY=false">>ARGV[1]
   }
   ' "${CONFIG}"
 
@@ -469,6 +471,7 @@ BEGIN {
   sh = "'${SH}'" # not used as a coprocess
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
   if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
+  SHOWNODISPLAY="'"${SHOWNODISPLAY:-false}"'"
 }
 {
   # Slurp NFILES .desktop files.
@@ -485,6 +488,8 @@ END {
   if('${DEBUG1:-0}') print "awk decoding",NFILES,"files..." > "/dev/stderr"
   for(i=1; i<=NFILES; i++) {
     fil=file[i]
+    if(SHOWNODISPLAY != "true" && index(fil, "NoDisplay=true"))
+      continue
     name=exec=icnpath=icnname=icnext=comment=category=""
     match(fil, /^;([^\n]+)/, m); filename=m[1]
     match(fil, /\nName=([^\n]+)/, m); name=m[1]
