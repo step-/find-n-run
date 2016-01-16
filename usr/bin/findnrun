@@ -835,7 +835,7 @@ generate_invoke_source_tap() # [[[2
   # Start tap-command. [[[
   echo -n ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}' # trim timestamp
   echo -n ' && '"${UNEXPORT}"' varLIST varF3 invokeTAP'
-  echo -n ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} FNRRPC='"${FNRRPC}"' eval ${TAP}'
+  echo -n ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'" eval ${TAP}'
   #]]]
 }
 
@@ -872,7 +872,7 @@ generate_invoke_source_drain() # [[[2
   # what we do for invokeTAP, which is fully implemented.
   echo -n '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}' # trim timestamp
   echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH varF3 invokeDRAIN'
-  echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP='"${TMPD}"' FNRPID=${FNRPID} FNRRPC='"${FNRRPC}"' eval "$@" &'
+  echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'" eval "$@" &'
   #]]]
 }
 
