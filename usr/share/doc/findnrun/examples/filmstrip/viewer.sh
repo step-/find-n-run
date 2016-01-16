@@ -4,7 +4,6 @@
 
 [ "${FNRDEBUG:-0}" -gt 1 ] && set -x
 
-
 # $1-$2 are required. [[[1
 CONFIG=$1; . "${CONFIG}"
 INPUTSTEM=$2
@@ -161,8 +160,8 @@ done
   </timer>
   ${REMARK# -]]]}
   <action signal="delete-event">exit:abort</action>
-  <variable>GUI_FILMSTRIP</variable>
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">closewindow:GUI_FILMSTRIP</action>
+  <variable>PLUGIN_filmstrip</variable>
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">closewindow:PLUGIN_filmstrip</action>
 </window>
 EOF
 
