@@ -462,6 +462,7 @@ fi
 #]]]
 # Prepare the database builder script. [[[1
 # Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] files
+# i18n 1.10.7
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN {
@@ -472,6 +473,8 @@ BEGIN {
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
   if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
   SHOWNODISPLAY="'"${SHOWNODISPLAY:-false}"'"
+  MSG1="'"$(gettext "SHOWNODISPLAY false excludes file '%s'")"'"
+  MSG2="'"$(gettext "filename '%s': Icon '%s' not found.")"'"
 }
 {
   # Slurp NFILES .desktop files.
@@ -488,13 +491,15 @@ END {
   if('${DEBUG1:-0}') print "awk decoding",NFILES,"files..." > "/dev/stderr"
   for(i=1; i<=NFILES; i++) {
     fil=file[i]
-    if(SHOWNODISPLAY != "true" && index(fil, "NoDisplay=true"))
-      continue
     name=exec=icnpath=icnname=icnext=comment=category=""
     match(fil, /^;([^\n]+)/, m); filename=m[1]
     match(fil, /\nName=([^\n]+)/, m); name=m[1]
     if(match(fil, /\nName\[('"${LR:-@}|${LL:-@}"')\]=([^\n]+)/, m)) name=m[2]
     if(!name) continue # trap bogus .desktop files
+    if(SHOWNODISPLAY != "true" && index(fil, "NoDisplay=true")) {
+      printf(MSG1"\n", filename) > "/dev/stderr"
+      continue
+    }
     match(fil, /\nExec=([^\n]+)/, m); exec=m[1]
     if(!exec) continue # trap bogus .desktop files
     # Delete freedesktop.org %F parameter since Exec= value is going to sh.
@@ -589,11 +594,10 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
     if("" != ifp) {
       sub(/\x00/,"",ifp)
     } else {
-      print filename": Icon=" icnpath icnname "." icnext, "Not found." >"/dev/stderr"
+      printf(MSG2"\n", filename, icnpath icnname "." icnext) >"/dev/stderr"
       return
     }
-    # gtkdialog tree can definitely display icon paths /usr/share/pixmaps/*
-    # so try symlinking to target ifp
+    # try symlinking target ifp
     x = split(ifp, a, /\//)
     lnk = a[x] # link name lnk <- icon-name[.ext] (no path)
     ext = (x = split(lnk, a, /\./)) ?"."a[x] :"" # ".ext" if any
