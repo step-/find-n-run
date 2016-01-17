@@ -31,7 +31,7 @@ matched && matched <= MAXSLOT { # Send image to viewer component. {{{2
   make_links = make_links link_image(abspath, caption, 0, matched-1) # TODO implement ymax>0
   ++sent
 }
-{ # Send output record to findnrun seach list widget. {{{2
+{ # Send output record to findnrun search list widget. {{{2
   print format_fnr_record(abspath, caption) > OUTF
 }
 { # Exit on reaching the maximum output record count. {{{2
