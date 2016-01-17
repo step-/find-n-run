@@ -594,7 +594,7 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
     if("" != ifp) {
       sub(/\x00/,"",ifp)
     } else {
-      printf(MSG2"\n", filename, icnpath icnname "." icnext) >"/dev/stderr"
+      printf(MSG2"\n", filename, icnpath icnname ("" != icnext ? "."icnext : "")) >"/dev/stderr"
       return
     }
     # try symlinking target ifp
