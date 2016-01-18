@@ -1,6 +1,6 @@
+#!/bin/sh
 # This file is sourced not run.
 # Film-strip source plugin default configuration file.
-# vim:ft=sh:
 
 # Source declaration, manually copy to ~/.findnrunrc {{{1
 # And add source 'filmstrip' to variable SOURCES in ~/.findnrunrc.
@@ -8,30 +8,37 @@
 #SOURCE_filmstrip='filmstrip:filmstrip::filmstrip:filmstrip'
 #TAP_filmstrip='/usr/share/doc/findnrun/examples/filmstrip/tap.sh /usr/share/doc/findnrun/examples/filmstrip/taprc "${term}" "${TITLE}" | findnrun-formatter --'
 #DRAIN_filmstrip='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
+# Uncomment next line to have ROX-Filer open the file, presumably with
+# the default image viewer, when you activate the search list row.
+#DRAIN_filmstrip='rox'
 #TITLE_filmstrip='Filmstrip'
 #INITSEARCH_filmstrip=''
 
 # ------ Basic settings ------ {{{1
-# Search for pictures inside these paths (separate multiple with ':').
+# Image search paths (separate multiple with ':').
 FIND_PATH="${HOME}/Pictures:${HOME}/Downloads:/usr/share/backgrounds"
-FIND_TYPE='\.\(jpg\|png\)$' # regex
-# Search also in sub-folders of $FIND_PATH elements.
+# Include these image types only (fullpath regular expression matcher).
+FIND_TYPE='\.\(jpg\|png\)$'
+# Search also sub-folders of $FIND_PATH elements.
 FIND_IN_SUBFOLDERS=false
-# Sort search results.
-FIND_SORTED=true
+# Command-line options for find command.
 FIND_OPTS='-L' # follow symlinks
+# Command-line options for find command expression.
 FIND_EXPR_OPTS=
+# Sort search results.
+FIND_SORTED='true'
 # How many pictures to show and paginate.
 VIEWER_FRAMES=4
 # Should image frame show vertical/horizontal scrollbars?
-SHOW_SCROLLBARS=false
+SHOW_SCROLLBARS='false'
 # Image horizontal width. The image will fit entirely within.
 # The image never scales whether the main window is resized or not.
 PICTURE_WIDTH=180
 # Image vertical viewport on plugin start up.
 # It can be increased by resizing the main window vertically.
 PICTURE_HEIGHT=120
-CAPTION_WIDTH=190 # 10+$PICTURE_WIDTH gives best look
+# Caption width: 10+$PICTURE_WIDTH gives best look.
+CAPTION_WIDTH=190
 # Caption height: the first value is used when $CUSTOM_CAPTION is null or
 # undefined; the second value is used otherwise.
 CAPTION_HEIGHT=40:60
@@ -39,20 +46,22 @@ CAPTION_HEIGHT=40:60
 LIST_LINES=60
 
 # ------ Advanced settings ------ {{{1
-# Whether to cache the image list after the first tap invocation.
+# Cache the image list after the first tap invocation.
 CACHE_LIST=true
 
-# Optional custom click command.
-# Leave empty for default command (rox).
+# Optional thumbnail click command.
+# Set empty for default command, ROX-Filer, which presumably opens the
+# image file with the default image viewer.
 # Examples of custom click commands.
 #CUSTOM_CLICK=rox
 #CUSTOM_CLICK=defaultimageviewer
+#CUSTOM_CLICK=mtpaint
 #CUSTOM_CLICK=/path/to/my-image-viewer-script.sh
 
 # Optional custom caption creation function.
-# Leave empty for default caption from image file name.
+# Set empty for default caption from image file name.
 # Some predefined custom functions are included further down.
-CUSTOM_CAPTION=exif_caption_abstract
+#CUSTOM_CAPTION=exif_caption_abstract
 
 # For gtkdialog styles
 # Puppy and Fatdog use GTK2 (default), Slacko uses GTK3 (uncomment).
