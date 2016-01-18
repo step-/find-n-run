@@ -44,6 +44,15 @@ CAPTION_WIDTH=190
 CAPTION_HEIGHT=40:60
 # Cap findnrun search result list at these many lines (hide remaining results).
 LIST_LINES=60
+# Typing rate (seconds): Increase this value if displayed thumbnails do
+# not match the top lines of the search result list.
+# Increase by 1/10 steps until thumbnail updates match the list. Test by
+# typing several character at your typical typing speed. As you increase
+# TYPING_RATE, the lag you see between the final typed character and the
+# final thumbnail update also increases. So, set the smallest value that
+# balances viewer accuracy for your typical typing speed with acceptable
+# thumbnail update lag.
+TYPING_RATE=0.5
 
 # ------ Advanced settings ------ {{{1
 # Cache the image list after the first tap invocation.

@@ -2,29 +2,32 @@
 ### Configuration file
 
 Source plugin 'filmstrip' tap has its own configuration file.
-Get familiar with the default configuration file 'taprc' in this folder.
-The same file also explains how to enable this plugin.
+Get familiar with the default configuration file '[taprc](taprc)',
+located in this folder, before reading further.
+File 'taprc' also explains how to install plugin 'filmstrip'.
 
 ### Synopsis
 
-The 'filmstrip' source outputs at most $LIST\_LINES (60) records to
-the tree list widget.  No icons are displayed. Each row label is the
+The 'filmstrip' plugin outputs at most $LIST\_LINES (60) records to
+the tree list widget. The icon column isn't filled. Each row label is the
 shortened full pathname of a JPEG image file under folder $SEARCH\_IN.
 Activating a row opens a demo dialog window that shows the image full
 pathname.
 
-The first $VIEWER\_FRAMES (5) images are displayed in a separate image
+The first $VIEWER\_FRAMES (5) images are displayed in a separate thumbnail
 viewer, which auto-updates while the user keys in the search term.  Note
 that by design input terms are searched for literally and only within
 the filename part of the path, or within the picture caption.
 Searching is letter case insensitive.
 
 CAVEAT: On slow systems the viewer may not be able to update fast
-enough for fast typing. Backspace and type again - more slowly - to
-sync.
+enough for fast typing. As a quick remedy, backspace and type again
+- more slowly - to sync. For a permanent solution experiment with
+different values of the $TYPING\_RATE parameter, as explained in file
+[taprc](taprc).
 
 By default clicking a picture in the viewer window opens the image file
-fullpath with ROX-filer, which presumably should run the default image
+fullpath with ROX-filer, which presumably should start the default image
 viewer. This action can be customized with setting CUSTOM\_CLICK.
 
 EXPERIMENTAL - Search results can be paginated by pressing the
@@ -39,7 +42,8 @@ CAVEAT: On slow systems the viewer may not be able to update fast
 enough when pressing the pagination keys too quickly. It will *skip*
 an entire pageful of pictures, and the next pagination will display the
 page after (or before) the skipped page. So there will be a gap in the
-displayed sequence.
+displayed sequence. As a quick remedy, paginate back/forth once until
+displayed thumbnails match the top lines of the search result list.
 
 ### Suggested packages
 

@@ -5,7 +5,8 @@
 # -v MAXREC=<max> return at most <max> lines to the search list
 # -v MAXSLOT=<viewer slots>  [1..n]
 # -v STEM=<filepath>
-# -i lib.awk
+# -v RATE=<typing rate>
+# -i lib.inc.awk
 
 # Generate new records, and send image references to the viewer component. {{{1
 BEGIN {
@@ -62,3 +63,4 @@ function format_fnr_record(abspath, caption,   na, a, label, NONE) # {{{1
   return("||" label "|" abspath "|" caption "|" NONE)
 }
 
+# vim: fdm=marker:

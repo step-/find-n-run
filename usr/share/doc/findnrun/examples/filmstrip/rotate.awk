@@ -1,8 +1,9 @@
 # Arguments {{{1
 # -v MAXSLOT=<viewer slots>  [1..n]
 # -v STEM=<filepath>
+# -v RATE=<typing rate>
 # -v ROTATE=+<down>|-<up> [1..m], typically ROTATE <= MAXSLOT
-# -i lib.awk
+# -i lib.inc.awk
 
 # Rotate records in memory {{{1
 { # Records to memory, 0-based index.
@@ -34,3 +35,4 @@ END {
 @include "epilogue.inc.awk"
 @include "lib.inc.awk"
 
+# vim: fdm=marker:

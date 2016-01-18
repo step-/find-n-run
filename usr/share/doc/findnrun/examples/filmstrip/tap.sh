@@ -85,6 +85,7 @@ RESF_ready=false
     [ PageDown = ${FNREVENT} ] && sign=+ || sign=-
     AWKPATH="${0%/*}" gawk -F '|' \
       -v MAXSLOT=${MAXSLOT} -v STEM="${INPUTSTEM}" \
+      -v RATE=${TYPING_RATE:-0.5} \
       -v ROTATE=${sign}${MAXSLOT} \
       -f rotate.awk "${RESF}" > "${RESF}.tmp" &&
     #{ diff -y "${RESF}.tmp" "${RESF}"; true ;} >&2 &&
@@ -106,6 +107,7 @@ if [ false = ${RESF_ready} ]; then
   AWKPATH="${0%/*}" gawk -F '[/|]' \
     -v OUTF="${RESF}" -v TERM="${term}" -v BASEDIR="${basedir}" \
     -v MAXREC=${MAXREC} -v MAXSLOT=${MAXSLOT} -v STEM="${INPUTSTEM}" \
+    -v RATE=${TYPING_RATE:-0.5} \
     -f generate-records.awk "${ALLF}" &&
   RESF_ready=true
 fi
