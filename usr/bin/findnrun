@@ -65,7 +65,7 @@ trap_handler() # [[[
     for id in $(grep --include .pidof_\* -hr .); do
       case ${id} in 0|1) ;; *) ids="${ids} ${id}" ;; esac
     done
-    [ -n "${ids}" ] && /bin/kill -TERM -- ${ids} 2>/dev/null # not the shell builtin!
+    [ -n "${ids}" ] && /bin/kill -TERM -- ${ids} 2>/dev/null # not the shell built-in!
     cd - >/dev/null
   fi
   rm -rf "${tmpd}"* ${DEBUG1:+/tmp/varSEARCH}
@@ -79,7 +79,7 @@ AWKQ="${TMPD}/.query.awk" # queries database (faster)
 HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
 FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
-F3SF="${TMPD}/.f3s"; >"${F3SF}" # builtin/plugin source list view cycler
+F3SF="${TMPD}/.f3s"; >"${F3SF}" # built-in/plugin source list view cycler
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 SEP=`echo -e "\b"` # field separator of packed values
@@ -105,7 +105,7 @@ export varFOCUSSEARCH=false
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=F2
 HOTKEY_F3=F3
-# Builtin sources
+# Built-in sources
 # space separated list
 SOURCES="FNRstart FNRsc"
 
@@ -191,17 +191,17 @@ for i in ${DESKTOP_FILE_DIRS}; do
   fi
 done
 
-# Declare builtin sources. [[[1
+# Declare built-in sources. [[[1
 # $BUILTIN_SOURCES get special treatment
 # pipe-separated list
 BUILTIN_SOURCES="FNRstart|FNRsc"
 
-# Default builtin source "Desktop Apps" [[[2
+# Default built-in source "Desktop Apps" [[[2
 SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=${APP_NAME}
 
-# Builtin source "Shell Completion" [[[2
+# Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
 # Embedded newline characters not allowed.
 TAP_FNRsc='set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su -I "${ICON}";'
@@ -365,7 +365,7 @@ function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   #   If source-id i is still in the set of valid ids (I)
   #   && its group-id A[i] has an associated value in VGI...
   for(i in A) if(i in I && ((group, A[i]) in VGI)) {
-    if(match(BUILTIN, i)) continue # optimization: skip builtin sources
+    if(match(BUILTIN, i)) continue # optimization: skip built-in sources
     if('${DEBUG4:-0}') #[[[
       print "now checking",i"'"'"'s", group, A[i],"=>", \
         VGI[group, A[i]] >"/dev/stderr" #]]]
@@ -934,7 +934,7 @@ generate_source_hotkeys() # [[[2
   done
 }
 
-start_dialog() # [[[2
+start_dialog() # Returns when gtkdialog terminates [[[2
 {
   local dialog
   dialog="${TMPD}/.main.xml"
@@ -1009,7 +1009,7 @@ start_dialog << EOF
       <input icon-column="0">$(generate_invoke_source_tap)</input>
       ${REMARK# ]]]}
       ${DEBUG2:+<action>echo>&2 ,,, varLIST ,,,</action>}
-      ${REMARK# [[[. Invoke list view selection.}
+      ${REMARK# [[[. Invoke list view selected item.}
       <action>$(generate_invoke_source_drain)</action>
       ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
@@ -1291,7 +1291,7 @@ start_dialog << EOF
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
   ${REMARK#  ]]]}
-  ${REMARK#  [[[. Key F3 cycles the list view among builtin and plugin sources.}
+  ${REMARK#  [[[. Key F3 cycles the list view among built-in and plugin sources.}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">set -- ${SOURCES}; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">refresh:varF3</action>
   ${REMARK#  ]]]}
