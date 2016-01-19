@@ -4,7 +4,7 @@
 # =============================================================================
 # Find'N'Run - find and run apps very quickly
   Version=1.10.7-beta2
-# authors: Jun-Nov 2015 step; March-May 2015 SFR and L18L.
+# authors: Copyright (C)2015-2016 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
 # requirements: gtk-dialog >= 0.8.3, gawk, ash (or bash)
 # source: https://github.com/step-/find-n-run
@@ -763,7 +763,7 @@ Open source - GNU GPL license applies
 %s
 
 configuration: %s
-")" "${APP_NAME}" "${Version}" "SFR, L18L, step" \
+")" "${APP_NAME}" "${Version}" "step, SFR, L18L" \
 "http://www.murga-linux.com/puppy/viewtopic.php?t=98330" \
 "https://github.com/step-/find-n-run" "${CONFIG}")
 $(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")" "${NDATF}"
