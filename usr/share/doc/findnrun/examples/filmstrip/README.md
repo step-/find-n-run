@@ -38,13 +38,6 @@ of the list respectively. Viewer contents update consequently. Typing
 or continuing to type the search term updates the list entirely and
 deliveres a new set of result items to the list and viewer.
 
-CAVEAT: On slow systems the viewer may not be able to update fast
-enough when pressing the pagination keys too quickly. It will *skip*
-an entire pageful of pictures, and the next pagination will display the
-page after (or before) the skipped page. So there will be a gap in the
-displayed sequence. As a quick remedy, paginate back/forth once until
-displayed thumbnails match the top lines of the search result list.
-
 ### Suggested packages
 
 The filmstrip plugin doesn't require additional packages, but it
