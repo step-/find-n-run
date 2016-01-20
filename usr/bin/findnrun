@@ -833,14 +833,14 @@ generate_invoke_source_tap() # [[[2
 # Optimization: use cached <variable>TAP</variable>.
   generate_get_source invoke_source_tap
   # ]]]
+  # Start tap-command. [[[
+  echo -n ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}' # trim timestamp
   if [ -n "${DEBUG1}" ]; then #[[[
-    echo -n ' && >&2 printf %s "$(date +%H:%M:%S.%N) INVOKE TAP"'
+    echo -n ' && >&2 printf %s "$(date +%H:%M:%S.%N) INVOKE TAP event=${fnrevent}"'
     [ -n "${DEBUG3}" ] && echo -n ' && eval ">&2 echo -n \" term(hex)=\$(echo -n \${term} |xxd -p)\""'
     echo -n ' && eval ">&2 echo \" term=\${term} \${TAP}\""'
   fi
   #]]]
-  # Start tap-command. [[[
-  echo -n ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}' # trim timestamp
   echo -n ' && '"${UNEXPORT}"' varLIST varF3 invokeTAP'
   echo -n ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'" eval ${TAP}'
   #]]]
@@ -866,11 +866,6 @@ generate_invoke_source_drain() # [[[2
   echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-${ID}.sh'"
   echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-FNR.sh'"
   #]]]
-  if [ -n "${DEBUG1}" ]; then #[[[
-    echo -n ' && >&2 printf %s $(date +%H:%M:%S.%N)'
-    echo -n ' && eval ">&2 echo \" INVOKE DRAIN \${DRAIN} \$@ \""'
-  fi
-  #]]]
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
   # NOTE: v.1.7 main window's gtkdialog doesn't implement variable
@@ -878,6 +873,11 @@ generate_invoke_source_drain() # [[[2
   # pretend that invokeDRAIN is implemented, and handle it similarly to
   # what we do for invokeTAP, which is fully implemented.
   echo -n '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}' # trim timestamp
+  if [ -n "${DEBUG1}" ]; then #[[[
+    echo -n ' && >&2 printf %s $(date +%H:%M:%S.%N)'
+    echo -n ' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'
+  fi
+  #]]]
   echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH varF3 invokeDRAIN'
   echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'" eval "$@" &'
   #]]]
