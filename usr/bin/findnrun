@@ -204,8 +204,10 @@ TITLE_FNRstart=${APP_NAME}
 
 # Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
+[ true = "${CASEDEPENDENT}" ] && unset i || i=i
+x="${TMPD}/.FNRsc"; mkdir "$x" &&
 # Embedded newline characters not allowed.
-TAP_FNRsc='set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su -I "${ICON}";'
+TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su -I "${ICON}" | tee "$t"; else grep -F'$i' "${term}" "$t"; fi;'
 ICON_FNRsc=findnrun-FNRsc
 TITLE_FNRsc=$(gettext "shell completion") # i18n 1.7
 
