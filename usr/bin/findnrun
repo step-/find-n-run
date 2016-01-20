@@ -1278,8 +1278,11 @@ start_dialog << EOF
     <default>Search</default>
     <variable>invokeTAP</variable>
     <input file>${ETAP}</input>
-    ${DEBUG1:+<action>echo>&2 ,,, invokeTAP \$invokeTAP ,,,</action>}
-    <action>refresh:varLIST</action>
+    ${COMMENT# Do not invoke if input is empty.}
+    <action condition="command_is_true(echo \${invokeTAP:-true})">break:</action>
+    ${DEBUG2:+<action>echo>&2 ,,, invokeTAP -\$invokeTAP- ,,,</action>}
+    <action>refresh:varLIST</action>${COMMENT# Invoke tap.}
+    <action>clear:invokeTAP</action>${COMMENT# Clear cached value.}
   </entry>
   ${REMARK#  ]]]}
   ${REMARK# ]]]}
