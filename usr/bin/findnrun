@@ -85,7 +85,6 @@ ETAP="${TMP0}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 SEP=`echo -e "\b"` # field separator of packed values
 XDGHOMEICONS="${HOME}/.icons" # freedesktop.org standard user's icon location
-SRCSTEM="${TMPD}/.source-" # prefix to source filenames
 
 # -----------------------------------------------------------------------------
 #LANG=de_DE.UTF-8 # just for demo
@@ -217,6 +216,9 @@ case " ${SOURCES} " in *' FNRsc '*)
 esac
 
 # Prepare sources. [[[1
+# Don't change next two formats; functions generate_invoke*()
+# assume them.
+SRCSTEM="${TMPD}/.source-" # prefix to source filenames
 SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTEM}" 0 FNRstart
 store_valid_sources() # [[[
 {
