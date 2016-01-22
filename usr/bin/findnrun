@@ -105,6 +105,7 @@ export varFOCUSSEARCH=false
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=F2
 HOTKEY_F3=F3
+HOTKEY_F12=F12
 # Built-in sources
 # space separated list
 SOURCES="FNRstart FNRsc"
@@ -126,8 +127,9 @@ awk '
   /^IBOL=/{f8=1}
   /^HOTKEY_F2=/{f9=1}
   /^HOTKEY_F3=/{f10=1}
-  /^SOURCES=/{f11=1}
-  /^SHOWNODISPLAY=/{f12=1}
+  /^HOTKEY_F12=/{f11=1}
+  /^SOURCES=/{f12=1}
+  /^SHOWNODISPLAY=/{f13=1}
   END{
     if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
@@ -139,8 +141,9 @@ awk '
     if(!f8) print "IBOL=\"'"${IBOL}"'\" # reserved">>ARGV[1]
     if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
     if(!f10) print "HOTKEY_F3='"${HOTKEY_F3}"'">>ARGV[1]
-    if(!f11) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
-    if(!f12) print "SHOWNODISPLAY=false">>ARGV[1]
+    if(!f11) print "HOTKEY_F12='"${HOTKEY_F12}"'">>ARGV[1]
+    if(!f12) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
+    if(!f13) print "SHOWNODISPLAY=false">>ARGV[1]
   }
   ' "${CONFIG}"
 
@@ -1020,6 +1023,12 @@ start_dialog << EOF
         ${REMARK#  [[[. Key PageDown invokes the current source plugin tap.}
         ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
         <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Page_Down ] && echo true )">date '+PageDown %s'>"${ETAP}"</action>
+        ${REMARK#  ]]]}
+        ${REMARK#  [[[. Key F12 activates the top varLIST item.}
+        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = ${HOTKEY_F12} ] && echo true)">grabfocus:varLIST</action>
+        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = ${HOTKEY_F12} ] && echo true)">$(generate_invoke_source_drain)</action>
+        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = ${HOTKEY_F12} ] && echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
+        <action signal="key-press-event" condition="command_is_false([ \$KEY_SYM = ${HOTKEY_F12} ] && echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         ${REMARK#  ]]]}
       </entry>
       <button tooltip-text="$(gettext "Clear entry")" stock-icon-size="1">
