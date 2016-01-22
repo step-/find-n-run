@@ -73,6 +73,15 @@ if ! [ -s "${ALLF}" ]; then
   #}}}
 fi
 
+# Work-around for AWKPATH variable in gawk < 4.1.2 {{{1
+# Issue: gawk versions < 4.1.2 search the current directory for include
+# files either before or after searching the paths in AWKPATH. This may
+# lead to accidental false hits :- finding an include file from outside of
+# AWKPATH. We avoid accidental false hits by changing directory to ${TMPD}
+# before running any of the gawk commands below. Note that free cd-ing is
+# safe because tap.sh doesn't only uses fullpaths.
+cd "${TMPD}" || exit 911
+
 #{{{1}}} Tip: Study 'On event PageUp/Down' after studying
 # 'On needing to generate new records' further down.
 RESF_ready=false
