@@ -208,7 +208,7 @@ x="${TMPD}/.FNRsc"; mkdir "$x" &&
 # Embedded newline characters not allowed.
 TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su -I "${ICON}" | tee "$t"; else grep -F'$i' "${term}" "$t"; fi;'
 ICON_FNRsc=findnrun-FNRsc
-TITLE_FNRsc=$(gettext "shell completion") # i18n 1.7
+TITLE_FNRsc=$(gettext "shell completion") # i18n 1.10.7
 
 # Cache icons of enabled sources. [[[2
 case " ${SOURCES} " in *' FNRsc '*)
@@ -247,7 +247,7 @@ store_valid_sources() # [[[
 # 205 unreferenced SOURCE_
 # 206 unreferenced INITSEARCH_
 #]]]
-# i18n 1.7 Source plugin validation.
+# i18n 1.10.7 Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
     -v MSG1="$(gettext "fatal source error: %d%s\n")" \
     -v MSG2="$(gettext "recoverable source error: %d%s\n")" \
@@ -452,13 +452,13 @@ list_diff() # $1-list1 $2-list2 - space-separated. Output: $1 - $2 [[[
 store_valid_sources > "${TMPD}/.$$"
 x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
 read NSOURCES sources < "${TMPD}/.$$" # all and only valid sources
-# Read first source's values to be used to initialize gtkdialog <default>'s.
+# Initialize gtkdialog source defaults from the first source.
 . "${SRCSTEM}0-"*.sh
 
 # If some sources were disabled display startup warning dialog. [[[
 if [ "${sources}" != "${SOURCES}" ]; then
-  # TODO display gtkdialog window over main window.
-  # i18n 1.7
+  # TODO display Xdialog window over main window.
+  # i18n 1.10.7
   Xdialog --title "${APP_NAME}" --msgbox \
     "$(printf \
       "$(gettext 'Invalid source plugins found and disabled:\n%s')" \
@@ -753,7 +753,7 @@ EOF
 find_help
 
 # i18n About dialog widgets: window text; number of apps text (singular/plural)
-# i18n 1.7 changed: use %s for authors.
+# i18n 1.10.7 changed: use %s for authors.
 export GUI_ABOUT='
 <window title="'"${APP_TITLE}"'" icon-name="edit-find" window-position="2">
   <vbox>
@@ -844,7 +844,9 @@ generate_invoke_source_tap() # [[[2
   fi
   #]]]
   echo -n ' && '"${UNEXPORT}"' varLIST varF3 invokeTAP'
-  echo -n ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'" eval ${TAP}'
+  echo -n ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
+  echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
+  echo -n ' eval ${TAP}'
   #]]]
 }
 
@@ -870,10 +872,10 @@ generate_invoke_source_drain() # [[[2
   #]]]
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
-  # NOTE: v.1.7 main window's gtkdialog doesn't implement variable
+  # NOTE: v.1.10.7 main window's gtkdialog doesn't implement variable
   # invokeDRAIN. So, for the plugin interface, here it's sufficient to
   # pretend that invokeDRAIN is implemented, and handle it similarly to
-  # what we do for invokeTAP, which is fully implemented.
+  # what we do for invokeTAP, which instead is fully implemented.
   echo -n '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}' # trim timestamp
   if [ -n "${DEBUG1}" ]; then #[[[
     echo -n ' && >&2 printf %s $(date +%H:%M:%S.%N)'
@@ -881,7 +883,9 @@ generate_invoke_source_drain() # [[[2
   fi
   #]]]
   echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH varF3 invokeDRAIN'
-  echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'" eval "$@" &'
+  echo -n ' FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
+  echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
+  echo -n ' eval "$@" &'
   #]]]
 }
 
@@ -892,7 +896,7 @@ generate_status_bar() # [[[2
   set -- ${SOURCES:-FNRStart}
   [ $# -lt 2 ] && return # no status bar unless:
   # Multiple sources. [[[
-  #i18n 1.7 Status bar: Ctrl+0... and F3... hotkeys
+  #i18n 1.10.7 Status bar: Ctrl+0... and F3... hotkeys
   local ctrlnkey funckey
   ctrlnkey=$(gettext "[ctrl+%d]") funckey=$(gettext "[%s]")
   echo -n '
