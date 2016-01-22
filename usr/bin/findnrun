@@ -72,7 +72,7 @@ trap_handler() # [[[
 }
 #]]]
 trap trap_handler INT QUIT TERM HUP ABRT 0
-TMPD=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 755 "${TMPD}"
+TMPD=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 700 "${TMPD}"
 TMP0="${TMPD}/.FNRstart"; mkdir "${TMP0}" # built-in source resources
 DATF="${TMP0}/.dat" # database of .desktop file entries
 AWKB="${TMP0}/.build.awk" # builds (and queries) database
@@ -171,7 +171,7 @@ while ! [ "${1#--}" = "$1" ]; do
     --geometry=*) # Override GEOMETRY set in $CONFIG, if any.
       o=${1#--geometry=}; GEOMETRY=${o%--geometry}
       ;;
-    --perm=*|--perm) # Tighten tempdir permissions from 755
+    --perm=*|--perm) # Change tempdir permissions.
       o=${1#--perm=}; o=${o%--perm}; chmod "${o:-700}" "${TMPD}"
       ;;
     --) shift; CMDLINEOPTS="$@"; break ;; # pass CMDLINEOPTS to gtkdialog
