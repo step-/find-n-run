@@ -44,7 +44,10 @@ generate_pixmap() { # $1-varname [$2-indent] [[[1
   width=$((${margin}*2 + ${PICTURE_WIDTH}))
   height=$((${margin}*2 + ${PICTURE_HEIGHT}))
   click_command="${CUSTOM_CLICK:-rox}"
-	printf "${2#*:}%s\\n" \
+  # Gtkdialog's pixmap widget supports auto-refresh and file-monitor
+  # attributes. However, they don't seem to work with symlinks, so
+  # another widget is used synchronously to refresh all pixmaps.
+  printf "${2#*:}%s\\n" \
 '<eventbox name="FilmstripPictureFrame">' \
 '  <vbox spacing="0" margin="'$margin'" width-request="'$width'" height-request="'$height'">' \
 '    <pixmap yalign="0">' \
