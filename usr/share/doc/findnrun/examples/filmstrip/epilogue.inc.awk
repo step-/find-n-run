@@ -1,4 +1,7 @@
 # @INCLUDE this file.
+# Globals:
+# STEM=<filepath>
+# RATE=<typing rate>
 END { #{{{1
   # Fill with blank images as needed. {{{2
   if(sent < MAXSLOT) {
