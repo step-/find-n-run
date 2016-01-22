@@ -6,16 +6,17 @@
 
 # ====== INSTALLING ====== {{{1
 # 1. Source declaration: Add this section to your ${HOME}/.findnrunrc: {{{2
-# Uncomment each line when copying.
+## Uncomment each line when copying.
 #SOURCE_filmstrip='filmstrip:filmstrip::filmstrip:filmstrip'
 #TAP_filmstrip='/usr/share/doc/findnrun/examples/filmstrip/tap.sh /usr/share/doc/findnrun/examples/filmstrip/taprc "${term}" "${TITLE}" | findnrun-formatter --'
 ## Uncomment next line if you copied the configuration file to your home folder:
 ##TAP_filmstrip='/usr/share/doc/findnrun/examples/filmstrip/tap.sh ${HOME}/.filmstriprc "${term}" "${TITLE}" | findnrun-formatter --'
 #DRAIN_filmstrip='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
-# Uncomment next line to have ROX-Filer open the file, presumably with
-# the default image viewer, when you activate the search list row.
+## Uncomment next line to have ROX-Filer open the file, presumably with
+## the default image viewer, when you activate the search list row.
 #DRAIN_filmstrip='rox'
 #TITLE_filmstrip='Filmstrip'
+#ICON_filmstrip='/usr/share/doc/findnrun/examples/filmstrip/filmstrip.svg'
 #INITSEARCH_filmstrip=''
 
 # 2. Enable this source: {{{2
