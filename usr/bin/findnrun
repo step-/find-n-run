@@ -1041,9 +1041,9 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varCMD: command history editing.}
     <hbox space-fill="false" space-expand="false">
-      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the down-arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">
+      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">${REMARK# i18n 1.10.7 changed}
         <variable>varCMD</variable>
-        <default>$(gettext "Press down-arrow key to grab item")</default>${REMARK# i18n 1.7 changed}
+        <default>$(gettext "Press Down Arrow to grab selected item")</default>${REMARK# i18n 1.10.7 changed}
         ${REMARK# NOTE: Commands imitate varLISTs action, see generate_invoke_source_drain().}
         <input>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@"</input>
         <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
