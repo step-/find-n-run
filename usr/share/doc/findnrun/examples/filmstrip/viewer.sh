@@ -117,6 +117,7 @@ echo '    </hbox>'
 done)
     <eventbox name="FilmstripButtonBar">
       <hbox space-fill="false" space-expand="false">
+        ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
         <text space-fill="true" space-expand="true"><label>""</label></text>
         <button tooltip-text="$(gettext "Restart Search")" stock-icon-size="1">
           <input file stock="gtk-refresh"></input>
