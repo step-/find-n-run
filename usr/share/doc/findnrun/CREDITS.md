@@ -1,11 +1,18 @@
 ## Credits
 
-**Find-n-run desktop icon**
+Foremost credits go to Puppy Linux users SFR and L18L, who created the _original_ Find'N'Run script in Spring 2015.
+
+**Desktop icon**
 
  * Icon Pack: Human-O2
  * Designer: http://schollidesign.deviantart.com
  * License: GNU/GPL
  * Download: http://findicons.com/icon/94185/old_zoom_original
+
+**Some plugin icons**
+
+ * [Woof-CE](https://github.com/puppylinux-woof-CE/woof-CE/tree/testing/woof-code/rootfs-skeleton/usr/share/pixmaps/puppy)
+   Puppy build system.
 
 **Translations**
 

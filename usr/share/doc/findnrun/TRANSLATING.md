@@ -18,7 +18,7 @@ Findnrun source code is prepared for translation with GNU Gettext.  Message cata
  * Convert the translated `.po` file to `.mo` format
  * Install the `.mo` file
  * Test your translation including the About dialog; to open the About
-   dialog click the star icon in the find-n-run main window
+   dialog click the star icon in the main window
  * Send me the `.po` and `.mo` files for inclusion in this repository.
 
 **Note:** Place `.po` and `.mo` files in
