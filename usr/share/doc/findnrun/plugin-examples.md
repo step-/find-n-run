@@ -27,7 +27,7 @@ regular expression matching.
     SOURCES='iregex find_file FNRstart'
 ```
 
-Tap-command prepends `.*` to `${term}`.  Since find option -iregex
+The tap-command prepends `.*` to `${term}`.  Since find option -iregex
 matches _on the whole path_, we start the search expression with `.*`
 otherwise find -iregex would never match. Note also that in order to
 match in the middle of a file name you need to explicitly append `.*` to

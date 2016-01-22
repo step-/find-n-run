@@ -47,11 +47,12 @@ Findnrun provides plugins with:
 
  * methods to _define_ and _install_ plugins
  * plugin _invocation_ in an _invocation environment_
- * a _call interface_ for a plugin to request execution of findnrun functions
+ * a _call interface_ for a plugin to request execution of findnrun
+   functions
  * a set of _services_
 
-Plugins provide findnrun with new search types/methods, and optional user
-interface elements.
+Plugins provide findnrun with new search types/methods, and optional
+user interface elements.
 
 ### Source Plugins
 
@@ -71,17 +72,19 @@ All fields yield string values, all characters allowed (caveat) except
 the pipe character. There is no way to include a literal pipe character
 in a value.  All values can be null except for `<tap-data>`.
 
- * `<icon-reference>` is an icon _reference_. See section _Findnrun User Interface and Source Plugins_.
-
- * `<tap-reserved>` is available for a plugin to associate special data to the tap-record record for custom activation. Currently this field isn't processed or further exposed in the plugin interface awaiting feedback from plugin developers.
-
- * `<label>` is displayed in the list widget. If the label value is null findnrun uses tap-data instead.
-
- * `<tap-data>` is displayed in the command entry widget. Tap-data is sent to the drain upon activating its entry in the list view.
-
+ * `<icon-reference>` is an icon _reference_. See section _Findnrun User
+   Interface and Source Plugins_.
+ * `<tap-reserved>` is available for a plugin to associate special data
+   to the tap-record record for custom activation. Currently this field
+   isn't processed or further exposed in the plugin interface awaiting
+   feedback from plugin developers.
+ * `<label>` is displayed in the list widget. If the label value is null
+   findnrun uses tap-data instead.
+ * `<tap-data>` is displayed in the command entry widget. Tap-data is
+   sent to the drain upon activating its entry in the list view.
  * `<comment>` is displayed in the comment widget.
-
- * `<categories>` is a semicolon-separated list of words and can be displayed in the comment widget.
+ * `<categories>` is a semicolon-separated list of words and can be
+   displayed in the comment widget.
 
 **Examples of well-formed records**
 
@@ -101,7 +104,8 @@ image. To show an empty label set a space character (" ").
 
 In the following discussion:
 
- * An `<...-id>` is a valid sh variable name: only letters, digits, and underscore characters are allowed.
+ * An `<...-id>` is a valid sh variable name: only letters, digits, and
+   underscore characters are allowed.
  * Characters outside of angle brackets are to be written literally.
 
 A source plugin is installed by adding its declaration into
@@ -115,23 +119,29 @@ A source plugin is installed by adding its declaration into
     INITSEARCH_<init-search-id>='<init-search>' # optional
 ```
 
- * Each `<...-id>` identifier must be unique within its declaration group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_).
+ * Each `<...-id>` identifier must be unique within its declaration
+   group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_).
  * `<tap-command>` is a valid sh command (more on this further down).
  * `<drain-command>` is also a valid sh command.
  * `<icon-filepath>` is the full path to a supported icon image file.
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
-
- * Declarations marked "optional" can be omitted by leaving their respective `<...-id>` slot empty in the `SOURCE_<source-id>` declaration.
- * Embedded newline or carriage return characters are not allowed in `<...-command>` values.
- * All values are quoted strings. Paired exterior double quotes work just as well as single quotes, but require escaping interior sh special characters.
+ * Declarations marked "optional" can be omitted by leaving their
+   respective `<...-id>` slot empty in the `SOURCE_<source-id>`
+   declaration.
+ * Embedded newline or carriage return characters are not allowed in
+   `<...-command>` values.
+ * All values are quoted strings. Paired exterior double quotes work
+   just as well as single quotes, but require escaping interior sh special
+   characters.
 
 You can use any valid sh variable name as an `<...-id>`, but prefix
 "FNR" is reserved for findnrun's own plugins.
-Examples of valid `<id>`s: drain27, acme\_1.
-Examples of invalid `<id>`s: my-plugin (sh identifiers can't include
-"-"), FNR\_plugin (prefix "FNR" is reserved), 100 (numbers aren't valid
-sh variable names).
+
+ * Examples of valid `<id>`s: drain27, acme\_1.
+ * Examples of invalid `<id>`s: my-plugin (sh identifiers can't include
+   "-"), FNR\_plugin (prefix "FNR" is reserved), 100 (numbers aren't valid
+   sh variable names).
 
 To enable a plugin edit `~/.findnrunrc` and add its `<source-id>` to the
 space-separated list `SOURCES`. The user interface shows enabled plugins
@@ -190,20 +200,26 @@ the following preset variables:
 [1] Value is `NA` if gtkdialog isn't running.
 
 [2] Findnrun's own temporary folder persists across plugin command
-invocations.  It is automatically deleted when findnrun terminates.
-Plugins are required to store their resource files in a fixed
-sub-folder of `${FNRTMP}`. Specifically, the sh initialization
-stanza of a plugin resource folder named `${TMPD}` is:
+   invocations.  It is automatically deleted when findnrun terminates.
+   Plugins are required to store their resource files in a fixed
+   sub-folder of `${FNRTMP}`. Specifically, the sh initialization
+   stanza of a plugin resource folder named `${TMPD}` is:
 ```
     TMPD="${FNRTMP:-/tmp}/.${ID}" && mkdir -p "${TMPD}" && chmod 700 "${TMPD}"
 ```
 
 [3] Name of the event that led to the invocation of a tap or
-drain. Currently the following names are defined:
- * **Search** - Tap - Input entered in the search input field. When a tap is first invoked this event fires even without pressing an input key.
- * **PageUp** - Tap - PageDown key pressed when the search input field has the focus.
- * **PageDown** - Tap - PageUp key pressed when the search input field has the focus.
- * **Activate** - Drain - Enter key pressed or mouse left-clicked when a search result list item has the focus.
+   drain. Currently the following names are defined:
+
+ * **Search** - Tap - Input entered in the search input field. When a
+   tap is first invoked this event fires even without pressing an input
+   key.
+ * **PageUp** - Tap - PageDown key pressed when the search input field
+   has the focus.
+ * **PageDown** - Tap - PageUp key pressed when the search input field
+   has the focus.
+ * **Activate** - Drain - Enter key pressed or mouse left-clicked when a
+   search result list item has the focus.
 
 ### Findnrun User Interface and Source Plugins
 
@@ -271,8 +287,10 @@ a path to this variable, and your plugin can copy its icons
 there.
 
  * Copy or link each `icon` as `${FNRTMP}/icons/$(basename icon)`
- * Do not create new sub-folders - gtkdialog will not display icons from that sub-folder
- * Do not delete files or existing sub-folders that you do not own - this is a shared location
+ * Do not create new sub-folders - gtkdialog will not display icons from
+   that sub-folder
+ * Do not delete files or existing sub-folders that you do not own -
+   this is a shared location
  * This is a temporary location - it exists only while findnrun is running.
 
 If a temporary location isn't suitable for your needs, copy (or link)
@@ -295,13 +313,11 @@ the PageUp or PageDown keys. Findnrun invokes the tap with variable
 is up to the source tap implementation to respond appropriately to the
 event:
 
- * Ignore the event name altogether and return its standard search output.
+ * Ignore the event name altogether and return its standard search
+   output.  The default source `FNRstart` is an example of this case.
  * Return a subset of its search results to represent a "page" of data.
+   [Plugin Filmstrip](plugin-examples.md) is an example of this case.
 
-The default source `FNRstart` is an example of ignoring the event name.
-
-The example source `filmstrip` instead subsets search results, see
-[More source plugin examples](plugin-examples.md).
 It's worth noting that the definition of a "page" is left entirely to
 the tap implementation. For example, `filmstrip` defines the page as
 the number of thumbnails, five, that fit in its viewer window, and
@@ -331,8 +347,10 @@ separate calls.
 Recognized calls:
 
  * `ExitFNR` - exit findnrun (this function is always executed last)
- * `PresentMainWindow` - raise findnrun's main window to top and give it the focus
- * `RestartSearch` - reset search input field to `<init-search>` and invoke `<tap-command>`
+ * `PresentMainWindow` - raise findnrun's main window to top and give it
+   the focus
+ * `RestartSearch` - reset search input field to `<init-search>` and
+   invoke `<tap-command>`
 
 ### Findnrun Termination and Plugins
 
