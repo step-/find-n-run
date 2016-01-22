@@ -1,4 +1,4 @@
-## Debugging plugins
+## Debugging Plugins
 
 Your plugin can print debugging messages to the standard error stream. Do not write to the standard output stream, which is reserved for tap-records.
 

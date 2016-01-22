@@ -1,39 +1,39 @@
-## More source plugin examples
+## More Source Plugin Examples
 
 Each example builds over the previous ones, so please add all previous
 declarations in order to make the next example work. Recall the
 [Find file](plugin.md) example.
 
-### Find file revisited
+### Find File Example Revisited
 
 Let's tweak 'Find file' to avoid the overhead of calling an external
 script. Let's also start findnrun directly into `find_file`'s view.
 Edit `~/.findnrun` and add:
 ```
     TITLE_find_file2='find file no script'
-    TAP_find_file2='find $HOME -type f -name "*${term}*" | findnrun-formatter -- -O s -I "${ICON}"'
+    TAP_find_file2='find $HOME -type f -name "*${term}*" | findnrun-formatter -- -O s'
     SOURCE_find_file2='find_file2:filer_select:find_file:find_file2'
     SOURCES='find_file2 find_file FNRstart'
 ```
 
-### Find file advanced
+### Find File Advanced
 
 A more powerful file search method might involve case insensitive
 regular expression matching.
 ```
     TITLE_iregex='Find file with regular expressions'
-    TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -- -O s -I "${ICON}"'
+    TAP_iregex='find $HOME -iregex ".*${term}" | findnrun-formatter -- -O s'
     SOURCE_iregex='iregex:filer_select:find_file:iregex'
     SOURCES='iregex find_file FNRstart'
 ```
 
-tap-command prepends `.*` to `${term}`
-Since find option -iregex matches _on the whole path_, we start
-the search expression with `.*` otherwise find -iregex would never
-match. Note also that in order to match in the middle of a file name you
-need to explicitly append `.*` to the search input field value.
+Tap-command prepends `.*` to `${term}`.  Since find option -iregex
+matches _on the whole path_, we start the search expression with `.*`
+otherwise find -iregex would never match. Note also that in order to
+match in the middle of a file name you need to explicitly append `.*` to
+the search input field value.
 
-### Initializing the search input field
+### Initializing the Search Input Field
 
 When a plugin is activated - by starting findnrun or by pressing F3
 or Ctrl+_i_ - the search input field is initialized with the value of
@@ -57,7 +57,7 @@ for the default source use:
     INITSEARCH_FNRstart='audio'
 ```
 
-### Multi-field tap
+### Multi-Field Tap
 
 So far we have only seen examples of source taps that output a single
 column, the tap-data column, for each record. Of course you could want
@@ -70,7 +70,7 @@ this document.
 The multi-field plugin code and documentation consists of a single file
 [/usr/share/doc/findnrun/examples/multi-field-tap.sh](examples/multi-field-tap.sh).
 
-### Filmstrip viewer
+### Filmstrip Viewer
 
 The filmstrip source plugin demonstrates several advanced features of
 the plugin interface:
