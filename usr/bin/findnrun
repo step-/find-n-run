@@ -905,7 +905,7 @@ generate_invoke_source_drain() # [[[2
   fi
   #]]]
   echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH varF3 invokeDRAIN'
-  echo -n ' FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
+  echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
   echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
   echo -n ' eval "$@" &'
   #]]]
