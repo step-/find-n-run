@@ -10,6 +10,7 @@
 # =============================================================================
 
 # Usage: source | findnrun-formatter [-S source-id] [-I icon-filename] [-T title] [-O options] [-v verbosity-level]
+# This program assumes that plugin invocation environment variables are defined.
 
 # Source plugin formatter script {{{1
 BEGIN {
@@ -31,7 +32,7 @@ BEGIN {
     printf("%s %s\nusage: <command> | %s -- [ <options> ]\n<options>:\n", \
            Program, Version, Program)
     print "  -h\t\t\tprint this message and exit\n" \
-          "  -I icon-filename\n" \
+          "  -I icon-filepath\toverrides plugin declared icon\n" \
           "  -O options\t\ta string of letters:\n" \
           "     's' (s)ingle field input\n" \
           "     'u' sort -(u)nique output, implies 's'\n" \
@@ -53,7 +54,7 @@ BEGIN {
     FS="|"
   }
   SEP="\x08"
-  default_icon = ("I" in opt) ?opt["I"] :""
+  default_icon = get_default_icon()
   verbose = ("v" in opt) ?opt["v"] :0
 }
 # Optimized single-field case. {{{2
@@ -96,6 +97,27 @@ index(opt["O"], "s") {
   # 510 works around gtkdialog tree widget buffer overflow limit
   if(verbose > 3)
     print ($1 ?$1 :default_icon) "||" $3 "|", $2 "**", $3, "**", $4, "**", $5, "**", $6 > "/dev/stderr"
+}
+
+function get_default_icon(   a, na, iconref) # {{{2
+{
+  # Note: The file path of an icon passed with option -I must be
+  # included in freedesktop.org's icon search path for the icon to be
+  # actually displayed. More info [ANCHOR_ICON_PATH].
+  if("I" in opt) return opt["I"]
+
+  # The icon reference of a plugin source $ICON is guaranteed to be visible.
+  # This code assumes a proper plugin invocation environment.
+  if(iconref = ENVIRON["ICON"]) {
+    na = split(iconref, a, /\//)
+    na = split(ENVIRON["FNRTMP"]"/icons/"a[na], a, /\//)
+    iconref = a[na]
+    if(match(iconref, /.+\./)) # trim file extension
+      iconref = substr(iconref, 1, RLENGTH - 1)
+    return iconref
+  }
+
+  return ""
 }
 
 # getopt.awk --- Do C library getopt(3) function in awk {{{1

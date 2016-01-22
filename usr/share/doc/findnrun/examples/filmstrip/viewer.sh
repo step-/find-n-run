@@ -98,7 +98,7 @@ height_request=$(( 77 + ${CAPTION_HEIGHT} + ${PICTURE_HEIGHT} ))
 # $TITLE is inherited from tap.sh's environment.
 # Widget 'name' attributes are defined in files gtkrc-2.0 and gtk3.css in this folder.
 cat > "${INPUTSTEM%/*}/.viewer.xml" << EOF
-<window name="FilmstripWindow" title="${TITLE}" icon-name="edit-find" width-request="${width_request}" height-request="${height_request}">
+<window name="FilmstripWindow" title="${TITLE}" icon-name="filmstrip" width-request="${width_request}" height-request="${height_request}">
   <vbox spacing="${WINDOW_SPACING}">
 $(y=0; while [ $y -lt $maxrow ]; do
 echo '    <hbox>'

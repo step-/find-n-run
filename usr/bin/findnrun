@@ -145,17 +145,25 @@ awk '
   ' "${CONFIG}"
 
 # Values that depend on defaults.
-if [ -z "${ICONCACHE}" ]; then # [[[2
+# Icons [[[2
+# Note [ANCHOR_ICON_PATH]:
+# For XDG/GTK to be able to find icons in a non-standard icon path,
+# the path must end in '/icons' and XDG_DATA_DIRS must include the
+# parent folder path. Gtkdialog window icons (attribute icon-name)
+# must be copied to '/icons/hicolor/32x32/apps/'
+# Findnrun copies a plugin $ICON in gawk function store_source().
+XDG_DATA_DIRS="${XDG_DATA_DIRS}:${TMPD}" # for plugin ICONS
+if [ -z "${ICONCACHE}" ]; then
   ICONCACHE="${XDGHOMEICONS}"
 else
-  # For XDG/GTK to be able to find icons in a non-standard icon path,
-  # the path must end in '/icons' and XDG_DATA_DIRS must include the
-  # parent folder path.
   XDG_DATA_DIRS="${XDG_DATA_DIRS}:${ICONCACHE}"
   ICONCACHE="${ICONCACHE}/icons"
 fi
-ICONSTEM="${ICONCACHE}/findnrun-" # prefix to worked-around icons.
-mkdir -p "${ICONCACHE}"
+# Prefix to worked-around icons.
+ICONSTEM="${ICONCACHE}/findnrun-" # NOT a dirpath
+ICONSTEM2="${TMPD}/icons/" # slash-terminated, for plugin ICONS
+ICONSTEM2A="${ICONSTEM2}/hicolor/scalable/apps/" # ditto
+mkdir -p "${ICONCACHE}" "${ICONSTEM2}" "${ICONSTEM2A}"
 
 # Parse command line --options. [[[1
 while ! [ "${1#--}" = "$1" ]; do
@@ -206,18 +214,13 @@ SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
 [ true = "${CASEDEPENDENT}" ] && unset i || i=i
 x="${TMPD}/.FNRsc"; mkdir "$x" &&
 # Embedded newline characters not allowed.
-TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su -I "${ICON}" | tee "$t"; else grep -F'$i' "${term}" "$t"; fi;'
-ICON_FNRsc=findnrun-FNRsc
+TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su | tee "$t"; else grep -F'$i' "${term}" "$t"; fi;'
+ICON_FNRsc='/usr/share/doc/findnrun/FNRsc.svg'
 TITLE_FNRsc=$(gettext "shell completion") # i18n 1.10.7
-
-# Cache icons of enabled sources. [[[2
-case " ${SOURCES} " in *' FNRsc '*)
-  [ -e "${ICONSTEM}FNRsc.png" ] || cp /usr/share/doc/findnrun/FNRsc.png "${ICONSTEM}FNRsc.png" ;;
-esac
 
 # Prepare sources. [[[1
 # Don't change next two formats; functions generate_invoke*()
-# assume them.
+# assume them, and so may also findnrun-formatter in the future.
 SRCSTEM="${TMPD}/.source-" # prefix to source filenames
 SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTEM}" 0 FNRstart
 store_valid_sources() # [[[
@@ -335,12 +338,14 @@ END {
   # Store remaining valid sources for gtkdialog shell. [[[
   # Treat sources as an ordered list.
   nE = split(valid_sources, E)
+  SH_FOR_ICONS="sh" # store_source() will pipe into it
   for(j=1; j <= nE; j++) {
     if(! (E[j] in S)) continue
     s = E[j] # source-id
     store_source(s)
     return_sources = return_sources" "s
   }
+  close(SH_FOR_ICONS) # actually executes piped commands.
   return_sources = substr(return_sources, 2)
   #]]]
   # Append NSOURCES= to all saved files. [[[
@@ -382,9 +387,10 @@ function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   }
 }
 #]]]
-function store_source(s, buf, A,   a, g, i, j, I) { #[[[
+function store_source(s, buf, A,   a, g, i, j, I, iconpath, cachedpath) { #[[[
   # NOTE store_source increments global static variable _global_store_source.
   # Call store_source for the ORDERED list of valid sources.
+  # SH_FOR_ICONS is pre-defined as "sh"
   # In => Out:
   #   s source-id
   #   buf==""      => compose from globals G and VGI for s; OR
@@ -413,6 +419,22 @@ function store_source(s, buf, A,   a, g, i, j, I) { #[[[
   }
   saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", 0+_global_store_source++, s)
   print buf > saveas
+  # Copy plugin icon, ref. note [ANCHOR_ICON_PATH] [[[
+  # Get ICON: [1] fullpath, [2] dirname, [3] basename.
+  match(buf, /ICON=\x27(([^\x27]*\/)([^\x27]+))\x27/, iconpath)
+  if("" != iconpath[3]) {
+    # Cache the icon. Read why at [ANCHOR_ICON_PATH].
+    cachedpath = "'"${ICONSTEM2}"'" iconpath[3]
+    # For gtkdialog tree widget column icon.
+    printf("ln -sf \x27%s\x27 \x27%s\x27\n", \
+      iconpath[1], cachedpath) | SH_FOR_ICONS
+    # For gtkdialog window widget (attribute icon-name).
+    cachedpath = "'"${ICONSTEM2A}"'" iconpath[3]
+    printf("ln -sf \x27%s\x27 \x27%s\x27\n", \
+      iconpath[1], cachedpath) | SH_FOR_ICONS
+  }
+  #]]]
+
   if('${DEBUG3:-0}') print "\n"buf > "/dev/stderr"
   return close(saveas)
 }
