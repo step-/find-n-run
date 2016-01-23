@@ -1,24 +1,24 @@
 ## Screenshots
 
-### Version 1.11.0
+### Version 2.0
 
 **About dialog**
 
-![About dialog](images/findnrun-1.11.0-about.png)
+![About dialog](images/findnrun-2.0-about.png)
 
 **Main window open on Find'N'Run application source**
 
-![Main window open on Find'N'Run application source](images/findnrun-1.11.0-main.png)
+![Main window open on Find'N'Run application source](images/findnrun-2.0-main.png)
 
 **Main window open on Shell Completion source**
 
-![Main window open on Shell Completion source](images/findnrun-1.11.0-main-shell-completion.png)
+![Main window open on Shell Completion source](images/findnrun-2.0-main-shell-completion.png)
 
 **Filmstrip source**
 
 Main window open on Filmstrip source (top) and filmstrip viewer (bottom)
 
-![Main window open on Filmstrip source](images/findnrun-1.11.0-main-filmstrip-1.0.png)
+![Main window open on Filmstrip source](images/findnrun-2.0-main-filmstrip-1.0.png)
 
 ![Filmstrip plugin viewer window](images/filmstrip-1.0-viewer.png)
 
