@@ -1,40 +1,68 @@
-# findnrun message catalog.
-# Copyright (C) 2015, the authors
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the find-n-run package.
-# http://www.murga-linux.com/puppy/viewtopic.php?t=98330
-# http://github.com/step-/find-n-run
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: find-n-run 1.10.6\n"
+"Project-Id-Version: find-n-run 2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2015-07-19 18:04+0000\n"
+"POT-Creation-Date: 2016-01-23 17:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#. i18n find_n_run.pot file generated with:
-#. i18n xgettext -ci18n -L Shell -o findnrun.pot --no-wrap --package-name=find-n-run --package-version=1.10.6 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
 #. i18n Main window title
-#: findnrun:19
+#: findnrun:22
 msgid "Find'N'Run"
 msgstr ""
 
-#: findnrun:348
+#: findnrun:222
+msgid "shell completion"
+msgstr ""
+
+#. i18n 2.0 Source plugin validation.
+#: findnrun:258
+msgid "fatal source error: %d%s\\n"
+msgstr ""
+
+#: findnrun:259
+msgid "recoverable source error: %d%s\\n"
+msgstr ""
+
+#: findnrun:260
+msgid "source warning: %d%s\\n"
+msgstr ""
+
+#. i18n 2.0
+#: findnrun:489
+msgid "Invalid source plugins found and disabled:\\n%s"
+msgstr ""
+
+#: findnrun:506
+msgid "SHOWNODISPLAY false excludes file '%s'"
+msgstr ""
+
+#: findnrun:507
+msgid "filename '%s': Icon '%s' not found."
+msgstr ""
+
+#: findnrun:768
 msgid "_Help"
 msgstr ""
 
 #. i18n About dialog widgets: window text; number of apps text (singular/plural)
-#: findnrun:361
+#. i18n 2.0 changed: use %s for authors, add ngettext(sources).
+#: findnrun:787
 msgid ""
 "%s %s\n"
-"authors: SFR, L18L, step\n"
+"authors: %s\n"
 "Open source - GNU GPL license applies\n"
 "\n"
 "%s\n"
@@ -43,93 +71,108 @@ msgid ""
 "configuration: %s\n"
 msgstr ""
 
-#: findnrun:372
+#: findnrun:798
 msgid "%s application found"
 msgid_plural "%s applications found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: findnrun:379
+#: findnrun:799
+msgid "%s source loaded"
+msgid_plural "%s sources loaded"
+msgstr[0] ""
+msgstr[1] ""
+
+#: findnrun:806
 msgid "_OK"
+msgstr ""
+
+#: findnrun:927
+msgid "[ctrl+%d]"
+msgstr ""
+
+#: findnrun:927
+msgid "[%s]"
 msgstr ""
 
 #. i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
 #. i18n "0" (invisible, disregard).
-#: findnrun:396
+#: findnrun:996
 msgid "0"
 msgstr ""
 
-#: findnrun:401
+#: findnrun:1002
 msgid "Press ENTER to select"
 msgstr ""
 
-#: findnrun:402
+#: findnrun:1010
 msgid "Type some letters to refine the list"
 msgstr ""
 
-#: findnrun:409
+#: findnrun:1035
 msgid "Clear entry"
 msgstr ""
 
-#: findnrun:416
+#: findnrun:1043
 msgid "Press ENTER or double-click to run the selected item"
 msgstr ""
 
-#: findnrun:443
-msgid "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit."
+#: findnrun:1080
+msgid "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit."
 msgstr ""
 
-#: findnrun:445
-msgid "Press up-arrow key to grab command"
+#: findnrun:1082
+msgid "Press Down Arrow to grab selected item"
 msgstr ""
 
-#: findnrun:457
+#: findnrun:1095
 msgid "Remove entry from command history"
 msgstr ""
 
-#: findnrun:466
+#: findnrun:1105
 msgid "Comment about current item"
 msgstr ""
 
-#: findnrun:472
+#: findnrun:1113
 msgid "Keep this window open after starting an item instead of closing this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays."
 msgstr ""
 
-#: findnrun:473
+#: findnrun:1114
 msgid "_Keep window"
 msgstr ""
 
-#: findnrun:478
+#: findnrun:1122
 msgid "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache."
 msgstr ""
 
-#: findnrun:479
+#: findnrun:1123
 msgid "_Show all icons"
 msgstr ""
 
-#: findnrun:501
+#: findnrun:1148
 msgid "Move the keyboard focus to the search input field after starting an item instead of keeping the keyboard focus on the started list item. This option also affects the command input field."
 msgstr ""
 
-#: findnrun:502
+#: findnrun:1149
 msgid "_Focus search"
 msgstr ""
 
-#: findnrun:508
+#: findnrun:1159
 msgid "About and help"
 msgstr ""
 
-#: findnrun:512
+#: findnrun:1165
 msgid "Exit"
 msgstr ""
 
+#. i18n This application's own .desktop file. [[[1
 #. i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
 #. i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
-#: findnrun:528
+#: findnrun:1354
 msgid "Find'N'Run "
 msgstr ""
 
 #. i18n Optionally translate the Comment[xx] field to be added to file findnrun.desktop
-#: findnrun:530
+#: findnrun:1356
 msgid "Find and run applications very quickly"
 msgstr ""
