@@ -778,7 +778,7 @@ EOF
 find_help
 
 # i18n About dialog widgets: window text; number of apps text (singular/plural)
-# i18n 1.10.7 changed: use %s for authors.
+# i18n 1.10.7 changed: use %s for authors, add ngettext(plugins).
 export GUI_ABOUT='
 <window title="'"${APP_TITLE}"'" icon-name="edit-find" window-position="2">
   <vbox>
@@ -795,7 +795,8 @@ configuration: %s
 ")" "${APP_NAME}" "${Version}" "step, SFR, L18L" \
 "http://www.murga-linux.com/puppy/viewtopic.php?t=98330" \
 "https://github.com/step-/find-n-run" "${CONFIG}")
-$(printf "$(ngettext "%s application found" "%s applications found" "${NDATF}")" "${NDATF}"
+$(n="${NDATF}"; printf "$(ngettext "%s application found" "%s applications found" "$n")" "$n")
+$(n="${NSOURCES}"; printf "$(ngettext "%s source plugin loaded" "%s source plugins loaded" "$n")" "$n"
 )"'"</label>
       </text>
     </frame>
