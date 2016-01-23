@@ -123,6 +123,10 @@ done)
           <input file stock="gtk-refresh"></input>
           <action>. "${INPUTSTEM%/*}/.btn-restart-search.sh"; date +'RestartSearch %s' >'${FNRRPC}'</action>
         </button>
+        <button tooltip-text="$(gettext "Help")" stock-icon-size="1">
+          <input file stock="gtk-help"></input>
+          <action>echo >rox '${0%/*}/README.md' || xdg-open '${0%/*}/README.md' & </action>
+        </button>
         <button tooltip-text="$(gettext "Exit Filmstrip")" stock-icon-size="1">
           <input file stock="gtk-quit"></input>
           <action>exit:EXIT</action>
