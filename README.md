@@ -1,4 +1,4 @@
-# find-n-run
+# Findnrun
 
 A progressive finder for Linux.
 
