@@ -1,17 +1,9 @@
 # Findnrun
 
-Simple and quick application (and more) finder for Linux.
+A progressive finder for Linux.
 
-[About](https://github.com/step-/find-n-run) | [Downloads](https://github.com/step-/find-n-run/releases) | [Translations](https://github.com/step-/find-n-run/releases)
-
-## News
-
- * 2015-12-08
-   [Find-n-run 1.10.7 beta 2 - now with plugins](https://github.com/step-/find-n-run/tree/source-plugins)
- * [Project home](http://github.com/step-/find-n-run)
- * As of version 1.10.5 this script is featured in the _original_
-   [Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
- * Version 1.10.6 runs on Lubuntu: [package information](DEBIAN.md)
+[Project home](http://github.com/step-/find-n-run)
+   | [Downloads](http://github.com/step-/find-n-run/releases)
 
 ## Introduction
 
@@ -21,25 +13,23 @@ are refined and displayed incrementally as you type into a search input
 field.  With the aid of external plugins findnrun can be extended to
 search through other data collections.
 
-Find'N'Run [started](CREDITS.md) as a Puppy Linux script in Spring 2015.
-In May 2015 it forked into this newer project - named Findnrun - and it is
-being developed and tested on
+Findnrun started in May 2015 as a fork of [Find'N'Run](CREDITS.md), an
+earlier project for Puppy Linux.
+
+Currently Findnrun is being developed and tested on
 [Fatdog64](http://distro.ibiblio.org/fatdog/web/)-701 64-bit Linux, a
 [Puppy Linux](http://puppylinux.com/) and
 [LFS](http://www.linuxfromscratch.org/) derivative.
 
-### Naming
+Names can be confusing:
 
- - _find-n-run_ refers to this new project and its repository.
- - _Find'N'Run_ refers to the _original_ project.
-   It is also the main window title for both projects.
- - _Findnrun_ refers to this project.
-   It is also the script _name_ for both projects - but of course
-   the scripts are different.
+ * _find-n-run_ - this project and its online repository.
+ * _Find'N'Run_ - the _earlier_ project, and also the main window title
+   for both projects.
+ * _findnrun_ - this project, and also the script _name_ for both
+   projects - but the scripts are very different.
 
-## Overview
-
-Main features:
+## Main features
 
  * **Fast incremental search** (find as you type)[1]
  * **Search Plugins** extend search to other data types
@@ -61,7 +51,7 @@ Main features:
    separate from other running instances. Use multiple preference
    files to tailor each instance to your needs.
 
-## Topics
+## Documentation Topics
 
  * [Screenshots](screenshots.md)
 
@@ -79,13 +69,11 @@ Main features:
 
  * [Translating](TRANSLATING.md)
 
- * [License](LICENSE.md) GNU GPL v2
+ * [License](LICENSE) GNU GPL v2
 
 ## Change Log
 
-See the project
-[release announcements](https://github.com/step-/find-n-run/releases)
-page and - for fine-grained information - the
-[commit history](https://github.com/step-/find-n-run/commits/master)
-page.
+See [release announcements](https://github.com/step-/find-n-run/releases)
+and - for fine-grained information - 
+[commit history](https://github.com/step-/find-n-run/commits/master).
 

@@ -16,7 +16,7 @@
 
 **Filmstrip source**
 
-Main window open on Filmstrip source (top) and filmstrip viewer (bottom)
+Main window open on Filmstrip source (top) and Filmstrip viewer (bottom)
 
 ![Main window open on Filmstrip source](images/findnrun-2.0-main-filmstrip-1.0.png)
 

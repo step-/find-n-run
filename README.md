@@ -1,43 +1,32 @@
 # find-n-run
 
-Simple and quick system application finder for Linux.
+A progressive finder for Linux.
+
+[Documentation Index](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/index.md)
+   | [Screenshots](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/screenshots.md)
+   | [Downloads](http://github.com/step-/find-n-run/releases)
+   | [Credits](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/CREDITS.md)
+   | [LICENSE](http://github.com/step-/find-n-run/tree/master/LICENSE)
+   | [Project home](http://github.com/step-/find-n-run)
 
 ## News
 
- * **2015-12-08** [Find-n-run 1.10.7 beta 2](https://github.com/step-/find-n-run/issues/8) - now with [plugins](usr/share/doc/findnrun/plugin.md)
- * [Project home](http://github.com/step-/find-n-run)
- * As of version 1.10.5 this script is featured in the _original_
-[Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
- * Version 1.10.6 runs on Lubuntu: [package information](usr/share/doc/findnrun/DEBIAN.md)
+ * **23-Jan-2016 Release 2.0 adds plugins and new features!**
 
-## Introduction, features, installing, help documentation and more
+## Introduction, Features, Installing, Documentation and more
 
-[Click to read...](usr/share/doc/findnrun/index.md)
-
-## Screenshots
-
-Version 1.10.6 (default window size)
-
-![main window](usr/share/doc/findnrun/images/findnrun-pub-main.png)
-
-![about dialog](usr/share/doc/findnrun/images/findnrun-pub-about.png)
-
-## Reporting bugs
-
-Please file bugs against this script in the issues section of the
-[github repository](https://github.com/step-/find-n-run/issues) _and not
-in the Puppy Linux forum thread_. You do need a github free accont to
-file new issues.
-
-## Credits
-
-[Artwork, translations](usr/share/doc/findnrun/CREDITS.md)
+[Main article](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/index.md)
 
 ## Change Log
 
-See the project [release announcements](https://github.com/step-/find-n-run/releases) page and - for fine-grained information - the [commit history](https://github.com/step-/find-n-run/commits/master) page.
+See [release announcements](https://github.com/step-/find-n-run/releases)
+and - for fine-grained information - 
+[commit history](https://github.com/step-/find-n-run/commits/master).
 
-## License
+## Old News
 
-[GNU GPL v2](LICENSE)
+ * Version 1.10.6 runs on Lubuntu: [package information](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/DEBIAN.md)
+
+ * As of version 1.10.5 this script is featured in the _original_
+[Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
 
