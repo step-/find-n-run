@@ -71,6 +71,8 @@ Main features:
 
  * [Starting](running.md) Findnrun
 
+ * [Plugins](plugin.md)
+
  * [Reporting bugs](issues.md)
 
  * [Credits](CREDITS.md)

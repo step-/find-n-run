@@ -1,4 +1,4 @@
-## Plugins
+## Plugin Development
 
 Before giving the theory, let's start with a complete example.
 
