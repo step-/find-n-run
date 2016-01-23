@@ -2,15 +2,36 @@
 
 As you incrementally refine the search term in findnrun's search window,
 an image viewer displays thumbnails of the images that match your search
-results. Matches are checked against image filename and caption (caption
-requires package 'exiftool' for your platform).
+results. Matches are checked against image filename and caption.[1]
+
+[1] Searching captions requires installing package 'exiftool' for your
+   platform.
 
 ### Configuration file
 
-The 'filmstrip' source plugin has its own configuration file.
-Get familiar with the default configuration file '[taprc](taprc)',
-located in this folder, before reading further.
-File 'taprc' also explains how to install plugin 'filmstrip'.
+The 'filmstrip' source plugin has its own configuration file 'taprc'.
+Get familiar with
+'[taprc](taprc)' - [alternative location](examples/filmstrip/taprc),
+before reading further.
+
+### Installing
+
+For basic installation follow section _INSTALLING_ in file
+'[taprc](taprc)' - [alternative location](examples/filmstrip/taprc).
+Once the plugin is installed restart findnrun and press [F3](hotkey.md)
+repeateadly until the viewer starts.
+
+ * Do not edit 'taprc' directly. Copy it to file `.filmstriprc` in your
+   home folder.
+ * You will be editing two files: `.filmstriprc` and `.findnrunrc`.
+ * Review basic settings. All defaults have sensible values for most
+   systems, but do check that `FIND_PATH` points to existing picture
+   folder locations, and that `TYPING_RATE` is well-suited to your
+   hardware (try the default value first).
+
+For advanced features locate and install the 'exiftool' package for
+your platform. To customize search tags read about `CUSTOM_CAPTION` in
+file 'taprc'.
 
 ### Operation
 
