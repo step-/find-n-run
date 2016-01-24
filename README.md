@@ -1,6 +1,6 @@
 # Findnrun
 
-A progressive finder for Linux.
+A progressive finder.
 
 [Documentation Index](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/index.md)
    | [Screenshots](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/screenshots.md)

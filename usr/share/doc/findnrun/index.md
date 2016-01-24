@@ -1,9 +1,11 @@
 # Findnrun
 
-A progressive finder for Linux.
+A progressive finder.
 
 [Project home](http://github.com/step-/find-n-run)
    | [Downloads](http://github.com/step-/find-n-run/releases)
+
+_Version 2.0.0_
 
 ## Introduction
 
@@ -56,7 +58,7 @@ Names can be confusing:
  * [Screenshots](screenshots.md)
 
  * [Installing](install.md)
- 
+
  * [Configuring](preference.md) user preferences and language settings
 
  * [Starting](running.md) Findnrun
@@ -69,11 +71,11 @@ Names can be confusing:
 
  * [Translating](TRANSLATING.md)
 
- * [License](LICENSE) GNU GPL v2
+ * [License](LICENSE.md) GNU GPL v2
 
 ## Change Log
 
 See [release announcements](https://github.com/step-/find-n-run/releases)
-and - for fine-grained information - 
+and - for fine-grained information -
 [commit history](https://github.com/step-/find-n-run/commits/master).
 
