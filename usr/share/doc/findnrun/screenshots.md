@@ -8,7 +8,7 @@
 
 **Main window open on _Application Finder_ source**
 
-![Main window open on _Application Finder_ source](images/findnrun-2.0.0-main.png)
+![Main window open on Application Finder source](images/findnrun-2.0.0-main.png)
 
 **Main window open on _Shell Completion_ source**
 
