@@ -1,6 +1,7 @@
 ## Credits
 
-Foremost credits go to Puppy Linux users SFR and L18L, who created the _original_ Find'N'Run script in Spring 2015.
+Foremost credits go to Puppy Linux users SFR and L18L, who created the
+_earlier_ Find'N'Run script in Spring 2015.
 
 **Desktop icon**
 

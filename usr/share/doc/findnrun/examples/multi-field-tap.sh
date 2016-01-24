@@ -46,7 +46,7 @@ if [ -z "${term}" ]; then
   if ! [ -d "${ICONCACHE}" ]; then
     # Print error directly onto the list widget. {{{
     printf "$(gettext \
-      "%sError: invalid setting: ICONCACHE.\n%sPlease try restarting Find'N'Run.")" \
+      "%sError: invalid setting: ICONCACHE.\n%sPlease try restarting Findnrun.")" \
       '||' '||' # 2 records
     #}}}
     exit

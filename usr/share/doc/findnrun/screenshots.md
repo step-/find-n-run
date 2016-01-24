@@ -6,17 +6,17 @@
 
 ![About dialog](images/findnrun-2.0.0-about.png)
 
-**Main window open on Find'N'Run application source**
+**Main window open on _Application Finder_ source**
 
-![Main window open on Find'N'Run application source](images/findnrun-2.0.0-main.png)
+![Main window open on _Application Finder_ source](images/findnrun-2.0.0-main.png)
 
-**Main window open on Shell Completion source**
+**Main window open on _Shell Completion_ source**
 
 ![Main window open on Shell Completion source](images/findnrun-2.0.0-main-shell-completion.png)
 
 **Filmstrip source**
 
-Main window open on Filmstrip source (top) and Filmstrip viewer (bottom)
+Main window open on _Filmstrip_ source (top) and _Filmstrip_ viewer (bottom)
 
 ![Main window open on Filmstrip source](images/findnrun-2.0.0-main-filmstrip-1.0.png)
 

@@ -96,10 +96,10 @@ recommended.
 
 **example for Spanish**
 
-    Name=Find'N'Run
+    Name=Findnrun
     Name[es]=Buscar y ejecutar
-    Comment=Find and run apps very quickly
-    Comment[es]=Buscar y ejecutar aplicaciones muy rápidamente
+    Comment=Find applications and more
+    Comment[es]=Buscar aplicaciones y más
 
 ### Plugins
 

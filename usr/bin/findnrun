@@ -2,7 +2,7 @@
 # vim: foldmarker=[[[,]]]:
 
 # =============================================================================
-# Find'N'Run - find and run apps very quickly
+# Findnrun - a progressive finder
   Version=2.0.0
 # authors: Copyright (C)2015-2016 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
@@ -19,7 +19,7 @@ export OUTPUT_CHARSET=UTF-8
 
 # Initialize variables that can be changed. [[[1
 # i18n Main window title
-APP_NAME=$(gettext "Find'N'Run")
+APP_NAME=$(gettext "Findnrun")
 APP_TITLE="${APP_NAME}"
 
 XDG_DATA_DIRS=${XDG_DATA_DIRS:-/usr/share:/usr/local/share}
@@ -210,7 +210,7 @@ BUILTIN_SOURCES="FNRstart|FNRsc"
 # Default built-in source "Desktop Apps" [[[2
 SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
-TITLE_FNRstart=${APP_NAME}
+TITLE_FNRstart=$(gettext "application finder") # i18n 2.0.0
 
 # Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
@@ -1351,7 +1351,7 @@ EOF
 # i18n This application's own .desktop file. [[[1
 # i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
 # i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
-Name=$(gettext "Find'N'Run ")
+Name=$(gettext "Findnrun ")
 # i18n Optionally translate the Comment[xx] field to be added to file findnrun.desktop
-Comment=$(gettext "Find and run applications very quickly")
+Comment=$(gettext "Find applications and more")
 

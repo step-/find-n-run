@@ -23,13 +23,13 @@ Currently Findnrun is being developed and tested on
 [Puppy Linux](http://puppylinux.com/) and
 [LFS](http://www.linuxfromscratch.org/) derivative.
 
-Names can be confusing:
+To clarify the names, which can be confusing at first:
 
- * _find-n-run_ - this project and its online repository.
- * _Find'N'Run_ - the _earlier_ project, and also the main window title
-   for both projects.
- * _findnrun_ - this project, and also the script _name_ for both
-   projects - but the scripts are very different.
+ * _Findnrun_ - this project
+ * _find-n-run_ - this online repository
+ * _Find'N'Run_ - the _earlier_ project
+
+Both projects name the main script 'findnrun'.
 
 ## Main features
 

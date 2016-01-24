@@ -22,7 +22,7 @@ list items for the main window, and it processes the selected list
 item when the user activates the item. The _exemplar source_ is the
 "application search and execution" that findnrun performs in its most
 basic configuration. It is referred to as _source 1_ and labelled
-_Find'N'Run_.
+_Application Finder_.
 
 As new plugins are installed, you get source 2, source 3, etc, each
 source with its own label.  The status bar located at the bottom of
