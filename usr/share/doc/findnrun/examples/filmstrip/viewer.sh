@@ -1,6 +1,14 @@
 #!/bin/sh
 # POSIX. No bashisms.
-# Adapted from /usr/share/doc/gtkdialog-514/examples/pixmap/pixmap_file_monitor
+# =============================================================================
+# Filmstrip viewer
+  Version=1.0.0
+# author: Copyright (C)2016 step
+# license: GNU GPL applies
+# requirements: findnrun >= 2.0.0
+# source: https://github.com/step-/find-n-run
+# forum: http://www.murga-linux.com/puppy/viewtopic.php?t=98330
+# =============================================================================
 
 [ "${FNRDEBUG:-0}" -gt 1 ] && set -x
 
