@@ -26,7 +26,7 @@ Main window open on _Filmstrip_ source (top) and _Filmstrip_ viewer (bottom)
 
 Version 1.10.6 (default window size)
 
-![Main window](images/findnrun-1.10.6-main.png)
+![Main window](images/findnrun-pub-main.png)
 
-![About dialog](images/findnrun-1.10.6-about.png)
+![About dialog](images/findnrun-pub-about.png)
 

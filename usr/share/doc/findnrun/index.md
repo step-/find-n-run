@@ -79,3 +79,10 @@ See [release announcements](https://github.com/step-/find-n-run/releases)
 and - for fine-grained information -
 [commit history](https://github.com/step-/find-n-run/commits/master).
 
+## Links
+
+ * [Project home](http://github.com/step-/find-n-run)
+ * [Downloads](http://github.com/step-/find-n-run/releases)
+ * [Forum thread](http://www.murga-linux.com/puppy/viewtopic.php?t=102811)
+ * [Old forum thread](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
+
