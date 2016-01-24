@@ -991,7 +991,7 @@ start_dialog() # Returns when gtkdialog terminates [[[2
 #   <action>${DEBUG1:+echo >&2 \$BASH_EXECUTION_STRING;}commands...</action>
 unset showcategories
 [ true = "${SEARCHCATEGORIES}" ] && showcategories=true
-# i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
+# i18n Main window widgets
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext's limitation
 start_dialog << EOF
@@ -1348,10 +1348,10 @@ start_dialog << EOF
 </window>
 EOF
 
-# i18n This application's own .desktop file. [[[1
-# i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
+# i18n Findnrun own .desktop file. [[[1
+# i18n Translate the Name[xx] field to be added to file findnrun.desktop
 # i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
 Name=$(gettext "Findnrun ")
-# i18n Optionally translate the Comment[xx] field to be added to file findnrun.desktop
+# i18n Translate the Comment[xx] field to be added to file findnrun.desktop
 Comment=$(gettext "Find applications and more")
 

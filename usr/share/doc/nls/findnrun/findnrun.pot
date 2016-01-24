@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: find-n-run 2.0\n"
+"Project-Id-Version: find-n-run 2.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2016-01-23 17:11+0100\n"
+"POT-Creation-Date: 2016-01-24 10:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,14 +20,18 @@ msgstr ""
 
 #. i18n Main window title
 #: findnrun:22
-msgid "Find'N'Run"
+msgid "Findnrun"
+msgstr ""
+
+#: findnrun:213
+msgid "application finder"
 msgstr ""
 
 #: findnrun:222
 msgid "shell completion"
 msgstr ""
 
-#. i18n 2.0 Source plugin validation.
+#. i18n 2.0.0 Source plugin validation.
 #: findnrun:258
 msgid "fatal source error: %d%s\\n"
 msgstr ""
@@ -40,7 +44,7 @@ msgstr ""
 msgid "source warning: %d%s\\n"
 msgstr ""
 
-#. i18n 2.0
+#. i18n 2.0.0
 #: findnrun:489
 msgid "Invalid source plugins found and disabled:\\n%s"
 msgstr ""
@@ -58,7 +62,7 @@ msgid "_Help"
 msgstr ""
 
 #. i18n About dialog widgets: window text; number of apps text (singular/plural)
-#. i18n 2.0 changed: use %s for authors, add ngettext(sources).
+#. i18n 2.0.0 changed: use %s for authors, add ngettext(sources).
 #: findnrun:787
 msgid ""
 "%s %s\n"
@@ -95,7 +99,7 @@ msgstr ""
 msgid "[%s]"
 msgstr ""
 
-#. i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
+#. i18n Main window widgets
 #. i18n "0" (invisible, disregard).
 #: findnrun:996
 msgid "0"
@@ -165,14 +169,14 @@ msgstr ""
 msgid "Exit"
 msgstr ""
 
-#. i18n This application's own .desktop file. [[[1
-#. i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
+#. i18n Findnrun own .desktop file. [[[1
+#. i18n Translate the Name[xx] field to be added to file findnrun.desktop
 #. i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
 #: findnrun:1354
-msgid "Find'N'Run "
+msgid "Findnrun "
 msgstr ""
 
-#. i18n Optionally translate the Comment[xx] field to be added to file findnrun.desktop
+#. i18n Translate the Comment[xx] field to be added to file findnrun.desktop
 #: findnrun:1356
-msgid "Find and run applications very quickly"
+msgid "Find applications and more"
 msgstr ""
