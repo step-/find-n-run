@@ -20,13 +20,13 @@ Main window open on _Filmstrip_ source (top) and _Filmstrip_ viewer (bottom)
 
 ![Main window open on Filmstrip source](images/findnrun-2.0.0-main-filmstrip-1.0.png)
 
-![Filmstrip plugin viewer window](images/filmstrip-1.0.0-viewer.png)
+![Filmstrip plugin viewer window](images/filmstrip-1.0.0-viewer.pub.png)
 
 ### Older Versions
 
 Version 1.10.6 (default window size)
 
-![Main window](images/findnrun-pub-main.png)
+![Main window](images/findnrun-1.10.6-main.pub.png)
 
-![About dialog](images/findnrun-pub-about.png)
+![About dialog](images/findnrun-1.10.6-about.pub.png)
 

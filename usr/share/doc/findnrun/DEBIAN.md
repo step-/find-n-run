@@ -1,19 +1,15 @@
-_Note: These instructions concern installing findnrun on
+_Note: These instructions concern installing Findnrun on
 Debian/Ubuntu/Mint systems. If you are running a Puppy Linux OS, you
 need not be concerned._
 
-While supporting Debian/Ubuntu/Mint distributions isn't a goal of mine,
-in my limited testing with Lubuntu I found that findnrun 1.10.6 runs
-just fine there.  Why not, I will try to keep, and possibly improve,
-compatibility in future releases, without promising full support
---because I am focused on Fatdog64 Linux and do not use Ubuntu.
+While supporting Debian-based distributions isn't a project goal, my
+limited testing on Lubuntu shows that findnrun 1.10.6 runs fine.  I will
+try to keep compatibility in future releases, but I can't promise full
+support - because I am focused on Fatdog64 Linux and do not use Ubuntu.
 
-Here is a picture of findnrun 1.10.6 running on Lubuntu with the WinAte
-theme.
+Findnrun 1.10.6 running on Lubuntu with the WinAte theme.
 
-![lubuntu main window](images/lubuntu-winate-pub-main.png)
-
-![lubuntu main window](usr/share/doc/findnrun/images/lubuntu-winate-pub-main.png)
+![lubuntu main window](images/lubuntu-winate-1.10.6-main.pub.png)
 
 ## Installing Findnrun on Debian/Ubuntu/Mint Systems
 
