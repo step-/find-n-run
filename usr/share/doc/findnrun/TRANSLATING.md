@@ -1,13 +1,20 @@
 ## Translations
 
-I will gladly add contributed translations to this git repository if
+I will gladly add contributed translations to the project repository if
 translators send them to me. Generate a Github pull request or attach your
 contributed files (see below) to the forum thread.
 
-Findnrun source code is prepared for translation with GNU Gettext.  Message catalogs are kept separated into multiple text domains (files):
+_Translators: For an up-to-date version of this document please visit
+the 'i18n' branch, which may include specific documents and tools not
+otherwise included in the master branch._
+[> i18n](https://github.com/step-/find-n-run/tree/i18n/usr/share/doc/findnrun/TRANSLATING.md).
+
+Findnrun source code is prepared for translation with GNU Gettext.
+Message catalogs are kept separated into multiple text domains (files):
 
  * "findnrun" for the required base functionality
- * "findnrun-plugin-PLUGIN-ID" for each contributed [plugin](plugin.md), where _PLUGIN-ID_ stands for the unique identifier of a plugin.
+ * "findnrun-plugin-PLUGIN-ID" for each contributed [plugin](plugin.md),
+   where _PLUGIN-ID_ stands for the unique identifier of a plugin.
 
 ### Instructions for base functionality
 
@@ -24,7 +31,9 @@ Findnrun source code is prepared for translation with GNU Gettext.  Message cata
 **Note:** Place `.po` and `.mo` files in
 `usr/share/locale/<language>/LC_MESSAGES/findnrun.po`, where `<language>` is
 the _language code_ for your language, i.e., 'de' for German, 'fr' for French,
-'ru' for Russian, 'pt\_BR' for Brasilian Portuguese, and so on. The _language code_ is part of the system _locale_, which includes additional regional settings.
+'ru' for Russian, 'pt\_BR' for Brasilian Portuguese, and so on. The
+_language code_ is part of the system _locale_, which includes
+additional regional settings.
 
 ### Full example for German
 
@@ -49,7 +58,12 @@ the _language code_ for your language, i.e., 'de' for German, 'fr' for French,
     # Now test the .mo file... (Note 1)
     # Then send .mo and .po files for inclusion in this repository (Note 2)
 
-**Νote 1:** Test all main window _and about dialog_ elements. Before testing you should set the system locale code to the translation language. If for some reason you can't set the system locale, you might try _faking_ proper language setup by running these shell commands (replace all occurrences of `de` with the language code that you are testing):
+**Νote 1:** Test all main window _and about dialog_ elements. Before
+testing you should set the system locale code to the translation
+language. If for some reason you can't set the system locale, you might
+try _faking_ proper language setup by running these shell commands
+(replace all occurrences of `de` with the language code that you are
+testing):
 
     # Start at the top directory of this git repository.
     cd find-n-run
@@ -84,7 +98,9 @@ locale code of `.desktop` file comments. Start a terminal and type:
 
     echo $LANG # It should match German for Germany
 
-**Note 2:** If at all possible, please generate a Github pull request for your contribution. Otherwise attach the two files to the project forum thread - see [README](README.md) for URL info.
+**Note 2:** If at all possible, please generate a Github pull request
+for your contribution. Otherwise attach the two files to the project
+forum thread - see [README](README.md) for URL info.
 
 ### Desktop file
 
