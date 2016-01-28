@@ -5,8 +5,9 @@ translators send them to me. Generate a Github pull request or attach your
 contributed files (see below) to the forum thread.
 
 _Translators: For an up-to-date version of this document please visit
-the 'i18n' branch, which may include specific documents and tools not
-otherwise included in the master branch._
+the 'i18n' branch, which may also include late-breaking changes to
+`.pot` files, new documents and translation tools not otherwise included
+in the master branch._
 [> i18n](https://github.com/step-/find-n-run/tree/i18n/usr/share/doc/findnrun/TRANSLATING.md).
 
 Findnrun source code is prepared for translation with GNU Gettext.
