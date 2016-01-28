@@ -1,19 +1,19 @@
-# Findnrun
+# Help Index
 
-A progressive finder.
+**Findrun** - A progressive finder - _Version 2.0.0_
 
 [Project home](http://github.com/step-/find-n-run)
    | [Downloads](http://github.com/step-/find-n-run/releases)
 
-_Version 2.0.0_
 
 ## Introduction
 
-Findnrun is a general finder packaged as an application starter script
-that displays system applications in a graphical window. Search results
-are refined and displayed incrementally as you type into a search input
-field.  With the aid of external plugins findnrun can be extended to
-search through other data collections.
+Findnrun is an extensible desktop application finder. It finds and
+displays system applications in a graphical window. Search results are
+refined and displayed progressively as you type characters into the
+search input field.  With the addition of plugins findnrun can search
+for other objects, such as user files, shell commands, pictures, and so
+on.
 
 Findnrun started in May 2015 as a fork of [Find'N'Run](CREDITS.md), an
 earlier project for Puppy Linux.
