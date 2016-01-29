@@ -1,3 +1,5 @@
+_Next: [Starting Findnrun](running.md)_
+
 ## Installing
 
 It is recommended to install the latest full package for your
@@ -36,4 +38,25 @@ Packages for various distributions can be downloaded from:
    [.pet](http://www.murga-linux.com/puppy/viewtopic.php?t=98330), which
    also features a ROX-app application
  * Quirky Linux [.pet](http://www.murga-linux.com/puppy/viewtopic.php?t=99789)
+
+## Language Settings
+
+If the system locale is correctly configured, and the optional NLS
+support package is installed, which includes translations for your local
+language, findnrun should automatically display its messages in the
+local language.
+
+Moreover the search result list can display item _name_ and _comments_
+in the local language provided that the corresponding `.desktop` file
+includes translated names and comments, which is `independent of findnrun.
+(Item _categories_ instead are strictly single-language ,typically
+English, according to the freedesktop.org's desktop file specifications
+[ref1](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s04.html)
+and
+[ref2](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s05.html)).
+
+Some plugins may require you to install a separate NLS support package
+before they can display translated messages.
+
+_Next: [Starting Findnrun](running.md)_
 

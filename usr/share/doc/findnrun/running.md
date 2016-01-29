@@ -1,9 +1,26 @@
-## Starting findnrun
+_Next: [Configuring Preferences](preference.md)_
+
+## Starting Findnrun
 
 ### Desktop Menu
 
 Findnrun's application icon is found in the 'File System' category of
 your desktop menu.
+
+### Global Hotkey
+
+You may find convenient to start findnrun with a global hotkey. For
+instance, on Fatdog64-701 Linux pressing Alt-F3 anywhere on the desktop
+starts findnrun.
+
+### First Run
+
+The first time findnrun starts it creates its configuration file
+`.findnrunrc` in your home directory, then displays the list of
+desktop applications, and the status bar shows that "application
+finder" is the current view. Press [F3] to change the view to "shell
+completion", the list of shell commands. Press [Ctrl+1] to switch back
+to "application finder". Click the exit icon to close findnrun.
 
 ### Command-Line Options
 
@@ -39,9 +56,9 @@ your desktop menu.
     findnrun -- --display=DISPLAY
     findnrun --stdout -- --version
 
-## Alternative Configuration File
+## Alternate Configuration File
 
-Specify an alternative configuration file as an environment variable:
+Specify an alternate configuration file as an environment variable:
 ```
     env CONFIG=/path/to/findnrunrc-alternative findnrun
 ```
@@ -84,3 +101,4 @@ initialization files.
 
     env GEOMETRY=500x200+100+100 findnrun
 
+_Next: [Configuring Preferences](preference.md)_
