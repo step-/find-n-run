@@ -4,11 +4,12 @@ I will gladly add contributed translations to the project repository if
 translators send them to me. Generate a Github pull request or attach your
 contributed files (see below) to the forum thread.
 
-_Translators: For an up-to-date version of this document please visit
-the 'i18n' branch, which may also include late-breaking changes to
-`.pot` files, new documents and translation tools not otherwise included
-in the master branch._
-[> i18n](https://github.com/step-/find-n-run/tree/i18n/usr/share/doc/findnrun/TRANSLATING.md).
+_Translators: Before starting or reviewing your translation, visit the
+dedicated
+['i18n' branch](https://github.com/step-/find-n-run/tree/i18n/usr/share/doc/findnrun/TRANSLATING.md),
+featuring an up-to-date version of this document, work-in-progress
+`.pot` files, if any, and translation scripts that aren't included in
+the master package.
 
 Findnrun source code is prepared for translation with GNU Gettext.
 Message catalogs are kept separated into multiple text domains (files):
