@@ -61,11 +61,13 @@ Both projects name the main script 'findnrun'.
 
  * [Screenshots](screenshots.md)
 
- * [Installing](install.md)
-
- * [Configuring](preference.md) user preferences and language settings
+ * [Installing](install.md) and Language Settings
 
  * [Starting](running.md) Findnrun
+
+ * [Configuring](preference.md) Preferences
+
+ * [Hotkeys](hotkey.md)
 
  * [Plugins](plugin.md)
 

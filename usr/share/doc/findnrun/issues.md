@@ -20,6 +20,6 @@ file new issues.
    environment variable `LANG` displays - when a matching translation
    file is installed.
 
- * Findnrun does not include the additional ROX-Filer application,
-   which is still included in the _original_ version.
+ * Findnrun does not include the additional ROX-Filer application that
+   the earlier Find'N'Run project has.
 
