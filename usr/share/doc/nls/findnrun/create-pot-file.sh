@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if not which mdview >/dev/null 2>&1; then
+if ! command -v mdview >/dev/null; then
   echo >&2 "${0%%*/}: error: This script needs command 'mdview'."
   exit 1
 fi
