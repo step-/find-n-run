@@ -82,7 +82,7 @@ for f in "${DMD}/"*.md "${DMD}/../examples/"*/*.md; do
   esac
 done >> "${FPOT}.tmp"
 
-msguniq --no-wrap --no-location "${FPOT}.tmp" || ERRORS="${ERRORS}
+msguniq --no-wrap "${FPOT}.tmp" || ERRORS="${ERRORS}
   msguniq"
 
 rm  -f "${FPOT}.tmp"
