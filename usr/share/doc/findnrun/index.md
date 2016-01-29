@@ -46,8 +46,12 @@ Both projects name the main script 'findnrun'.
    **categories**, or all at once. Search **from left**, with **regular
    expressions**, **case-independently**.
 
-[2] Markdown files can be confortably read as plain text files.
-   To browse markdown files install the `mdview` package.
+[2] Help documents are encoded as _markdown_. _Read_ markdown as
+   plain text - with some minor loss of formatting - or with the
+   [mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index)
+   viewer (recommended). Mdview can also _browse_ markdown, and
+   automatically show _translated_ markdown provided that the findnrun
+   NLS package for your language is installed.
 
 [3] Run multiple searches at the same time. Each search window is
    separate from other running instances. Use multiple preference
