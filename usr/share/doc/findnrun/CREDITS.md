@@ -18,7 +18,7 @@ _earlier_ Find'N'Run script in Spring 2015.
 **Translations**
 
  * French, 1.10.6 - ASRI at Puppy Linux Forum
- * German, 1.10.6 - L18L at Puppy Linux Forum
+ * German, 2.0.0 and earlier - L18L at Puppy Linux Forum
  * Italian, 1.10.6 - xanad at Puppy Linux Forum
  * Spanish, 1.10.6 - nilsonmorales at Puppy Linux Forum
    nilsonmorales@hotmail.com
