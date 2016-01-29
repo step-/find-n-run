@@ -9,6 +9,7 @@ VERSION=2.0.0
 DMD=../../findnrun
 DBIN=../../../../bin
 FPOT=findnrun.new.pot
+FINAL=findnrun.pot
 ERRORS=
 
 create_pot_file() # {{{1
@@ -82,10 +83,17 @@ for f in "${DMD}/"*.md "${DMD}/../examples/"*/*.md; do
   esac
 done >> "${FPOT}.tmp"
 
-msguniq --no-wrap "${FPOT}.tmp" || ERRORS="${ERRORS}
+msguniq --no-wrap -o "${FPOT}.2.tmp" "${FPOT}.tmp" || ERRORS="${ERRORS}
   msguniq"
 
-rm  -f "${FPOT}.tmp"
+sed '
+/#-#-#-#-#/d
+s|^#: ../../../../|#: /usr/|
+s/^#:.*find-n-run/#: /
+' "${FPOT}.2.tmp" || ERRORS="${ERRORS}
+  sed 2"
+
+rm  -f "${FPOT}."*tmp
 
 return ${ERRORS:+1}
 
