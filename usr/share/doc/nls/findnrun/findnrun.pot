@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 2.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2016-01-29 23:51+0000\n"
+"POT-Creation-Date: 2016-02-16 16:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -229,30 +229,30 @@ msgid "**Translations**"
 msgstr ""
 
 #: /usr/share/doc/findnrun/CREDITS.md:20
-msgid "French, 1.10.6 - ASRI at Puppy Linux Forum"
+msgid "French, 1.10.6 - ASRI, Puppy Linux forum"
 msgstr ""
 
 #: /usr/share/doc/findnrun/CREDITS.md:21
-msgid "German, 2.0.0 and earlier - L18L at Puppy Linux Forum"
+msgid "German, 2.0.0 - L18L, Puppy Linux forum"
 msgstr ""
 
 #: /usr/share/doc/findnrun/CREDITS.md:22
-msgid "Italian, 1.10.6 - xanad at Puppy Linux Forum"
+msgid "Italian, 2.0.0 - xanad, Puppy Linux forum"
 msgstr ""
 
-#: /usr/share/doc/findnrun/CREDITS.md:24
-msgid "Spanish, 1.10.6 - nilsonmorales at Puppy Linux Forum nilsonmorales@hotmail.com"
+#: /usr/share/doc/findnrun/CREDITS.md:23
+msgid "Spanish, 1.10.6 - nilsonmorales, nilsonmorales@hotmail.com"
 msgstr ""
 
-#: /usr/share/doc/findnrun/CREDITS.md:26
-msgid "Simplified Chinese, Traditional Chinese, 1.10.6 - icake at Puppy Linux Forum icake@hotmail.com"
+#: /usr/share/doc/findnrun/CREDITS.md:25
+msgid "Simplified Chinese, Traditional Chinese, 1.10.6 - icake, icake@hotmail.com"
 msgstr ""
 
-#: /usr/share/doc/findnrun/CREDITS.md:28
+#: /usr/share/doc/findnrun/CREDITS.md:27
 msgid "**Packages**"
 msgstr ""
 
-#: /usr/share/doc/findnrun/CREDITS.md:35
+#: /usr/share/doc/findnrun/CREDITS.md:34
 msgid "Debian - user 'saintless' at Puppy Linux Forum helped me improve my rudimentary .deb packages. He and fredx author [DebianDog](http://www.murga-linux.com/puppy/viewtopic.php?t=93225), a very small Debian Live CD shaped to look like and act like Puppy Linux, while keeping Debian structure, behaviour, and apt-get/synaptic access to Debian repositories."
 msgstr ""
 

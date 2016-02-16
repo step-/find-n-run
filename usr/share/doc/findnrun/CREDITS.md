@@ -17,12 +17,11 @@ _earlier_ Find'N'Run script in Spring 2015.
 
 **Translations**
 
- * French, 1.10.6 - ASRI at Puppy Linux Forum
- * German, 2.0.0 and earlier - L18L at Puppy Linux Forum
- * Italian, 1.10.6 - xanad at Puppy Linux Forum
- * Spanish, 1.10.6 - nilsonmorales at Puppy Linux Forum
-   nilsonmorales@hotmail.com
- * Simplified Chinese, Traditional Chinese, 1.10.6 - icake at Puppy Linux Forum
+ * French, 1.10.6 - ASRI, Puppy Linux forum
+ * German, 2.0.0 - L18L, Puppy Linux forum
+ * Italian, 2.0.0 - xanad, Puppy Linux forum
+ * Spanish, 1.10.6 - nilsonmorales, nilsonmorales@hotmail.com
+ * Simplified Chinese, Traditional Chinese, 1.10.6 - icake,
    icake@hotmail.com
 
 **Packages**
