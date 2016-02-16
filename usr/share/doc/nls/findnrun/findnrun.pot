@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 2.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2016-02-16 16:13+0000\n"
+"POT-Creation-Date: 2016-02-16 22:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -387,12 +387,12 @@ msgstr ""
 msgid "Ash"
 msgstr ""
 
-#: /usr/share/doc/findnrun/DEBIAN.md:104
-msgid "If the ash shell **is** installed, be wary that Debian, Mint, and Ubuntu have a separate ash.deb package that links `/bin/ash` to `/bin/dash`, and dash can't run findnrun. When ash is linked to dash findnrun prints error messages to the command line interface similar to: ```"
+#: /usr/share/doc/findnrun/DEBIAN.md:103
+msgid "If the ash shell **is** installed, be wary that Debian, Mint, and Ubuntu have a separate ash.deb package that links `/bin/ash` to `/bin/dash`, and dash can't run findnrun. When ash is linked to dash findnrun prints error messages to the command line interface similar to:"
 msgstr ""
 
 #: /usr/share/doc/findnrun/DEBIAN.md:109
-msgid "``` Findnrun really needs the true ash (or bash)."
+msgid "Findnrun really needs the true ash (or bash)."
 msgstr ""
 
 #: /usr/share/doc/findnrun/DEBIAN.md:112
@@ -458,8 +458,8 @@ msgstr ""
 msgid "**With the focus in the search input field**"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:20
-msgid "`[F12]` - activate the top search result item. Focus moves according"
+#: /usr/share/doc/findnrun/hotkey.md:21
+msgid "`[F12]` - activate the top search result item. Focus moves according to user preference 'Focus search'"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:22
@@ -762,7 +762,7 @@ msgid "If the system locale is correctly configured, and the optional NLS suppor
 msgstr ""
 
 #: /usr/share/doc/findnrun/install.md:56
-msgid "Moreover the search result list can display item _name_ and _comments_ in the local language provided that the corresponding `.desktop` file includes translated names and comments, which is `independent of findnrun. (Item _categories_ instead are strictly single-language ,typically English, according to the freedesktop.org's desktop file specifications [ref1](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s04.html) and [ref2](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s05.html))."
+msgid "Moreover the search result list can display item _name_ and _comments_ in the local language provided that the corresponding `.desktop` file includes translated names and comments, which is independent of findnrun. (Item _categories_ instead are strictly single-language ,typically English, according to the freedesktop.org's desktop file specifications [ref1](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s04.html) and [ref2](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s05.html))."
 msgstr ""
 
 #: /usr/share/doc/findnrun/install.md:59
@@ -967,12 +967,8 @@ msgstr ""
 msgid "Alternate Configuration File"
 msgstr ""
 
-#: /usr/share/doc/findnrun/running.md:62
-msgid "Specify an alternate configuration file as an environment variable: ```"
-msgstr ""
-
-#: /usr/share/doc/findnrun/running.md:64
-msgid "```"
+#: /usr/share/doc/findnrun/running.md:61
+msgid "Specify an alternate configuration file as an environment variable:"
 msgstr ""
 
 #: /usr/share/doc/findnrun/running.md:66

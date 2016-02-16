@@ -48,7 +48,7 @@ local language.
 
 Moreover the search result list can display item _name_ and _comments_
 in the local language provided that the corresponding `.desktop` file
-includes translated names and comments, which is `independent of findnrun.
+includes translated names and comments, which is independent of findnrun.
 (Item _categories_ instead are strictly single-language ,typically
 English, according to the freedesktop.org's desktop file specifications
 [ref1](http://standards.freedesktop.org/desktop-entry-spec/latest/ar01s04.html)

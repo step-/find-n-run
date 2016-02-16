@@ -18,7 +18,7 @@
 **With the focus in the search input field**
 
  * `[F12]` - activate the top search result item. Focus moves according
-    to user preference 'Focus search'
+   to user preference 'Focus search'
  * `[Enter]` - move focus to the top search result item
 
 **With the focus in the search result list**
