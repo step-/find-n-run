@@ -3,10 +3,10 @@
 
 # =============================================================================
 # Findnrun - a progressive finder
-  Version=2.0.0
+  Version=2.1.0
 # authors: Copyright (C)2015-2016 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
-# requirements: gtk-dialog >= 0.8.3, gawk, ash (or bash)
+# depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only)
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
 # =============================================================================
@@ -121,7 +121,7 @@ awk '
   /^CASEDEPENDENT=/{f5=1}
   # GEOMETRY=WxH+X+Y has no default, environment is overridden
   # DESKTOP_FILE_DIRS initialized from system values, environment overrides
-  # ICON_DIRS initialized from has system values, environment overrides
+  # ICON_DIRS initialized from system values, environment overrides
   /^SEARCHCATEGORIES=/{f6=1}
   /^SEARCHCOMPLETE=/{f7=1}
   /^IBOL=/{f8=1}
@@ -956,17 +956,17 @@ generate_status_bar() # [[[2
 
 generate_source_hotkeys() # [[[2
 {
-  #echo '<action signal="key-press-event">echo "MOD=$KEY_MOD RAW=$KEY_RAW SYM=$KEY_SYM UNI=$KEY_UNI VAL=$KEY_VAL">&2</action>'
-  local i p
-  set -- ${SOURCES:-FNRstart}
-  i=0; while [ $# -gt 0 -a $i -lt 9 ]; do
-    p=$(($i + 1))
-    echo '
-  <action signal="key-press-event" condition="command_is_true([ $KEY_MOD = 4 -a $KEY_SYM = '$p' ] && echo true )">echo -n '$i' >"'"${F3SF}"'"</action>
-  <action signal="key-press-event" condition="command_is_true([ $KEY_MOD = 4 -a $KEY_SYM = '$p' ] && echo true )">refresh:varF3</action>'
-    shift
-    i=$p
-  done
+  #echo '<action signal="key-press-event">exec 1>&2;echo;date;env|grep KEY_</action>'
+
+  # Actions for keys Ctrl+1..Ctrl+9
+  local keys command attributes
+  # Accept no more than 9 numeric keys.
+  keys="[1-$(($NSOURCES > 9 ? 9 : $NSOURCES))]"
+  # Require Ctrl w/o Shift w/o Meta (can have NumLock or non-en_US keyboard layout).
+  command='[ $(($KEY_MOD & 7)) = 4 ] && case $KEY_SYM in '"$keys"') echo true;; esac'
+  attributes='signal="key-press-event" condition="command_is_true('"$command"')"'
+  printf "<action $attributes>%s</action>\n" \
+  'echo -n $(($KEY_SYM -1)) >"'"${F3SF}"'"' 'refresh:varF3'
 }
 
 start_dialog() # Returns when gtkdialog terminates [[[2
