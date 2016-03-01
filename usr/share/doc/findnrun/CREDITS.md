@@ -1,6 +1,6 @@
 ## Credits
 
-Foremost credits go to Puppy Linux users SFR and L18L, who created the
+Foremost credit goes to Puppy Linux users SFR and L18L, who created the
 _earlier_ Find'N'Run script in Spring 2015.
 
 **Desktop icon**
@@ -17,18 +17,17 @@ _earlier_ Find'N'Run script in Spring 2015.
 
 **Translations**
 
- * French, 1.10.6 - ASRI, Puppy Linux forum
- * German, 2.0.0 - L18L, Puppy Linux forum
- * Italian, 2.0.0 - xanad, Puppy Linux forum
- * Spanish, 1.10.6 - nilsonmorales, nilsonmorales@hotmail.com
- * Simplified Chinese, Traditional Chinese, 1.10.6 - icake,
-   icake@hotmail.com
+ * French - ASRI, Puppy Linux forum
+ * German - L18L, Puppy Linux forum
+ * Italian - xanad, [Italian](http://www.italianpuppy.org/) Puppy Linux
+   forum
+ * Spanish - nilsonmorales, nilsonmorales@hotmail.com
+ * Simplified Chinese, Traditional Chinese - icake, icake@hotmail.com
 
 **Packages**
 
- * Debian - user 'saintless' at Puppy Linux Forum helped me improve
-   my rudimentary .deb packages. He and fredx author
+ * Debian - Puppy Linux forum user _saintless_ helped me improve my
+   rudimentary .deb packages for version 1.10.6.
+   _Saintless_ and _fredx_ co-author
    [DebianDog](http://www.murga-linux.com/puppy/viewtopic.php?t=93225),
-   a very small Debian Live CD shaped to look like and act like Puppy Linux,
-   while keeping Debian structure, behaviour, and apt-get/synaptic
-   access to Debian repositories.
+   a live CD that looks and acts like Puppy Linux but is Debian.
