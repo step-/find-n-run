@@ -54,7 +54,7 @@ power users and custom applications:
     #ICON_DIRS=~/.icons ~/.local/іcons /usr/share/icons /usr/local/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons
     # Preferred help viewing program.
     #BROWSER=
-    # Pressing HOTKEY_F2 cycles keyboard input focus between the command entry field and the search field.
+    # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field.
     HOTKEY_F2=F2
     # Pressing HOTKEY_F3 starts the next available source plugin.
     HOTKEY_F3=F3

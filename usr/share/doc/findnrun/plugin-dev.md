@@ -80,8 +80,8 @@ in a value.  All values can be null except for `<tap-data>`.
    feedback from plugin developers.
  * `<label>` is displayed in the list widget. If the label value is null
    findnrun uses tap-data instead.
- * `<tap-data>` is displayed in the command entry widget. Tap-data is
-   sent to the drain upon activating its entry in the list view.
+ * `<tap-data>` is added to the history list and sent to the drain upon
+   activating its entry in the search results list.
  * `<comment>` is displayed in the comment widget.
  * `<categories>` is a semicolon-separated list of words and can be
    displayed in the comment widget.
