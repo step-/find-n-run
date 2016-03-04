@@ -1,132 +1,211 @@
-## Translations
+## Translations Demystified
 
-I will gladly add contributed translations to the project repository if
-translators send them to me. Generate a Github pull request or attach your
-contributed files (see below) to the forum thread.
+You can be a translator too! No magic involved. This page includes
+a tutorial that attempts to demistify the Linux translation
+toolset. You will learn to create a full translation using just your
+favorite text editor and some shell commands, that's all. You could
+use specialized translation tools instead, but really it isn't
+necessary.
 
-_Translators: Before starting or reviewing your translation, visit the
-dedicated
-['i18n' branch](https://github.com/step-/find-n-run/tree/i18n/usr/share/doc/findnrun/TRANSLATING.md),
-featuring an up-to-date version of this document, work-in-progress
-`.pot` files, if any, and translation scripts that aren't included in
-the master package.
+I will add contributed translations to the project repository.
+Preferably send me your contribution as a GitHub pull request.
+Alternatively, attach your contributed files to the forum thread.
+I ask for both the source and the compiled files (.po and .mo)
+because findnrun is an open source project.  Thank you.
 
-Findnrun source code is prepared for translation with GNU Gettext.
-Message catalogs are kept separated into multiple text domains (files):
+Findnrun is prepared for translation with the GNU Gettext toolset.
+Message catalogs are kept separated into multiple text domains, which
+are named:
 
  * "findnrun" for the required base functionality
  * "findnrun-plugin-PLUGIN-ID" for each contributed [plugin](plugin.md),
    where _PLUGIN-ID_ stands for the unique identifier of a plugin.
 
-### Instructions for base functionality
+### Adding a New Translation
 
- * Start from the pre-generated GNU gettext Portable Object format
-   template file `usr/share/doc/nls/findnrun/findnrun.pot`
- * Generate a new `.po` file for your local language from the `.pot` file
- * Edit and translate the `.po` file
+Process overview.  For step-by-step instructions refer to section
+_Tutorial_.
+
+ * Download and unpack the 'mdview' archive attached to the
+   [release page](https://github.com/step-/find-n-run/releases).
+   This custom version of mdview includes bug fixes that enable full
+   support for translating findnrun
+ * Download and install the latest findnrun NLS package
+ * Copy the template file `findnrun.pot` to a new file `findnrun.po`.
+   File extension 'po' stands for GNU gettext Portable Object format,
+   and 'pot' for 'po' Template
+ * Edit and translate the `.po` file - you can use your favorite text
+   editor, or a specialized `po` editing application, such as poedit
+ * Convert the translated `.po` file to `.mo` format - you can use shell
+   command `msgfmt`, or a specialized application
+ * Install `.mo` and `.po` files for testing[1]
+ * Run findnrun to test[2] your translation
+ * Run the custom mdview[3] to test your translation of markdown files
+ * Send me `.mo` **and `.po`** files for inclusion in the repository.[3]
+
+[1] Place `.mo` **and `.po`** files in
+   `/usr/share/locale/<language>/LC_MESSAGES/`, where `<language>` is the
+   _language code_ for your language, i.e., 'de' for German, 'fr' for
+   French, 'pt\_BR' for Brasilian Portuguese, and so on.
+
+[2] Before you can test effectively you might need to prepare your
+   system. Refer to the _Tutorial_.
+
+[3] I ask for `.mo` **and `.po`** files because Findnrun is an open
+   source project.
+   For GitHub pull requests you need to create a relative path that
+   corresponds to the full path indicated in note [1] above, and add the
+   path you created to your pull request.
+
+### Updating an Existing Translation
+
+Process overview.  For step-by-step instructions refer to section
+_Tutorial_.
+
+ * Download and install archives as explained in section _Adding a New
+   Translation._
+ * Update the existing translation `findnrun.po` from the template file
+ * Edit and translate the updated `findnrun.po`
  * Convert the translated `.po` file to `.mo` format
- * Install the `.mo` file
- * Test your translation including the About dialog; to open the About
-   dialog click the star icon in the main window
- * Send me the `.po` and `.mo` files for inclusion in this repository.
+ * Install and test as described in _Adding a New Translation_
+ * Send me the updated `.po` **and `.mo`** files.[3]
 
-**Note:** Place `.po` and `.mo` files in
-`usr/share/locale/<language>/LC_MESSAGES/findnrun.po`, where `<language>` is
-the _language code_ for your language, i.e., 'de' for German, 'fr' for French,
-'ru' for Russian, 'pt\_BR' for Brasilian Portuguese, and so on. The
-_language code_ is part of the system _locale_, which includes
-additional regional settings.
+### Tutorial
 
-### Full example for German
+This tutorial uses German (language code = de).  Substitute the language
+and full locale codes for your own case.
 
-    # Start at the top directory of this git repository.
-    cd find-n-run
+* Download and unpack the 'mdview' archive attached to the
+  [release page](https://github.com/step-/find-n-run/releases).
+* Download and install the latest findnrun NLS package.
+* Open a terminal window
+```
+# Create relative folder structure for your locale.
+mkdir -p /usr/share/locale/de/LC_MESSAGES
+cd /usr/share/locale/de/LC_MESSAGES
 
-    # Create relative folder structure for your locale.
-    mkdir -p usr/share/locale/de/LC_MESSAGES
+# Backup current .po and .mo files, if they exist
+cp -i findnrun.po findnrun-old.po
+cp -i findnrun.mo findnrun-old.mo
 
-    # Generate a new .po file from the .pot template file.
-    cd usr/share/locale/de/LC_MESSAGES
-    msginit -i ../../../doc/nls/findnrun/findnrun.pot -o findnrun.po --locale=de --no-wrap
+# [A] For new translations: generate a new .po file
+# [B] For existing translations: merge updates into the existing .po file
 
-    # Now edit and translate findnrun.po...
+## Either do case [A]
+msginit -i /usr/share/doc/nls/findnrun/findnrun.pot -o findnrun.po --locale=de --no-wrap
 
-    # Then generate the .mo file.
-    msgfmt -o findnrun.mo findnrun.po
-    # Temporarily install the .mo file in the message catalog.
-    mkdir -p /usr/share/locale/de/LC_MESSAGES
-    ln -s `pwd`/findnrun.mo /usr/share/locale/de/LC_MESSAGES/findnrun.mo
+## or case [B]
+msgmerge -U findnrun.po /usr/share/doc/nls/findnrun/findnrun.pot
+```
 
-    # Now test the .mo file... (Note 1)
-    # Then send .mo and .po files for inclusion in this repository (Note 2)
+Now edit and translate `findnrun.po` with your favorite text editor or
+a specialized application, such as poedit.
+You translate each 'msgid' string into its corresponding 'msgstr' string.
+For case [B] label 'fuzzy' marks new/updated entries.
+Don't forget to fill in/update the initial information block.
 
-**Νote 1:** Test all main window _and about dialog_ elements. Before
-testing you should set the system locale code to the translation
-language. If for some reason you can't set the system locale, you might
-try _faking_ proper language setup by running these shell commands
-(replace all occurrences of `de` with the language code that you are
-testing):
+Then generate the new .mo file
+```
+msgfmt -o findnrun.mo findnrun.po
+```
 
-    # Start at the top directory of this git repository.
-    cd find-n-run
-    # Temporarily link message catalog file
-    test -d /usr/share/locale/de || ln -s `pwd`/usr/share/locale/de /usr/share/locale/de
-    test -e /usr/share/locale/de/LC_MESSAGES/findnrun.mo || ln -s `pwd`/usr/share/locale/de/LC_MESSAGES/findnrun.mo /usr/share/locale/de/LC_MESSAGES/findnrun.mo
-    # Set LANGUAGE to the FULL language locale
-    env LANGUAGE=de_DE.UTF-8 usr/bin/findnrun --geometry=
-    # Clean up temporary links
-    test -L /usr/share/locale/de && rm /usr/share/locale/de
-    test -L /usr/share/locale/de/LC_MESSAGES/findnrun.mo && rm /usr/share/locale/de/LC_MESSAGES/findnrun.mo
+Now start findnrun to test your translation of windows and dialogs. First, you need to
+set your system language to the translation language. This requires
+rebooting.  If for some reason you can't reboot, you can try _faking_
+proper language setup when you start findnrun; sometimes it's enough:
+```
+cd /usr/share/locale/de/LC_MESSAGES
 
-These settings should be enough for `findnrun` to show translated
-messages.  However, they are not sufficient for `findnrun` to also
-display translated application comments. (Translated comments are
-included in many `.desktop` files). To also be able to view translated
-comments you do need to set the system locale code _properly_ by
-following the exact procedure of your Linux variant. For instance, the
-steps for Fatdog64 Linux involve installing the NLS SFS, dropping to
-the console, setting the locale code and variables, and restarting X:
+# Faking proper system language setup:
+# set LANGUAGE to the FULL language locale
+env LANGUAGE=de_DE.UTF-8 /usr/bin/findnrun --geometry=
+```
 
-    # First download fd64-nls_701.sfs with the SFS manager
-    load_sfs.sh --load /path/to/fd64-nls_701.sfs # load SFS
-    /usr/sbin/fatdog-choose-locale.sh # choose, i.e., German for Germany
-    # Close all windows and press Ctrl+Alt+BackSpace
-    LANG=de_DE.UTF-8; export LANG # German for Germany
-    LANGUAGE=$LANG; export LANGUAGE
-    xwin # restart X with German for Germany as a back-end.
+On Fatdog64-702, for example, setting `LANGUAGE` is enough for findnrun
+to be able to display a translated GUI.  However, it isn't sufficient
+for findnrun to also display translated application comments, which many
+`.desktop` files include. Note that your translation doesn't involve
+such comments, so you need not worry about them. Just be wary that you
+might see untranslated data **inside** the comment field in the main
+window.
 
-`findnrun` looks at environment variable `LANG` to determine the
-locale code of `.desktop` file comments. Start a terminal and type:
+----
 
-    echo $LANG # It should match German for Germany
+_Optional: To view translated application comments you need to set
+the system locale code properly by following the exact procedure of
+your Linux variant.  For instance, the steps for Fatdog64-702 Linux
+involve installing the system NLS SFS, dropping to the system console,
+setting the locale code and variables, and finally restarting X:_
+```
+# First download fd64-nls_702.sfs with the SFS manager
+load_sfs.sh --load /path/to/fd64-nls_701.sfs # load SFS
 
-**Note 2:** If at all possible, please generate a Github pull request
-for your contribution. Otherwise attach the two files to the project
-forum thread - see [README](README.md) for URL info.
+/usr/sbin/fatdog-choose-locale.sh # choose, i.e., German for Germany
 
-### Desktop file
+# Close all windows and press Ctrl+Alt+BackSpace
 
-Open file `usr/share/applications/findnrun.desktop` and check whether
+LANG=de_DE.UTF-8; export LANG # German for Germany
+LANGUAGE=$LANG; export LANGUAGE
+
+xwin # restart X with German for Germany as a back-end.
+```
+
+_Findnrun looks at environment variable `LANG` to determine the
+locale code of `.desktop` file comments. Start a terminal and type:_
+```
+echo $LANG # It should match German for Germany
+```
+
+_End of optional paragraph._
+
+----
+
+To complete testing findnrun's GUI make sure to open all sub-dialogs
+(click the start icon) and tooltips (hover your mouse pointer over all
+fields).
+
+Next step: test help messages. You should have already downloaded the
+custom mdview archive from the download page. Go to the folder where you
+unpacked mdview. We are going to use the 'fake language code' trick:
+```
+# Faking proper system language setup:
+# set LANGUAGE to the FULL language locale
+env LANGUAGE=de_DE.UTF-8 ./mdview '/usr/share/locale/<language>/LC_MESSAGES/index.md'
+```
+Now you should see findnrun's help index in your language. Follow all
+links though all pages to ensure you didn't miss sections that you want
+translated. For more information about findnrun's help system you can
+read section _Help Documents_ further down.
+
+If you need to change your translation, go back to the step that
+involves editing file findnrun.po and keep working through this tutorial
+again. When you are satisfied with your work send me the new .mo and
+.po files. Preferably generate a GitHub pull request for your files.
+Otherwise attach them to the project
+[forum thread](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/index.md#links).
+
+### Desktop File
+
+Open file `/usr/share/applications/findnrun.desktop` and check whether
 translations into your language already exist for fields `Comment` and
 `Name` If not, send the translated fields to me via one of the
 mechanisms noted above.  Translating at least the `Comment` field is
 recommended.
 
 **example for Spanish**
-
-    Name=Findnrun
-    Name[es]=Buscar y ejecutar
-    Comment=Find applications and more
-    Comment[es]=Buscar aplicaciones y más
+```
+Name=Findnrun
+Name[es]=Buscar y ejecutar
+Comment=Find applications and more
+Comment[es]=Buscar aplicaciones y más
+```
 
 ### Plugins
 
-Each [plugin](plugin.md) has its own `.mo` file, which can be translated
-following steps analogous to the ones given in section _Instructions for
-base functionality_.
-
-A plugin's `.mo` file is named "findnrun-plugin-PLUGIN-ID.mo", where
-_PLUGIN-ID_ stands for the unique identifier of the plugin.
+Each [plugin](plugin.md) has its own `.mo` file in
+`/usr/share/doc/nls/findnrun/`.
+The file name must be "findnrun-plugin-PLUGIN-ID.mo", where _PLUGIN-ID_
+stands for the unique identifier of the plugin.
 
 As a minimum translators should add a translation for the plugin title
 defined with `TITLE_`_PLUGIN-ID_=... in the plugin installation section
@@ -137,73 +216,27 @@ Plugin source code files may include other GetText resources to be
 translated in the same `.mo` file. A plugin developer may optionally
 provide a corresponding `.po` file to ease up the translator's task.
 
-### Help files
+### Help Documents
 
-The documents that you are reading online are also included in `findnrun`
-as run-time help files. The help sub-system can display HTML documents
-and markdown documents (using
-[mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index)).
-HTML is preferred because the browser is ubiquitous while mdview isn't.
+Since version 2.0.0 findnrun's help system is based on markdown code
+only, and it is translated as part of the main window translation as
+GetText 'msgstr' strings.  The .pot template includes source
+file locations and comments that help you identify when you are dealing
+with markdown codes as opposed to GUI text.
 
-To translate the help files you can either start from the markdown
-source, or directly from the HTML source. Markdown should be preferred
-in most cases because it is easier than HTML, and because you will start
-from the most up-to-date English source files. I imagine HTML would be
-preferred if your language had very special layout needs that HTML only
-can provide.  Another reason to prefer HTML vs. markdown is that with
-HTML your testing cycle will be shorter, because you will not have to
-depend on me to convert markdown to HTML (see instructions [A]).  So,
-as a translator of the Help documentation you need to first decide your
-English source file format: markdown vs. HTML, then proceed as follows.
-
-**[A] Instructions for markdown**
-
-The set of English markdown source files is located on github
-[here](https://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun).
-
- * Translate all `.md` files found in the on-line folder.
- * Pack all translated files into a `.tar.gz` archive named after your
-   locale code, i.e. `markdown[de_DE.UTF-8].tar.gz` for German in Germany.
- * Send me the archive via one of the mechanisms noted above.
- * I will generate an HTML archive and push it to Github with the expectation
-   that you will **test the HTML archive** and correct translation and layout
-   issues by submitting new `.md` files until all issues are closed.
-
-**Note on markdown syntax**
-
-Avoid being too creative with your markdown syntax. Keep it
-simple.  While the publishing process supports [Markdown
-Extra](http://en.wikipedia.org/wiki/Markdown_Extra) I recommend that you
-stick to the much more limited, but effective, markdown syntax that
+Pay attention that markdown output formatting is controlled by the
+relative position and indentation of text lines and a few special
+characters. Try to identify such elements in the .pot template and
+reproduce them verbatim in your translation of the surrounding
+text. Markdown isn't standardized, so different dialect provide
+different capabilities. For findnrun you must stick to the markdown
+syntax and `%%` directives that
 [mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index)
-supports. All `.md` files in this project follow this guideline.
+supports.
 
-**[B] Instructions for HTML**
+### Thank You
 
-If you prefer HTML to markdown, then the set of English markdown source
-files is archived on github as a `tar.gz` file
-[here](https://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun).
-
- * Download the latest version of `help[en].tar.gz`, which has full
-   locale code en_US.UTF-8.
- * Unpack it in a local folder; translate all `.html` files.
- * Pack all translated files into a `.tar.gz` archive named after your
-   locale code, i.e. `html[de_DE.UTF-8].tar.gz` for German in Germany.
- * You should **test your archive** before sending it to me. Follow these
-   steps (example for German):
-```
-    cd "/path/to/dir/containing/" # html[de_DE.UFT-8].tar.gz
-    mkdir -p /usr/share/doc/findnrun # it should already exist
-    ln -fs "`pwd`/html[de_DE.UFT-8].tar.gz" "/usr/share/doc/findnrun/help[de].tar.gz"
-    env LANG=de_DE.UTF-8 findnrun # assumes proper system locale settings
-```
- * Send me the archive via one of the mechanisms noted above.
- * I will publish the HTML archive on Github as an official update.
-
-### Thank you
-
-I am committed to enabling software localization. I believe it is
-important in widening the adoption of Linux, and it is respectful of
-other cultures. Your help in providing an array of language translations
-is very much appreciated.  Thank you.
+I am committed to enabling software localization. I appreciate very much
+your help in building up an array of language translations for findnrun.
+Thank you.
 
