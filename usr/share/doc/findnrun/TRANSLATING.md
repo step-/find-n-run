@@ -31,19 +31,19 @@ _Tutorial_.
    This custom version of mdview includes bug fixes that enable full
    support for translating findnrun
  * Download and install the latest findnrun NLS package
- * Copy the template file `findnrun.pot` to a new file `findnrun.po`.
-   File extension 'po' stands for GNU gettext Portable Object format,
-   and 'pot' for 'po' Template
- * Edit and translate the `.po` file - you can use your favorite text
+ * Initialize a new translation file `findnrun.po` from the template
+   file `findnrun.pot`.  File extension `po` stands for GNU gettext
+   Portable Object format, and `pot` for `po` Template
+ * Edit and translate the `po` file - you can use your favorite text
    editor, or a specialized `po` editing application, such as poedit
- * Convert the translated `.po` file to `.mo` format - you can use shell
+ * Convert the translated `po` file to `mo` format - you can use shell
    command `msgfmt`, or a specialized application
- * Install `.mo` and `.po` files for testing[1]
+ * Install `mo` and `po` files for testing[1]
  * Run findnrun to test[2] your translation
  * Run the custom mdview[3] to test your translation of markdown files
- * Send me `.mo` **and `.po`** files for inclusion in the repository.[3]
+ * Send me `mo` **and `po`** files for inclusion in the repository.[3]
 
-[1] Place `.mo` **and `.po`** files in
+[1] Place `mo` **and `po`** files in
    `/usr/share/locale/<language>/LC_MESSAGES/`, where `<language>` is the
    _language code_ for your language, i.e., 'de' for German, 'fr' for
    French, 'pt\_BR' for Brasilian Portuguese, and so on.
@@ -51,7 +51,7 @@ _Tutorial_.
 [2] Before you can test effectively you might need to prepare your
    system. Refer to the _Tutorial_.
 
-[3] I ask for `.mo` **and `.po`** files because Findnrun is an open
+[3] I ask for `mo` **and `po`** files because Findnrun is an open
    source project.
    For GitHub pull requests you need to create a relative path that
    corresponds to the full path indicated in note [1] above, and add the
@@ -65,10 +65,10 @@ _Tutorial_.
  * Download and install archives as explained in section _Adding a New
    Translation._
  * Update the existing translation `findnrun.po` from the template file
- * Edit and translate the updated `findnrun.po`
- * Convert the translated `.po` file to `.mo` format
+ * Edit and translate the updated `po` file
+ * Convert the translated `po` file to `mo` format
  * Install and test as described in _Adding a New Translation_
- * Send me the updated `.po` **and `.mo`** files.[3]
+ * Send me the updated `po` **and `mo`** files.[3]
 
 ### Tutorial
 
@@ -202,7 +202,7 @@ Comment[es]=Buscar aplicaciones y más
 
 ### Plugins
 
-Each [plugin](plugin.md) has its own `.mo` file in
+Each [plugin](plugin.md) has its own `mo` file in
 `/usr/share/doc/nls/findnrun/`.
 The file name must be "findnrun-plugin-PLUGIN-ID.mo", where _PLUGIN-ID_
 stands for the unique identifier of the plugin.
@@ -213,20 +213,20 @@ of file `~/.findnrunrc`. Translators can retrieve plugin installation
 information (PLUGIN-ID, title, etc.) from the plugin developer.
 
 Plugin source code files may include other GetText resources to be
-translated in the same `.mo` file. A plugin developer may optionally
-provide a corresponding `.po` file to ease up the translator's task.
+translated in the same `mo` file. A plugin developer may optionally
+provide a corresponding `po` file to ease up the translator's task.
 
 ### Help Documents
 
 Since version 2.0.0 findnrun's help system is based on markdown code
 only, and it is translated as part of the main window translation as
-GetText 'msgstr' strings.  The .pot template includes source
+GetText 'msgstr' strings.  The `pot` template includes source
 file locations and comments that help you identify when you are dealing
 with markdown codes as opposed to GUI text.
 
 Pay attention that markdown output formatting is controlled by the
 relative position and indentation of text lines and a few special
-characters. Try to identify such elements in the .pot template and
+characters. Try to identify such elements in the `pot` template and
 reproduce them verbatim in your translation of the surrounding
 text. Markdown isn't standardized, so different dialect provide
 different capabilities. For findnrun you must stick to the markdown
