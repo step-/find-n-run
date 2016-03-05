@@ -2,11 +2,12 @@
 # vim: fdm=marker:
 
 # =============================================================================
-# findnrun-formatter script
-Version=1.0.1
+# Text line formatter for findnrun source pluging taps.
+# Version=1.0.1
 # author: Copyright (C)2016 step
 # license: GNU GPL applies
 # source: https://github.com/step-/find-n-run
+# forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
 # =============================================================================
 
 # Usage: source | findnrun-formatter [-S source-id] [-I icon-filename] [-T title] [-O options] [-v verbosity-level]
@@ -14,7 +15,7 @@ Version=1.0.1
 
 # Source plugin formatter script {{{1
 BEGIN {
-  Version = "1.0"
+  Version = "1.0.1"
   Program = "findnrun-formatter"
   Opterr = 1    # default is to diagnose
   Optind = 1    # skip ARGV[0]
