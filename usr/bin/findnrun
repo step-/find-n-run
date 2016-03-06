@@ -3,7 +3,7 @@
 
 # =============================================================================
 # Findnrun - a progressive finder
-  Version=2.1.0
+  Version=2.0.0
 # authors: Copyright (C)2015-2016 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
 # depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only)
@@ -12,10 +12,13 @@
 # =============================================================================
 
 # Localization settings. [[[1
-# i18n findnrun.pot file generated with:
-# i18n xgettext -ci18n -L Shell -o findnrun.pot --no-wrap --package-name=find-n-run --package-version=2.0.0 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
 export TEXTDOMAIN=findnrun
 export OUTPUT_CHARSET=UTF-8
+>/dev/null gettext 'INSTRUCTIONS FOR TRANSLATORS
+1 Download the latest commented translation template from:
+  https://raw.githubusercontent.com/step-/find-n-run/master/usr/share/doc/nls/findnrun/findnrun.pot
+2 Follow the translation tutorial at:
+  https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/TRANSLATING.md'
 
 # Initialize variables that can be changed. [[[1
 # i18n Main window title
@@ -210,7 +213,7 @@ BUILTIN_SOURCES="FNRstart|FNRsc"
 # Default built-in source "Desktop Apps" [[[2
 SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
-TITLE_FNRstart=$(gettext "application finder") # i18n 2.0.0
+TITLE_FNRstart=$(gettext "application finder")
 
 # Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
@@ -219,7 +222,7 @@ x="${TMPD}/.FNRsc"; mkdir "$x" &&
 # Embedded newline characters not allowed.
 TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su | tee "$t"; else grep -F'$i' "${term}" "$t"; fi;'
 ICON_FNRsc='/usr/share/doc/findnrun/FNRsc.svg'
-TITLE_FNRsc=$(gettext "shell completion") # i18n 2.0.0
+TITLE_FNRsc=$(gettext "shell completion")
 
 # Prepare sources. [[[1
 # Don't change next two formats; functions generate_invoke*()
@@ -253,7 +256,7 @@ store_valid_sources() # [[[
 # 205 unreferenced SOURCE_
 # 206 unreferenced INITSEARCH_
 #]]]
-# i18n 2.0.0 Source plugin validation.
+# i18n Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
     -v MSG1="$(gettext "fatal source error: %d%s\n")" \
     -v MSG2="$(gettext "recoverable source error: %d%s\n")" \
@@ -483,7 +486,6 @@ read NSOURCES sources < "${TMPD}/.$$" # all and only valid sources
 # If some sources were disabled display startup warning dialog. [[[
 if [ "${sources}" != "${SOURCES}" ]; then
   # TODO display Xdialog window over main window.
-  # i18n 2.0.0
   Xdialog --title "${APP_NAME}" --msgbox \
     "$(printf \
       "$(gettext 'Invalid source plugins found and disabled:\n%s')" \
@@ -492,7 +494,6 @@ fi
 #]]]
 # Prepare the database builder script. [[[1
 # Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] files
-# i18n 2.0.0
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN {
@@ -778,7 +779,6 @@ EOF
 find_help
 
 # i18n About dialog widgets: window text; number of apps text (singular/plural)
-# i18n 2.0.0 changed: use %s for authors, add ngettext(sources).
 export GUI_ABOUT='
 <window title="'"${APP_TITLE}"'" icon-name="edit-find" window-position="2">
   <vbox>
@@ -922,7 +922,7 @@ generate_status_bar() # [[[2
   set -- ${SOURCES:-FNRStart}
   [ $# -lt 2 ] && return # no status bar unless:
   # Multiple sources. [[[
-  #i18n 2.0.0 Status bar: Ctrl+0... and F3... hotkeys
+  #i18n Status bar: Ctrl+0... and F3... hotkeys
   local ctrlnkey funckey
   ctrlnkey=$(gettext "[ctrl+%d]") funckey=$(gettext "[%s]")
   echo -n '
@@ -1077,9 +1077,9 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varCMD: command history editing.}
     <hbox space-fill="false" space-expand="false">
-      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">${REMARK# i18n 2.0.0 changed}
+      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">
         <variable>varCMD</variable>
-        <default>$(gettext "Press Down Arrow to grab selected item")</default>${REMARK# i18n 2.0.0 changed}
+        <default>$(gettext "Press Down Arrow to grab selected item")</default>
         ${REMARK# NOTE: Commands imitate varLISTs action, see generate_invoke_source_drain().}
         <input>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@"</input>
         <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
@@ -1350,8 +1350,7 @@ EOF
 
 # i18n Findnrun own .desktop file. [[[1
 # i18n Translate the Name[xx] field to be added to file findnrun.desktop
-# i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
-Name=$(gettext "Findnrun ")
+Name=$(gettext "Findnrun.")
 # i18n Translate the Comment[xx] field to be added to file findnrun.desktop
-Comment=$(gettext "Find applications and more")
+Comment=$(gettext "Find applications and more.")
 
