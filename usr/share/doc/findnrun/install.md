@@ -16,10 +16,11 @@ ash (or bash[1]), gawk, gtk-dialog.
 [1] if you only have bash on your system, you may need to do a one-time,
    post-install file edit. See the above link for details.
 
-To read markdown help files you only need a text editor. However,
-installing the _mdview_ markdown viewer for your platform is highly
-recommended. Mdview is a small, single-file, GTK application that
-displays markdown with clickable links.
+To read _translated_ help files the _mdview_ markdown viewer is
+required.  While a text editor is sufficient to read English help files,
+installing mdview is recommended for an improved experience.  Mdview
+is a small, single-file, GTK application that displays markdown with
+clickable hyperlinks and pictures.
 
 ### Packages
 

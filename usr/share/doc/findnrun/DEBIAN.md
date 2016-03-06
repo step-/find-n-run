@@ -98,26 +98,26 @@ and extract binary files into the standard locations for your OS.
 ### Ash
 
 If the ash shell **is** installed, be wary that Debian, Mint, and Ubuntu
-have a separate ash.deb package that links `/bin/ash` to `/bin/dash`, and
-dash can't run findnrun. When ash is linked to dash findnrun prints
-error messages to the command line interface similar to:
+have a separate ash.deb package that links `/bin/ash` to `/bin/dash`,
+and dash can't run findnrun. When ash is linked to dash findnrun prints
+error messages to the shell such as:
 ```
     gawk: /tmp/findnrun_18ud5t/.build.awk:3:   if("") print "
     gawk: /tmp/findnrun_18ud5t/.build.awk:3:                ^ syntax error
     sh: $'\b': command not found
 ```
-Findnrun really needs the true ash (or bash).
+Findnrun really needs the true ash (or bash) binary.
 
 If the true ash shell isn't already installed you can target /bin/busybox,
 if available, as a symbolic link or even /bin/bash.
 
 To create a symbolic link run the following commands in a terminal:
-
+```
     test `readlink -m /bin/ash` = /bin/dash && echo "Remove link /bin/ash -> /bin/dash first."
     test -x /bin/ash || sudo ln -s /bin/busybox /bin/ash
     test -x /bin/ash || sudo ln -s /bin/bash /bin/ash
     ls -l /bin/ash
-
+```
 If `/bin/ash` is still unavailable or linked to `/bin/dash` try
 changing the first line of file `/usr/bin/findnrun` to reference
 `/bin/bash` instead of `/bin/ash`.

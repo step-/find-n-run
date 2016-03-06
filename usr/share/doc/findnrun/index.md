@@ -19,7 +19,7 @@ Findnrun started in May 2015 as a fork of [Find'N'Run](CREDITS.md), an
 earlier project for Puppy Linux.
 
 Currently Findnrun is being developed and tested on
-[Fatdog64](http://distro.ibiblio.org/fatdog/web/)-701 64-bit Linux, a
+[Fatdog64](http://distro.ibiblio.org/fatdog/web/) 64-bit Linux, a
 [Puppy Linux](http://puppylinux.com/) and
 [LFS](http://www.linuxfromscratch.org/) derivative.
 
@@ -46,7 +46,7 @@ Both projects name the main script 'findnrun'.
    **categories**, or all at once. Search **from left**, with **regular
    expressions**, **case-independently**.
 
-[2] Help documents are encoded as _markdown_. _Read_ markdown as
+[2] Help documents are encoded as _markdown_. You can _read_ markdown as
    plain text - with some minor loss of formatting - or with the
    [mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index)
    viewer (recommended). Mdview can also _browse_ markdown, and
