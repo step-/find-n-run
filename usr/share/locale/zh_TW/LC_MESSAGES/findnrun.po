@@ -1,0 +1,135 @@
+# findnrun message catalog.
+# Copyright (C) 2015, the authors
+# This file is distributed under the same license as the find-n-run package.
+# http://www.murga-linux.com/puppy/viewtopic.php?t=98330
+# http://github.com/step-/find-n-run
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: find-n-run 1.10.6\n"
+"Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
+"POT-Creation-Date: 2015-07-19 18:04+0000\n"
+"PO-Revision-Date: 2015-07-29 21:05+0800\n"
+"Last-Translator: icake <icake@hotmail.com.hk>\n"
+"Language: zh_TW\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language-Team: Chinese\n"
+"X-Generator: Poedit 1.7.4\n"
+"MIME-Version: 1.0\n"
+
+#. i18n find_n_run.pot file generated with:
+#. i18n xgettext -ci18n -L Shell -o findnrun.pot --no-wrap --package-name=find-n-run --package-version=1.10.6 --msgid-bugs-address=https://github.com/step-/find-n-run/issues/ findnrun
+#. i18n Main window title
+#: findnrun:19
+msgid "Find'N'Run"
+msgstr "搜尋和運行"
+
+#: findnrun:348
+msgid "_Help"
+msgstr "幫助"
+
+#. i18n About dialog widgets: window text; number of apps text (singular/plural)
+#: findnrun:361
+msgid ""
+"%s %s\n"
+"authors: SFR, L18L, step\n"
+"Open source - GNU GPL license applies\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"configuration: %s\n"
+msgstr ""
+
+#: findnrun:372
+msgid "%s application found"
+msgid_plural "%s applications found"
+msgstr[0] "找到 %s 個項目"
+msgstr[1] "找到 %s 個項目"
+
+#: findnrun:379
+msgid "_OK"
+msgstr "確定"
+
+#. i18n Main window widgets: entry tooltip; entry default; icon tooltip; list tooltip; pull-down tooltip; pull-down default; pull-down icon tooltip; entry tooltip; {checkbox tooltip; checkbox label}repeat(3); {button icon tooltip}repeat(2)
+#. i18n "0" (invisible, disregard).
+#: findnrun:396
+msgid "0"
+msgstr ""
+
+#: findnrun:401
+msgid "Press ENTER to select"
+msgstr "要選擇按 ENTER "
+
+#: findnrun:402
+msgid "Type some letters to refine the list"
+msgstr "要精簡清單請輸入字母"
+
+#: findnrun:409
+msgid "Clear entry"
+msgstr "清空輸入"
+
+#: findnrun:416
+msgid "Press ENTER or double-click to run the selected item"
+msgstr "要運行所選項目，請按 ENTER 或雙擊滑鼠"
+
+#: findnrun:443
+msgid "Press the up-arrow key to grab the current command and move through the command history. You can modify the command. You can enter any shell command. History persists while the window is kept open. History is cleared on exit."
+msgstr "按 ↑ 可抓取現用命令及瀏覽剛用過的命令。窗口開啟時會記下剛用過的命令，關閉窗口後用過的命令會被清除。"
+
+#: findnrun:445
+msgid "Press up-arrow key to grab command"
+msgstr "按 ↑ 可抓取現用命令"
+
+#: findnrun:457
+msgid "Remove entry from command history"
+msgstr "從命令清單中移走選項"
+
+#: findnrun:466
+msgid "Comment about current item"
+msgstr "現有項目的附註"
+
+#: findnrun:472
+msgid "Keep this window open after starting an item instead of closing this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays."
+msgstr "保持這窗口開啟而不在運行命令後自動關閉窗口。保持窗口開啟可保有剛用命令的清單，亦可防止啟動的延遲"
+
+#: findnrun:473
+msgid "_Keep window"
+msgstr "保持窗口"
+
+#: findnrun:478
+msgid "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache."
+msgstr "顯示所有圖標，而非只顯示不用儲存的圖標。要儲存所有圖標會花時間，將此功能關閉會失去儲存的圖標"
+
+#: findnrun:479
+msgid "_Show all icons"
+msgstr "顯示所有圖標"
+
+#: findnrun:501
+msgid "Move the keyboard focus to the search input field after starting an item instead of keeping the keyboard focus on the started list item. This option also affects the command input field."
+msgstr "當啟動項目後，將鍵盤的焦點轉到搜尋的輸入窗口而非將鍵盤的焦點放在啟動的清單上。這選項同時會影響命令輸入欄"
+
+#: findnrun:502
+msgid "_Focus search"
+msgstr "焦點搜尋"
+
+#: findnrun:508
+msgid "About and help"
+msgstr "關於和幫助"
+
+#: findnrun:512
+msgid "Exit"
+msgstr "退出"
+
+#. i18n Optionally translate the Name[xx] field to be added to file findnrun.desktop
+#. i18n Do NOT include ending ' ' in your translation, assume that it isn't there.
+#: findnrun:528
+msgid "Find'N'Run "
+msgstr "找寻和运行"
+
+#. i18n Optionally translate the Comment[xx] field to be added to file findnrun.desktop
+#: findnrun:530
+msgid "Find and run applications very quickly"
+msgstr "快速地找尋和運行應用程式"
