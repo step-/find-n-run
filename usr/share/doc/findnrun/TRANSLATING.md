@@ -184,22 +184,6 @@ again. When you are satisfied with your work send me the new .mo and
 Otherwise attach them to the project
 [forum thread](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/index.md#links).
 
-### Desktop File
-
-Open file `/usr/share/applications/findnrun.desktop` and check whether
-translations into your language already exist for fields `Comment` and
-`Name` If not, send the translated fields to me via one of the
-mechanisms noted above.  Translating at least the `Comment` field is
-recommended.
-
-**example for Spanish**
-```
-Name=Findnrun
-Name[es]=Buscar y ejecutar
-Comment=Find applications and more
-Comment[es]=Buscar aplicaciones y más
-```
-
 ### Plugins
 
 Each [plugin](plugin.md) has its own `mo` file in
