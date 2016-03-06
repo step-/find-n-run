@@ -2,7 +2,7 @@ _Next: [Hotkeys](hotkey.md)_
 
 ## Configuring Preferences
 
-The user preferences file is created as `~/.findnrunrc` on first run.
+The user preferences file is created as `$HOME/.findnrunrc` on first run.
 
 Users can specify an alternative preferences file from the shell command
 line:
@@ -12,25 +12,27 @@ line:
 ### GUI Preferences
 
 These values can be set also from the main window:
-
+```gettext
     # Keep the main window open after starting an item.
     defOPEN=false
     # Show and cache all application icons.
     varICONS=false
     # Return keyboard focus to the search input field.
     varFOCUSSEARCH=true
+```
 
 ### Hidden Preferences
 
 These values are hidden in the main window. They are intended mostly for
 power users and custom applications:
-
+```gettext
     # Icon cache location.
     ICONCACHE=${HOME}/.icons
     # By default findnrun searches in application names only.
-    # Extend search to application comments (OR).
+    # Extend search subject to application comments.
     SEARCHCOMMENTS=false
-    # Extend search to application categories (OR).
+    # By default findnrun searches in application names only.
+    # Extend search subject to application categories.
     # When true categories are shown in the comment field.
     # Prepend ';' to search for category only, i.e., ';office'.
     SEARCHCATEGORIES=false
@@ -49,10 +51,13 @@ power users and custom applications:
     # Command-line option --geometry=WxH+X+Y overrides this value.
     #GEOMETRY=460x280+100+200
     # Desktop file search directories, space-separated list, system default.
-    #DESKTOP_FILE_DIRS=~/.local/applications /usr/share/applications /usr/local/share/applications
+    #DESKTOP_FILE_DIRS="$HOME/.local/applications /usr/share/applications +
+    #  + /usr/local/share/applications"
     # Icon search directories, space-separated list, system default.
-    #ICON_DIRS=~/.icons ~/.local/іcons /usr/share/icons /usr/local/share/icons /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons
-    # Preferred help viewing program.
+    #ICON_DIRS="$HOME/.icons $HOME/.local/icons /usr/share/icons +
+    #  + /usr/local/share/icons /usr/share/pixmaps +
+    #  + /usr/share/midi-icons /usr/share/mini-icons"
+    # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
     # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field.
     HOTKEY_F2=F2
@@ -60,11 +65,12 @@ power users and custom applications:
     HOTKEY_F3=F3
     # Pressing HOTKEY_F12 activates the top search result list item.
     HOTKEY_F12=F12
-    # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included.
+    # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included. 
     # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
-    IBOL=" "
+    IBOL=' '
     # Ignore the NoDisplay=true attribute value of .desktop files (not recommended).
     # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default.
     SHOWNODISPLAY=false
+```
 
 _Next: [Hotkeys](hotkey.md)_
