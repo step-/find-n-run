@@ -752,7 +752,7 @@ find_help() #[[[
     if [ -e "${hf}" ]; then
       hd="${TMPD}/help" && mkdir -p "${hd}" &&
       case "${hf##*.}" in t[gx]z|[gx]z) tar -C "${hd}" -xaf "${hf}" && hf=$(set +f; echo "${hd}"/index.*) ;; esac &&
-      case "${hf##*.}" in md) x=mdview ;; htm*) x=defaultbrowser;; esac
+      case "${hf##*.}" in md) x=${FNRMDVIEW:-mdview} ;; htm*) x=defaultbrowser;; esac
       read -t 1 helpviewer << EOF
 $(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
 EOF

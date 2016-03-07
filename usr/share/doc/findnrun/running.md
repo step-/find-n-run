@@ -60,7 +60,7 @@ to "application finder". Click the exit icon to close findnrun.
 
 Specify an alternate configuration file as an environment variable:
 ```
-    env CONFIG=/path/to/findnrunrc-alternative findnrun
+    env CONFIG=/path/to/alternate-findnrunrc findnrun
 ```
 
 ## Environment Variables
@@ -86,12 +86,14 @@ initialization files.
 
   If a translation file for your local language is installed but you
   see English messages, you need to properly configure your system
-  locale.  Find-n-run honors the system locale code that environment
+  locale.  Findnrun honors the language code that the environment
   variable `LANG` displays.
 
     echo $LANG
 
-**Non-standard variables**
+  See also `LANGUAGE` in the [translation tutorial](TRANSLATING.md).
+
+**Specific findnrun variables**
 
 `GEOMETRY`
 
@@ -100,5 +102,14 @@ initialization files.
   order of precedence.
 
     env GEOMETRY=500x200+100+100 findnrun
+
+`FNRMDVIEW`
+
+  Alternate path to the mdview markdown viewer. Findnrun
+  opens its help files with `FNRMDVIEW`. Default value: "mdview".
+
+    env FNRMDVIEW=/usr/bin/geany findnrun
+
+  See more examples in the [translation tutorial](TRANSLATING.md).
 
 _Next: [Configuring Preferences](preference.md)_
