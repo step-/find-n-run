@@ -59,9 +59,8 @@ to "application finder". Click the exit icon to close findnrun.
 ## Alternate Configuration File
 
 Specify an alternate configuration file as an environment variable:
-```
+
     env CONFIG=/path/to/alternate-findnrunrc findnrun
-```
 
 ## Environment Variables
 
@@ -94,6 +93,13 @@ initialization files.
   See also `LANGUAGE` in the [translation tutorial](TRANSLATING.md).
 
 **Specific findnrun variables**
+
+`CONFIG`
+
+  Alternate path to the configuration file.
+  Default value: `$HOME/.findnrunrc`.
+
+    env CONFIG=/path/to/alternate-findnrunrc findnrun
 
 `GEOMETRY`
 
