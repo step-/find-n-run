@@ -109,6 +109,10 @@ initialization files.
 
     env GEOMETRY=500x200+100+100 findnrun
 
+`FNRDEBUG`
+
+  Debugging aid for plugin developers and bug reports.
+
 `FNRMDVIEW`
 
   Alternate path to the mdview markdown viewer. Findnrun
