@@ -344,26 +344,28 @@ END {
   # Store remaining valid sources for gtkdialog shell. [[[
   # Treat sources as an ordered list.
   nE = split(valid_sources, E)
-  SH_FOR_ICONS="sh" # store_source() will pipe into it
+  SH_FOR_ICONS="sh" # try_store_source() will pipe into it
   for(j=1; j <= nE; j++) {
     if(! (E[j] in S)) continue
     s = E[j] # source-id
-    store_source(s)
-    return_sources = return_sources" "s
+    ret = try_store_source(s, S)
+    ret = (ret<0 ? -1 : (ret==0 ? 0 : 1))
+    # 0:valid-enabled -1:store-error 1:valid-disabled
+    return_sources[ret] = return_sources[ret]" "s
   }
   close(SH_FOR_ICONS) # actually executes piped commands.
-  return_sources = substr(return_sources, 2)
+  return_sources[0] = substr(return_sources[0], 2)
   #]]]
   # Append NSOURCES= to all saved files. [[[
-  nsources = split(return_sources, a)
+  nsources = split(return_sources[0], a)
   for(j=0; j < nsources; j++) {
     saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", j, a[j+1])
     printf("NSOURCES='"'%d'"'\n", nsources) >> saveas
     close(saveas)
   }
   #]]]
-  # Return valid sources
-  print nsources, return_sources
+  # Return sources (#enabled:list_enabled:list_disabled)
+  printf("%d:%s:%s\n", nsources, return_sources[0], substr(return_sources[1],2))
 }
 function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   # Checks all items of A. Deletes items of I.
@@ -393,15 +395,18 @@ function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   }
 }
 #]]]
-function store_source(s, buf, A,   a, g, i, j, I, iconpath, cachedpath) { #[[[
-  # NOTE store_source increments global static variable _global_store_source.
-  # Call store_source for the ORDERED list of valid sources.
+function try_store_source(s, S, buf, A,   a, g, i, j, I, iconpath, cachedpath) { #[[[
+  # try_store_source stores the current source unless the source "disabled" bit is on.
+  # Upon storing the source, try_store_source increments global static variable _global_try_store_source.
+  # Call try_store_source for the ORDERED list of valid sources.
   # SH_FOR_ICONS is pre-defined as "sh"
   # In => Out: (all output values are wrapped in SINGLE quotes)
   #   s source-id
+  #   S    global array of valid source ids
   #   buf==""      => compose from globals G and VGI for s; OR
   #   buf=="array" => compose from A["SOURCE"]=source-id, A["TAP"]=tap-command, ...
   #   A    see buf="array"
+  # Return value: 0:ok-stored <0:error-not-stored >0:other-not-stored
   # Assert: The calling outer loop has stripped all exterior single quotes.
   if("" == buf) {
     buf = sprintf("ID='"'%s'"'", s)
@@ -430,8 +435,14 @@ function store_source(s, buf, A,   a, g, i, j, I, iconpath, cachedpath) { #[[[
       buf = buf sprintf("\n%s='"'%s'"'", a, A[a])
   }
   # Get MODE: [1] bit mask
-  match(buf, /MODE=\x27([^\x27]+)\x27/, mode) # FOR FUTURE USE
-  saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", 0+_global_store_source++, s)
+  match(buf, /MODE=\x27([^\x27]+)\x27/, mode)
+  # Do not store the current source if MODE "disabled" bit (0x1) is set
+  if(and(mode[1], 0x1)) {
+    if('${DEBUG3:-0}') print "\n!!! Plugin is disabled [[\n"buf"\n]]" > "/dev/stderr"
+    return 1
+  }
+  # Else continue to store the current source
+  saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", 0+_global_try_store_source++, s)
   print buf > saveas
   # Copy plugin icon, ref. note [ANCHOR_ICON_PATH] [[[
   # Get ICON: [1] fullpath, [2] dirname, [3] basename.
@@ -476,7 +487,8 @@ function unquote(s,   p,t,l) { # [[[
   '
 }
 #]]]
-list_diff() # $1-list1 $2-list2 - space-separated. Output: $1 - $2 [[[
+list_diff() # $1-list1 $2-list2 [[[
+# In: space-separated lists of words. Out: $1 - $2
 {
   local e1 l1 l2 res
   l1=$1; l2=" $2 "
@@ -487,17 +499,19 @@ list_diff() # $1-list1 $2-list2 - space-separated. Output: $1 - $2 [[[
 
 store_valid_sources > "${TMPD}/.$$"
 x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
-read NSOURCES sources < "${TMPD}/.$$" # all and only valid sources
+# Get lists of valid sources.
+x=$IFS; IFS=:; read NSOURCES valid_enabled valid_disabled < "${TMPD}/.$$"; IFS=$x
 # Initialize gtkdialog source defaults from the first source.
 . "${SRCSTEM}0-"*.sh
 
-# If some sources were disabled display startup warning dialog. [[[
-if [ "${sources}" != "${SOURCES}" ]; then
+# Display warning dialog if some source declarations were found invalid. [[[
+invalid=$(list_diff "${SOURCES}" "${valid_enabled} $valid_disabled")
+if [ -n "$invalid" ]; then
   # TODO display main window then Xdialog window over.
   Xdialog --title "${APP_NAME}" --msgbox \
     "$(printf \
       "$(gettext 'Invalid source plugins found and disabled:\n%s')" \
-      "$(list_diff "${SOURCES}" "${sources}" )")" 0x0
+      "$invalid")" 0x0
 fi
 #]]]
 # Prepare the database builder script. [[[1

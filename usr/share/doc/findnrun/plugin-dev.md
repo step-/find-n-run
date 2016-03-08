@@ -12,16 +12,16 @@ file, and with the file selected.
 We will be implementing a so called tap/drain pair: the tap outputs
 search results, the drain starts the filer. Here's how.
 
-Save the following script in your home folder `${HOME}/fnr-find-file.sh`
+Save the following script in your home folder `$HOME/fnr-find-file.sh`
 ```
     #!/bin/sh
     find $HOME -type f -name "*$1*" | findnrun-formatter -- -O s
 ```
 
-Edit file `${HOME}/.findnrun` and add:
+Edit file `$HOME/.findnrun` and add:
 ```
     TITLE_find_file='open ROX-Filer with file selected'
-    TAP_find_file='"${HOME}/fnr-find-file.sh" "${term}"'
+    TAP_find_file='"$HOME/fnr-find-file.sh" "${term}"'
     DRAIN_filer_select='rox -s'
     ICON_find_file='/usr/share/icons/hicolor/32x32/apps/findnrun.png'
     # tap:drain:default_icon:title
@@ -31,11 +31,11 @@ Edit file `${HOME}/.findnrun` and add:
 
 Make your script executable:
 ```
-    chmod +x ${HOME}/fnr-find-file.sh
+    chmod +x $HOME/fnr-find-file.sh
 ```
 
 Now every time you select the `find_file` source in the user interface
-and type a character in the search field, `${HOME}/fnr-find-file.sh`
+and type a character in the search field, `$HOME/fnr-find-file.sh`
 starts and lists file names that partially match the search term and are
 located inside and below your home folder. When you activate an entry
 ROX-Filer starts with the given file selected - but how visibly selected
@@ -100,12 +100,12 @@ label "firefox" and tap-data "firefox". Similarly, for record
 tap-data "chrome". To show an empty icon, set the filename of an empty
 image. To show an empty label set a space character (" ").
 
-### Installing source plugins
+### Declaring Source Plugins
 
 In the following discussion:
 
- * An `<...-id>` is a valid sh variable name: only letters, digits, and
-   underscore characters are allowed.
+ * An `<...-id>` is a valid shell variable name: only letters, digits,
+   and underscore characters are allowed.
  * Characters outside of angle brackets are to be written literally.
 
 A source plugin is installed by adding its declaration into
@@ -117,13 +117,13 @@ A source plugin is installed by adding its declaration into
     ICON_<icon-id>='<icon-filepath>'            # optional
     TITLE_<title-id>='<source-title>'           # optional
     INITSEARCH_<init-search-id>='<init-search>' # optional
-    MODE_<mode-id>='<mode-mask>                 # optional
+    MODE_<mode-id>='<mode-mask>'                # optional
 ```
 
  * Each `<...-id>` identifier must be unique within its declaration
    group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_).
- * `<tap-command>` is a valid sh command (more on this further down).
- * `<drain-command>` is also a valid sh command.
+ * `<tap-command>` is a valid shell command (more on this further down).
+ * `<drain-command>` is also a valid shell command.
  * `<icon-filepath>` is the full path to a supported icon image file.
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
@@ -134,27 +134,46 @@ A source plugin is installed by adding its declaration into
  * Embedded newline or carriage return characters are not allowed in
    `<...-command>` values.
  * All values are quoted strings. Paired exterior double quotes work
-   just as well as single quotes, but require escaping interior sh special
-   characters.
+   just as well as single quotes, but require escaping interior shell
+   special characters.
 
-You can use any valid sh variable name as an `<...-id>`, but prefix
-"FNR" is reserved for findnrun's own plugins.
+You can use any valid shell variable name as an `<...-id>`, but
+prefix "FNR" is reserved for findnrun's own plugins.
 
  * Examples of valid `<id>`s: drain27, acme\_1.
- * Examples of invalid `<id>`s: my-plugin (sh identifiers can't include
-   "-"), FNR\_plugin (prefix "FNR" is reserved), 100 (numbers aren't valid
-   sh variable names).
+ * Examples of invalid `<id>`s: my-plugin (shell identifiers can't
+   include "-"), FNR\_plugin (prefix "FNR" is reserved), 100 (numbers
+   aren't valid shell variable names).
 
-To enable a plugin edit `~/.findnrunrc` and add its `<source-id>` to the
-space-separated list `SOURCES`. The user interface shows enabled plugins
-in the order they appear in `SOURCES`.
+### Installing Source Plugins
+
+To install a source plugin edit `$SHOME/.findnrunrc` and add the
+plugin `<source-id>` to the space-separated list `SOURCES`. When
+findnrun starts it validates the declaration of all installed
+plugins. The main window shows enabled plugins in the order they appear
+in `SOURCES`.
 ```
     SOURCES='... <source-id> ...'    # list of all enabled sources
 ```
+### Plugin Capabilities
 
-**Tap and drain command implementation**
+In a plugin declaration `<mode-mask>` modifies plugin capabilities. Calculate this decimal number as the Bitwise And of the following bit values:
 
-A tap- or a drain-command is implemented as a sh command, script, or
+```
+    0x1  Plugin is installed/validated but disabled/invisible
+```
+
+**Example of disabled plugin**
+```
+    # tap:drain:default_icon:title:search_term:mode_bit_mask
+    SOURCE_find_file='find_file:filer_select:find_file:find_file::disabled'
+    MODE_disabled=1
+    SOURCES='FNRstart find_file'
+```
+
+### Tap and Drain Command Implementation
+
+A tap- or a drain-command is implemented as a shell command, script, or
 external program, something that the shell can execute.
 
 ### Plugin Invocation
@@ -178,7 +197,7 @@ invokes the drain-command as follows:
 Just before starting the command findnrun saves the invocation command,
 without "eval ", into the history list pull-down widget.[1]
 If the drain-command value is null findnrun starts `<tap-data>` with the
-sh builtin command `eval`.
+shell builtin command `eval`.
 
 [1] Findnrun's _history service_ also saves two other history files: the
 global history file and the plugin's history file. Currently these files
@@ -204,7 +223,7 @@ the following preset variables:
 [2] Findnrun's own temporary folder persists across plugin command
    invocations.  It is automatically deleted when findnrun terminates.
    Plugins are required to store their resource files in a fixed
-   sub-folder of `${FNRTMP}`. Specifically, the sh initialization
+   sub-folder of `${FNRTMP}`. Specifically, the shell initialization
    stanza of a plugin resource folder named `${TMPD}` is:
 ```
     TMPD="${FNRTMP:-/tmp}/.${ID}" && mkdir -p "${TMPD}" && chmod 700 "${TMPD}"
@@ -233,7 +252,7 @@ installation is:
     SOURCES='FNRstart'
 ```
 
-Since version 1.7 the "shell completion" plugin is bundled, so the
+Since version 2.0.0 the "shell completion" plugin is bundled, so the
 amended default source installation is:
 ```
     SOURCES='FNRstart FNRsc'
