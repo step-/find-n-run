@@ -96,7 +96,7 @@ LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
 # Unexport these variables before running the selected command.
-UNEXPORT="unset GUI_ABOUT varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET"
+UNEXPORT="unset GUI_ABOUT varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET MINIWINDOW"
 # unset varLIST and varF3 separately
 
 # Prepare the configuration file. [[[1
@@ -892,7 +892,9 @@ generate_invoke_source_tap() # [[[2
     echo -n ' && eval ">&2 echo \" term=\${term} \${TAP}\""'
   fi
   #]]]
-  echo -n ' && '"${UNEXPORT}"' varLIST varF3 invokeTAP'
+  # Unexport all vars.
+  # cf. UNEXPORT in generate_invoke_source_drain.
+  echo -n " && ${UNEXPORT} varLIST varF3 invokeTAP invokeDRAIN"
   echo -n ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
   echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
   echo -n ' eval ${TAP}'
@@ -909,6 +911,7 @@ generate_invoke_source_drain() # [[[2
   echo -n '; unset varLIST; IFS="${ifs}"'
   #]]]
   # Unexport all vars but varF3 and varLIST.
+  # cf. 'UNEXPORT' in generate_invoke_source_tap and 'unset' further down
   echo -n "; ${UNEXPORT}"
   # Get source[varF3]'s values. [[[
   echo -n '; '; generate_get_source invoke_source_drain
@@ -931,7 +934,7 @@ generate_invoke_source_drain() # [[[2
     echo -n ' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'
   fi
   #]]]
-  echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH MODE varF3 invokeDRAIN'
+  echo -n '; unset varF3 varLIST invokeTAP invokeDRAIN TAP DRAIN ICON TITLE INITSEARCH MODE'
   echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
   echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
   echo -n ' eval "$@" &'
