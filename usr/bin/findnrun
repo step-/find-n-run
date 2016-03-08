@@ -501,12 +501,14 @@ list_diff() # $1-list1 $2-list2 [[[
 store_valid_sources > "${TMPD}/.$$"
 x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
 # Get lists of valid sources.
-x=$IFS; IFS=:; read NSOURCES valid_enabled valid_disabled < "${TMPD}/.$$"; IFS=$x
+x=$IFS; IFS=:
+read NSOURCES VALID_ENABLED_SOURCES VALID_DISABLED_SOURCES < "${TMPD}/.$$"
+IFS=$x
 # Initialize gtkdialog source defaults from the first source.
 . "${SRCSTEM}0-"*.sh
 
 # Display warning dialog if some source declarations were found invalid. [[[
-invalid=$(list_diff "${SOURCES}" "${valid_enabled} $valid_disabled")
+invalid=$(list_diff "$SOURCES" "$VALID_ENABLED_SOURCES $VALID_DISABLED_SOURCES")
 if [ -n "$invalid" ]; then
   # TODO display main window then Xdialog window over.
   Xdialog --title "${APP_NAME}" --msgbox \
@@ -861,10 +863,10 @@ generate_rotated_sources() # $1-sh-fragment  [[[2 NOT USED
   #</entry>
   local fragment nsources i
   fragment=$1
-  set -- ${SOURCES:-FNRstart}
+  set -- ${VALID_ENABLED_SOURCES:-FNRstart}
   nsources=$#
   # Switch rotated source-ids.
-  echo -n 'set -- '"${SOURCES}"'; shift ${varF3:-0}'
+  echo -n 'set -- '"${VALID_ENABLED_SOURCES}"'; shift ${varF3:-0}'
   echo -n '; case $1 in'
   i=0; while [ $# -gt 0 -a $i -le ${nsources} ]; do
     echo -n " $i|$1) ${fragment} ;;"
@@ -945,7 +947,7 @@ generate_status_bar() # [[[2
 {
   # Echo sh code that loads the current and next source's titles
   # and sets them as navigation hotkey labels.
-  set -- ${SOURCES:-FNRStart}
+  set -- ${VALID_ENABLED_SOURCES:-FNRStart}
   [ $# -lt 2 ] && return # no status bar unless:
   # Multiple sources. [[[
   #i18n Status bar: Ctrl+0... and F3... hotkeys
@@ -1369,7 +1371,7 @@ start_dialog << EOF
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
   ${REMARK#  ]]]}
   ${REMARK#  [[[. Key F3 cycles the list view among built-in and plugin sources.}
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">set -- ${SOURCES}; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">set -- $VALID_ENABLED_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">refresh:varF3</action>
   ${REMARK#  ]]]}
   ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
