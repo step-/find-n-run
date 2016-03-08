@@ -117,6 +117,7 @@ A source plugin is installed by adding its declaration into
     ICON_<icon-id>='<icon-filepath>'            # optional
     TITLE_<title-id>='<source-title>'           # optional
     INITSEARCH_<init-search-id>='<init-search>' # optional
+    MODE_<mode-id>='<mode-mask>                 # optional
 ```
 
  * Each `<...-id>` identifier must be unique within its declaration
@@ -126,6 +127,7 @@ A source plugin is installed by adding its declaration into
  * `<icon-filepath>` is the full path to a supported icon image file.
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
+ * `<mode-mask>` is a bit mask of plugin modifiers, for instance "disabled".
  * Declarations marked "optional" can be omitted by leaving their
    respective `<...-id>` slot empty in the `SOURCE_<source-id>`
    declaration.

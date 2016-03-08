@@ -280,7 +280,7 @@ BEGIN {
   if("" == valid_sources) valid_sources = "FNRstart"
   #]]]
   # id types
-  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH"
+  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH|MODE"
   # G[] array of types
   nG = split(ordered_G, G, /\|/)
   pattern = "^("ordered_G")_([^=]+)=(.*)"
@@ -397,32 +397,40 @@ function store_source(s, buf, A,   a, g, i, j, I, iconpath, cachedpath) { #[[[
   # NOTE store_source increments global static variable _global_store_source.
   # Call store_source for the ORDERED list of valid sources.
   # SH_FOR_ICONS is pre-defined as "sh"
-  # In => Out:
+  # In => Out: (all output values are wrapped in SINGLE quotes)
   #   s source-id
   #   buf==""      => compose from globals G and VGI for s; OR
-  #     Note1: on null title-id output source-id as title value
-  #     Note2: on null other-id output null value, i.e., VAR='' << IMPORTANT
   #   buf=="array" => compose from A["SOURCE"]=source-id, A["TAP"]=tap-command, ...
-  # Note3: All output values are wrapped in single quotes.
-  # Assert: Main input loop stripped exterior single quotes.
+  #   A    see buf="array"
+  # Assert: The calling outer loop has stripped all exterior single quotes.
   if("" == buf) {
     buf = sprintf("ID='"'%s'"'", s)
     split(s":"VGI["SOURCE",s], I, /:/)
     for(j = 1; j <= nG; j++) {
       g = G[j]; i = (j in I) ?I[j] :"N\x08NULL" # \x08 => never "(g,i) in VGI"
       if('${DEBUG3:-0}') printf ("<%s, %s> ", g, i) > "/dev/stderr"
-      if((g, i) in VGI)
+      if((g, i) in VGI) {
           buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, i])
-      else if("TITLE" == g)
-          buf = buf sprintf("\n%s='"'%s'"'", g, s) # Note1
-      else
-          buf = buf sprintf("\n%s='"''"'", g) # Note2
+      } else { # the plugin does not declare a value for group id g
+        if("TITLE" == g) {
+          # on no title-id output source-id as title value
+          buf = buf sprintf("\n%s='"'%s'"'", g, s)
+        } else if("MODE" == g) {
+          # on no mode-id output MODE="0" for bit mask
+          buf = buf sprintf("\n%s='"'%d'"'", g, 0)
+        } else {
+          # on no "other" id output null value, i.e., VAR="" << IMPORTANT
+          buf = buf sprintf("\n%s='"''"'", g)
+        }
+      }
     }
   } else if("array" == buf) { # NOT USED
     buf = sprintf("ID='"'%s'"'", s)
     for(a in A)
       buf = buf sprintf("\n%s='"'%s'"'", a, A[a])
   }
+  # Get MODE: [1] bit mask
+  match(buf, /MODE=\x27([^\x27]+)\x27/, mode) # FOR FUTURE USE
   saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", 0+_global_store_source++, s)
   print buf > saveas
   # Copy plugin icon, ref. note [ANCHOR_ICON_PATH] [[[
@@ -485,7 +493,7 @@ read NSOURCES sources < "${TMPD}/.$$" # all and only valid sources
 
 # If some sources were disabled display startup warning dialog. [[[
 if [ "${sources}" != "${SOURCES}" ]; then
-  # TODO display Xdialog window over main window.
+  # TODO display main window then Xdialog window over.
   Xdialog --title "${APP_NAME}" --msgbox \
     "$(printf \
       "$(gettext 'Invalid source plugins found and disabled:\n%s')" \
