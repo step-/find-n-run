@@ -157,7 +157,7 @@ awk '
 # the path must end in '/icons' and XDG_DATA_DIRS must include the
 # parent folder path. Gtkdialog window icons (attribute icon-name)
 # must be copied to '/icons/hicolor/32x32/apps/'
-# Findnrun copies a plugin $ICON in gawk function store_source().
+# Findnrun copies a plugin $ICON in gawk function try_store_source().
 XDG_DATA_DIRS="${XDG_DATA_DIRS}:${TMPD}" # for plugin ICONS
 if [ -z "${ICONCACHE}" ]; then
   ICONCACHE="${XDGHOMEICONS}"
@@ -255,6 +255,7 @@ store_valid_sources() # [[[
 # 204 unreferenced ICON_
 # 205 unreferenced SOURCE_
 # 206 unreferenced INITSEARCH_
+# 207 unreferenced MODE_
 #]]]
 # i18n Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
@@ -930,7 +931,7 @@ generate_invoke_source_drain() # [[[2
     echo -n ' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'
   fi
   #]]]
-  echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH varF3 invokeDRAIN'
+  echo -n '; unset TAP DRAIN ICON TITLE INITSEARCH MODE varF3 invokeDRAIN'
   echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
   echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
   echo -n ' eval "$@" &'
@@ -1266,6 +1267,12 @@ start_dialog << EOF
     <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${INITSEARCH}"</input>
     ${DEBUG2:+<action>echo>&2 === CACHE INITSEARCH [\$varF3] \$INITSEARCH</action>}
   </entry>
+  <entry visible="false" sensitive="false">
+    <variable>MODE</variable>
+    ${REMARK# Cache MODE until next refresh:MODE}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${MODE}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE MODE [\$varF3] \$MODE</action>}
+  </entry>
   ${REMARK# ]]]}
   ${REMARK# [[[. Read-only values (hidden).}
   <entry visible="false" sensitive="false">
@@ -1321,6 +1328,7 @@ start_dialog << EOF
     <action>refresh:ICON</action>
     <action>refresh:TITLE</action>
     <action>refresh:INITSEARCH</action>
+    <action>refresh:MODE</action>
     <action>refresh:SOURCE</action>
     <action>refresh:ID</action>
     ${REMARK# ]]]}

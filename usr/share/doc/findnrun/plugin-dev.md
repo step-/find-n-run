@@ -160,7 +160,7 @@ in `SOURCES`.
 In a plugin declaration `<mode-mask>` modifies plugin capabilities. Calculate this decimal number as the Bitwise And of the following bit values:
 
 ```
-    0x1  Plugin is installed/validated but disabled/invisible
+    0x1  DISABLED  Plugin is installed/validated but disabled/invisible/unallocated
 ```
 
 **Example of disabled plugin**
@@ -209,7 +209,8 @@ the global history. This might change in the future.
 The _invocation environment_ provides tap-command and drain-command with
 the following preset variables:
 
- * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}`, `${ICON}` and `${INITSEARCH}` - from the source declaration
+ * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}`, `${ICON}`,
+   `${INITSEARCH}`, `${MODE}` - from the source declaration
  * `${ID}` - the source-id
  * `${NSOURCES} - number of sources
  * `${FNRPID}` - findnrun gtkdialog process id [1]
