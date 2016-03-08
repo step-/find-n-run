@@ -852,29 +852,6 @@ generate_get_source() # [$1-event] [[[2
   echo -n ". \"${SRCSTEM}\"\${varF3:-0}-*.sh"
   [ -n "${DEBUG3}" ] && echo -n '; set +x; echo >&2 "]]"'
 }
-generate_rotated_sources() # $1-sh-fragment  [[[2 NOT USED
-{
-  # Echo sh code that executes sh-fragment for the current source index (varF3, numeric).
-  # Example (gtkdialog):
-  #<entry>
-  #  <variable>varF3SYM</variable>
-  #  ${REMARK# Cache source-id value until next refresh:varF3SYM.}
-  #  <input>$(generate_rotated_sources "echo -n \"\$1\"")</input>
-  #</entry>
-  local fragment nsources i
-  fragment=$1
-  set -- ${VALID_ENABLED_SOURCES:-FNRstart}
-  nsources=$#
-  # Switch rotated source-ids.
-  echo -n 'set -- '"${VALID_ENABLED_SOURCES}"'; shift ${varF3:-0}'
-  echo -n '; case $1 in'
-  i=0; while [ $# -gt 0 -a $i -le ${nsources} ]; do
-    echo -n " $i|$1) ${fragment} ;;"
-    shift
-    i=$(($i + 1))
-  done
-  echo -n " esac"
-}
 
 generate_invoke_source_tap() # [[[2
 {
