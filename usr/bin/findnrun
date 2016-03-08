@@ -349,24 +349,32 @@ END {
   for(j=1; j <= nE; j++) {
     if(! (E[j] in S)) continue
     s = E[j] # source-id
-    ret = try_store_source(s, S)
-    ret = (ret<0 ? -1 : (ret==0 ? 0 : 1))
-    # 0:valid-enabled -1:store-error 1:valid-disabled
-    return_sources[ret] = return_sources[ret]" "s
+    ret = try_store_source(s, S, Store)
+    # Cumulate binned sources: enabled, disabled, hidden.
+    bin[ret] = bin[ret]" "s
   }
   close(SH_FOR_ICONS) # actually executes piped commands.
-  return_sources[0] = substr(return_sources[0], 2)
   #]]]
-  # Append NSOURCES= to all saved files. [[[
-  nsources = split(return_sources[0], a)
-  for(j=0; j < nsources; j++) {
-    saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", j, a[j+1])
-    printf("NSOURCES='"'%d'"'\n", nsources) >> saveas
-    close(saveas)
+  # Output binned sources. [[[
+  for(x = 0; x <= 2; x++) {
+    bin[x] = substr(bin[x], 2)
+    nbin[x] = split(bin[x], source)
+    # Output enabled (visible/hidden) sources only.
+    if(x != 0x1) {
+      for(j = 1; j <= nbin[x]; j++) {
+        buf = Store[source[j]]
+        p = index(buf, "\n")
+        saveas = substr(buf, 1, p-1)
+        # While saving source to disk add NSOURCES= number of visible sources
+        printf("%s\nNSOURCES='"'%d'"'\n", substr(buf, p+1), nbin[0]) > saveas
+        close(saveas)
+      }
+    }
   }
   #]]]
-  # Return sources (#enabled:list_enabled:list_disabled)
-  printf("%d:%s:%s\n", nsources, return_sources[0], substr(return_sources[1],2))
+  # Return binned sources and their counts.
+  for(j = 0; j <= 2; j++) printf("%d:%s:", nbin[j], bin[j])
+  printf "\n"
 }
 function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   # Checks all items of A. Deletes items of I.
@@ -396,18 +404,21 @@ function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   }
 }
 #]]]
-function try_store_source(s, S, buf, A,   a, g, i, j, I, iconpath, cachedpath) { #[[[
-  # try_store_source stores the current source unless the source "disabled" bit is on.
-  # Upon storing the source, try_store_source increments global static variable _global_try_store_source.
+function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cachedpath) { #[[[
+  # try_store_source stores BY REFERENCE in map Store the current
+  # source s unless the source "disabled" bit is on.
+  # Upon storing s, try_store_source increments global static variable _global_try_store_source.
   # Call try_store_source for the ORDERED list of valid sources.
   # SH_FOR_ICONS is pre-defined as "sh"
   # In => Out: (all output values are wrapped in SINGLE quotes)
-  #   s source-id
-  #   S    global array of valid source ids
+  #   s      source-id
+  #   S      global array of valid source ids
+  #   Store  return array of composed sources
   #   buf==""      => compose from globals G and VGI for s; OR
   #   buf=="array" => compose from A["SOURCE"]=source-id, A["TAP"]=tap-command, ...
   #   A    see buf="array"
-  # Return value: 0:ok-stored <0:error-not-stored >0:other-not-stored
+  # Return value: 0:enabled-in-Store 1:disabled 2:hidden-in-Store
+
   # Assert: The calling outer loop has stripped all exterior single quotes.
   if("" == buf) {
     buf = sprintf("ID='"'%s'"'", s)
@@ -436,15 +447,15 @@ function try_store_source(s, S, buf, A,   a, g, i, j, I, iconpath, cachedpath) {
       buf = buf sprintf("\n%s='"'%s'"'", a, A[a])
   }
   # Get MODE: [1] bit mask
-  match(buf, /MODE=\x27([^\x27]+)\x27/, mode)
+  match(buf, /MODE=\x27([^\x27]+)\x27/, a); mode = a[1]
   # Do not store the current source if MODE "disabled" bit (0x1) is set
-  if(and(mode[1], 0x1)) {
-    if('${DEBUG3:-0}') print "\n!!! Plugin is disabled [[\n"buf"\n]]" > "/dev/stderr"
-    return 1
+  if(and(mode, 0x1)) {
+    if('${DEBUG3:-0}') print "\n!!! Plugin mode DISABLED [[\n"buf"\n]]" > "/dev/stderr"
+    return 1 # DISABLED source
   }
   # Else continue to store the current source
-  saveas = sprintf("%s'"${SRCFMT}"'", "'"${SRCSTEM}"'", 0+_global_try_store_source++, s)
-  print buf > saveas
+  Store[s] = sprintf("%s\n%s", # filepath[.hide] + contents
+    format_saveas(_global_try_store_source++, s, mode), buf)
   # Copy plugin icon, ref. note [ANCHOR_ICON_PATH] [[[
   # Get ICON: [1] fullpath, [2] dirname, [3] basename.
   match(buf, /ICON=\x27(([^\x27]*\/)([^\x27]+))\x27/, iconpath)
@@ -461,10 +472,21 @@ function try_store_source(s, S, buf, A,   a, g, i, j, I, iconpath, cachedpath) {
   }
   #]]]
 
-  if('${DEBUG3:-0}') print "\n"buf > "/dev/stderr"
-  return close(saveas)
+  if(and(mode, 0x2)) {
+    if('${DEBUG3:-0}') print "\n!!! Plugin mode HIDDEN [[\n"buf"\n]]" > "/dev/stderr"
+    return 2 # HIDDEN source
+  } else {
+    if('${DEBUG3:-0}') print "\nPlugin is enabled [[\n"buf"\n]]" > "/dev/stderr"
+    return 0
+  }
 }
 #]]]
+function format_saveas(num, name, mode,   saveas) { #[[[
+  # Return source fullpath according to source number, name and mode bit mask
+  saveas = sprintf("%s'"${SRCFMT}"'%s", "'"${SRCSTEM}"'", 0+num, name,
+    and(mode, 0x2) ? ".hide" : "")
+  return saveas
+}#]]]
 function fatal(code, subject, source) { #[[[
   printf(MSG1, code, \
     (source ?" "source":" :"") (subject ?" "subject :"")) > "/dev/stderr"
@@ -501,14 +523,14 @@ list_diff() # $1-list1 $2-list2 [[[
 store_valid_sources > "${TMPD}/.$$"
 x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
 # Get lists of valid sources.
-x=$IFS; IFS=:
-read NSOURCES VALID_ENABLED_SOURCES VALID_DISABLED_SOURCES < "${TMPD}/.$$"
-IFS=$x
+ifs=$IFS; IFS=:
+read NSOURCES VISIBLE_SOURCES x DISABLED_SOURCES x HIDDEN_SOURCES x < "${TMPD}/.$$"
+IFS=$ifs
 # Initialize gtkdialog source defaults from the first source.
 . "${SRCSTEM}0-"*.sh
 
 # Display warning dialog if some source declarations were found invalid. [[[
-invalid=$(list_diff "$SOURCES" "$VALID_ENABLED_SOURCES $VALID_DISABLED_SOURCES")
+invalid=$(list_diff "$SOURCES" "$VISIBLE_SOURCES $DISABLED_SOURCES $HIDDEN_SOURCES")
 if [ -n "$invalid" ]; then
   # TODO display main window then Xdialog window over.
   Xdialog --title "${APP_NAME}" --msgbox \
@@ -924,7 +946,7 @@ generate_status_bar() # [[[2
 {
   # Echo sh code that loads the current and next source's titles
   # and sets them as navigation hotkey labels.
-  set -- ${VALID_ENABLED_SOURCES:-FNRStart}
+  set -- ${VISIBLE_SOURCES:-FNRStart}
   [ $# -lt 2 ] && return # no status bar unless:
   # Multiple sources. [[[
   #i18n Status bar: Ctrl+0... and F3... hotkeys
@@ -1348,7 +1370,7 @@ start_dialog << EOF
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
   ${REMARK#  ]]]}
   ${REMARK#  [[[. Key F3 cycles the list view among built-in and plugin sources.}
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">set -- $VALID_ENABLED_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
+  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">refresh:varF3</action>
   ${REMARK#  ]]]}
   ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}

@@ -150,17 +150,20 @@ prefix "FNR" is reserved for findnrun's own plugins.
 To install a source plugin edit `$SHOME/.findnrunrc` and add the
 plugin `<source-id>` to the space-separated list `SOURCES`. When
 findnrun starts it validates the declaration of all installed
-plugins. The main window shows enabled plugins in the order they appear
+plugins. The main window shows visible plugins in the order they appear
 in `SOURCES`.
 ```
     SOURCES='... <source-id> ...'    # list of all enabled sources
 ```
 ### Plugin Capabilities
 
-In a plugin declaration `<mode-mask>` modifies plugin capabilities. Calculate this decimal number as the Bitwise And of the following bit values:
-
+By default an installed plugin is validated, allocated and visible.
+In a plugin declaration `<mode-mask>` modifies plugin capabilities.
+Calculate this decimal value as the Bitwise And of the following bit
+values:
 ```
     0x1  DISABLED  Plugin is installed/validated but disabled/invisible/unallocated
+    0x2  HIDDEN    Plugin is installed/validated/allocated but invisible *NOT IMPLEMENTED*
 ```
 
 **Example of disabled plugin**
