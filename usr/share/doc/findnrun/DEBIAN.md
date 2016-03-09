@@ -37,7 +37,7 @@ three packages, which might themselves pull in additional dependencies:
 
 ### GNU awk
 
-Find-n-run requires GNU awk, best known as `gawk`.  On some Debian-based
+Findnrun requires GNU awk, best known as `gawk`.  On some Debian-based
 versions, i.e., Lubuntu and others, by default `awk` links to `mawk`,
 which isn't sufficiently capable for findnrun. So get `gawk`.
 
