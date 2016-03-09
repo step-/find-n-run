@@ -1386,5 +1386,5 @@ EOF
 # i18n Translate the Name[xx] field to be added to file findnrun.desktop
 Name=$(gettext "Findnrun.")
 # i18n Translate the Comment[xx] field to be added to file findnrun.desktop
-Comment=$(gettext "Find applications and more.")
+Comment=$(gettext "Find applications and much more.")
 
