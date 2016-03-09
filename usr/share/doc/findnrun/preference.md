@@ -73,4 +73,8 @@ power users and custom applications:
     SHOWNODISPLAY=false
 ```
 
+### See Also
+
+ * _Environment Variables_ in [Starting Findnrun](running.md).
+
 _Next: [Hotkeys](hotkey.md)_
