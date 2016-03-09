@@ -31,6 +31,7 @@ _Tutorial_.
    This custom version of mdview includes bug fixes that enable full
    support for translating findnrun
  * Download and install the latest findnrun NLS package
+ * Download and install the latest `findnrun.pot` template
  * Initialize a new translation file `findnrun.po` from the template
    file `findnrun.pot`.  File extension `po` stands for GNU gettext
    Portable Object format, and `pot` for `po` Template
@@ -62,8 +63,8 @@ _Tutorial_.
 Process overview.  For step-by-step instructions refer to section
 _Tutorial_.
 
- * Download and install archives as explained in section _Adding a New
-   Translation._
+ * Download and install archives and `pot` template as explained in
+   section _Adding a New Translation._
  * Update the existing translation `findnrun.po` from the template file
  * Edit and translate the updated `po` file
  * Convert the translated `po` file to `mo` format
@@ -77,36 +78,48 @@ and full locale codes for your own case.
 
 * Download and unpack the 'mdview' archive attached to the
   [release page](https://github.com/step-/find-n-run/releases).
-* Download and install the latest findnrun NLS package.
-* Open a terminal window
+* Download and install the most recent findnrun NLS package.
+* Open a terminal window and execute the following commands:
 ```
-# Create relative folder structure for your locale.
-mkdir -p /usr/share/locale/de/LC_MESSAGES
-cd /usr/share/locale/de/LC_MESSAGES
+    # Download the latest findnrun.pot template (overwrite existing, if any).
+    wget -N -P /usr/share/doc/nls/findnrun https://raw.githubusercontent.com/step-/find-n-run/master/usr/share/doc/nls/findnrun/findnrun.pot
 
-# Backup current .po and .mo files, if they exist
-cp -i findnrun.po findnrun-old.po
-cp -i findnrun.mo findnrun-old.mo
+    # Create relative folder structure for your locale.
+    mkdir -p /usr/share/locale/de/LC_MESSAGES
+    cd /usr/share/locale/de/LC_MESSAGES
 
-# [A] For new translations: generate a new .po file
-# [B] For existing translations: merge updates into the existing .po file
-
-## Either do case [A]
-msginit -i /usr/share/doc/nls/findnrun/findnrun.pot -o findnrun.po --locale=de --no-wrap
-
-## or case [B]
-msgmerge -U findnrun.po /usr/share/doc/nls/findnrun/findnrun.pot
+    # Backup current .po and .mo files, if they exist
+    cp -i findnrun.po findnrun-old.po
+    cp -i findnrun.mo findnrun-old.mo
 ```
 
-Now edit and translate `findnrun.po` with your favorite text editor or
-a specialized application, such as poedit.
-You translate each 'msgid' string into its corresponding 'msgstr' string.
-For case [B] label 'fuzzy' marks new/updated entries.
+Now you need to choose between two options:
+ * [A] To create a **new translation** generate a new .po file
+```
+    t='/usr/share/doc/nls/findnrun/findnrun.pot'
+    msginit --locale=de --no-wrap -i "$t" -o findnrun.po
+```
+
+ * [B] To update an **existing translation** merge updates into the existing .po file
+```
+    t='/usr/share/doc/nls/findnrun/findnrun.pot'
+    x='1,/Project-Id-Version/'
+    sed -n "${x}p" "$t" > tmp.po
+      ## Enter your email address when prompted
+    msgmerge --no-wrap -o - findnrun.po "$t" | sed "${x}d" >> tmp.po
+      ## Say yes to next prompt if all of the above completed with no errors
+    mv -i tmp.po findnrun.po
+```
+
+Now a new or updated `findnrun.po` is ready for editing. Use your
+favorite text editor or a specialized application, such as poedit.
+Translate each 'msgid' string into its corresponding 'msgstr' string.
+If you are updating an existing translation (case [B]) msgmerge marked new and updated msgids
 Don't forget to fill in/update the initial information block.
 
 Then generate the new .mo file
 ```
-msgfmt -o findnrun.mo findnrun.po
+    msgfmt -o findnrun.mo findnrun.po
 ```
 
 Now start findnrun to test your translation of windows and dialogs. First, you need to
@@ -114,11 +127,11 @@ set your system language to the translation language. This requires
 rebooting.  If for some reason you can't reboot, you can try _faking_
 proper language setup when you start findnrun; sometimes it's enough:
 ```
-cd /usr/share/locale/de/LC_MESSAGES
+    cd /usr/share/locale/de/LC_MESSAGES
 
-# Faking proper system language setup:
-# set LANGUAGE to the FULL language locale
-env LANGUAGE=de_DE.UTF-8 /usr/bin/findnrun --geometry=
+    # Faking proper system language setup:
+    # set LANGUAGE to the FULL language locale
+    env LANGUAGE=de_DE.UTF-8 /usr/bin/findnrun --geometry=
 ```
 
 On Fatdog64-702, for example, setting `LANGUAGE` is enough for findnrun
@@ -137,23 +150,23 @@ your Linux variant.  For instance, the steps for Fatdog64-702 Linux
 involve installing the system NLS SFS, dropping to the system console,
 setting the locale code and variables, and finally restarting X:_
 ```
-# First download fd64-nls_702.sfs with the SFS manager
-load_sfs.sh --load /path/to/fd64-nls_701.sfs # load SFS
+    # First download fd64-nls_702.sfs with the SFS manager
+    load_sfs.sh --load /path/to/fd64-nls_701.sfs # load SFS
 
-/usr/sbin/fatdog-choose-locale.sh # choose, i.e., German for Germany
+    /usr/sbin/fatdog-choose-locale.sh # choose, i.e., German for Germany
 
-# Close all windows and press Ctrl+Alt+BackSpace
+    # Close all windows and press Ctrl+Alt+BackSpace
 
-LANG=de_DE.UTF-8; export LANG # German for Germany
-LANGUAGE=$LANG; export LANGUAGE
+    LANG=de_DE.UTF-8; export LANG # German for Germany
+    LANGUAGE=$LANG; export LANGUAGE
 
-xwin # restart X with German for Germany as a back-end.
+    xwin # restart X with German for Germany as a back-end.
 ```
 
 _Findnrun looks at environment variable `LANG` to determine the
 locale code of `.desktop` file comments. Start a terminal and type:_
 ```
-echo $LANG # It should match German for Germany
+    echo $LANG # It should match German for Germany
 ```
 
 _End of optional paragraph._
@@ -168,14 +181,23 @@ Next step: test help messages. You should have already downloaded the
 custom mdview archive from the download page. Go to the folder where you
 unpacked mdview. We are going to use the 'fake language code' trick:
 ```
-# Faking proper system language setup:
-# set LANGUAGE to the FULL language locale
-env LANGUAGE=de_DE.UTF-8 ./mdview '/usr/share/locale/<language>/LC_MESSAGES/index.md'
+    # Faking proper system language setup:
+    # set LANGUAGE to the FULL language locale
+    env LANGUAGE=de_DE.UTF-8 ./mdview '/usr/share/locale/<language>/LC_MESSAGES/index.md'
 ```
 Now you should see findnrun's help index in your language. Follow all
 links though all pages to ensure you didn't miss sections that you want
 translated. For more information about findnrun's help system you can
 read section _Help Documents_ further down.
+
+**Tip:** The following command starts findnrun with the system
+language _faked as_ German and a custom mdview path set to the current folder.
+translation:
+```
+    # Faking proper system language setup:
+    # set LANGUAGE to the FULL language locale
+    env LANGUAGE=de_DE.UTF-8 FNRMDVIEW=./mdview findnrun --geometry=
+```
 
 If you need to change your translation, go back to the step that
 involves editing file findnrun.po and keep working through this tutorial
@@ -193,7 +215,7 @@ stands for the unique identifier of the plugin.
 
 As a minimum translators should add a translation for the plugin title
 defined with `TITLE_`_PLUGIN-ID_=... in the plugin installation section
-of file `~/.findnrunrc`. Translators can retrieve plugin installation
+of file `$HOME/.findnrunrc`. Translators can retrieve plugin installation
 information (PLUGIN-ID, title, etc.) from the plugin developer.
 
 Plugin source code files may include other GetText resources to be
