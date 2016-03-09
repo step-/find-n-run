@@ -13,7 +13,7 @@ line:
 
 These values can be set also from the main window:
 ```gettext
-    # Keep the main window open after starting an item.
+    # Keep the main window open after activating an item.
     defOPEN=false
     # Show and cache all application icons.
     varICONS=false

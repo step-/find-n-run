@@ -919,7 +919,7 @@ generate_invoke_source_drain() # [[[2
   # ]]]
   # Save command to history lists. [[[
   # To the source's own history list file + FNR's global history list file.
-  # ${HSTF} points to one of the two files, and it's used as input to the command history widget.
+  # ${HSTF} points to one of the two files, and it's used as input to the history widget.
   echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-${ID}.sh'"
   echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-FNR.sh'"
   #]]]
@@ -1102,7 +1102,7 @@ start_dialog << EOF
       <action>if true clear:varFOCUSGRABBER</action>
     </checkbox>
     ${REMARK# ]]]}
-    ${REMARK# [[[. varCMD: command history editing.}
+    ${REMARK# [[[. varCMD: history editing.}
     <hbox space-fill="false" space-expand="false">
       <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">
         <variable>varCMD</variable>
@@ -1119,7 +1119,7 @@ start_dialog << EOF
         <action signal="activate" condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         <action signal="activate">refresh:varCMD</action>
       </comboboxentry>
-      <button tooltip-text="$(gettext "Remove entry from command history")" stock-icon-size="1">
+      <button tooltip-text="$(gettext "Remove entry from history")" stock-icon-size="1">
         <input file stock="gtk-remove"></input>
         <action>grabfocus:varCMD</action>
         <action>removeselected:varCMD</action>
@@ -1137,7 +1137,7 @@ start_dialog << EOF
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. varOPEN checkbox}
-      <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after starting an item instead of closing this window each time a command starts. Keep the window open to use the command history feature, or to avoid startup delays.")">
+      <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays.")">
         <label>$(gettext "_Keep window")</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
@@ -1172,7 +1172,7 @@ start_dialog << EOF
       </checkbox>
       ${REMARK# ]]]}
       ${REMARK# [[[. varFOCUSSEARCH checkbox}
-      <checkbox use-underline="true" tooltip-text="$(gettext "Move the keyboard focus to the search input field after starting an item instead of keeping the keyboard focus on the started list item. This option also affects the command input field.")">
+      <checkbox use-underline="true" tooltip-text="$(gettext "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item. This option also affects the command input field.")">
         <label>$(gettext "_Focus search")</label>
         <default>${varFOCUSSEARCH}</default>
         <variable>varFOCUSSEARCH</variable>
