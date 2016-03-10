@@ -16,7 +16,7 @@ file new issues.
    `ICON_DIRS`.
 
  * Prioritized language preferences via environment variable `LANGUAGE`
-   are not supported. Find-n-run honors the system locale code that
+   are not supported. Findnrun honors the system locale code that
    environment variable `LANG` displays - when a matching translation
    file is installed.
 
