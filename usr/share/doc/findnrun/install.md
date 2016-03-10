@@ -10,7 +10,7 @@ distribution, which is split into multiple sub-packages:
  * The optional _NLS_ package adds run-time translations in several
    languages
 
-Installation [PRE-REQUISITES](DEBIAN.md):
+[Installation requirements](install-require.md):
 ash (or bash[1]), gawk, gtk-dialog.
 
 [1] if you only have bash on your system, you may need to do a one-time,

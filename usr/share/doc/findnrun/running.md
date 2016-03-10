@@ -48,7 +48,7 @@ to "application finder". Click the exit icon to close findnrun.
   which X display to use, you need to pass them on the command-line
   after a `--` stop marker. Anything following `--` will be passed
   to gtkdialog without further inspection. Be vary that some options
-  you pass could conflict with the way `findnrun` sets up gtkdialog
+  you pass could conflict with the way findnrun sets up gtkdialog
   for use. Be also aware that in some cases you might also need to
   specify option `--stdout`:
 

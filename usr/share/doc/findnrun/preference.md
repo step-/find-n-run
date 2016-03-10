@@ -23,7 +23,7 @@ These values can be set also from the main window:
 
 ### Hidden Preferences
 
-These values are hidden in the main window. They are intended mostly for
+These values aren't available from the main window. They are intended mostly for
 power users and custom applications:
 ```gettext
     # Icon cache location.

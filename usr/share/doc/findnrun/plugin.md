@@ -25,10 +25,10 @@ basic configuration. It is referred to as _source 1_ and labelled
 _Application Finder_.
 
 As new plugins are installed, you get source 2, source 3, etc, each
-source with its own label.  The status bar located at the bottom of
-the main window shows the labels of the currently active source and
-of the _next_ source. You move through the source ring by pressing
-[F3](hotkey.md).
+source with its own distinctive label.  The status bar located at the
+bottom of the main window shows the labels of the currently active
+source and of the _next_ source. You move through the source ring by
+pressing [F3](hotkey.md).
 
 ### Bundled Plugins
 
