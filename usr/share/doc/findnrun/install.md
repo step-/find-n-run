@@ -31,7 +31,7 @@ Packages for various distributions can be downloaded from:
 
  * Fatdog64 [.txz](http://github.com/step-/find-n-run/releases/)
  * Puppy Linux [.pet](http://github.com/step-/find-n-run/releases/)
- * Debian (Lubuntu) [.deb](http://github.com/step-/find-n-run/releases/)
+ * Debian (Lubuntu) [.deb](https://github.com/step-/find-n-run/releases/tag/1.10.6)
 
 (2) one of these known threads:
 
