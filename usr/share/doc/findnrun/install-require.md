@@ -15,7 +15,7 @@ Findnrun depends on three packages:
 
 ### Ash
 
-If the ash shell **is** installed, be wary some systems Linux
+If the ash shell **is** installed, be wary that some Linux
 distributions link `/bin/ash` to `/bin/dash`, and dash can't run
 findnrun. When ash is linked to dash findnrun prints error messages to
 the shell such as:
