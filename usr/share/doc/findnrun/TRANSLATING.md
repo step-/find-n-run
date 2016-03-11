@@ -177,26 +177,31 @@ To complete testing findnrun's GUI make sure to open all sub-dialogs
 (click the start icon) and tooltips (hover your mouse pointer over all
 fields).
 
-Next step: test help messages. You should have already downloaded the
+Next step: test help files. You should have already downloaded the
 custom mdview archive from the download page. Go to the folder where you
-unpacked mdview. We are going to use the 'fake language code' trick:
+unpacked mdview. We are going to make findnrun use the unpacked mdview
+viewer, and we are faking language code setup again:
 ```
     # Faking proper system language setup:
-    # set LANGUAGE to the FULL language locale
-    env LANGUAGE=de_DE.UTF-8 ./mdview '/usr/share/locale/<language>/LC_MESSAGES/index.md'
-```
-Now you should see findnrun's help index in your language. Follow all
-links though all pages to ensure you didn't miss sections that you want
-translated. For more information about findnrun's help system you can
-read section _Help Documents_ further down.
-
-**Tip:** The following command starts findnrun with the system
-language _faked as_ German and a custom mdview path set to the current folder.
-translation:
-```
-    # Faking proper system language setup:
-    # set LANGUAGE to the FULL language locale
+    # set LANGUAGE to the FULL language locale.
+    # Use custom mdview.
     env LANGUAGE=de_DE.UTF-8 FNRMDVIEW=./mdview findnrun --geometry=
+```
+Press [F1] and you should see findnrun's help index in German.  Follow
+all links though all pages to ensure you didn't miss sections that you
+want translated. For more information about findnrun's help system you
+can read section _Help Documents_ further down.
+
+**Tip** Should you need to run findnrun with an arbitrary index
+file for input, use this command:
+```
+    env LANGUAGE=de_DE.UTF-8 FNRHELPINDEX=/path/to/index.md findnrun
+```
+
+**Tip** Should you need to run a custom mdview with an arbitrary index
+file for input, use this command:
+```
+    env LANGUAGE=de_DE.UTF-8 TEXTDOMAIN=findnrun /path/to/mdview /path/to/index.md
 ```
 
 If you need to change your translation, go back to the step that

@@ -42,7 +42,7 @@ EOF
 ICON_DIRS="$HOME/.icons ${ICON_DIRS} /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
-HELPFILE=/usr/share/doc/findnrun/index.md:/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.html
+FNRHELPINDEX=${FNRHELPINDEX:-/usr/share/doc/findnrun/index.md:/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.html}
 
 # Initialize variables that should not be changed. [[[1
 REMARK= # leave unset
@@ -787,10 +787,10 @@ NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 # i18n About dialog.
 find_help() #[[[
 {
-  # In:  ${HELPFILE} paths.
+  # In:  ${FNRHELPINDEX} paths.
   # Out: ${helpviewer} command, ${helpbutton} gtk code.
   local IFS=:
-  set ${HELPFILE}
+  set ${FNRHELPINDEX}
   for i; do
     unset x p s helpviewer helpbutton; hf="$i"
     case "${hf}" in *\[*\]*) p="${hf%[*}["; s="]${hf##*]}" # search for translation
