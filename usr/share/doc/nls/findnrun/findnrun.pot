@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 2.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2016-03-10 22:05+0000\n"
+"POT-Creation-Date: 2016-03-11 18:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -670,7 +670,7 @@ msgid "If you are using Puppy Linux, Fatdog64 or DebianDog your system should al
 msgstr ""
 
 #: /usr/share/doc/findnrun/install-require.md:10
-msgid "Findnrun depends on three packages:"
+msgid "Findnrun depends on the following packages:"
 msgstr ""
 
 #: /usr/share/doc/findnrun/install-require.md:12
@@ -682,26 +682,30 @@ msgid "**gtk-dialog 0.8.3**"
 msgstr ""
 
 #: /usr/share/doc/findnrun/install-require.md:14
-msgid "the **ash** shell (with some precautions, see further down)"
+msgid "the **ash** shell - cf. section _Ash_ below"
 msgstr ""
 
 #: /usr/share/doc/findnrun/install-require.md:16
+msgid "**mdview >2016.02.04** - indispensable to view translated help files; recommended to view English help files."
+msgstr ""
+
+#: /usr/share/doc/findnrun/install-require.md:18
 msgid "Ash"
 msgstr ""
 
-#: /usr/share/doc/findnrun/install-require.md:21
+#: /usr/share/doc/findnrun/install-require.md:23
 msgid "If the ash shell **is** installed, be wary that some Linux distributions link `/bin/ash` to `/bin/dash`, and dash can't run findnrun. When ash is linked to dash findnrun prints error messages to the shell such as:"
 msgstr ""
 
-#: /usr/share/doc/findnrun/install-require.md:29
+#: /usr/share/doc/findnrun/install-require.md:31
 msgid "If the true ash shell isn't already installed you can target /bin/busybox, if available, as a symbolic link or even /bin/bash."
 msgstr ""
 
-#: /usr/share/doc/findnrun/install-require.md:31
+#: /usr/share/doc/findnrun/install-require.md:33
 msgid "To create a symbolic link run the following commands in a terminal:"
 msgstr ""
 
-#: /usr/share/doc/findnrun/install-require.md:41
+#: /usr/share/doc/findnrun/install-require.md:43
 msgid "If `/bin/ash` is still unavailable or linked to `/bin/dash` try changing the first line of file `/usr/bin/findnrun` to reference `/bin/bash` instead of `/bin/ash`."
 msgstr ""
 

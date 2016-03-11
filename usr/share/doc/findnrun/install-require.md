@@ -7,11 +7,13 @@ they can use findnrun. More information for Debian systems is available
 on the
 [project page](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/DEBIAN.md)
 
-Findnrun depends on three packages:
+Findnrun depends on the following packages:
 
  * GNU awk, **gawk 4.1.0**
  * **gtk-dialog 0.8.3**
- * the **ash** shell (with some precautions, see further down)
+ * the **ash** shell - cf. section _Ash_ below
+ * **mdview >2016.02.04** - indispensable to view translated help files;
+   recommended to view English help files.
 
 ### Ash
 
