@@ -5,13 +5,14 @@ A progressive finder.
 [Documentation Index](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/index.md)
    | [Screenshots](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/screenshots.md)
    | [Downloads](http://github.com/step-/find-n-run/releases)
+   | [Translations](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/TRANSLATING.md)
    | [Credits](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/CREDITS.md)
-   | [LICENSE](http://github.com/step-/find-n-run/tree/master/LICENSE)
+   | [Legal](http://github.com/step-/find-n-run/tree/master/LICENSE)
    | [Project home](http://github.com/step-/find-n-run)
 
 ## News
 
- * **23-Jan-2016 Release 2.0 adds plugins and new features!**
+ * **11-Mar-2016 Release 2.1.0 is a recommended upgrade for all users.**
 
 ## Introduction, Features, Installing, Documentation and more
 
@@ -25,8 +26,8 @@ and - for fine-grained information -
 
 ## Old News
 
+ * 23-Jan-2016 Release 2.0.0 adds plugins and new features!
  * Version 1.10.6 runs on Lubuntu: [package information](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/DEBIAN.md)
-
  * As of version 1.10.5 this script is featured in the _original_
 [Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
 
