@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: find-n-run 2.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
 "POT-Creation-Date: 2016-03-11 18:52+0000\n"
-"PO-Revision-Date: 2016-03-13 07:52+0100\n"
+"PO-Revision-Date: 2016-03-14 13:55+0100\n"
 "Last-Translator: xanad <xanad@mail.com>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -210,7 +210,7 @@ msgstr "Termina"
 #. i18n Translate the Name[xx] field to be added to file findnrun.desktop
 #: /usr/bin/findnrun:1387
 msgid "Findnrun."
-msgstr "Trova e lancia."
+msgstr "Ricercatore."
 
 #. i18n Translate the Comment[xx] field to be added to file findnrun.desktop
 #: /usr/bin/findnrun:1389
