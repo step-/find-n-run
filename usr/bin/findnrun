@@ -195,7 +195,7 @@ which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
 
 # -----------------------------------------------------------------------------
 # Set LOCS to the glob that lists valid .desktop file locations.
-# Do this in the main shell after having processed script option.
+# Do this in the main shell after having processed findnrun command options.
 for i in ${DESKTOP_FILE_DIRS}; do
   set -- "$i"/*.desktop
   if [ "$1" != "${1%/*.desktop}/*.desktop" ]; then
@@ -543,7 +543,7 @@ fi
 # Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] files
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
-BEGIN {
+BEGIN { # [[[2
   if('${DEBUG1:-0}') print "\n=== DB BUILDER (set FNRDEBUG= 2 for more)\n[[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
   RS="^~cannot~match~me~" # enable slurp read mode.
   # Choose a shell for ongoing command execution - see icon_workaround().
@@ -554,12 +554,13 @@ BEGIN {
   MSG1="'"$(gettext "SHOWNODISPLAY false excludes file '%s'")"'"
   MSG2="'"$(gettext "filename '%s': Icon '%s' not found.")"'"
 }
+# main loop # [[[2
 {
   # Slurp NFILES .desktop files.
   file[++NFILES]=";"FILENAME"\n"$0
   FILENAME="-in-section-END-"
 }
-END {
+END { # [[[2
   # Is the icon work-around enabled and up-to-date?
   if(ICONUPDATED = is_icon_workaround_uptodate()) {
     # Speed up icon_workaround() by reading the icon index file.
@@ -623,9 +624,9 @@ END {
   if('${DEBUG1:-0}') print "]] BUILDER" >"/dev/stderr"
 }
 
+function format_item(   ic,cols) { # [[[2
 # Format tree widget item - columns: icon, name, all-packed-values.
 # Note: assert data does not include characters "|" and $SEP.
-function format_item(   ic,cols) {
   ic = format_icon_cell()
   # The second column, always empty, is reserved for future expansion.
   # The tree widget does display its value.
@@ -637,15 +638,15 @@ function format_item(   ic,cols) {
   return(cols)
 }
 
+function format_icon_cell( ) { # [[[2
 # Format tree row icon cell.
 # Use within <input icon-column="0"> or <stock-column="0">
 # Note: tree widget does not support icons with paths anyway.
-function format_icon_cell( ) {
   return(icnpath ? icnpath icnname "." icnext : icnname)
 }
 
+function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) { # [[[2
 # Workaround for gtkdialog tree widget not displaying icons with path.
-function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
   # Supposedly, IFP is the icon full path (it is used as the icon index key).
   IFP = icnpath icnname (icnext ?".":"") icnext
   if("" == IFP) return
@@ -699,8 +700,8 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) {
   # but the link name must include an extension!
 }
 
+function is_icon_workaround_uptodate(   uptodate,x) { # [[[2
 # Is the icon work-around enabled and up-to-date? - icon_workaround() helper.
-function is_icon_workaround_uptodate(   uptodate,x) {
   if(uptodate = ("true" == ALL_ICONS)) {
     if(uptodate = (-1 != (getline < (x = ICONSTEM".uptodate"))))
       close(x)
@@ -709,8 +710,8 @@ function is_icon_workaround_uptodate(   uptodate,x) {
   return(uptodate)
 }
 
+function read_icon_index(   a,b,data,i,x) { # [[[2
 # Read the index file - icon_workaround() helper
-function read_icon_index(   a,b,data,i,x) {
   if('${DEBUG2:-0}') print "in read_icon_index" >"/dev/stderr"
   if(1 == (getline data < (x = ICONSTEM".index"))) {
     close(x)
@@ -722,13 +723,14 @@ function read_icon_index(   a,b,data,i,x) {
   }
 }
 
+function mark_icon_workaround_uptodate( ) { # [[[2
 # If the icon work-around is enabled, mark whether it is up-to-date.
-function mark_icon_workaround_uptodate( ) {
   if("true" == ALL_ICONS) {
     print "" > (ICONSTEM".uptodate")
     if('${DEBUG3:-0}') print "\nmark_icon_workaround_uptodate() created", ICONSTEM".uptodate" > "/dev/stderr"
   }
 }
+
 '
 
 # Prepare the database query script. [[[1
