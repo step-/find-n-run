@@ -3,7 +3,7 @@
 
 # =============================================================================
 # Findnrun - a progressive finder
-  Version=2.1.0
+  Version=2.1.1
 # authors: Copyright (C)2015-2016 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
 # depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only)
@@ -540,7 +540,9 @@ if [ -n "$invalid" ]; then
 fi
 #]]]
 # Prepare the database builder script. [[[1
-# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] files
+# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v LIST_FILE="list_file" | files ]
+# Specify input file names either as lines of LIST_FILE or as command arguments
+# The former style allows for handling read file errors gracefully.
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN { # [[[2
@@ -553,12 +555,18 @@ BEGIN { # [[[2
   SHOWNODISPLAY="'"${SHOWNODISPLAY:-false}"'"
   MSG1="'"$(gettext "SHOWNODISPLAY false excludes file '%s'")"'"
   MSG2="'"$(gettext "filename '%s': Icon '%s' not found.")"'"
+  # Read files specified by list of file names.
+  if(LIST_FILE) {
+    NFILES = read_list_file(LIST_FILE, file)
+    exit # go to END - skip main loop
+  }
 }
 # main loop # [[[2
+# Read files specified by command line arguments.
+# Use when you are certain that all files are readable.
 {
   # Slurp NFILES .desktop files.
   file[++NFILES]=";"FILENAME"\n"$0
-  FILENAME="-in-section-END-"
 }
 END { # [[[2
   # Is the icon work-around enabled and up-to-date?
@@ -731,6 +739,26 @@ function mark_icon_workaround_uptodate( ) { # [[[2
   }
 }
 
+function read_list_file(list_file, acontent,   name,nname,nfiles,f,i,s) { # [[[2
+# File names from list_file; slurp file contents into acontent; return nfiles.
+  if(0 < (getline s < list_file)) {
+    close(list_file)
+    if(nname = split(s, name, /\n/)) {
+      # Slurp nfiles .desktop files.
+      for(i=1; i<nname; i++) {
+        f = name[i]
+        if(0 < (getline s < f)) {
+          close(f)
+          file[++nfiles]=";"f"\n"s
+        } else {
+          printf(MSG2"\n", f, "") >"/dev/stderr"
+        }
+      }
+    }
+  }
+  return(0+nfiles)
+}
+
 '
 
 # Prepare the database query script. [[[1
@@ -781,7 +809,9 @@ END {
 } '
 
 # Build database of .desktop file entries. [[[1
-gawk -v ALL_ICONS=${varICONS} -f "${AWKB}" ${LOCS} > "${DATF}"
+LIST_FILE="${AWKB}.list-file"
+printf "%s\n" ${LOCS} > "$LIST_FILE"
+gawk -v ALL_ICONS=${varICONS} -f "${AWKB}" -v LIST_FILE="$LIST_FILE" > "${DATF}"
 [ "${DEBUG1}" ] && { >/tmp/varSEARCH; echo >&2 === READING SEARCH INPUT ALSO FROM /tmp/varSEARCH; }
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
@@ -1158,7 +1188,7 @@ start_dialog << EOF
         ${DEBUG2:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
         ${DEBUG2:+<action>if true echo >&2 in true rebuilding database...</action>}
-        <action>if true gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' ${LOCS} > '${DATF}'</action>
+        <action>if true gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
         ${DEBUG2:+<action>if true echo >&2 in true clear:varLIST</action>}
         <action>if true clear:varLIST</action>
         ${DEBUG2:+<action>if true echo >&2 in true refresh:varLIST</action>}
@@ -1166,7 +1196,7 @@ start_dialog << EOF
         ${DEBUG2:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/findnrun-\*</action>}
         <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
         ${DEBUG2:+<action>if false echo >&2 in false rebuilding database...</action>}
-        <action>if false gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' ${LOCS} > '${DATF}'</action>
+        <action>if false gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
         ${DEBUG2:+<action>if false echo >&2 in false clear:varLIST</action>}
         <action>if false clear:varLIST</action>
         ${DEBUG2:+<action>if false echo >&2 in false refresh:varLIST</action>}
