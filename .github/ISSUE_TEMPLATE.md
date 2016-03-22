@@ -2,6 +2,10 @@ Fill in as much information as possible below.
 
 You can use markdown to format this issue report.
 
+### Title
+
+ * Issue title - copy here what you entered in the title field above
+
 ### System Info
 
  * Findnrun version - open 'About and help' dialog to find out
