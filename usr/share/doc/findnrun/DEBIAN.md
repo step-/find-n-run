@@ -49,8 +49,20 @@ Start a terminal and run this command:
 
 Ubuntu removed gtk-dialog from the offical repository a few releases
 ago, so you need to install gtk-dialog from a contributed repository.  I
-tested lanzadoc's repository, which includes a 32-bit package only.  An
-option for 64-bit system is listed further down.
+tested lanzadoc's repository, which includes a 32-bit package only.
+Option for 64-bit systems are also listed further down.
+
+**Links to PPA repositories**
+
+Update: lanzadoc's repository link has disappeared from Launchpad's
+_Other versions of 'gtkdialog' in untrusted archives_. I found some new
+PPA links for a mix of versions and architectures. I have _not_ tested
+any of these links, but here they are:
+
+ * https://launchpad.net/~kxstudio-team/+archive/ubuntu/ppa
+ * https://launchpad.net/~elia-notarangelo/+archive/ubuntu/x-light-mind
+ * https://launchpad.net/~dnjl/+archive/ubuntu/ppa/+packages
+   (32- and 64-bit builds)
 
 **Using aptitude**
 
