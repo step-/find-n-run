@@ -24,16 +24,15 @@ END { #{{{1
   # that a process queue is created. Each process in the queue is a
   # pending refresh request with a timeout of RATE seconds. Any refresh
   # request is executed if no new requests come into the queue within
-  # the timeout. A new request cancels all pending requests before
-  # it.
+  # the timeout. A new request cancels all pending requests before it.
   # RATE, is the tuning parameter of viewer accuracy vs. user's
   # experience.  If RATE is set too low, the viewer will update
   # thumbnails inaccurately. The user experiences a RATE second lag
   # between the final typed character and the final thumbnail update -
   # intervening characters don't produce updates if they're typed faster
-  # than RATE. RATE is a system-depended value. It should be set to the
+  # than RATE. RATE is a system-dependent value. It should be set to the
   # lowest possible value that balances accuracy and user experience.
-  # RATE defaults to 0.5 s.
+  # RATE defaults to 0.6 s.
 
   tag="'@" STEM "@'"
   # Tested with /bin/bash, /bin/ash, '/bin/busybox sh'.

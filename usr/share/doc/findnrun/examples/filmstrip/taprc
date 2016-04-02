@@ -76,7 +76,7 @@ LIST_LINES=60
 # final thumbnail update also increases. So, set the smallest value that
 # balances viewer accuracy for your typical typing speed with acceptable
 # thumbnail update lag.
-TYPING_RATE=0.5
+TYPING_RATE=0.6
 
 # ------ Advanced settings ------ {{{1
 # Cache the image list after the first tap invocation.

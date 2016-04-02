@@ -9,15 +9,8 @@ function link_image(path, caption, y, x,   ref) # {{{2
   ref = reference(y, x)
   print caption > (ref "c")
   close(ref "c")
-  # Postpone actual linking to a single call of the system() function.
-  return ("ln -sf \"" path "\" \"" ref "\";")
+  # Change symlink target atomically, cf.
+  # http://blog.moertel.com/posts/2005-08-22-how-to-change-symlinks-atomically.html
+  return ("ln -s \"" path "\" \"" ref ".new\" && mv -Tf \"" ref ".new\" \"" ref "\";")
+  # All shell commands are grouped in a single system() function call.
 }
-
-#TODO remove this block function blank_images(start, x, ref, make_links) # {{{2
-#{
-#  for(x = start; x < MAXSLOT; x++) {
-#    make_links = make_links link_image(".blankimg", "", 0, x) # TODO implement ymax>0
-#  }
-#  return(make_links)
-#}
-
