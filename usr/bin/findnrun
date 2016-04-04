@@ -81,10 +81,10 @@ DATF="${TMP0}/.dat" # database of .desktop file entries
 AWKB="${TMP0}/.build.awk" # builds (and queries) database
 AWKQ="${TMP0}/.query.awk" # queries database (faster)
 HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
-FCSF="${TMP0}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
-F2SF="${TMP0}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
-F3SF="${TMP0}/.f3s"; >"${F3SF}" # built-in/plugin source list view cycler
-ETAP="${TMP0}/.eta"; >"${ETAP}" # tap invocation event
+FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
+F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
+F3SF="${TMPD}/.f3s"; >"${F3SF}" # built-in/plugin source list view cycler
+ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 SEP=`echo -e "\b"` # field separator of packed values
 XDGHOMEICONS="${HOME}/.icons" # freedesktop.org standard user's icon location
@@ -1031,8 +1031,8 @@ generate_source_hotkeys() # [[[2
 start_dialog() # Returns when gtkdialog terminates [[[2
 {
   local dialog gtkdialog
-  dialog="${TMP0}/.main.xml"
-  gtkdialog="$TMP0/${0##*/}"
+  dialog="${TMPD}/.main.xml"
+  gtkdialog="$TMPD/${0##*/}"
   ln -sf "$(command -v $GTKDIALOG)" "$gtkdialog"
   cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
