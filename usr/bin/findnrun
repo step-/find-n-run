@@ -1030,17 +1030,19 @@ generate_source_hotkeys() # [[[2
 
 start_dialog() # Returns when gtkdialog terminates [[[2
 {
-  local dialog
+  local dialog gtkdialog
   dialog="${TMP0}/.main.xml"
+  gtkdialog="$TMP0/${0##*/}"
+  ln -sf "$(command -v $GTKDIALOG)" "$gtkdialog"
   cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
     cat
     return
   fi &&
   if [ "${ENABLESTDOUT}" ]; then
-    $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}"
+    "$gtkdialog" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}"
   else
-    $GTKDIALOG ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null
+    "$gtkdialog" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null
   fi
 }
 
