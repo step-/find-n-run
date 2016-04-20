@@ -217,7 +217,7 @@ the following preset variables:
  * `${ID}` - the source-id
  * `${NSOURCES} - number of sources
  * `${FNRPID}` - findnrun gtkdialog process id [1]
- * `${FNRTMP}` - findnrun temporary folder id [2]
+ * `${FNRTMP}` - findnrun temporary folder full path [2]
  * `${FNREVENT}` - invocation event name [3]
  * `${FNRRPC}` - call interface mailbox file, see section _Remote Call Interface_
  * `${FNRDEBUG}` - findnrun debugging level 1-9.
