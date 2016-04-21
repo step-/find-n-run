@@ -114,7 +114,7 @@ HOTKEY_F12=F12
 SOURCES="FNRstart FNRsc"
 
 # Read / supplement $CONFIG. [[[2
-touch "${CONFIG}" && . "${CONFIG}" # must exist even if empty
+[ -e "$CONFIG" ] || > "$CONFIG"; . "$CONFIG"
 # Add missing/hidden defaults.
 awk '
   /^ICONCACHE=/{f1=1}
