@@ -12,7 +12,7 @@ A progressive finder.
 
 ## News
 
- * **11-Mar-2016 Release 2.1.0 is a recommended upgrade for all users.**
+ * **25-Apr-2016 Release 2.1.1 is a recommended upgrade for all users.**
 
 ## Introduction, Features, Installing, Documentation and more
 
@@ -26,6 +26,7 @@ and - for fine-grained information -
 
 ## Old News
 
+ * 11-Mar-2016 Release 2.1.0 is a recommended upgrade for all users.
  * 23-Jan-2016 Release 2.0.0 adds plugins and new features!
  * Version 1.10.6 runs on Lubuntu: [package information](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/DEBIAN.md)
  * As of version 1.10.5 this script is featured in the _original_
