@@ -1086,14 +1086,6 @@ start_dialog << EOF
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
-        ${REMARK#  [[[. Key PageUp invokes the current source plugin tap.}
-        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
-        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Page_Up ] && echo true )">date '+PageUp %s'>"${ETAP}"</action>
-        ${REMARK#  ]]]}
-        ${REMARK#  [[[. Key PageDown invokes the current source plugin tap.}
-        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
-        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Page_Down ] && echo true )">date '+PageDown %s'>"${ETAP}"</action>
-        ${REMARK#  ]]]}
         ${REMARK#  [[[. Key F12 activates the top varLIST item.}
         <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = ${HOTKEY_F12} ] && echo true)">grabfocus:varLIST</action>
         <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = ${HOTKEY_F12} ] && echo true)">$(generate_invoke_source_drain)</action>
@@ -1176,6 +1168,23 @@ start_dialog << EOF
       <input>IFS=${SEP}; set -- \${varLIST}; echo "\$4${showcategories:+ \$5}"</input>
     </entry>
     ${REMARK# ]]]}
+    ${REMARK# [[[. Menubar (nearly hidden 1x1).}
+    ${REMARK# The menubar hosts some varENTRY hotkeys that would slow down typing if implemented as key-press-event handlers.}
+    <menubar height-request="1" width-request="1">
+      <menu>
+      ${REMARK#  [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
+      ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
+        <menuitem accel-key="0xff55" accel-mods="0">
+          <action>date '+PageUp %s'>"${ETAP}"</action>
+        </menuitem>
+        <menuitem accel-key="0xff56" accel-mods="0">
+          <action>date '+PageDown %s'>"${ETAP}"</action>
+        </menuitem>
+      ${REMARK#  ]]]}
+        <label>""</label>
+      </menu>
+    </menubar>
+    ${REMARK#  ]]]}
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. varOPEN checkbox}
