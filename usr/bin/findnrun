@@ -141,7 +141,7 @@ awk '
     if(!f4) print "SEARCHREGEX=false">>ARGV[1]
     if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
     if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
-    if(!f7) print "SEARCHCOMPLETE=false">>ARGV[1]
+    if(!f7) print "SEARCHCOMPLETE=true">>ARGV[1]
     if(!f8) print "IBOL=\"'"${IBOL}"'\" # reserved">>ARGV[1]
     if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
     if(!f10) print "HOTKEY_F3='"${HOTKEY_F3}"'">>ARGV[1]

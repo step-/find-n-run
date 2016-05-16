@@ -28,20 +28,21 @@ power users and custom applications:
 ```gettext
     # Icon cache location.
     ICONCACHE=${HOME}/.icons
-    # By default findnrun searches in application names only.
     # Extend search subject to .desktop file names.
+    # Subsumed by SEARCHCOMPLETE=true.
     SEARCHFILENAMES=false
-    # By default findnrun searches in application names only.
     # Extend search subject to application comments.
+    # Subsumed by SEARCHCOMPLETE=true.
     SEARCHCOMMENTS=false
-    # By default findnrun searches in application names only.
     # Extend search subject to application categories.
+    # Subsumed by SEARCHCOMPLETE=true.
     # When true categories are shown in the comment field.
     # Prepend ';' to search for category only, i.e., ';office'.
     SEARCHCATEGORIES=false
     # Search in application names, file names, command lines, comments and categories all at once.
-    # When true (recommended) findnrun finds more and is slightly faster.
-    SEARCHCOMPLETE=false
+    # When false and no other SEARCH* field is true search in application names only.
+    # To search in, i.e., file names only set SEARCHCOMPLETE=false SEARCHFILENAMES=true.
+    SEARCHCOMPLETE=true
     # Search pattern must match from the leftmost character.
     # Ignored for category search.
     SEARCHFROMLEFT=false
