@@ -133,6 +133,7 @@ awk '
   /^HOTKEY_F12=/{f11=1}
   /^SOURCES=/{f12=1}
   /^SHOWNODISPLAY=/{f13=1}
+  /^SEARCHFILENAMES=/{f14=1}
   END{
     if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
@@ -147,6 +148,7 @@ awk '
     if(!f11) print "HOTKEY_F12='"${HOTKEY_F12}"'">>ARGV[1]
     if(!f12) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
     if(!f13) print "SHOWNODISPLAY=false">>ARGV[1]
+    if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
   }
   ' "${CONFIG}"
 
@@ -768,13 +770,18 @@ unset case subject commleft left categ REDIRECT2 func statements
 if ! [ true = "${SEARCHCOMPLETE}" ]; then
   # Split out the last field of the record that $AWK's format_item() printed.
   statements="
-  split(\$(NF), a, /${SEP}/) # a <- {filename,name,exec,comment,category}"
+  split(\$(NF), a, /${SEP}/) # a <- {fullpathname,name,exec,comment,category}"
+  if [ true = "$SEARCHFILENAMES" ]; then
+    statements="$statements
+    gsub(/^.*[/]|[.][^.]+$/, \"\", a[1]) # basename(fullpathname)"
+  fi
   subject="${case}(a[2])"
 else
-  # Ignore last record's first sub-field (filename).
+  # Keep basename(fullpathname) & sub-fields 'name'..'category'.
   statements="
-  a=\$(NF); a=substr(a,1+index(a,\"${SEP}\"))"
-  subject="${case}(a)" # ="${case}(a[2]\";\"a[3]\";\"a[4]\";\"a[5])"
+  a=\$(NF); x=index(a,\"${SEP}\"); a1=substr(a,1,x-1)
+  gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a=a1 substr(a,x)"
+  subject="${case}(a)" # ="${case}(basename(a[1])\";\"a[2]\";\"a[3]\";\"a[4]\";\"a[5])"
 fi
 if [ true = "${SEARCHREGEX}" ]; then
   REDIRECT2=" 2>/dev/null" # Quiet awk's "fatal: invalid regex" message
@@ -786,6 +793,7 @@ else
 fi
 subject="${func}(${subject},GREP)"
 if ! [ true = "${SEARCHCOMPLETE}" ]; then
+  [ true = "${SEARCHFILENAMES}" ] && fnameleft="|| ${func}(${case}(a[1]),GREP)${left}"
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(${case}(a[4]),GREP)${left}"
   [ true = "${SEARCHCATEGORIES}" ] && categ="|| ${func}(${case}(a[5]),GREP)"
 fi
@@ -793,13 +801,13 @@ fi
 BEGIN {
   if('${DEBUG3:-0}') {
     print "\n=== DB QUERY [[ GREP=\""GREP"\"" >"/dev/stderr"
-    print "expression=('"${subject}${left} ${commleft} ${categ}"')" >"/dev/stderr"
+    print "expression=('"${subject}${left} ${fnameleft} ${commleft} ${categ}"')" >"/dev/stderr"
   }
   FS="|"
 }
 {'"${statements}"'
   # narrow matches by GREP pattern
-  if(GREP && ('"${subject}${left} ${commleft} ${categ}"') || !GREP) {
+  if(GREP && ('"${subject}${left} ${fnameleft} ${commleft} ${categ}"') || !GREP) {
     print substr($0, 1, 510)
     # 510 works around gtkdialog tree widget buffer overflow limit
   }

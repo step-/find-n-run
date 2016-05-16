@@ -29,6 +29,9 @@ power users and custom applications:
     # Icon cache location.
     ICONCACHE=${HOME}/.icons
     # By default findnrun searches in application names only.
+    # Extend search subject to .desktop file names.
+    SEARCHFILENAMES=false
+    # By default findnrun searches in application names only.
     # Extend search subject to application comments.
     SEARCHCOMMENTS=false
     # By default findnrun searches in application names only.
@@ -36,7 +39,7 @@ power users and custom applications:
     # When true categories are shown in the comment field.
     # Prepend ';' to search for category only, i.e., ';office'.
     SEARCHCATEGORIES=false
-    # Search in names, command lines, comments and categories all at once.
+    # Search in application names, file names, command lines, comments and categories all at once.
     # When true (recommended) findnrun finds more and is slightly faster.
     SEARCHCOMPLETE=false
     # Search pattern must match from the leftmost character.
