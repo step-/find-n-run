@@ -1175,7 +1175,6 @@ start_dialog << EOF
           <action>date '+PageDown %s'>"${ETAP}"</action>
         </menuitem>
         ${REMARK#  ]]]}
-        ${REMARK# TODO FIXME When mini is active ?F2 or ?F12 breaks.}
         ${REMARK#  [[[. Key F12 activates the top varLIST item.}
         <menuitem accel-key="0xffc9" accel-mods="0">
           <action>grabfocus:varLIST</action>
