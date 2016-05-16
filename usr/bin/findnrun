@@ -1086,12 +1086,6 @@ start_dialog << EOF
         <action>refresh:varLIST</action>
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
-        ${REMARK#  [[[. Key F12 activates the top varLIST item.}
-        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = ${HOTKEY_F12} ] && echo true)">grabfocus:varLIST</action>
-        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = ${HOTKEY_F12} ] && echo true)">$(generate_invoke_source_drain)</action>
-        <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = ${HOTKEY_F12} ] && echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
-        <action signal="key-press-event" condition="command_is_false([ \$KEY_SYM = ${HOTKEY_F12} ] && echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
-        ${REMARK#  ]]]}
       </entry>
       <button tooltip-text="$(gettext "Clear entry")" stock-icon-size="1">
         <input file stock="gtk-clear"></input>
@@ -1172,15 +1166,24 @@ start_dialog << EOF
     ${REMARK# The menubar hosts some varENTRY hotkeys that would slow down typing if implemented as key-press-event handlers.}
     <menubar height-request="1" width-request="1">
       <menu>
-      ${REMARK#  [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
-      ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
+        ${REMARK#  [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
+        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
         <menuitem accel-key="0xff55" accel-mods="0">
           <action>date '+PageUp %s'>"${ETAP}"</action>
         </menuitem>
         <menuitem accel-key="0xff56" accel-mods="0">
           <action>date '+PageDown %s'>"${ETAP}"</action>
         </menuitem>
-      ${REMARK#  ]]]}
+        ${REMARK#  ]]]}
+        ${REMARK# TODO FIXME When mini is active ?F2 or ?F12 breaks.}
+        ${REMARK#  [[[. Key F12 activates the top varLIST item.}
+        <menuitem accel-key="0xffc9" accel-mods="0">
+          <action>grabfocus:varLIST</action>
+          <action>$(generate_invoke_source_drain)</action>
+          <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
+          <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
+        </menuitem>
+        ${REMARK#  ]]]}
         <label>""</label>
       </menu>
     </menubar>
