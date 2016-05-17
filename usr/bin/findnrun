@@ -108,7 +108,7 @@ export varFOCUSSEARCH=false
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=F2
 HOTKEY_F3=F3
-HOTKEY_F12=F12
+HOTKEY_F12=0xffc9
 # Built-in sources
 # space separated list
 SOURCES="FNRstart FNRsc"
@@ -1163,10 +1163,13 @@ start_dialog << EOF
     </entry>
     ${REMARK# ]]]}
     ${REMARK# [[[. Menubar (nearly hidden 1x1).}
-    ${REMARK# The menubar hosts some varENTRY hotkeys that would slow down typing if implemented as key-press-event handlers.}
+    ${REMARK# The menubar hosts hotkey handlers, which are implemented as menu accelerators.}
+    ${REMARK# Hotkeys that are implemented as key-press-event handlers slow down typing way too much.}
     <menubar height-request="1" width-request="1">
       <menu>
-        ${REMARK#  [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
+      ${REMARK#  [[[. Hotkeys for varENTRY.}
+      ${REMARK# Note that all menu accelerators act globally, so these hotkeys really apply to all widgets.}
+        ${REMARK#   [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
         ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
         <menuitem accel-key="0xff55" accel-mods="0">
           <action>date '+PageUp %s'>"${ETAP}"</action>
@@ -1174,15 +1177,16 @@ start_dialog << EOF
         <menuitem accel-key="0xff56" accel-mods="0">
           <action>date '+PageDown %s'>"${ETAP}"</action>
         </menuitem>
-        ${REMARK#  ]]]}
-        ${REMARK#  [[[. Key F12 activates the top varLIST item.}
-        <menuitem accel-key="0xffc9" accel-mods="0">
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F12 activates the top varLIST item.}
+        <menuitem accel-key="${HOTKEY_F12}" accel-mods="0">
           <action>grabfocus:varLIST</action>
           <action>$(generate_invoke_source_drain)</action>
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
           <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         </menuitem>
-        ${REMARK#  ]]]}
+        ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
         <label>""</label>
       </menu>
     </menubar>
