@@ -64,11 +64,11 @@ power users and custom applications:
     # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
     # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field.
-    HOTKEY_F2=F2
+    HOTKEY_F2=0xffbf
     # Pressing HOTKEY_F3 starts the next available source plugin.
-    HOTKEY_F3=F3
+    HOTKEY_F3=0xffc0
     # Pressing HOTKEY_F12 activates the top search result list item.
-    HOTKEY_F12=F12
+    HOTKEY_F12=0xffc9
     # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included. 
     # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
     IBOL=' '
