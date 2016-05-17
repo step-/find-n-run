@@ -1193,6 +1193,11 @@ start_dialog << EOF
           <action>exit:EXIT</action>
         </menuitem>
         ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F1 invokes the help viewer.}
+        <menuitem accel-key="0xffbe" accel-mods="0">
+          <action>${helpviewer:-:} &</action>
+        </menuitem>
+        ${REMARK#   ]]]}
       ${REMARK#  ]]]}
         <label>""</label>
       </menu>
@@ -1423,9 +1428,6 @@ start_dialog << EOF
   ${REMARK#  ]]]}
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey actions (hidden).}
-  ${REMARK#  [[[. Key F1 invokes the help viewer.}
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = F1 ] && echo true )">${helpviewer:-:} &</action>
-  ${REMARK#  ]]]}
   ${REMARK#  [[[. Key F2 cycles focus between the search and the command entry field.}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F2}\" ] && echo true )">refresh:varF2</action>
