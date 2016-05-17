@@ -1187,10 +1187,17 @@ start_dialog << EOF
         </menuitem>
         ${REMARK#   ]]]}
       ${REMARK#  ]]]}
+      ${REMARK#  [[[. Hotkeys for the main window widget.}
+        ${REMARK#   [[[. Key ESC terminates findnrun.}
+        <menuitem accel-key="0xff1b" accel-mods="0">
+          <action>exit:EXIT</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
         <label>""</label>
       </menu>
     </menubar>
-    ${REMARK#  ]]]}
+    ${REMARK# ]]]}
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. varOPEN checkbox}
@@ -1416,9 +1423,6 @@ start_dialog << EOF
   ${REMARK#  ]]]}
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey actions (hidden).}
-  ${REMARK#  [[[. Key ESC terminates findnrun.}
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">exit:EXIT</action>
-  ${REMARK#  ]]]}
   ${REMARK#  [[[. Key F1 invokes the help viewer.}
   <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = F1 ] && echo true )">${helpviewer:-:} &</action>
   ${REMARK#  ]]]}
