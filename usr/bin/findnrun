@@ -107,7 +107,7 @@ export varFOCUSSEARCH=false
 # IBOL+IBOL in search field ignores all characters to beginning of line.
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 HOTKEY_F2=0xffbf
-HOTKEY_F3=F3
+HOTKEY_F3=0xffc0
 HOTKEY_F12=0xffc9
 # Built-in sources
 # space separated list
@@ -1204,6 +1204,12 @@ start_dialog << EOF
           <action>refresh:varF2</action>
         </menuitem>
         ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
+        <menuitem accel-key="${HOTKEY_F3}" accel-mods="0">
+          <action>set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
+          <action>refresh:varF3</action>
+        </menuitem>
+        ${REMARK#   ]]]}
       ${REMARK#  ]]]}
         <label>""</label>
       </menu>
@@ -1434,10 +1440,6 @@ start_dialog << EOF
   ${REMARK#  ]]]}
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey actions (hidden).}
-  ${REMARK#  [[[. Key F2 cycles focus between the search and the command entry field.}
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = \"${HOTKEY_F3}\" ] && echo true )">refresh:varF3</action>
-  ${REMARK#  ]]]}
   ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
   $(generate_source_hotkeys)
   ${REMARK#  ]]]}
