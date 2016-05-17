@@ -63,12 +63,14 @@ power users and custom applications:
     #  + /usr/share/midi-icons /usr/share/mini-icons"
     # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
+    # Hotkey format: accel-mods':'key-sym':'accel-key
+    # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
     # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field.
-    HOTKEY_F2=0xffbf
+    HOTKEY_F2=0:F2:0xffbf
     # Pressing HOTKEY_F3 starts the next available source plugin.
-    HOTKEY_F3=0xffc0
+    HOTKEY_F3=0:F3:0xffc0
     # Pressing HOTKEY_F12 activates the top search result list item.
-    HOTKEY_F12=0xffc9
+    HOTKEY_F12=0:F12:0xffc9
     # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included. 
     # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
     IBOL=' '

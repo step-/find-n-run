@@ -106,9 +106,11 @@ export varICONS=false
 export varFOCUSSEARCH=false
 # IBOL+IBOL in search field ignores all characters to beginning of line.
 IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
-HOTKEY_F2=0xffbf
-HOTKEY_F3=0xffc0
-HOTKEY_F12=0xffc9
+# Hotkey format: accel-mods':'key-sym':'accel-key
+# cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
+HOTKEY_F2=0:F2:0xffbf
+HOTKEY_F3=0:F3:0xffc0
+HOTKEY_F12=0:F12:0xffc9
 # Built-in sources
 # space separated list
 SOURCES="FNRstart FNRsc"
@@ -990,7 +992,8 @@ generate_status_bar() # [[[2
   [ $# -lt 2 ] && return # no status bar unless:
   # Multiple sources. [[[
   #i18n Status bar: Ctrl+0... and F3... hotkeys
-  local ctrlnkey funckey
+  local ctrlnkey funckey keysymF3
+  keysymF3=${HOTKEY_F3#*:}; keysymF3=${keysymF3%:*}
   ctrlnkey=$(gettext "[ctrl+%d]") funckey=$(gettext "[%s]")
   echo -n '
     <vbox>
@@ -1011,8 +1014,7 @@ generate_status_bar() # [[[2
   echo -n '; . "'"${SRCSTEM}"'"$(((${varF3:-0} + 1) % ${NSOURCES:-'${NSOURCES}'}))-*.sh'
   echo -n '; next="${TITLE}"'
   # Send formatted data to SBAR.
-  echo -n '; printf "'"%s ${ctrlnkey}  »  ${funckey} %s"'" "${title}" $((${varF3}+1)) "'"${HOTKEY_F3}"'" "${next}"'
-#  echo -n '; printf "'"${ctrlnkey} %s  »  %s ${funckey}"'" $((${varF3}+1)) "${title}" "${next}" "'"${HOTKEY_F3}"'"'
+  echo -n '; printf "'"%s ${ctrlnkey}  »  ${funckey} %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}"'
   [ -n "${DEBUG3}" ] && echo -n 'set +x; echo >&2 "]]";'
   echo "</input>
         ${DEBUG2:+<action>echo>&2 ,,, varSBAR ,,,</action>}
@@ -1023,17 +1025,16 @@ generate_status_bar() # [[[2
 
 generate_source_hotkeys() # [[[2
 {
-  #echo '<action signal="key-press-event">exec 1>&2;echo;date;env|grep KEY_</action>'
-
   # Actions for keys Ctrl+1..Ctrl+9
-  local keys command attributes
-  # Accept no more than 9 numeric keys.
-  keys="[1-$(($NSOURCES > 9 ? 9 : $NSOURCES))]"
-  # Require Ctrl w/o Shift w/o Meta (can have NumLock or non-en_US keyboard layout).
-  command='[ $(($KEY_MOD & 7)) = 4 ] && case $KEY_SYM in '"$keys"') echo true;; esac'
-  attributes='signal="key-press-event" condition="command_is_true('"$command"')"'
-  printf "<action $attributes>%s</action>\n" \
-  'echo -n $(($KEY_SYM -1)) >"'"${F3SF}"'"' 'refresh:varF3'
+  local h i
+  h=0
+  for i in 1 2 3 4 5 6 7 8 9; do
+    echo '<menuitem accel-key="0x003'"$i"'" accel-mods="4">'
+    printf "  <action>%s</action>\n" "echo -n $h >\"${F3SF}\"" "refresh:varF3"
+    echo "</menuitem>"
+    [ $i = $NSOURCES ] && break
+    h=$i
+  done
 }
 
 start_dialog() # Returns when gtkdialog terminates [[[2
@@ -1179,7 +1180,7 @@ start_dialog << EOF
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F12 activates the top varLIST item.}
-        <menuitem accel-key="${HOTKEY_F12}" accel-mods="0">
+        <menuitem accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
           <action>grabfocus:varLIST</action>
           <action>$(generate_invoke_source_drain)</action>
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
@@ -1199,17 +1200,20 @@ start_dialog << EOF
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
-        <menuitem accel-key="${HOTKEY_F2}" accel-mods="0">
+        <menuitem accel-key="${HOTKEY_F2##*:}" accel-mods="${HOTKEY_F2%%:*}">
           <action>case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
           <action>refresh:varF2</action>
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
-        <menuitem accel-key="${HOTKEY_F3}" accel-mods="0">
+        <menuitem accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
           <action>set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
           <action>refresh:varF3</action>
         </menuitem>
         ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
+      ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
+        $(generate_source_hotkeys)
       ${REMARK#  ]]]}
         <label>""</label>
       </menu>
@@ -1440,9 +1444,7 @@ start_dialog << EOF
   ${REMARK#  ]]]}
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey actions (hidden).}
-  ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
-  $(generate_source_hotkeys)
-  ${REMARK#  ]]]}
+  ${REMARK# DEBUG <action signal="key-press-event">exec 1>&2;echo;date;env|grep KEY_</action>}
   ${REMARK# ]]]}
   <action signal="delete-event">exit:abort</action>
   <variable export="false">MAINWINDOW</variable>
