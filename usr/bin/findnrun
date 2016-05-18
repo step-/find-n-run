@@ -906,9 +906,19 @@ $(n="${NSOURCES}"; printf "$(ngettext "%s source loaded" "%s sources loaded" "$n
 
 # Helpers [[[1
 
+generate_get_drain_cmd() # [[[2
+{
+  # Echo sh code that extracts the drain command of the selected list item.
+  # Command is returned in "$@" - Command defined per plugin-dev.md.
+  echo -n 'ifs="${IFS}"'
+  echo -n '; IFS="'"${SEP}"'"; set -f; set -- $varLIST; set -- $3; set +f'
+  echo -n '; IFS="${ifs}"'
+}
+
 generate_get_source() # [$1-event] [[[2
 {
   # Echo sh code that loads the current source's field values.
+  # Values are returned as shell variables - Values defined per plugin-dev.md.
   local eventfmt
   eventfmt="${1:+ on event:}$1${1:+ }"
   [ -n "${DEBUG2}" ] && echo -n 'eval ">&2 echo \"GET SOURCE \${varF3:-0}'"${eventfmt}"'\"";'
@@ -947,23 +957,19 @@ generate_invoke_source_tap() # [[[2
 generate_invoke_source_drain() # [[[2
 {
   # Echo sh code that invokes source[varF3]'s drain-command.
-  # Extract selected list item value as "$@". [[[
-  echo -n 'ifs="${IFS}"'
-  # NOTE: Imitate this command line in varCMD's <input> !
-  echo -n '; IFS="'"${SEP}"'"; set -f; set -- ${varLIST}; set -- $3; set +f'
-  echo -n '; unset varLIST; IFS="${ifs}"'
-  #]]]
+  # Extract selected list item value as "$@".
+  generate_get_drain_cmd
   # Unexport all vars but varF3 and varLIST.
   # cf. 'UNEXPORT' in generate_invoke_source_tap and 'unset' further down
   echo -n "; ${UNEXPORT}"
-  # Get source[varF3]'s values. [[[
+  # Load source[varF3]'s values into drain's invocation environment. [[[
   echo -n '; '; generate_get_source invoke_source_drain
   # ]]]
-  # Save command to history lists. [[[
-  # To the source's own history list file + FNR's global history list file.
-  # ${HSTF} points to one of the two files, and it's used as input to the history widget.
+  # Save drain-command to history lists. [[[
+  # To the source's own history list file and to the global history list file
+  # $HSTF, which is the history widget input file (varCMD).
   echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-${ID}.sh'"
-  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-FNR.sh'"
+  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${HSTF}'"
   #]]]
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
@@ -1107,7 +1113,7 @@ start_dialog << EOF
       ${REMARK# ]]]}
       ${DEBUG2:+<action>echo>&2 ,,, varLIST ,,,</action>}
       ${REMARK# [[[. Invoke list view selected item.}
-      <action>$(generate_invoke_source_drain)</action>
+      <action>$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
       ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
@@ -1133,13 +1139,13 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varCMD: history editing.}
     <hbox space-fill="false" space-expand="false">
+      ${REMARK# This widget doubles as a varLIST grabber and as a pull-down history list.}
       <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">
         <variable>varCMD</variable>
         <default>$(gettext "Press Down Arrow to grab selected item")</default>
-        ${REMARK# NOTE: Commands imitate varLISTs action, see generate_invoke_source_drain().}
-        <input>IFS="${SEP}"; set -f; set -- \${varLIST}; set -- \$3; set +f; echo "\$@"</input>
+        <input>$(generate_get_drain_cmd); echo "\$@"</input>
         <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
-        <output file>${HSTF}</output>
+        <output file>$HSTF</output>
         ${DEBUG2:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
         <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT} varLIST varF3; eval "\$@" &</action>
@@ -1151,9 +1157,8 @@ start_dialog << EOF
       <button tooltip-text="$(gettext "Remove entry from history")" stock-icon-size="1">
         <input file stock="gtk-remove"></input>
         <action>grabfocus:varCMD</action>
-        <action>removeselected:varCMD</action>
-        <action>save:varCMD</action>
-        <action>refresh:varCMD</action>
+        <action>removeselected:varCMD</action>${REMARK# This removes user-selected in pull-down.}
+        <action>save:varCMD</action>${REMARK# Selected in pull-down <<< selected in varLIST, which also gets appended to $HSTF.}
       </button>
     </hbox>
     ${REMARK# ]]]}
@@ -1182,7 +1187,7 @@ start_dialog << EOF
         ${REMARK#   [[[. Key F12 activates the top varLIST item.}
         <menuitem accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
           <action>grabfocus:varLIST</action>
-          <action>$(generate_invoke_source_drain)</action>
+          <action>$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
           <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         </menuitem>
