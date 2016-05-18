@@ -1113,7 +1113,8 @@ start_dialog << EOF
       ${REMARK# ]]]}
       ${DEBUG2:+<action>echo>&2 ,,, varLIST ,,,</action>}
       ${REMARK# [[[. Invoke list view selected item.}
-      <action>$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
+      <action signal="row-activated">$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
+      <action signal="row-activated">refresh:varCMD</action>
       ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
       <action signal="changed">refresh:varCMD</action>
