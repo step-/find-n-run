@@ -968,8 +968,8 @@ generate_invoke_source_drain() # [[[2
   # Save drain-command to history lists. [[[
   # To the source's own history list file and to the global history list file
   # $HSTF, which is the history widget input file (varCMD).
-  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${TMPD}/.hist-${ID}.sh'"
-  echo -n "; echo "\${DRAIN}\${DRAIN:+ }" "\$@" >> '${HSTF}'"
+  echo -n "; echo \$DRAIN\ \"\$@\" >> \"$TMPD/.hist-\$ID.sh\""
+  echo -n "; echo \$DRAIN \"\$@\" >> '$HSTF'"
   #]]]
   # Start drain-command. [[[
   echo -n '; set -- ${DRAIN} "$@"'
@@ -1148,7 +1148,7 @@ start_dialog << EOF
         <output file>$HSTF</output>
         ${DEBUG2:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
-        <action signal="activate">set -- \${varCMD}; echo "\$@" >> "${HSTF}"; ${UNEXPORT} varLIST varF3; eval "\$@" &</action>
+        <action signal="activate">set -- \$varCMD; echo "\$@" >> '$HSTF'; echo "\$@" >> "$TMPD/.hist-\$ID.sh"; $UNEXPORT varLIST varF3; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
         <action signal="activate" condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
         <action signal="activate" condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
