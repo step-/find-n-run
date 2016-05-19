@@ -1003,9 +1003,10 @@ generate_status_bar() # [[[2
   ctrlnkey=$(gettext "[ctrl+%d]") funckey=$(gettext "[%s]")
   echo -n '
     <vbox>
-      <statusbar has-resize-grip="false" sensitive="false">
-        <variable export="false">varSBAR</variable>
-        <input>'
+      <eventbox>
+        <statusbar has-resize-grip="false" sensitive="false">
+          <variable export="false">varSBAR</variable>
+          <input>'
   [ -n "${DEBUG3}" ] && echo -n 'echo >&2 "=== GENERATE STATUS BAR [["; set -x;'
   echo -n 'title="${TITLE}"' # This is a gtkdialog sh variable and...
   # [[[ ... it gets its value from the <input> tag, which is activated only
@@ -1024,8 +1025,11 @@ generate_status_bar() # [[[2
   [ -n "${DEBUG3}" ] && echo -n 'set +x; echo >&2 "]]";'
   echo "</input>
         ${DEBUG2:+<action>echo>&2 ,,, varSBAR ,,,</action>}
-      </statusbar>
-    </vbox>"
+        </statusbar>
+        <action signal=\"button-press-event\">set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \${#}))>'$F3SF'</action>
+        <action signal=\"button-press-event\">refresh:varF3</action>
+      </eventbox>
+    </vbox>" # Copy <action>s from <menuitem> HOTKEY_F3.
   #]]]
 }
 
@@ -1287,7 +1291,7 @@ start_dialog << EOF
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
         <menuitem accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
-          <action>set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
+          <action>set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \${#}))>'${F3SF}'</action>
           <action>refresh:varF3</action>
         </menuitem>
         ${REMARK#   ]]]}
