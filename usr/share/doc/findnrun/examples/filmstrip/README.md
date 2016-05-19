@@ -16,7 +16,6 @@ results. Matches are checked against image filename and caption.[1]
 
 Before reading further get familiar with the default configuration file
 '[taprc](taprc)' - [alternative location](examples/filmstrip/taprc).
-before reading further.
 
 ### Installing
 
