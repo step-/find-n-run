@@ -1140,27 +1140,39 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varCMD: history editing.}
     <hbox space-fill="false" space-expand="false">
-      ${REMARK# This widget doubles as a varLIST grabber and as a pull-down history list.}
+      ${REMARK# This widget doubles as a varLIST item grabber and as a pull-down history list.}
+      ${REMARK#  [[[. Pull-down list and input entry field combo.}
       <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">
         <variable>varCMD</variable>
         <default>$(gettext "Press Down Arrow to grab selected item")</default>
-        <input>$(generate_get_drain_cmd); echo "\$@"</input>
-        <input>awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "${HSTF}"</input>
+        ${REMARK# Append a space to the grabbed varLIST item \$@ so we can tell it from history items.}
+        ${REMARK# Note that the entry widget discards trailing spaces, so our space is a unique mark.}
+        <input>$(generate_get_drain_cmd); echo "\$@ "; awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "$HSTF"</input>
         <output file>$HSTF</output>
         ${DEBUG2:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
         <action signal="activate">set -- \$varCMD; echo "\$@" >> '$HSTF'; echo "\$@" >> "$TMPD/.hist-\$ID.sh"; $UNEXPORT varLIST varF3; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
-        <action signal="activate" condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
-        <action signal="activate" condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
+        <action signal="activate" condition="command_is_true(echo \$varFOCUSSEARCH)">grabfocus:varSEARCH</action>
+        <action signal="activate" condition="command_is_false(echo \$varFOCUSSEARCH)">grabfocus:varLIST</action>
         <action signal="activate">refresh:varCMD</action>
       </comboboxentry>
+      ${REMARK#  ]]]}
+      ${REMARK#  [[[. History item delete button.}
       <button tooltip-text="$(gettext "Remove entry from history")" stock-icon-size="1">
         <input file stock="gtk-remove"></input>
         <action>grabfocus:varCMD</action>
-        <action>removeselected:varCMD</action>${REMARK# This removes user-selected in pull-down.}
-        <action>save:varCMD</action>${REMARK# Selected in pull-down <<< selected in varLIST, which also gets appended to $HSTF.}
+        ${REMARK# pull-down-list ::= varLIST-item + history-file-contents.}
+        <action>removeselected:varCMD</action>${REMARK# pull-down-list -= user-selected-item.}
+        <action>save:varCMD</action>${REMARK# Save pull-down-list (including space-terminated varLIST-item}
+        ${REMARK# ^^^ Gtkdialog 0.8.4: save:varCMD does not append LF to the last file line.}
+        ${REMARK# Now delete the space-terminated varLIST item from the saved history file.}
+        ${REMARK# Thankfully awk is oblivious to the missing LF.}
+        ${REMARK# history-file-contents -= space-terminated-items.}
+        <action>awk '/[^ ]\$/{a[++i]=\$0}END{printf "">FILENAME;while(i>0)print a[i--]>FILENAME}#tac' '$HSTF'</action>
+        <action>refresh:varCMD</action>${REMARK# widget <- varLIST-item + history-file-contents.}
       </button>
+      ${REMARK#  ]]]}
     </hbox>
     ${REMARK# ]]]}
     ${REMARK# [[[. varCOMMENT: display item comment.}
