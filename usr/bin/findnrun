@@ -998,13 +998,18 @@ generate_status_bar() # [[[2
   [ $# -lt 2 ] && return # no status bar unless:
   # Multiple sources. [[[
   #i18n Status bar: Ctrl+0... and F3... hotkeys
-  local ctrlnkey funckey keysymF3
+  local ctrlnkey funckey keysymF3 tooltip
   keysymF3=${HOTKEY_F3#*:}; keysymF3=${keysymF3%:*}
   ctrlnkey=$(gettext "[ctrl+%d]") funckey=$(gettext "[%s]")
+  tooltip=$(printf "$(gettext \
+    "Click the status bar or press a hotkey to activate the next source.\n%s\n%s")" \
+    "$(n="${NSOURCES}"; printf "$(ngettext "%s source loaded" "%s sources loaded" "$n")" "$n")" \
+    "$(n="${NDATF}"; printf "$(ngettext "%s application found" "%s applications found" "$n")" "$n")" \
+  )
   echo -n '
     <vbox>
       <eventbox>
-        <statusbar has-resize-grip="false" sensitive="false">
+        <statusbar has-resize-grip="false" sensitive="false" tooltip-text="'"$tooltip"'">
           <variable export="false">varSBAR</variable>
           <input>'
   [ -n "${DEBUG3}" ] && echo -n 'echo >&2 "=== GENERATE STATUS BAR [["; set -x;'
