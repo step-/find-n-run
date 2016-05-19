@@ -1181,62 +1181,6 @@ start_dialog << EOF
       <input>IFS=${SEP}; set -- \${varLIST}; echo "\$4${showcategories:+ \$5}"</input>
     </entry>
     ${REMARK# ]]]}
-    ${REMARK# [[[. Menubar (nearly hidden 1x1).}
-    ${REMARK# The menubar hosts hotkey handlers, which are implemented as menu accelerators.}
-    ${REMARK# Hotkeys that are implemented as key-press-event handlers slow down typing way too much.}
-    <menubar height-request="1" width-request="1">
-      <menu>
-      ${REMARK#  [[[. Hotkeys for varENTRY.}
-      ${REMARK# Note that all menu accelerators act globally, so these hotkeys really apply to all widgets.}
-        ${REMARK#   [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
-        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
-        <menuitem accel-key="0xff55" accel-mods="0">
-          <action>date '+PageUp %s'>"${ETAP}"</action>
-        </menuitem>
-        <menuitem accel-key="0xff56" accel-mods="0">
-          <action>date '+PageDown %s'>"${ETAP}"</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-        ${REMARK#   [[[. Key F12 activates the top varLIST item.}
-        <menuitem accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
-          <action>grabfocus:varLIST</action>
-          <action>$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
-          <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
-          <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-      ${REMARK#  ]]]}
-      ${REMARK#  [[[. Hotkeys for the main window widget.}
-        ${REMARK#   [[[. Key ESC terminates findnrun.}
-        <menuitem accel-key="0xff1b" accel-mods="0">
-          <action>exit:EXIT</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-        ${REMARK#   [[[. Key F1 invokes the help viewer.}
-        <menuitem accel-key="0xffbe" accel-mods="0">
-          <action>${helpviewer:-:} &</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-        ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
-        <menuitem accel-key="${HOTKEY_F2##*:}" accel-mods="${HOTKEY_F2%%:*}">
-          <action>case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
-          <action>refresh:varF2</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-        ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
-        <menuitem accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
-          <action>set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
-          <action>refresh:varF3</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-      ${REMARK#  ]]]}
-      ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
-        $(generate_source_hotkeys)
-      ${REMARK#  ]]]}
-        <label>""</label>
-      </menu>
-    </menubar>
-    ${REMARK# ]]]}
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. varOPEN checkbox}
@@ -1298,6 +1242,62 @@ start_dialog << EOF
       </button>
       ${REMARK# ]]]}
     </hbox>
+    ${REMARK# ]]]}
+    ${REMARK# [[[. Menubar (nearly hidden 1x1).}
+    ${REMARK# The menubar hosts hotkey handlers, which are implemented as menu accelerators.}
+    ${REMARK# Hotkeys that are implemented as key-press-event handlers slow down typing way too much.}
+    <menubar height-request="1" width-request="1">
+      <menu>
+      ${REMARK#  [[[. Hotkeys for varENTRY.}
+      ${REMARK# Note that all menu accelerators act globally, so these hotkeys really apply to all widgets.}
+        ${REMARK#   [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
+        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
+        <menuitem accel-key="0xff55" accel-mods="0">
+          <action>date '+PageUp %s'>"${ETAP}"</action>
+        </menuitem>
+        <menuitem accel-key="0xff56" accel-mods="0">
+          <action>date '+PageDown %s'>"${ETAP}"</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F12 activates the top varLIST item.}
+        <menuitem accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
+          <action>grabfocus:varLIST</action>
+          <action>$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
+          <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
+          <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
+      ${REMARK#  [[[. Hotkeys for the main window widget.}
+        ${REMARK#   [[[. Key ESC terminates findnrun.}
+        <menuitem accel-key="0xff1b" accel-mods="0">
+          <action>exit:EXIT</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F1 invokes the help viewer.}
+        <menuitem accel-key="0xffbe" accel-mods="0">
+          <action>${helpviewer:-:} &</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
+        <menuitem accel-key="${HOTKEY_F2##*:}" accel-mods="${HOTKEY_F2%%:*}">
+          <action>case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
+          <action>refresh:varF2</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
+        <menuitem accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
+          <action>set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \$#))>"${F3SF}"</action>
+          <action>refresh:varF3</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
+      ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
+        $(generate_source_hotkeys)
+      ${REMARK#  ]]]}
+        <label>""</label>
+      </menu>
+    </menubar>
     ${REMARK# ]]]}
     ${REMARK# [[[. varSBAR statusbar}
     ${REMARK# Do not vbox the status bar here; keep the vbox under the control}
