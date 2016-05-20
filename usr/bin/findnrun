@@ -1286,7 +1286,7 @@ start_dialog << EOF
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F1 invokes the help viewer.}
         <menuitem accel-key="0xffbe" accel-mods="0">
-          <action>${helpviewer:-:} &</action>
+          <action>${helpviewer:-:} "\${PLGDIR:-...}/index.md" &</action>
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
