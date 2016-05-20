@@ -848,7 +848,7 @@ $(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
 EOF
       case ${helpviewer} in
         '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
-        *mdview) helpviewer="'${helpviewer}' '${hf%/*}' '${hf##*/}' '${hf##*/}' \"${APP_TITLE}\"" ;;
+        *mdview) helpviewer='v() { for a; do [ -e "$a" ] && cd "${a%/*}" && exec "'"$helpviewer"'" "${a%/*}" "${a##*/}" "${a##*/}" "'"$APP_TITLE"'" & sleep 0.4 || sleep 1; done ;}; v "'"$hf"'"' ;;
         *browser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
         *) # dup help files to protect sources from text editors
           if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
