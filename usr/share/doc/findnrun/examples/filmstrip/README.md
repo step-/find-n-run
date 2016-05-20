@@ -2,8 +2,6 @@
 
 Progressive image search
 
-_Version 1.0.0_
-
 Filmstrip is a source plugin for Findnrun.
 As you incrementally refine the search term in Findnrun's search window,
 an image viewer displays thumbnails of the images that match your search
@@ -12,21 +10,27 @@ results. Matches are checked against image filename and caption.[1]
 [1] Searching captions requires installing package 'exiftool' for your
    platform.
 
-### Configuration file
+### Requirements and Installation
 
-Before reading further get familiar with the default configuration file
+ * Copy file [source-me.sh](source-me.sh) to your home folder
+   - [alternative location](examples/filmstrip/source-me.sh).
+ * Copy file [taprc](taprc) to your home folder as `~/.filmstriprc`
+   - [alternative location](examples/filmstrip/taprc).
+ * Edit file `~/.findnrunrc` and **append** two lines; one line sources
+   this file and another line adds the new plugin source to SOURCES:
+```
+    . "$HOME/source-me.sh"
+    SOURCES='FNRstart filmstrip FNRsc' # <<< REVIEW AND CHANGE IF NECESSARY
+```
+
+ * Start findnrun. Press 'F3' to start the filmstrip viewer.
+   You may press Ctrl+1 to use the standard 'application finder'.
+
+This plugin can be further configured by editing its configuration file
 '[taprc](taprc)' - [alternative location](examples/filmstrip/taprc).
-
-### Installing
-
-For basic installation follow section _INSTALLING_ in file
-'[taprc](taprc)' - [alternative location](examples/filmstrip/taprc).
-Once the plugin is installed restart findnrun and press [F3](hotkey.md)
-repeateadly until the viewer starts.
 
  * Do not edit 'taprc' directly. Copy it to file `.filmstriprc` in your
    home folder.
- * You will be editing two files: `.filmstriprc` and `.findnrunrc`.
  * Review basic settings. All defaults have sensible values for most
    systems, but do check that `FIND_PATH` points to existing picture
    folder locations, and that `TYPING_RATE` is well-suited to your
@@ -76,5 +80,8 @@ CUSTOM\_CAPTION.
 ### Translations
 
 Source title and messages can be localized by installing a suitable
-.mo file, findnrun-plugin-filmstrip.mo
+.mo file, findnrun-plugin-filmstrip.mo.
 
+### Version
+
+See file [source-me.sh](source-me.sh) for version information.
