@@ -260,6 +260,7 @@ store_valid_sources() # [[[
 # 205 unreferenced SOURCE_
 # 206 unreferenced INITSEARCH_
 # 207 unreferenced MODE_
+# 208 unreferenced PLGDIR_
 #]]]
 # i18n Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
@@ -285,7 +286,7 @@ BEGIN {
   if("" == valid_sources) valid_sources = "FNRstart"
   #]]]
   # id types
-  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH|MODE"
+  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH|MODE|PLGDIR"
   # G[] array of types
   nG = split(ordered_G, G, /\|/)
   pattern = "^("ordered_G")_([^=]+)=(.*)"
@@ -983,7 +984,7 @@ generate_invoke_source_drain() # [[[2
     echo -n ' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'
   fi
   #]]]
-  echo -n '; unset varF3 varLIST invokeTAP invokeDRAIN TAP DRAIN ICON TITLE INITSEARCH MODE'
+  echo -n '; unset varF3 varLIST invokeTAP invokeDRAIN TAP DRAIN ICON TITLE INITSEARCH MODE PLGDIR'
   echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
   echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
   echo -n ' eval "$@" &'
@@ -1445,6 +1446,7 @@ start_dialog << EOF
     <action>refresh:TITLE</action>
     <action>refresh:INITSEARCH</action>
     <action>refresh:MODE</action>
+    <action>refresh:PLGDIR</action>
     <action>refresh:SOURCE</action>
     <action>refresh:ID</action>
     ${REMARK# ]]]}

@@ -118,6 +118,7 @@ A source plugin is installed by adding its declaration into
     TITLE_<title-id>='<source-title>'           # optional
     INITSEARCH_<init-search-id>='<init-search>' # optional
     MODE_<mode-id>='<mode-mask>'                # optional
+    PLGDIR_<plgdir-id>='<plugin-dir-path>'      # optional
 ```
 
  * Each `<...-id>` identifier must be unique within its declaration
@@ -128,6 +129,7 @@ A source plugin is installed by adding its declaration into
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
  * `<mode-mask>` is a bit mask of plugin modifiers, for instance "disabled".
+ * `<plugin-dir-path>` is the location of the plugin resource files, if any.
  * Declarations marked "optional" can be omitted by leaving their
    respective `<...-id>` slot empty in the `SOURCE_<source-id>`
    declaration.
@@ -155,6 +157,14 @@ in `SOURCES`.
 ```
     SOURCES='... <source-id> ...'    # list of all enabled sources
 ```
+
+A plugin may provide findnrun with well-known resource files by setting
+`<plugin-dir-path>` to the container of the files. Findnrun
+looks for the following optional files in `<plugin-dir-path>`:
+
+ * `index.md` - Press `F1` when the plugin is active to open this
+   plugin-specific help file in addition to the standard help file.
+
 ### Plugin Capabilities
 
 By default an installed plugin is validated, allocated and visible.
