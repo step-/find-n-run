@@ -1390,6 +1390,12 @@ start_dialog << EOF
     <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${MODE}"</input>
     ${DEBUG2:+<action>echo>&2 === CACHE MODE [\$varF3] \$MODE</action>}
   </entry>
+  <entry visible="false" sensitive="false">
+    <variable>PLGDIR</variable>
+    ${REMARK# Cache PLGDIR until next refresh:PLGDIR}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${PLGDIR}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE PLGDIR [\$varF3] \$PLGDIR</action>}
+  </entry>
   ${REMARK# ]]]}
   ${REMARK# [[[. Read-only values (hidden).}
   <entry visible="false" sensitive="false">
