@@ -775,15 +775,15 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
   split(\$(NF), a, /${SEP}/) # a <- {fullpathname,name,exec,comment,category}"
   if [ true = "$SEARCHFILENAMES" ]; then
     statements="$statements
-    gsub(/^.*[/]|[.][^.]+$/, \"\", a[1]) # basename(fullpathname)"
+    gsub(/^.*[/]|[.][^.]+$/, \"\", a[1]) # basename(fullpathname, .ext)"
   fi
   subject="${case}(a[2])"
 else
-  # Keep basename(fullpathname) & sub-fields 'name'..'category'.
+  # Keep basename(fullpathname, .ext) & sub-fields 'name'..'category'.
   statements="
   a=\$(NF); x=index(a,\"${SEP}\"); a1=substr(a,1,x-1)
   gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a=a1 substr(a,x)"
-  subject="${case}(a)" # ="${case}(basename(a[1])\";\"a[2]\";\"a[3]\";\"a[4]\";\"a[5])"
+  subject="${case}(a)" # ="${case}(basename(a[1], .ext)\";\"a[2]\";\"a[3]\";\"a[4]\";\"a[5])"
 fi
 if [ true = "${SEARCHREGEX}" ]; then
   REDIRECT2=" 2>/dev/null" # Quiet awk's "fatal: invalid regex" message
