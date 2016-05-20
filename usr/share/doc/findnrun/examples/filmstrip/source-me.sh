@@ -16,7 +16,7 @@ define_source_plugin () { #{{{
   local plgdir="${0%/*}/../share/doc/findnrun/examples/filmstrip"
   # This plugin provides its own help file "$plgdir/index.md"
   PLGDIR_filmstrip="$plgdir"
-  SOURCE_filmstrip='filmstrip:filmstrip::filmstrip:filmstrip::filmstrip'
+  SOURCE_filmstrip='filmstrip:filmstrip:filmstrip:filmstrip:filmstrip::filmstrip'
   TITLE_filmstrip='Filmstrip'
   TAP_filmstrip='/usr/share/doc/findnrun/examples/filmstrip/tap.sh $HOME/.filmstriprc "${term}" | findnrun-formatter --'
   DRAIN_filmstrip='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
