@@ -265,6 +265,7 @@ store_valid_sources() # [[[
 # 206 unreferenced INITSEARCH_
 # 207 unreferenced MODE_
 # 208 unreferenced PLGDIR_
+# 208 unreferenced SAVEFLT_
 #]]]
 # i18n Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
@@ -290,7 +291,7 @@ BEGIN {
   if("" == valid_sources) valid_sources = "FNRstart"
   #]]]
   # id types
-  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH|MODE|PLGDIR"
+  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH|MODE|PLGDIR|SAVEFLT"
   # G[] array of types
   nG = split(ordered_G, G, /\|/)
   pattern = "^("ordered_G")_([^=]+)=(.*)"
@@ -988,7 +989,7 @@ generate_invoke_source_drain() # [[[2
     echo -n ' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'
   fi
   #]]]
-  echo -n '; unset varF3 varLIST invokeTAP invokeDRAIN TAP DRAIN ICON TITLE INITSEARCH MODE PLGDIR'
+  echo -n '; unset varF3 varLIST invokeTAP invokeDRAIN TAP DRAIN ICON TITLE INITSEARCH MODE PLGDIR SAVEFLT'
   echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
   echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
   echo -n ' eval "$@" &'
@@ -1288,7 +1289,7 @@ start_dialog << EOF
         ${REMARK#   [[[. Key F4 saves search results and invokes a filter.}
         <menuitem accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
           <action>save:varLIST</action>
-          <action>echo >&2 "TODO filter '$F4SF'"</action>
+          <action>[ -n '\$SAVEFLT' ] && file='$F4SF' && eval \$SAVEFLT</action>
         </menuitem>
         ${REMARK#   ]]]}
       ${REMARK#  ]]]}
@@ -1410,6 +1411,12 @@ start_dialog << EOF
     <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${PLGDIR}"</input>
     ${DEBUG2:+<action>echo>&2 === CACHE PLGDIR [\$varF3] \$PLGDIR</action>}
   </entry>
+  <entry visible="false" sensitive="false">
+    <variable>SAVEFLT</variable>
+    ${REMARK# Cache SAVEFLT until next refresh:SAVEFLT}
+    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${SAVEFLT}"</input>
+    ${DEBUG2:+<action>echo>&2 === CACHE SAVEFLT [\$varF3] \$SAVEFLT</action>}
+  </entry>
   ${REMARK# ]]]}
   ${REMARK# [[[. Read-only values (hidden).}
   <entry visible="false" sensitive="false">
@@ -1467,6 +1474,7 @@ start_dialog << EOF
     <action>refresh:INITSEARCH</action>
     <action>refresh:MODE</action>
     <action>refresh:PLGDIR</action>
+    <action>refresh:SAVEFLT</action>
     <action>refresh:SOURCE</action>
     <action>refresh:ID</action>
     ${REMARK# ]]]}

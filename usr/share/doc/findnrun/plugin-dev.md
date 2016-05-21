@@ -119,17 +119,19 @@ A source plugin is installed by adding its declaration into
     INITSEARCH_<init-search-id>='<init-search>' # optional
     MODE_<mode-id>='<mode-mask>'                # optional
     PLGDIR_<plgdir-id>='<plugin-dir-path>'      # optional
+    SAVEFLT_<filter-id>='<save-filter-command>' # optional
 ```
 
  * Each `<...-id>` identifier must be unique within its declaration
    group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_).
- * `<tap-command>` is a valid shell command (more on this further down).
+ * `<tap-command>` is a valid shell command.
  * `<drain-command>` is also a valid shell command.
  * `<icon-filepath>` is the full path to a supported icon image file.
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
  * `<mode-mask>` is a bit mask of plugin modifiers, for instance "disabled".
  * `<plugin-dir-path>` is the location of the plugin resource files, if any.
+ * `<save-filter-command>` is a valid shell command.
  * Declarations marked "optional" can be omitted by leaving their
    respective `<...-id>` slot empty in the `SOURCE_<source-id>`
    declaration.
@@ -184,14 +186,15 @@ values:
     SOURCES='FNRstart find_file'
 ```
 
-### Tap and Drain Command Implementation
+### Implementing Plugin Commands
 
-A tap- or a drain-command is implemented as a shell command, script, or
-external program, something that the shell can execute.
+Each tap-, drain- and save-filter-command is implemented as a shell
+command, script, or external program, something that the shell can
+execute.
 
 ### Plugin Invocation
 
-Findnrun _invokes_ two source plugin commands. While the user is typing
+Findnrun _invokes_ three kinds of commands. While the user is typing
 into the search innput field, findnrun invokes the tap-command as
 follows:
 ```
@@ -216,6 +219,15 @@ shell builtin command `eval`.
 global history file and the plugin's history file. Currently these files
 are not exposed in the user interface, and the pull-down widget shows
 the global history. This might change in the future.
+
+When the user presses hotkey `F4` findnrun saves the search results to a
+file and invokes save-filter-command as follows:
+```
+    eval <save-filter-command>
+```
+save-filter-command should reference the save file as `${file}` and
+process it to its own liking. See the built-in FNRstart source code for
+examples.
 
 ### Invocation Environment
 
