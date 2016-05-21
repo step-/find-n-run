@@ -10,7 +10,7 @@ Add features to the standard application search window:
 ### Requirements and Installation
 
  * Copy file [source-me.sh](source-me.sh) to your home folder
-   - [alternative location](examples/fuzzy-search/source-me.sh).
+   - [alternative location](examples/agrep_apps/source-me.sh).
  * Download and install package 'tre 0.8.0'.
    You can get .txz and .pet packages from
    [https://github.com/step-/find-n-run/releases/tag/2.1.1](https://github.com/step-/find-n-run/releases/tag/2.1.1)
