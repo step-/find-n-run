@@ -137,20 +137,20 @@ awk '
   /^SHOWNODISPLAY=/{f13=1}
   /^SEARCHFILENAMES=/{f14=1}
   END{
-    if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
-    if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
-    if(!f3) print "SEARCHFROMLEFT=false">>ARGV[1]
-    if(!f4) print "SEARCHREGEX=false">>ARGV[1]
-    if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
-    if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
-    if(!f7) print "SEARCHCOMPLETE=true">>ARGV[1]
-    if(!f8) print "IBOL=\"'"${IBOL}"'\" # reserved">>ARGV[1]
     if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
     if(!f10) print "HOTKEY_F3='"${HOTKEY_F3}"'">>ARGV[1]
     if(!f11) print "HOTKEY_F12='"${HOTKEY_F12}"'">>ARGV[1]
-    if(!f12) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
-    if(!f13) print "SHOWNODISPLAY=false">>ARGV[1]
+    if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
     if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
+    if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
+    if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
+    if(!f7) print "SEARCHCOMPLETE=true">>ARGV[1]
+    if(!f3) print "SEARCHFROMLEFT=false">>ARGV[1]
+    if(!f4) print "SEARCHREGEX=false">>ARGV[1]
+    if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
+    if(!f13) print "SHOWNODISPLAY=false">>ARGV[1]
+    if(!f8) print "IBOL=\"'"${IBOL}"'\" # reserved">>ARGV[1]
+    if(!f12) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
   }
   ' "${CONFIG}"
 
