@@ -798,7 +798,7 @@ subject="${func}(${subject},GREP)"
 if ! [ true = "${SEARCHCOMPLETE}" ]; then
   [ true = "${SEARCHFILENAMES}" ] && fnameleft="|| ${func}(${case}(a[1]),GREP)${left}"
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(${case}(a[4]),GREP)${left}"
-  [ true = "${SEARCHCATEGORIES}" ] && categ="|| ${func}(${case}(a[5]),GREP)"
+  case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(${case}(a[5]),GREP)";; esac
 fi
 > "${AWKQ}" echo '#!/usr/bin/gawk -f
 BEGIN {
@@ -1076,7 +1076,8 @@ start_dialog() # Returns when gtkdialog terminates [[[2
 # <action>s, <input>s, etc. to print the execution line on stderr:
 #   <action>${DEBUG1:+echo >&2 \$BASH_EXECUTION_STRING;}commands...</action>
 unset showcategories
-[ true = "${SEARCHCATEGORIES}" ] && showcategories=true
+[ true = "$SEARCHCATEGORIES" -o true = "$SEARCHCOMPLETE" ] && showcategories=true
+[ hidden = "${SEARCHCATEGORIES}" ] && unset showcategories
 # i18n Main window widgets
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext's limitation
@@ -1254,12 +1255,12 @@ start_dialog << EOF
     </hbox>
     ${REMARK# ]]]}
     ${REMARK# [[[. Menubar (nearly hidden 1x1).}
-    ${REMARK# The menubar hosts hotkey handlers, which are implemented as menu accelerators.}
-    ${REMARK# Hotkeys that are implemented as key-press-event handlers slow down typing way too much.}
+    ${REMARK# Implementing hotkeys as key-press-event handlers would slow down typing way too much.}
+    ${REMARK# So the menubar implements hotkey handlers as menu accelerators, which are fast.}
+    ${REMARK# Note that menu accelerators act globally, so these hotkeys really apply to all widgets.}
     <menubar height-request="1" width-request="1">
       <menu>
       ${REMARK#  [[[. Hotkeys for varENTRY.}
-      ${REMARK# Note that all menu accelerators act globally, so these hotkeys really apply to all widgets.}
         ${REMARK#   [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
         ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
         <menuitem accel-key="0xff55" accel-mods="0">

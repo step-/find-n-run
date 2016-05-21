@@ -27,7 +27,7 @@ define_source_plugin () { #{{{
     on=$on',\$1'
   fi
   [ true = "$SEARCHCOMMENTS" ] && on=$on',\$4'
-  [ true = "$SEARCHCATEGORIES" ] && on=$on',\$5'
+  case $SEARCHCATEGORIES in true|hidden) on=$on',\$5' ;; esac
   [ true = "$SEARCHCOMPLETE" ] && on='\$1,\$2,\$3,\$4,\$5'
   [ true = "$SEARCHREGEX" ] && ox= || ox=-k
   # $0 is the findnrun script file path.
