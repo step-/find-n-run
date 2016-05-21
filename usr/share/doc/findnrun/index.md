@@ -2,7 +2,7 @@
 
 **Findrun** - A progressive finder
 
-_2.1.1_
+_2.2.0_
 
 [Project home](http://github.com/step-/find-n-run)
    | [Downloads](http://github.com/step-/find-n-run/releases)
@@ -61,23 +61,14 @@ Both projects name the main script 'findnrun'.
 ## Documentation Topics
 
  * [Screenshots](screenshots.md)
-
  * [Installing](install.md) and Language Settings
-
  * [Starting](running.md) Findnrun
-
  * [Configuring](preference.md) Preferences
-
  * [Hotkeys](hotkey.md)
-
  * [Plugins](plugin.md)
-
  * [Reporting bugs](issues.md)
-
  * [Credits](CREDITS.md)
-
  * [Translating](TRANSLATING.md)
-
  * [License](LICENSE.md) GNU GPL v2
 
 ## Change Log

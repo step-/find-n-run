@@ -89,5 +89,5 @@ knowledge of shell scripting and of the exiftool command-line utility.
 
 The filmstrip plugin/application consists of several files located in
 `/usr/share/doc/findnrun/examples/filmstrip/`.
-[Plugin README](examples/filmstrip/README.md) file.
+Plugin [help file](examples/filmstrip/index.md).
 

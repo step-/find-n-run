@@ -5,6 +5,8 @@
  * `[F1]` - view help documentation
  * `[F2]` - cycle keyboard focus between the history field and the search input field
  * `[F3]` - start the next search plugin
+ * `[F12]` - activate the top search result item. Focus moves according
+   to user preference 'Focus search'
  * `[Escape]` - exit findnrun
  * `[Page Down]` - Rotate down search result items[1]
  * `[Page Up]` - Rotate up search result items[1]
@@ -17,8 +19,6 @@
 
 **With the focus in the search input field**
 
- * `[F12]` - activate the top search result item. Focus moves according
-   to user preference 'Focus search'
  * `[Enter]` - move focus to the top search result item
 
 **With the focus in the search result list**
@@ -36,5 +36,4 @@
  * `[Arrow Up]` - show the next history item
  * `[Enter]` - activate current entry text
  * `Edit keys` - edit current entry text, including a grabbed item
- * `[F2]` - cycle keyboard focus between the history field and the search input field
 

@@ -11,11 +11,11 @@ Add features to the standard application search window:
 
  * Copy file [source-me.sh](source-me.sh) to your home folder
    - [alternative location](examples/agrep_apps/source-me.sh).
- * Download and install package 'tre 0.8.0'.
-   You can get .txz and .pet packages from
-   [https://github.com/step-/find-n-run/releases/tag/2.1.1](https://github.com/step-/find-n-run/releases/tag/2.1.1)
-   and also from the Fatdog64 package manager.
- * Edit file `~/.findnrunrc` and **append** two lines; one line sources
+ * Requirement: Install command `agrep`, which is found in package
+   'tre 0.8.0' - 
+   [Download links](https://github.com/step-/find-n-run/releases/2.2.0)
+   for 32- and 64-bit pet and txz packages.
+ * Edit file `~/.findnrunrc` and **APPEND** two lines; one line sources
    this file and another line adds the new plugin source to SOURCES:
 ```
     . "$HOME/source-me.sh"

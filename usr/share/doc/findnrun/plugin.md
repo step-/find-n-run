@@ -40,16 +40,25 @@ terminal window, which this plugin doesn't start automatically.
 
 ### Demo Plugins
 
-**Filmstrip** is the prominent demo plugin for end users.  As you
+**Approximate Application Search** looks and works like the built-in
+application search, but it performs approximate searches that tolerate
+typing errors to some degree.[1]
+
+ * [Install and help](examples/agrep_apps/index.md)
+
+**Filmstrip** is an image viewer plugin for end users.  As you
 incrementally refine the search term the Filmstrip viewer displays
 thumbnails of the images that match your search results. Matches are
-checked against image filename and caption.[1]
+checked against image filename and caption.[2]
 
-Filmstrip isn't installed by default. To install it follow the
-instructions in its [README](examples/filmstrip/README.md) file.
-Once the plugin is installed press [F3](hotkey.md) repeatedly until the
-viewer starts.
+ * [Install and help](examples/filmstrip/index.md)
 
-[1] Searching captions requires installing package 'exiftool' for your
-   platform.
+**Notes**
+
+[1] Requirement: Install command `agrep`, which is found in the TRE package.
+ * [Download links](https://github.com/step-/find-n-run/releases/2.2.0)
+   for 32- and 64-bit pet and txz packages.
+
+[2] Optionally searching captions needs installing package 'exiftool'
+   for your platform.
 

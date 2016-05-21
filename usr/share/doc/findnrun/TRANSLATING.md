@@ -94,6 +94,7 @@ and full locale codes for your own case.
 ```
 
 Now you need to choose between two options:
+
  * [A] To create a **new translation** generate a new .po file
 ```
     t='/usr/share/doc/nls/findnrun/findnrun.pot'

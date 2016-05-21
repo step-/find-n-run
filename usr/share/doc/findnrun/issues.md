@@ -14,12 +14,10 @@ file new issues.
    in alphabetical order.
    You can work around this limitation by setting hidden user preference
    `ICON_DIRS`.
-
  * Prioritized language preferences via environment variable `LANGUAGE`
    are not supported. Findnrun honors the system locale code that
    environment variable `LANG` displays - when a matching translation
    file is installed.
-
  * Findnrun does not include the additional ROX-Filer application that
    the earlier Find'N'Run project has.
 
