@@ -84,6 +84,7 @@ HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
 FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 F3SF="${TMPD}/.f3s"; >"${F3SF}" # built-in/plugin source list view cycler
+F4SF="${TMPD}/search-output" # save+filter search results
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 SEP=`echo -e "\b"` # field separator of packed values
@@ -110,6 +111,7 @@ IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
 # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
 HOTKEY_F2=0:F2:0xffbf
 HOTKEY_F3=0:F3:0xffc0
+HOTKEY_F4=0:F4:0xffc1
 HOTKEY_F12=0:F12:0xffc9
 # Built-in sources
 # space separated list
@@ -136,9 +138,11 @@ awk '
   /^SOURCES=/{f12=1}
   /^SHOWNODISPLAY=/{f13=1}
   /^SEARCHFILENAMES=/{f14=1}
+  /^HOTKEY_F4=/{f15=1}
   END{
     if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
     if(!f10) print "HOTKEY_F3='"${HOTKEY_F3}"'">>ARGV[1]
+    if(!f15) print "HOTKEY_F4='"${HOTKEY_F4}"'">>ARGV[1]
     if(!f11) print "HOTKEY_F12='"${HOTKEY_F12}"'">>ARGV[1]
     if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
     if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
@@ -1119,6 +1123,7 @@ start_dialog << EOF
       ${REMARK# record is defined as Icon|Reserved|Label|PackedValues }
       <label>Reserved|Label|PackedValues</label>
       <variable>varLIST</variable>
+      <output file>$F4SF</output>
       ${REMARK# [[[. Populate list view.}
       <input icon-column="0">$(generate_invoke_source_tap)</input>
       ${REMARK# ]]]}
@@ -1276,6 +1281,14 @@ start_dialog << EOF
           <action>$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
           <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
+      ${REMARK#  [[[. Hotkeys for varLIST.}
+        ${REMARK#   [[[. Key F4 saves search results and invokes a filter.}
+        <menuitem accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
+          <action>save:varLIST</action>
+          <action>echo >&2 "TODO filter '$F4SF'"</action>
         </menuitem>
         ${REMARK#   ]]]}
       ${REMARK#  ]]]}
