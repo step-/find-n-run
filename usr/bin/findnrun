@@ -80,11 +80,12 @@ TMP0="${TMPD}/.FNRstart"; mkdir "${TMP0}" # built-in source resources
 DATF="${TMP0}/.dat" # database of .desktop file entries
 AWKB="${TMP0}/.build.awk" # builds (and queries) database
 AWKQ="${TMP0}/.query.awk" # queries database (faster)
+AWK4="${TMPD}/.saveflt.awk" # filters saved items
 HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
 FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 F3SF="${TMPD}/.f3s"; >"${F3SF}" # built-in/plugin source list view cycler
-F4SF="${TMPD}/search-output" # save+filter search results
+F4SF="${TMPD}/search-output" # saved items
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 SEP=`echo -e "\b"` # field separator of packed values
@@ -218,19 +219,40 @@ done
 # pipe-separated list
 BUILTIN_SOURCES="FNRstart|FNRsc"
 
+# Built-in save-filter-command. [[[2
+FNRSAVEFLT="gawk -f \"$AWK4\""
+# usage:
+#   SAVEFLT_<source-id>="CUT\"=i,j,k,...\" RDR="redirection" \$FNRSAVEFLT \"${file}\""
+# CUT and RDR explained at script AWK4
+
+# save-filter-command setup for built-in sources. [[[2
+# If xclip command exists then copy stdout to clipboard else to awk's stderr.
+# User preference XCLIP can override/disable clipboard copying.
+if [ -z "$XCLIP" ]; then
+  XCLIP=$(which xclip 2>/dev/null)
+  [ -e "$XCLIP" ] && XCLIP="|$XCLIP"
+fi
+if [ -z "$XCLIP" -o none = "$XCLIP" ]; then
+  XCLIP=">/dev/stderr"
+fi
+
 # Default built-in source "Desktop Apps" [[[2
-SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart"
+SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart:::FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$(gettext "application finder")
+# save item label, .desktop file fullpath, exec line, comments, categories
+SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"$XCLIP\" \$FNRSAVEFLT \"\${file}\""
 
 # Built-in source "Shell Completion" [[[2
-SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc"
+SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc"
 [ true = "${CASEDEPENDENT}" ] && unset i || i=i
 x="${TMPD}/.FNRsc"; mkdir "$x" &&
 # Embedded newline characters not allowed.
 TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su | tee "$t"; else grep -F'$i' "${term}" "$t"; fi;'
 ICON_FNRsc='/usr/share/doc/findnrun/FNRsc.svg'
 TITLE_FNRsc=$(gettext "shell completion")
+# save item label == exec line
+SAVEFLT_FNRsc="CUT=\"-4\" RDR=\"$XCLIP\" \$FNRSAVEFLT \"\${file}\""
 
 # Prepare sources. [[[1
 # Don't change next two formats; functions generate_invoke*()
@@ -910,6 +932,63 @@ $(n="${NSOURCES}"; printf "$(ngettext "%s source loaded" "%s sources loaded" "$n
   <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:GUI_ABOUT</action>
 </window>'
 
+# Prepare the save filter script. [[[1
+# Usage: gawk -f "$AWK4" "\${file}" with $CUT and $RDR environment variables
+> "${AWK4}" echo '#!/usr/bin/gawk -f
+# "CUT=i,j,k,..." selects which fields to print:
+# Positive indexes select source-defined fields.
+# Negative indexes select tree widget item fields in reverse order.
+# Thus -1 is the icon, and -4 is the item label.
+# "\t" (tab) is the output field separator.
+#
+# Typical redirections:
+# RDR=">/dev/stderr" or RDR=">/path/to/output/file"
+# RDR="|xclip" or RDR="|/path/to/executable-file"
+
+BEGIN {
+  FS = "|"
+  CUT=ENVIRON["CUT"]
+  RDR=ENVIRON["RDR"]
+  n = split(CUT, f, /,/)
+  if(match(RDR, /^[ \t]*[|]/)) {
+    redirect = "piper"
+  } else if(match(RDR, /^[ \t]*[>]/)) {
+    redirect = "printer"
+  } else {
+    printf "'"$(gettext "%s: invalid SAVEFLT redirection '%s'\n")"'", \
+      ENVIRON["ID"], RDR > "/dev/stderr"
+    exit(1)
+  }
+  RDR = substr(RDR, RSTART+RLENGTH)
+}
+{
+  # positive indexes
+  _ = split($(NF), a, /'"$SEP"'/)
+  # negative indexes
+  w = 0
+  while(!(++w>=NF)) {
+    a[-w] = $(w)
+  }
+  @redirect(f,a,n)
+}
+function piper(f,a,n,   i) { # [[[2
+  while(!(++i>=n)) {
+    printf "%s\t", a[f[i]] | RDR
+  }
+  if(n) {
+    print a[f[n]] | RDR
+  }
+}
+function printer(f,a,n,   i) { # [[[2
+  while(!(++i>=n)) {
+    printf "%s\t", a[f[i]] > RDR
+  }
+  if(n) {
+    print a[f[n]] > RDR
+  }
+}
+'
+
 # Helpers [[[1
 
 generate_get_drain_cmd() # [[[2
@@ -1289,7 +1368,7 @@ start_dialog << EOF
         ${REMARK#   [[[. Key F4 saves search results and invokes a filter.}
         <menuitem accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
           <action>save:varLIST</action>
-          <action>[ -n '\$SAVEFLT' ] && file='$F4SF' && eval \$SAVEFLT</action>
+          <action>if [ -n '\$SAVEFLT' ]; then file='$F4SF'; FNRSAVEFLT="$FNRSAVEFLT" eval \$SAVEFLT; fi</action>
         </menuitem>
         ${REMARK#   ]]]}
       ${REMARK#  ]]]}

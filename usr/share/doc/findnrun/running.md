@@ -109,6 +109,10 @@ initialization files.
 
     env GEOMETRY=500x200+100+100 findnrun
 
+`XCLIP`
+
+  Advanced setting for the save filter function. See XCLIP in [user preferences](preference.md).
+
 `FNRDEBUG`
 
   Debugging aid for plugin developers and bug reports.

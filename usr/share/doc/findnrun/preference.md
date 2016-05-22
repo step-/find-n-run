@@ -77,6 +77,14 @@ power users and custom applications:
     #  + /usr/share/midi-icons /usr/share/mini-icons"
     # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
+    # Set XCLIP to an alternative X clipboard copy/paste filter for hotkey F4.
+    # Default value: the xclip binary file, if it's installed.
+    # Use 'none' to disable clipboard copying; output is sent to stderr.
+    # Piping and/or redirection are also supported, .i.e.,
+    #   env XCLIP="|cut -f2 >/dev/stderr" findnrun &
+    #   env XCLIP=">/tmp/myfile" findnrun &
+    # Built-in sources honor this setting. Some plugins may not.
+    #XCLIP=
     # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included. 
     # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
     IBOL=' '

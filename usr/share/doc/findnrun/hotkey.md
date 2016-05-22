@@ -5,6 +5,7 @@
  * `[F1]` - view help documentation
  * `[F2]` - cycle keyboard focus between the history field and the search input field
  * `[F3]` - start the next search plugin
+ * `[F4]` - copy search results to file and/or clipboard ([XCLIP](preference.md) required)
  * `[F12]` - activate the top search result item. Focus moves according
    to user preference 'Focus search'
  * `[Escape]` - exit findnrun
