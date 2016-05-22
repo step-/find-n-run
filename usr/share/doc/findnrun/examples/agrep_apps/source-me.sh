@@ -1,7 +1,7 @@
 #!/bin/ash
 # This file is sourced by (b)ash not run.
 
-# Version: 1.0.0 2016-05-18
+# Version: 1.0.0
 # Author: step
 # License: GPLv2
 # Copyright (c)2016 step

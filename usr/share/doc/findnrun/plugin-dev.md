@@ -227,14 +227,13 @@ file and invokes save-filter-command as follows:
 
 Then save-filter-command can process the file to its own liking. The
 command string can use `${file}` to refer to the input save file, and
-`$FNRSAVEFLT` to run the pre-made filter that also the built-in sources
-run. The calling convention for `$FNRSAVEFLT` is unusual. Look at the
-example in the findnrun script source code. Look for `SAVEFLT_FNRstart`.
+`$FNRSAVEFLT` to leverage the save filter code that built-in sources
+run.
 
 ### Invocation Environment
 
-The _invocation environment_ provides tap-command and drain-command with
-the following preset variables:
+The _invocation environment_ provides tap-, drain- and save-filter-
+commands with the following preset variables:
 
  * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}`, `${ICON}`,
    `${INITSEARCH}`, `${MODE}` - from the source declaration
@@ -245,6 +244,12 @@ the following preset variables:
  * `${FNREVENT}` - invocation event name [3]
  * `${FNRRPC}` - call interface mailbox file, see section _Remote Call Interface_
  * `${FNRDEBUG}` - findnrun debugging level 1-9.
+
+For save-filter-command only there are also these variable that can be
+leveraged to create custom save filters:
+
+ * `${FNRSAVEFLT}` - save-filter code for built-in sources[4]
+ * `${FNRXCLIP}` - XCLIP redirection for built-in sources.
 
 [1] Value is `NA` if gtkdialog isn't running.
 
@@ -269,6 +274,9 @@ the following preset variables:
    has the focus.
  * **Activate** - Drain - Enter key pressed or mouse left-clicked when a
    search result list item has the focus.
+
+[4] The calling convention for `${FNRSAVEFLT}` is unusual. Look up the
+   definitions of `SAVEFLT_FNRstart` and `SAVEFLT_filmstrip` for examples.
 
 ### Findnrun User Interface and Source Plugins
 

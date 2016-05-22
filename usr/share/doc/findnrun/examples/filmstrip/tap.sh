@@ -16,7 +16,7 @@ xmax=$((${VIEWER_FRAMES} -1)) # image strip max row index (0-based)
 ymax=0 # ditto column index TODO implement ymax>0
 MAXSLOT=$(( (${ymax}+1) * (${xmax}+1) ))
 TMPD="${FNRTMP:-/tmp}/.${ID:-filmstrip}" && mkdir -p "${TMPD}" && chmod 700 "${TMPD}"
-RESF="${TMPD}/.result" # search results for earch ${term}
+RESF="${TMPD}/.result" # search results for each ${term}
 ALLF="${TMPD}/.all" # cache all image paths between invocations
 VIEWER="${0%/*}/viewer.sh" # viewer component
 INPUTSTEM="${TMPD}/.input" # viewer component's input file stem
@@ -25,7 +25,7 @@ BLANKIMG="${0%/*}/spacer.png"
 # i18n Localization {{{1
 TEXTDOMAIN="findnrun-plugin-filmstrip"
 
-splash () # $1-single-line-message, non-blocking {{{1
+infobox () # $1-single-line-message, non-blocking {{{1
 {
   local pid x
   # i18 $TITLE translation fyi. {{{
@@ -38,7 +38,7 @@ splash () # $1-single-line-message, non-blocking {{{1
   pid=$(Xdialog --title "${TITLE}" --no-buttons \
     --infobox "$x$1$x" 0x0 999999 1>&2 &
   echo -n $!)
-  # Return sane pid to kill splash dialog.
+  # Return sane pid to kill infobox dialog.
   case ${pid} in 0|1) ;; *) echo -n ${pid};; esac
 }
 
@@ -55,20 +55,20 @@ if ! [ -s "${ALLF}" ]; then
   #}}}
   # Warn against finding no files. {{{
   if ! [ -s "${ALLF}" ]; then
-    splash_pid=$(splash "$(gettext "Warning: no files found.")")
+    infobox_pid=$(infobox "$(gettext "Warning: no files found.")")
     sleep 2
-    kill ${splash_pid} >/dev/null 2>&1
+    kill ${infobox_pid} >/dev/null 2>&1
   fi
   # }}}
   # Optionally read custom caption data {{{
   if [ -n "${CUSTOM_CAPTION}" ] && [ -s "${ALLF}" ]; then
-    splash_pid=$(splash "$(gettext "Reading captions...")")
+    infobox_pid=$(infobox "$(gettext "Reading captions...")")
 
     ${CUSTOM_CAPTION} "${ALLF}" > "${ALLF}.tmp"
     # Guard against gross failure of $CUSTOM_CAPTION function.
     [ -s "${ALLF}.tmp" ] && mv "${ALLF}.tmp" "${ALLF}"
 
-    kill ${splash_pid} >/dev/null 2>&1
+    kill ${infobox_pid} >/dev/null 2>&1
   fi
   #}}}
 fi

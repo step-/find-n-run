@@ -224,7 +224,7 @@ BUILTIN_SOURCES="FNRstart|FNRsc"
 FNRSAVEFLT="gawk -f \"$AWK4\""
 # usage:
 #   SAVEFLT_<source-id>="CUT\"=i,j,k,...\" RDR="redirection" \$FNRSAVEFLT \"${file}\""
-# CUT and RDR explained at script AWK4
+# CUT and RDR explained at script AWK4 - see examples for FNRstart and Filmstrip source.
 
 # save-filter-command setup for built-in sources. [[[2
 # If xclip command exists then copy stdout to clipboard else to awk's stderr.

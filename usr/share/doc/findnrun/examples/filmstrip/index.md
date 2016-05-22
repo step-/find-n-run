@@ -62,6 +62,23 @@ By default clicking a picture in the viewer window opens the image file
 full pathname with ROX-filer, which presumably should start the default
 image viewer. This action can be customized with CUSTOM\_CLICK.
 
+You can save search results by pressing hotkey F4. By default
+tab-separated text data fields are copied to the clipboard if xclip is
+installed, otherwise data are sent to the standard error stream.  To save
+to a file start findnrun like so:
+```
+    XCLIP=">/path/to/save-file.tab" findnrun &
+```
+To keep just specific columns use a filter command, i.e.:
+```
+    XCLIP="|cut -f2 >/path/to/save-file.csv" findnrun &
+    # -f2 : image file full path
+```
+To copy to the clipboard:
+```
+    XCLIP="|xclip" findnrun &
+```
+
 Search results can be paginated by pressing the PageDown/PageUp keys
 while the search input field is selected. Page size is $VIEWER\_FRAMES
 rows. Paginating down/up the search result list rotates the first/last
