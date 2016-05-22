@@ -98,7 +98,7 @@ LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
 # Unexport these variables before running the selected command.
-UNEXPORT="unset GUI_ABOUT varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET MINIWINDOW"
+UNEXPORT="unset GUI_ABOUT varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET"
 # unset varLIST and varF3 separately
 
 # Prepare the configuration file. [[[1
@@ -197,8 +197,9 @@ while ! [ "${1#--}" = "$1" ]; do
   shift
 done
 
-# More environment variables: BROWSER, LANG [[[1
-# =============================================================================
+# Initialize more variables [[[1
+# Some environment variables may affect operations:
+# BROWSER, GEOMETRY, LANG, XCLIP, and more.
 
 which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
 
