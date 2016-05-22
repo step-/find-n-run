@@ -26,6 +26,16 @@ These values can be set also from the main window:
 These values aren't available from the main window. They are intended mostly for
 power users and custom applications:
 ```gettext
+    # Hotkey format: accel-mods':'key-sym':'accel-key
+    # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
+    # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field.
+    HOTKEY_F2=0:F2:0xffbf
+    # Pressing HOTKEY_F3 starts the next available source plugin.
+    HOTKEY_F3=0:F3:0xffc0
+    # Pressing HOTKEY_F4 saves+filters search results (see XCLIP)
+    HOTKEY_F4=0:F4:0xffc1
+    # Pressing HOTKEY_F12 activates the top search result list item.
+    HOTKEY_F12=0:F12:0xffc9
     # Icon cache location.
     ICONCACHE=${HOME}/.icons
     # Extend search subject to .desktop file names.
@@ -35,9 +45,10 @@ power users and custom applications:
     # Subsumed by SEARCHCOMPLETE=true.
     SEARCHCOMMENTS=false
     # Extend search subject to application categories.
+    # Show category labels in the comment field.
     # Subsumed by SEARCHCOMPLETE=true.
-    # When true categories are shown in the comment field.
-    # Prepend ';' to search for category only, i.e., ';office'.
+    # Set 'hidden' to hide category labels in the comment field.
+    # In search input field prepend ';' to search for category only, i.e., ';office'.
     SEARCHCATEGORIES=false
     # Search in application names, file names, command lines, comments and categories all at once.
     # When false and no other SEARCH* field is true search in application names only.
@@ -53,6 +64,9 @@ power users and custom applications:
     CASEDEPENDENT=false
     # Main window geometry, no default.
     # Command-line option --geometry=WxH+X+Y overrides this value.
+    # Ignore the NoDisplay=true attribute value of .desktop files (not recommended).
+    # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default.
+    SHOWNODISPLAY=false
     #GEOMETRY=460x280+100+200
     # Desktop file search directories, space-separated list, system default.
     #DESKTOP_FILE_DIRS="$HOME/.local/applications /usr/share/applications +
@@ -63,20 +77,9 @@ power users and custom applications:
     #  + /usr/share/midi-icons /usr/share/mini-icons"
     # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
-    # Hotkey format: accel-mods':'key-sym':'accel-key
-    # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
-    # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field.
-    HOTKEY_F2=0:F2:0xffbf
-    # Pressing HOTKEY_F3 starts the next available source plugin.
-    HOTKEY_F3=0:F3:0xffc0
-    # Pressing HOTKEY_F12 activates the top search result list item.
-    HOTKEY_F12=0:F12:0xffc9
     # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included. 
     # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
     IBOL=' '
-    # Ignore the NoDisplay=true attribute value of .desktop files (not recommended).
-    # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default.
-    SHOWNODISPLAY=false
 ```
 
 ### See Also
