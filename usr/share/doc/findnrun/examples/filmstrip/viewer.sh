@@ -56,16 +56,18 @@ generate_pixmap() { # $1-varname [$2-indent] [[[1
   # attributes. However, they don't seem to work with symlinks, so
   # another widget is used synchronously to refresh all pixmaps.
   printf "${2#*:}%s\\n" \
-'<eventbox name="FilmstripPictureFrame">' \
-'  <vbox spacing="0" margin="'$margin'" width-request="'$width'" height-request="'$height'">' \
-'    <pixmap yalign="0">' \
-'      <variable export="false">'$1'</variable>' \
-'      <input file>'"${INPUTSTEM}-$1"'</input>' \
-"      <width>${PICTURE_WIDTH}</width>" \
-'    </pixmap>' \
-'  </vbox>' \
-'  <action signal="button-press-event">'${click_command}' "$(readlink -f "'"${INPUTSTEM}-$1"'")" & </action>' \
-'</eventbox>'
+'<vbox space-fill="false" space-expand="false">' \
+'  <eventbox name="FilmstripPictureFrame">' \
+'    <vbox spacing="0" margin="'$margin'" width-request="'$width'" height-request="'$height'">' \
+'      <pixmap yalign="0">' \
+'        <variable export="false">'$1'</variable>' \
+'        <input file>'"${INPUTSTEM}-$1"'</input>' \
+"        <width>${PICTURE_WIDTH}</width>" \
+'      </pixmap>' \
+'    </vbox>' \
+'    <action signal="button-press-event">'${click_command}' "$(readlink -f "'"${INPUTSTEM}-$1"'")" & </action>' \
+'  </eventbox>' \
+'</vbox>'
 }
 
 generate_caption() { # $1-varname [$2-indent] [[[1
@@ -73,16 +75,18 @@ generate_caption() { # $1-varname [$2-indent] [[[1
   local width=$((${margin}*2 + ${CAPTION_WIDTH}))
   local height=$((${margin}*2 + ${CAPTION_HEIGHT}))
 	printf "${2#*:}%s\\n" \
-'<eventbox name="FilmstripCaption">' \
-'  <vbox spacing="0" margin="'$margin'" width-request="'$width'" height-request="'$height'">' \
-'    <edit name="FilmstripCaption" cursor-visible="false" editable="false" accepts-tab="false" wrap-mode="2" left-margin="5" right-margin="5"'"${scrollbars}"'>' \
-'      <variable export="false">'$1'c</variable>' \
-'      <input file>'"${INPUTSTEM}-$1"c'</input>' \
-"      <width>${CAPTION_WIDTH}</width>" \
-"      <height>${CAPTION_HEIGHT}</height>" \
-'    </edit>' \
-'  </vbox>' \
-'</eventbox>'
+'<vbox space-fill="true" space-expand="true">' \
+'  <eventbox name="FilmstripCaption">' \
+'    <vbox spacing="0" margin="'$margin'" width-request="'$width'" height-request="'$height'">' \
+'      <edit name="FilmstripCaption" cursor-visible="false" editable="false" accepts-tab="false" wrap-mode="2" left-margin="5" right-margin="5"'"${scrollbars}"'>' \
+'        <variable export="false">'$1'c</variable>' \
+'        <input file>'"${INPUTSTEM}-$1"c'</input>' \
+"        <width>${CAPTION_WIDTH}</width>" \
+"        <height>${CAPTION_HEIGHT}</height>" \
+'      </edit>' \
+'    </vbox>' \
+'  </eventbox>' \
+'</vbox>'
 }
 
 # Main window [[[1
