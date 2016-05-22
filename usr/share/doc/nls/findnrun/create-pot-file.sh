@@ -67,7 +67,7 @@ EOF
   # Delete annoyances
   sed '
 /#-#-#-#-#/d
-s~^#: ../../../../~#: /usr/~
+/^#: /{s~ \.\./\.\./\.\./\.\./~ /usr/~g}
 s~^#:.*'"$PACKAGE_NAME"'~#: ~
 ' "$fpot.tmp" || ERRORS="${ERRORS}
   sed"

@@ -1,7 +1,8 @@
 # This file is sourced not run
 
 # Optional settings {{{1
-MDVIEW=./mdview
+MDVIEW=mdview
+# since version 2.2.0 using Fatdog64-710 alpha mdview 2016.04.26 - which includes my patches.
 
 # Required script settings {{{1
 # Output file name
@@ -49,7 +50,7 @@ is_to_be_translated() # $1-filepath
 }
 
 # Required project header settings {{{1
-PACKAGE_VERSION="2.1.0"
+PACKAGE_VERSION="2.2.0"
 PACKAGE_NAME="find-n-run"
 PACKAGE_TITLE="Findnrun $PACKAGE_VERSION"
 PACKAGE_COPYRIGHT="2015-2016 step; 2015 FSH, L18L, step"
