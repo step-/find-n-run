@@ -242,7 +242,7 @@ SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart:::FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$(gettext "application finder")
 # save item label, .desktop file fullpath, exec line, comments, categories
-SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"$XCLIP\" \$FNRSAVEFLT \"\${file}\""
+SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
 # Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc"
@@ -253,7 +253,7 @@ TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; 
 ICON_FNRsc='/usr/share/doc/findnrun/FNRsc.svg'
 TITLE_FNRsc=$(gettext "shell completion")
 # save item label == exec line
-SAVEFLT_FNRsc="CUT=\"-4\" RDR=\"$XCLIP\" \$FNRSAVEFLT \"\${file}\""
+SAVEFLT_FNRsc="CUT=\"-4\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
 # Prepare sources. [[[1
 # Don't change next two formats; functions generate_invoke*()
@@ -1013,6 +1013,20 @@ generate_get_source() # [$1-event] [[[2
   [ -n "${DEBUG3}" ] && echo -n '; set +x; echo >&2 "]]"'
 }
 
+generate_invoke_source_save_filter() # [[[2
+{
+  # Echo sh code that invokes source[varF3]'s save-filter-command.
+  # Unexport all vars.
+  echo -n "$UNEXPORT varLIST varF3 invokeTAP invokeDRAIN"
+  echo -n "; if [ -n \"\$SAVEFLT\" ]; then"
+  echo -n   " file=\"$F4SF\""
+  echo -n   "; FNRDEBUG=$FNRDEBUG"
+  echo -n   " FNRTMP=\"$TMPD\" FNRPID=$FNRPID FNRRPC=\"$FNRRPC\""
+  echo -n   " FNRSAVEFLT=\"$FNRSAVEFLT\" FNRXCLIP=\"$XCLIP\"" # specifically for save-filter
+  echo -n   " eval \$SAVEFLT"
+  echo -n '; fi'
+}
+
 generate_invoke_source_tap() # [[[2
 {
   # Echo sh code that invokes source[varF3]'s tap-command.
@@ -1369,7 +1383,7 @@ start_dialog << EOF
         ${REMARK#   [[[. Key F4 saves search results and invokes a filter.}
         <menuitem accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
           <action>save:varLIST</action>
-          <action>if [ -n '\$SAVEFLT' ]; then file='$F4SF'; FNRSAVEFLT="$FNRSAVEFLT" eval \$SAVEFLT; fi</action>
+          <action>$(generate_invoke_source_save_filter)</action>
         </menuitem>
         ${REMARK#   ]]]}
       ${REMARK#  ]]]}
