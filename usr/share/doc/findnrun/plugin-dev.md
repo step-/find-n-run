@@ -224,10 +224,12 @@ When the user presses hotkey `F4` findnrun saves the search results to a
 file and invokes save-filter-command as follows:
 ```
     eval <save-filter-command>
-```
-save-filter-command should reference the save file as `${file}` and
-process it to its own liking. See the built-in FNRstart source code for
-examples.
+
+Then save-filter-command can process the file to its own liking. The
+command string can use `${file}` to refer to the input save file, and
+`$FNRSAVEFLT` to run the pre-made filter that also the built-in sources
+run. The calling convention for `$FNRSAVEFLT` is unusual. Look at the
+example in the findnrun script source code. Look for `SAVEFLT_FNRstart`.
 
 ### Invocation Environment
 

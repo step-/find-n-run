@@ -34,7 +34,7 @@ define_source_plugin () { #{{{
   local plgdir="${0%/*}/../share/doc/findnrun/examples/agrep_apps"
   # This plugin provides its own help file "$plgdir/index.md"
   PLGDIR_agrep_apps="$plgdir"
-  SOURCE_agrep_apps="agrep_apps:::agrep_apps:::agrep_apps"
+  SOURCE_agrep_apps='agrep_apps:::agrep_apps:::agrep_apps:FNRstart'
   TITLE_agrep_apps='approximate application finder'
   if [ -e "$bin_agrep_apps" ]; then
     TAP_agrep_apps=\
