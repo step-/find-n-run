@@ -124,22 +124,24 @@ echo '    </hbox>'
   y=$((y + 1))
 done)
     <eventbox name="FilmstripButtonBar">
-      <hbox space-fill="false" space-expand="false">
-        ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
-        <text space-fill="true" space-expand="true"><label>""</label></text>
-        <button tooltip-text="$(gettext "Restart Search")" stock-icon-size="1">
-          <input file stock="gtk-refresh"></input>
-          <action>. "${INPUTSTEM%/*}/.btn-restart-search.sh"; date +'RestartSearch %s' >'${FNRRPC}'</action>
-        </button>
-        <button tooltip-text="$(gettext "Help")" stock-icon-size="1">
-          <input file stock="gtk-help"></input>
-          <action>rox '${0%/*}/README.md' || xdg-open '${0%/*}/README.md' & </action>
-        </button>
-        <button tooltip-text="$(gettext "Exit Filmstrip")" stock-icon-size="1">
-          <input file stock="gtk-quit"></input>
-          <action>exit:EXIT</action>
-        </button>
-      </hbox>
+      <vbox space-fill="false" space-expand="false">
+        <hbox space-fill="false" space-expand="false">
+          ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
+          <text space-fill="true" space-expand="true"><label>""</label></text>
+          <button tooltip-text="$(gettext "Restart Search")" stock-icon-size="1">
+            <input file stock="gtk-refresh"></input>
+            <action>. "${INPUTSTEM%/*}/.btn-restart-search.sh"; date +'RestartSearch %s' >'${FNRRPC}'</action>
+          </button>
+          <button tooltip-text="$(gettext "Help")" stock-icon-size="1">
+            <input file stock="gtk-help"></input>
+            <action>rox '${0%/*}/README.md' || xdg-open '${0%/*}/README.md' & </action>
+          </button>
+          <button tooltip-text="$(gettext "Exit Filmstrip")" stock-icon-size="1">
+            <input file stock="gtk-quit"></input>
+            <action>exit:EXIT</action>
+          </button>
+        </hbox>
+      </vbox>
     </eventbox>
   </vbox>
   ${REMARK# --------------------------------------------}
