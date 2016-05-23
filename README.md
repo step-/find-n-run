@@ -12,6 +12,7 @@ A progressive finder.
 
 ## News
 
+ * **23-May-2016 Test version 2.2.0 available**
  * **25-Apr-2016 Release 2.1.1 is a recommended upgrade for all users.**
 
 ## Introduction, Features, Installing, Documentation and more
