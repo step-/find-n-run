@@ -1361,7 +1361,7 @@ start_dialog << EOF
     <menubar height-request="1" width-request="1">
       <menu>
       ${REMARK#  [[[. Hotkeys for varENTRY.}
-        ${REMARK#   [[[. Keys PageUp/PageDown invoke the current source plugin tap.}
+        ${REMARK#   [[[. Keys PageUp/PageDown paginate the current source plugin tap.}
         ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
         <menuitem accel-key="0xff55" accel-mods="0">
           <action>date '+PageUp %s'>"${ETAP}"</action>
@@ -1529,6 +1529,10 @@ start_dialog << EOF
     ${DEBUG1:+<action>echo>&2 "RPC [ \$RPC ]"</action>}
     ${REMARK#  [[[. PresentMainWindow}
     <action condition="command_is_true(case \${RPC% *} in *PresentMainWindow*) echo 1;; esac)">presentwindow:MAINWINDOW</action>
+    ${REMARK#  ]]]}
+    ${REMARK#  [[[. PresentMainSearchInput}
+    <action condition="command_is_true(case \${RPC% *} in *PresentMainSearchInput*) echo 1;; esac)">presentwindow:MAINWINDOW</action>
+    <action condition="command_is_true(case \${RPC% *} in *PresentMainSearchInput*) echo 1;; esac)">grabfocus:varSEARCH</action>
     ${REMARK#  ]]]}
     ${REMARK#  [[[. RestartSearch}
     ${REMARK# This call forces a tap-command invocation with INITSEARCH input.}

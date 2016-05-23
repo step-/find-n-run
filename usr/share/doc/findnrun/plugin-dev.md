@@ -345,13 +345,12 @@ there.
 
  * Copy or link each `icon` as `${FNRTMP}/icons/$(basename icon)`
  * Do not create new sub-folders - gtkdialog will not display icons from
-   that sub-folder
- * Do not delete files or existing sub-folders that you do not own -
-   this is a shared location
- * This is a temporary location - it exists only while findnrun is running.
-
-If a temporary location isn't suitable for your needs, copy (or link)
-your icons in `$XDG_DATA_DIRS` before findnrun starts.
+   those sub-folders
+ * Do not delete existing files and sub-folders that you do not own -
+   this is a shared location.
+ * This is also a temporary location that exists only while findnrun
+   is running.  If a temporary directory isn't suitable for your needs,
+   copy (or link) your icons in `$XDG_DATA_DIRS` before findnrun starts.
 
 **Paginating Search Results**
 
@@ -406,6 +405,8 @@ Recognized calls:
  * `ExitFNR` - exit findnrun (this function is always executed last)
  * `PresentMainWindow` - raise findnrun's main window to top and give it
    the focus
+ * `PresentMainSearchInput` - `PresentMainWindow` and set focus to the
+   search input field
  * `RestartSearch` - reset search input field to `<init-search>` and
    invoke `<tap-command>`
  * `PageUp` - Paginate up, cf. _Paginating Search Results_
