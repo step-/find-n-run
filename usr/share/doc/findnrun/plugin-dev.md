@@ -408,6 +408,8 @@ Recognized calls:
    the focus
  * `RestartSearch` - reset search input field to `<init-search>` and
    invoke `<tap-command>`
+ * `PageUp` - Paginate up, cf. _Paginating Search Results_
+ * `PageDown` - Paginate down
 
 ### Findnrun Termination and Plugins
 

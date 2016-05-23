@@ -1535,6 +1535,11 @@ start_dialog << EOF
     <action condition="command_is_true(case \${RPC% *} in *RestartSearch*) echo 1;; esac)">clear:varSEARCH</action>
     <action condition="command_is_true(case \${RPC% *} in *RestartSearch*) echo 1;; esac)">refresh:varSEARCH</action>
     ${REMARK#  ]]]}
+    ${REMARK#   [[[. PageUp/PageDown paginate the current source plugin tap.}
+    ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
+    <action condition="command_is_true(case \${RPC% *} in *PageUp*) echo 1;; esac)">date '+PageUp %s'>"${ETAP}"</action>
+    <action condition="command_is_true(case \${RPC% *} in *PageDown*) echo 1;; esac)">date '+PageDown %s'>"${ETAP}"</action>
+    ${REMARK#   ]]]}
     ${REMARK#  [[[. Exit}
     <action condition="command_is_true(case \${RPC% *} in *ExitFNR*) echo 1;; esac)">exit:EXIT</action>
     ${REMARK#  ]]]}
