@@ -127,8 +127,8 @@ echo '      </frame>'
 echo '    </hbox>'
   y=$((y + 1))
 done)
-    <eventbox name="FilmstripButtonBar">
-      <vbox space-fill="false" space-expand="false">
+    <vbox space-fill="false" space-expand="false">
+      <eventbox name="FilmstripButtonBar">
         <hbox space-fill="false" space-expand="false">
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
           <text space-fill="true" space-expand="true"><label>""</label></text>
@@ -145,8 +145,8 @@ done)
             <action>exit:EXIT</action>
           </button>
         </hbox>
-      </vbox>
-    </eventbox>
+      </eventbox>
+    </vbox>
   </vbox>
   ${REMARK# --------------------------------------------}
   ${REMARK#   Only invisible widgets below this line.   }
