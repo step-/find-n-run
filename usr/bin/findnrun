@@ -238,9 +238,10 @@ if [ -z "$XCLIP" -o none = "$XCLIP" ]; then
 fi
 
 # Default built-in source "Desktop Apps" [[[2
-SOURCE_FNRstart="FNRstart:::FNRstart:FNRstart:::FNRstart"
+SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$(gettext "application finder")
+ICON_FNRstart='/usr/share/doc/findnrun/findnrun.svg' # Filmstrip plugin expects.
 # save item label, .desktop file fullpath, exec line, comments, categories
 SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
