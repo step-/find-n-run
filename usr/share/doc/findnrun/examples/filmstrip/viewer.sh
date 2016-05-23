@@ -112,6 +112,7 @@ height_request=$(( 77 + ${CAPTION_HEIGHT} + ${PICTURE_HEIGHT} ))
 cat > "${INPUTSTEM%/*}/.viewer.xml" << EOF
 <window name="FilmstripWindow" title="${TITLE}" icon-name="filmstrip" width-request="${width_request}" height-request="${height_request}">
   <vbox spacing="${WINDOW_SPACING}">
+    ${REMARK# [[[. Image+Caption Frames.}
 $(y=0; while [ $y -lt $maxrow ]; do
 echo '    <hbox>'
   x=0; while [ $x -lt $maxcol ]; do
@@ -127,30 +128,84 @@ echo '      </frame>'
 echo '    </hbox>'
   y=$((y + 1))
 done)
+    ${REMARK# ]]]}
+    ${REMARK# [[[. Button Bar.}
     <vbox space-fill="false" space-expand="false">
       <eventbox name="FilmstripButtonBar">
         <hbox space-fill="false" space-expand="false">
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
           <text space-fill="true" space-expand="true"><label>""</label></text>
-          <button tooltip-text="$(gettext "Restart Search")" stock-icon-size="1">
+          <button tooltip-text="$(gettext "Roll Pictures Left [Alt+PageUp]")" stock-icon-size="1">
+            <input file stock="gtk-go-back"></input>
+            <action>date +'PageUp %s' >'${FNRRPC}'</action>
+          </button>
+          <button tooltip-text="$(gettext "Roll Pictures Right [Alt+PageDown]")" stock-icon-size="1">
+            <input file stock="gtk-go-forward"></input>
+            <action>date +'PageDown %s' >'${FNRRPC}'</action>
+          </button>
+          <button tooltip-text="$(gettext "Focus Search Window [F2]")">
+            <input file icon="findnrun"></input>
+            <action>date +"PresentMainSearchInput %s" > "${FNRRPC}"</action>
+          </button>
+          <button tooltip-text="$(gettext "Reload All Images [F5]")" stock-icon-size="1">
             <input file stock="gtk-refresh"></input>
             <action>. "${INPUTSTEM%/*}/.btn-restart-search.sh"; date +'RestartSearch %s' >'${FNRRPC}'</action>
           </button>
-          <button tooltip-text="$(gettext "Help")" stock-icon-size="1">
+          <button tooltip-text="$(gettext "Help [F1]")" stock-icon-size="1">
             <input file stock="gtk-help"></input>
-            <action>rox '${0%/*}/README.md' || xdg-open '${0%/*}/README.md' & </action>
+            <action>v=\$(which mdview 2>/dev/null || echo xdg-open); f="${0%/*}/index.md"; \$v "\$f" &</action>
           </button>
-          <button tooltip-text="$(gettext "Exit Filmstrip")" stock-icon-size="1">
+          <button tooltip-text="$(gettext "Exit Filmstrip [Esc]")" stock-icon-size="1">
             <input file stock="gtk-quit"></input>
             <action>exit:EXIT</action>
           </button>
         </hbox>
       </eventbox>
     </vbox>
+    ${REMARK# ]]]}
+    ${REMARK# [[[. Menubar (nearly hidden 1x1).}
+    ${REMARK# So the menubar implements hotkey handlers as menu accelerators, which are fast.}
+    ${REMARK# Note that menu accelerators act globally, so these hotkeys really apply to all widgets.}
+    <menubar height-request="1" width-request="1">
+      <menu>
+      ${REMARK#   [[[. Keys Alt+PageUp/PageDown invoke the current source plugin tap.}
+      ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
+      <menuitem accel-key="0xff55" accel-mods="8">
+        <action>date '+PageUp %s'>'${FNRRPC}'</action>
+      </menuitem>
+      <menuitem accel-key="0xff56" accel-mods="8">
+        <action>date '+PageDown %s'>'${FNRRPC}'</action>
+      </menuitem>
+      ${REMARK#   ]]]}
+      ${REMARK#   [[[. Key ESC closes the viewer window.}
+      <menuitem accel-key="0xff1b" accel-mods="0">
+        <action>closewindow:PLUGIN_filmstrip</action>
+      </menuitem>
+      ${REMARK#   ]]]}
+      ${REMARK#   [[[. Key F1 invokes the help viewer.}
+      <menuitem accel-key="0xffbe" accel-mods="0">
+        <action>v=\$(which mdview 2>/dev/null || echo xdg-open); f="${0%/*}/index.md"; \$v "\$f" &</action>
+      </menuitem>
+      ${REMARK#   ]]]}
+      ${REMARK#   [[[. Key F2 changes input focus to findnruns search input field.}
+      <menuitem accel-key="0xffbf" accel-mods="0">
+        <action>date +"PresentMainSearchInput %s" > "${FNRRPC}"</action>
+      </menuitem>
+      ${REMARK#   ]]]}
+      ${REMARK#   [[[. Key F5 rebuilds the data cache.}
+      <menuitem accel-key="0xffc2" accel-mods="0">
+        <action>. "${INPUTSTEM%/*}/.btn-restart-search.sh"; date +'RestartSearch %s' >'${FNRRPC}'</action>
+      </menuitem>
+      ${REMARK#   ]]]}
+        <label>""</label>
+      </menu>
+    </menubar>
+    ${REMARK# ]]]}
   </vbox>
   ${REMARK# --------------------------------------------}
   ${REMARK#   Only invisible widgets below this line.   }
   ${REMARK# --------------------------------------------}
+  ${REMARK# [[[. Automation.}
   <entry visible="false" sensitive="false" auto-refresh="true">
     <variable export="false">REFRESHPIXMAPS</variable>
     <input file>"${INPUTSTEM}-refresh"</input>
@@ -173,17 +228,18 @@ done
     <variable export="false">KILLPID</variable>
     <input>ps -ho ppid:1 \$\$ >> "${PIDF}"</input>
   </entry>
-  ${REMARK# --- After showing this window ---}
+  ${REMARK# ]]]}
+  ${REMARK# --- After showing this window. [[[-}
   <timer milliseconds="true" interval="100" visible="false">
     <variable export="false">TIMER0</variable>
     <action>disable:TIMER0</action>
     ${REMARK# Give focus to findnruns search input widget.}
-    <action>command:date +"PresentMainWindow %s" > "${FNRRPC}"</action>
+    <action>date +"PresentMainSearchInput %s" > "${FNRRPC}"</action>
   </timer>
   ${REMARK# -]]]}
+  ${REMARK# ]]]}
   <action signal="delete-event">exit:abort</action>
   <variable>PLUGIN_filmstrip</variable>
-  <action signal="key-press-event" condition="command_is_true([ \$KEY_SYM = Escape ] && echo true )">closewindow:PLUGIN_filmstrip</action>
 </window>
 EOF
 

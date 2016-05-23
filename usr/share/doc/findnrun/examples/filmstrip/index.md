@@ -5,10 +5,7 @@ Progressive image search
 Filmstrip is a source plugin for Findnrun.
 As you incrementally refine the search term in Findnrun's search window,
 an image viewer displays thumbnails of the images that match your search
-results. Matches are checked against image filename and caption.[1]
-
-[1] Searching captions requires installing package 'exiftool' for your
-   platform.
+results. Matches are checked against image filename and caption.
 
 ### Requirements and Installation
 
@@ -16,15 +13,15 @@ results. Matches are checked against image filename and caption.[1]
    - [alternative location](examples/filmstrip/source-me.sh).
  * Copy file [taprc](taprc) to your home folder as `~/.filmstriprc`
    - [alternative location](examples/filmstrip/taprc).
- * Edit file `~/.findnrunrc` and **append** two lines; one line sources
+ * Edit file `~/.findnrunrc` and **APPEND** two lines; one line sources
    this file and another line adds the new plugin source to SOURCES:
 ```
     . "$HOME/source-me.sh"
-    SOURCES='FNRstart filmstrip FNRsc' # <<< REVIEW AND CHANGE IF NECESSARY
+    SOURCES='FNRstart filmstrip FNRsc' # <<< CHANGE IF NECESSARY
 ```
 
- * Start findnrun. Press 'F3' to start the filmstrip viewer.
-   You may press Ctrl+1 to use the standard 'application finder'.
+ * Start findnrun. Press 'F3' to activate the filmstrip viewer.
+   You may press Ctrl+1 to return to the standard 'application finder'.
 
 This plugin can be further configured by editing its configuration file
 '[taprc](taprc)' - [alternative location](examples/filmstrip/taprc).
@@ -36,16 +33,15 @@ This plugin can be further configured by editing its configuration file
    folder locations, and that `TYPING_RATE` is well-suited to your
    hardware (try the default value first).
 
-For advanced features locate and install the 'exiftool' package for
-your platform. To customize search tags read about `CUSTOM_CAPTION` in
-file 'taprc'.
+For advanced features read section _Suggested Packages_.
+To customize search tags read about `CUSTOM_CAPTION` in file 'taprc'.
 
 ### Operation
 
-The Filmstrip plugin outputs at most $LIST\_LINES (60) rows at the time to the
-search result list. Each row label is the shortened full pathname of a
-JPEG image file under folder $SEARCH\_IN.  Activating a row opens a demo
-dialog window that shows the image full pathname.
+The Filmstrip plugin outputs at most $LIST\_LINES (60) rows at the time
+to the search result list. Each row label is the shortened full pathname
+of a JPEG image file under folder $SEARCH\_IN.  Activating a row opens a
+demo dialog window that shows the image full pathname.
 
 The first $VIEWER\_FRAMES (5) images are displayed in a separate
 thumbnail viewer, which auto-updates while the user keys in the search
@@ -79,18 +75,18 @@ To copy to the clipboard:
     XCLIP="|xclip" findnrun &
 ```
 
-Search results can be paginated by pressing the PageDown/PageUp keys
+Search results can be paginated by pressing the PageDown or PageUp keys
 while the search input field is selected. Page size is $VIEWER\_FRAMES
-rows. Paginating down/up the search result list rotates the first/last
-$VIEWER\_FRAMES items to the bottom/top of the list respectively. Viewer
-contents update consequently. Typing or continuing to type the search
-term updates the list entirely and deliveres a new set of result items
-to the list and viewer.
+rows, say N rows.  Paginating down the search result list rotates the
+first N items to the bottom of the list.  Paginating up rotates the
+last N items to the top.  Viewer contents update consequently.  Typing
+or continuing to type the search term updates the list entirely and
+deliveres a new set of result items to the list and viewer.
 
-### Suggested packages
+### Suggested Packages
 
-The Filmstrip plugin doesn't require additional packages, but it
-delivers enhanced functionality when the package 'exiftool' is
+While the Filmstrip plugin doesn't depend on non-standard packages,
+it does deliver enhanced functionality when package 'exiftool' is
 installed. Read more in file 'taprc' in the comment section for
 CUSTOM\_CAPTION.
 
