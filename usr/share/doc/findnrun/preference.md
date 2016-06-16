@@ -69,7 +69,7 @@ power users and custom applications:
     SHOWNODISPLAY=false
     #GEOMETRY=460x280+100+200
     # Desktop file search directories, space-separated list, system default.
-    #DESKTOP_FILE_DIRS="$HOME/.local/applications /usr/share/applications +
+    #DESKTOP_FILE_DIRS="$HOME/.local/share/applications /usr/share/applications +
     #  + /usr/local/share/applications"
     # Icon search directories, space-separated list, system default.
     #ICON_DIRS="$HOME/.icons $HOME/.local/icons /usr/share/icons +

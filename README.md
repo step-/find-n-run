@@ -12,7 +12,7 @@ A progressive finder.
 
 ## News
 
- * **13-Jun-2016 Release 2.2.0 is a recommeded upgrade for all users**
+ * **13-Jun-2016 Release 2.2.0 is a recommended upgrade for all users**
 
    **You do need to update your existing configuration file** to run this version.
    This is explained in the [release announcement](https://github.com/step-/find-n-run/releases/tag/2.2.0).
