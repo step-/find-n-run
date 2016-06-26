@@ -204,20 +204,6 @@ done
 
 which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
 
-# -----------------------------------------------------------------------------
-# Set LOCS to the glob that lists valid .desktop file locations.
-# Do this in the main shell after having processed findnrun command options.
-ifs=$IFS; IFS=:
-for i in ${DESKTOP_FILE_DIRS}; do
-  set -- "$i"/*.desktop
-  if [ "$1" != "${1%/*.desktop}/*.desktop" ]; then
-    x=${1%% }; x=${x%/*}; LOCS="${LOCS}${LOCS+ }$x/*.desktop"
-  else
-    : # LOCi is empty or non-existent
-  fi
-done
-IFS=$ifs
-
 # Declare built-in sources. [[[1
 # $BUILTIN_SOURCES get special treatment
 # pipe-separated list
@@ -857,7 +843,10 @@ END {
 
 # Build database of .desktop file entries. [[[1
 LIST_FILE="${AWKB}.list-file"
-printf "%s\n" ${LOCS} > "$LIST_FILE"
+ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS
+# Recursive search supports common wine games.
+find "$@" -type f -name '*.desktop' > "$LIST_FILE" 2>/dev/null
+IFS=$ifs
 gawk -v ALL_ICONS=${varICONS} -f "${AWKB}" -v LIST_FILE="$LIST_FILE" > "${DATF}"
 [ "${DEBUG1}" ] && { >/tmp/varSEARCH; echo >&2 === READING SEARCH INPUT ALSO FROM /tmp/varSEARCH; }
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
