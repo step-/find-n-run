@@ -32,14 +32,15 @@ XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local}
 $(
   IFS=:
   set -- ${XDG_DATA_HOME} ${XDG_DATA_DIRS}
-  for i; do echo -n " $i/applications"; done; echo
-  for i; do echo -n " $i/icons"; done; echo
+  for i; do echo -n ":$i/applications"; done; echo
+  for i; do echo -n ":$i/icons"; done; echo
 )
 EOF
+DESKTOP_FILE_DIRS=${DESKTOP_FILE_DIRS#:} ICON_DIRS=${ICON_DIRS#:}
 # Ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
 # Note: Search by icon *theme* isn't implemented.
 # Additional Fatdog64-specific locations start at .../midi-icons.
-ICON_DIRS="$HOME/.icons ${ICON_DIRS} /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
+ICON_DIRS="$HOME/.icons:${ICON_DIRS}:/usr/share/pixmaps:/usr/share/midi-icons:/usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
 FNRHELPINDEX=${FNRHELPINDEX:-/usr/share/doc/findnrun/index.md:/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.html}
@@ -206,6 +207,7 @@ which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
 # -----------------------------------------------------------------------------
 # Set LOCS to the glob that lists valid .desktop file locations.
 # Do this in the main shell after having processed findnrun command options.
+ifs=$IFS; IFS=:
 for i in ${DESKTOP_FILE_DIRS}; do
   set -- "$i"/*.desktop
   if [ "$1" != "${1%/*.desktop}/*.desktop" ]; then
@@ -214,6 +216,7 @@ for i in ${DESKTOP_FILE_DIRS}; do
     : # LOCi is empty or non-existent
   fi
 done
+IFS=$ifs
 
 # Declare built-in sources. [[[1
 # $BUILTIN_SOURCES get special treatment
@@ -701,7 +704,11 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) { # [[[2
       # This could happen because .desktop file sets Icon=name-only (valid), but
       # we cannot trust gtkdialog to show icons by name without extension, so
       # get the full pathname; ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#icon_lookup
-      c = "2>/dev/null find -L '${ICON_DIRS}' " \
+      # next 3 lines: expand colon-separated list to shell words
+      icon_dirs = "'"$ICON_DIRS"'"
+      gsub(/:/, "\" \"", icon_dirs)
+      icon_dirs = "\"" icon_dirs "\""
+      c = "2>/dev/null find -L " icon_dirs \
         " -type f \\( -name \""icnname".png\" -o -name \""icnname".svg\" -o -name \""icnname".xpm\" \\) -print0 -quit"
         # ! -path "*/.*/*" excludes all matches within any hidden dir, neat!
         # -print0 ensures match string does not include \n character
