@@ -993,7 +993,13 @@ generate_get_drain_cmd() # [[[2
 {
   # Echo sh code that extracts the drain command of the selected list item.
   # Command is returned in "$@" - Command defined per plugin-dev.md.
-  echo -n 'ifs="${IFS}"'
+
+  # KLUDGE work-around malformed Windows paths for common wine app installers.
+  echo -n 'case $varLIST in *wine\ *\\\\\\\\*)'
+  echo -n ' varLIST=$(echo -n "$varLIST" | sed -e "s/\\\\\\\\/\\\\/g") ;;'
+  echo -n 'esac'
+
+  echo -n '; ifs="${IFS}"'
   echo -n '; IFS="'"${SEP}"'"; set -f; set -- $varLIST; set -- $3; set +f'
   echo -n '; IFS="${ifs}"'
 }
