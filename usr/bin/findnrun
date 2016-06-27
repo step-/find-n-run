@@ -994,7 +994,7 @@ generate_get_drain_cmd() # [[[2
   # Echo sh code that extracts the drain command of the selected list item.
   # Command is returned in "$@" - Command defined per plugin-dev.md.
 
-  # KLUDGE work-around malformed Windows paths for common wine app installers.
+  # KLUDGE work around the peculiar Windows paths that winemenubuilder generates.
   echo -n 'case $varLIST in *wine\ *\\\\\\\\*)'
   echo -n ' varLIST=$(echo -n "$varLIST" | sed -e "s/\\\\\\\\/\\\\/g") ;;'
   echo -n 'esac'
