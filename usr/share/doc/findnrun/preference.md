@@ -68,13 +68,14 @@ power users and custom applications:
     # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default.
     SHOWNODISPLAY=false
     #GEOMETRY=460x280+100+200
-    # Desktop file search directories, space-separated list, system default.
-    #DESKTOP_FILE_DIRS="$HOME/.local/applications /usr/share/applications +
+    # Desktop file search directories, colon-separated list from system settings.
+    # Recursively search folders and sub-folders.
+    #DESKTOP_FILE_DIRS="$HOME/.local/share/applications:/usr/share/applications:+
     #  + /usr/local/share/applications"
-    # Icon search directories, space-separated list, system default.
-    #ICON_DIRS="$HOME/.icons $HOME/.local/icons /usr/share/icons +
-    #  + /usr/local/share/icons /usr/share/pixmaps +
-    #  + /usr/share/midi-icons /usr/share/mini-icons"
+    # Icon search directories, colon-separated list from system default settings.
+    #ICON_DIRS="$HOME/.icons:$HOME/.local/icons:/usr/share/icons:+
+    #  + /usr/local/share/icons:/usr/share/pixmaps:+
+    #  + /usr/share/midi-icons:/usr/share/mini-icons"
     # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
     # Set XCLIP to an alternative X clipboard copy/paste filter for hotkey F4.

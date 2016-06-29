@@ -3,7 +3,7 @@
 
 # =============================================================================
 # Findnrun - a progressive finder
-  Version=2.1.1
+  Version=2.2.0
 # authors: Copyright (C)2015-2016 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
 # depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only)
@@ -32,14 +32,15 @@ XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local}
 $(
   IFS=:
   set -- ${XDG_DATA_HOME} ${XDG_DATA_DIRS}
-  for i; do echo -n " $i/applications"; done; echo
-  for i; do echo -n " $i/icons"; done; echo
+  for i; do echo -n ":$i/applications"; done; echo
+  for i; do echo -n ":$i/icons"; done; echo
 )
 EOF
+DESKTOP_FILE_DIRS=${DESKTOP_FILE_DIRS#:} ICON_DIRS=${ICON_DIRS#:}
 # Ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
 # Note: Search by icon *theme* isn't implemented.
 # Additional Fatdog64-specific locations start at .../midi-icons.
-ICON_DIRS="$HOME/.icons ${ICON_DIRS} /usr/share/pixmaps /usr/share/midi-icons /usr/share/mini-icons"
+ICON_DIRS="$HOME/.icons:${ICON_DIRS}:/usr/share/pixmaps:/usr/share/midi-icons:/usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
 FNRHELPINDEX=${FNRHELPINDEX:-/usr/share/doc/findnrun/index.md:/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.html}
@@ -202,18 +203,6 @@ done
 # BROWSER, GEOMETRY, LANG, XCLIP, and more.
 
 which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
-
-# -----------------------------------------------------------------------------
-# Set LOCS to the glob that lists valid .desktop file locations.
-# Do this in the main shell after having processed findnrun command options.
-for i in ${DESKTOP_FILE_DIRS}; do
-  set -- "$i"/*.desktop
-  if [ "$1" != "${1%/*.desktop}/*.desktop" ]; then
-    x=${1%% }; x=${x%/*}; LOCS="${LOCS}${LOCS+ }$x/*.desktop"
-  else
-    : # LOCi is empty or non-existent
-  fi
-done
 
 # Declare built-in sources. [[[1
 # $BUILTIN_SOURCES get special treatment
@@ -701,7 +690,11 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) { # [[[2
       # This could happen because .desktop file sets Icon=name-only (valid), but
       # we cannot trust gtkdialog to show icons by name without extension, so
       # get the full pathname; ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#icon_lookup
-      c = "2>/dev/null find -L '${ICON_DIRS}' " \
+      # next 3 lines: expand colon-separated list to shell words
+      icon_dirs = "'"$ICON_DIRS"'"
+      gsub(/:/, "\" \"", icon_dirs)
+      icon_dirs = "\"" icon_dirs "\""
+      c = "2>/dev/null find -L " icon_dirs \
         " -type f \\( -name \""icnname".png\" -o -name \""icnname".svg\" -o -name \""icnname".xpm\" \\) -print0 -quit"
         # ! -path "*/.*/*" excludes all matches within any hidden dir, neat!
         # -print0 ensures match string does not include \n character
@@ -850,7 +843,10 @@ END {
 
 # Build database of .desktop file entries. [[[1
 LIST_FILE="${AWKB}.list-file"
-printf "%s\n" ${LOCS} > "$LIST_FILE"
+ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS
+# Recursive search supports common wine games.
+find "$@" -type f -name '*.desktop' > "$LIST_FILE" 2>/dev/null
+IFS=$ifs
 gawk -v ALL_ICONS=${varICONS} -f "${AWKB}" -v LIST_FILE="$LIST_FILE" > "${DATF}"
 [ "${DEBUG1}" ] && { >/tmp/varSEARCH; echo >&2 === READING SEARCH INPUT ALSO FROM /tmp/varSEARCH; }
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
@@ -997,7 +993,13 @@ generate_get_drain_cmd() # [[[2
 {
   # Echo sh code that extracts the drain command of the selected list item.
   # Command is returned in "$@" - Command defined per plugin-dev.md.
-  echo -n 'ifs="${IFS}"'
+
+  # KLUDGE work around the peculiar Windows paths that winemenubuilder generates.
+  echo -n 'case $varLIST in *wine\ *\\\\\\\\*)'
+  echo -n ' varLIST=$(echo -n "$varLIST" | sed -e "s/\\\\\\\\/\\\\/g") ;;'
+  echo -n 'esac'
+
+  echo -n '; ifs="${IFS}"'
   echo -n '; IFS="'"${SEP}"'"; set -f; set -- $varLIST; set -- $3; set +f'
   echo -n '; IFS="${ifs}"'
 }

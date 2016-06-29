@@ -43,9 +43,10 @@ Both projects name the main script 'findnrun'.
  * **Multiple-user, multiple-instance** support[3]
  * **Multi-language** support includes program and help documentation.
 
-[1] Search applications by **name**, **command line**, **comments**, and
-   **categories**, or all at once. Search **from left**, with **regular
-   expressions**, **case-independently**.
+[1] Search for applications by **name**, **filename**, **command line**,
+   **comments**, and **categories**, or all at once. Search **from left**,
+   with **regular expressions**, **case-independently**. Search for
+   applications installed with **Wine**.
 
 [2] Help documents are encoded as _markdown_. You can _read_ markdown as
    plain text - with some minor loss of formatting - or with the
