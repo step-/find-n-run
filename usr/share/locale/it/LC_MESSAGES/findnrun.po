@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 2.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2016-05-22 16:26+0000\n"
-"PO-Revision-Date: 2016-05-25 07:12+0100\n"
+"POT-Creation-Date: 2016-06-27 19:23+0000\n"
+"PO-Revision-Date: 2016-06-30 14:18+0200\n"
 "Last-Translator: xanad <xanad@mail.com>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+# NON TRADURRE
 #.
 #. =======================================================================
 #. i18n User documentation in markdown format from .md files follows.
@@ -40,7 +41,6 @@ msgstr ""
 #. i18n Do NOT translate VARIABLE names or variable assignments.
 #. i18n And, as usual, translate all text outside the code blocks.
 #.
-# NON TRADURRE
 #: /usr/bin/findnrun:17
 msgid ""
 "INSTRUCTIONS FOR TRANSLATORS\n"
@@ -55,45 +55,45 @@ msgstr ""
 msgid "Findnrun"
 msgstr "Ricercatore"
 
-#: /usr/bin/findnrun:243
+#: /usr/bin/findnrun:232
 msgid "application finder"
 msgstr "trova applicazione"
 
-#: /usr/bin/findnrun:254
+#: /usr/bin/findnrun:244
 msgid "shell completion"
 msgstr "trova comando"
 
 #. i18n Source plugin validation.
-#: /usr/bin/findnrun:295
+#: /usr/bin/findnrun:285
 msgid "fatal source error: %d%s\\n"
 msgstr "errore finale sulla fonte %d%s\\n"
 
-#: /usr/bin/findnrun:296
+#: /usr/bin/findnrun:286
 msgid "recoverable source error: %d%s\\n"
 msgstr "errore parziale sulla fonte %d%s\\n"
 
-#: /usr/bin/findnrun:297
+#: /usr/bin/findnrun:287
 msgid "source warning: %d%s\\n"
 msgstr "attenzione alla fonte %d%s\\n"
 
-#: /usr/bin/findnrun:571
+#: /usr/bin/findnrun:561
 msgid "Invalid source plugins found and disabled:\\n%s"
 msgstr "Trovati e disattivati plugin di fonti non valide:\\n%s"
 
-#: /usr/bin/findnrun:589
+#: /usr/bin/findnrun:579
 msgid "SHOWNODISPLAY false excludes file '%s'"
 msgstr "SHOWNODISPLAY falso esclude il file '%s'"
 
-#: /usr/bin/findnrun:590
+#: /usr/bin/findnrun:580
 msgid "filename '%s': Icon '%s' not found."
 msgstr "file '%s': icona '%s' non trovata."
 
-#: /usr/bin/findnrun:887
+#: /usr/bin/findnrun:884
 msgid "_Help"
 msgstr "_Aiuto"
 
 #. i18n About dialog widgets: window text; number of apps text (singular/plural)
-#: /usr/bin/findnrun:905
+#: /usr/bin/findnrun:902
 msgid ""
 "%s %s\n"
 "authors: %s\n"
@@ -113,116 +113,116 @@ msgstr ""
 "\n"
 "configurazione: %s\n"
 
-#: /usr/bin/findnrun:916 /usr/bin/findnrun:1107
+#: /usr/bin/findnrun:913 /usr/bin/findnrun:1110
 msgid "%s application found"
 msgid_plural "%s applications found"
 msgstr[0] "trovata una%.0s applicazione"
 msgstr[1] "trovate %s applicazioni"
 
-#: /usr/bin/findnrun:917 /usr/bin/findnrun:1106
+#: /usr/bin/findnrun:914 /usr/bin/findnrun:1109
 msgid "%s source loaded"
 msgid_plural "%s sources loaded"
 msgstr[0] "caricata una%.0s fonte"
 msgstr[1] "caricate %s fonti"
 
-#: /usr/bin/findnrun:924
+#: /usr/bin/findnrun:921
 msgid "_OK"
 msgstr "_OK"
 
-#: /usr/bin/findnrun:959
+#: /usr/bin/findnrun:956
 msgid "%s: invalid SAVEFLT redirection '%s'\\n"
 msgstr "%s: ridirezione SAVEFLT non valida '%s'\\n"
 
-#: /usr/bin/findnrun:1103
+#: /usr/bin/findnrun:1106
 msgid "[ctrl+%d]"
 msgstr "[ctrl+%d]"
 
-#: /usr/bin/findnrun:1103
+#: /usr/bin/findnrun:1106
 msgid "[%s]"
 msgstr "[%s]"
 
-#: /usr/bin/findnrun:1105
+#: /usr/bin/findnrun:1108
 msgid "Click the status bar or press a hotkey to activate the next source.\\n%s\\n%s"
 msgstr "Clicca la barra di stato o premi una scorciatoia di tastiera per attivare la prossima fonte.\\n%s\\n%s"
 
 #. i18n Main window widgets
 #. i18n "0" (invisible, disregard).
-#: /usr/bin/findnrun:1182
+#: /usr/bin/findnrun:1185
 msgid "0"
 msgstr "0"
 
-#: /usr/bin/findnrun:1188
+#: /usr/bin/findnrun:1191
 msgid "Press ENTER to select"
 msgstr "Seleziona premendo INVIO"
 
-#: /usr/bin/findnrun:1196
+#: /usr/bin/findnrun:1199
 msgid "Type some letters to refine the list"
 msgstr "Raffina l'elenco battendo alcune lettere"
 
-#: /usr/bin/findnrun:1207
+#: /usr/bin/findnrun:1210
 msgid "Clear entry"
 msgstr "Pulisci campo"
 
-#: /usr/bin/findnrun:1215
+#: /usr/bin/findnrun:1218
 msgid "Press ENTER or double-click to run the selected item"
 msgstr "Esegui l'elemento selezionato premendo INVIO o con un doppio clic"
 
-#: /usr/bin/findnrun:1256
+#: /usr/bin/findnrun:1259
 msgid "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit."
 msgstr "Premi Freccia Giù per richiamare l'elemento selezionato e per consultare l'elenco storico. Gli elementi si possono modificare. Lo storico resta attivo fino alla chiusura della finestra: viene cancellato all'uscita dal programma."
 
-#: /usr/bin/findnrun:1258
+#: /usr/bin/findnrun:1261
 msgid "Press Down Arrow to grab selected item"
 msgstr "Premi Freccia Giù per richiamare l'elemento selezionato"
 
-#: /usr/bin/findnrun:1273
+#: /usr/bin/findnrun:1276
 msgid "Remove entry from history"
 msgstr "Cancella l'elemento dallo storico"
 
-#: /usr/bin/findnrun:1290
+#: /usr/bin/findnrun:1293
 msgid "Comment about current item"
 msgstr "Commento sull'elemento attuale"
 
-#: /usr/bin/findnrun:1298
+#: /usr/bin/findnrun:1301
 msgid "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays."
 msgstr "Tiene questa finestra aperta dopo l'attivazione di un elemento. Tenendo la finestra aperta si può usare lo storico e si riduce il tempo di avvio del programma."
 
-#: /usr/bin/findnrun:1299
+#: /usr/bin/findnrun:1302
 msgid "_Keep window"
 msgstr "_Tieni finestra"
 
-#: /usr/bin/findnrun:1307
+#: /usr/bin/findnrun:1310
 msgid "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache."
 msgstr "Mostra tutte le icone delle applicazioni anziché solo le icone che non necessitano di essere memorizzate. La memorizzazione di tutte le icone potrebbe richiedere un certo tempo. Disattivare questa opzione per ripulire la memoria icone."
 
-#: /usr/bin/findnrun:1308
+#: /usr/bin/findnrun:1311
 msgid "_Show all icons"
 msgstr "_Mostra tutte le icone"
 
-#: /usr/bin/findnrun:1333
+#: /usr/bin/findnrun:1336
 msgid "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item."
 msgstr "Dopo l'attivazione dell'elemento riporta il cursore della tastiera nel campo ricerca, anziché lasciarlo sull'elemento selezionato nella lista."
 
-#: /usr/bin/findnrun:1334
+#: /usr/bin/findnrun:1337
 msgid "_Focus search"
 msgstr "Torna a _ricerca"
 
-#: /usr/bin/findnrun:1344
+#: /usr/bin/findnrun:1347
 msgid "About and help"
 msgstr "Informazioni e guida"
 
-#: /usr/bin/findnrun:1350
+#: /usr/bin/findnrun:1353
 msgid "Exit"
 msgstr "Termina"
 
 #. i18n Findnrun own .desktop file. [[[1
 #. i18n Translate the Name[xx] field to be added to file findnrun.desktop
-#: /usr/bin/findnrun:1607
+#: /usr/bin/findnrun:1619
 msgid "Findnrun."
 msgstr "Ricercatore."
 
 #. i18n Translate the Comment[xx] field to be added to file findnrun.desktop
-#: /usr/bin/findnrun:1609
+#: /usr/bin/findnrun:1621
 msgid "Find applications and much more."
 msgstr "Trova applicazioni e molto altro ancora."
 
@@ -297,7 +297,7 @@ msgstr "**Pacchetti**"
 
 #: /usr/share/doc/findnrun/CREDITS.md:33
 msgid "Debian - Puppy Linux forum user _saintless_ helped me improve my rudimentary .deb packages for version 1.10.6. _Saintless_ and _fredx_ co-author [DebianDog](http://www.murga-linux.com/puppy/viewtopic.php?t=93225), a live CD that looks and acts like Puppy Linux but is Debian."
-msgstr "Debian - _saintless_, utente del forum di Puppy Linux, mi ha aiutato a migliorare il mio rudimentale pacchetto .deb per la versione 1.10.6. _Saintless_ e _fredx_ sono gli autori di [DebianDog](http://www..murga-linux.com/puppy/viewtopic.php?t=93225), un live CD che appare e si comporta proprio come Puppy Linux, ma sotto è Debian."
+msgstr "Debian - _saintless_, utente del forum di Puppy Linux, mi ha aiutato a migliorare il mio rudimentale pacchetto .deb per la versione 1.10.6. _Saintless_ e _fredx_ sono gli autori di [DebianDog](http://www..murga-linux.com/puppy/viewtopic.php?t=93225), un live CD che appare e si comporta proprio come Puppy Linux ma sotto è Debian."
 
 #.
 #. ---------------------------------------------------------
@@ -346,7 +346,7 @@ msgstr "`[Pagina Su]` - ruota in alto l'elenco dei risultati di ricerca[1]"
 
 #: /usr/share/doc/findnrun/hotkey.md:14
 msgid "`[Tab]` - cycle through user interface controls"
-msgstr "`[Tabulatore]` - sposta a circuito chiuso attraverso tutti gli elementi dell'interfaccia utente"
+msgstr "`[Tabulatore]` - sposta il cursore attraverso tutti gli elementi dell'interfaccia utente"
 
 #: /usr/share/doc/findnrun/hotkey.md:16
 msgid "`[Ctrl+1]` .. `[Ctrl+9]` - start search plugin `1` through `9`. Usually `1` is findnrun's default application search."
@@ -378,7 +378,7 @@ msgstr "`[Freccia Su]` - seleziona l'elemento precedente"
 
 #: /usr/share/doc/findnrun/hotkey.md:29
 msgid "`[Enter]` - activate the current item"
-msgstr "`[Invio]` - attiva l'elemento selezionato"
+msgstr "`[Invio]` - attiva l'elemento attuale"
 
 #: /usr/share/doc/findnrun/hotkey.md:30
 msgid "`[Page Down]` - Scroll up search results"
@@ -440,11 +440,11 @@ msgstr "Findnrun serve a trovare le applicazioni e può andare anche ben oltre. 
 
 #: /usr/share/doc/findnrun/index.md:20
 msgid "Findnrun started in May 2015 as a fork of [Find'N'Run](CREDITS.md), an earlier project for Puppy Linux."
-msgstr "Findnrun è nato nel maggio 2015 come biforcazione di [Find'N'Run](CREDITS.md), la prima versione per Puppy Linux."
+msgstr "Findnrun è nato nel maggio 2015 come biforcazione di [Find'N'Run](CREDITS.md), il progetto originatore per Puppy Linux."
 
 #: /usr/share/doc/findnrun/index.md:25
 msgid "Currently Findnrun is being developed and tested on [Fatdog64](http://distro.ibiblio.org/fatdog/web/) 64-bit Linux, a [Puppy Linux](http://puppylinux.com/) and [LFS](http://www.linuxfromscratch.org/) derivative."
-msgstr "Attualmente Findnrun viene sviluppato e collaudato su Linux 64 bit [Fatdog64](http://distro.ibiblio.org/fatdog/web/), che è derivato da [Puppy Linux](http://puppylinux.com/) e da [Linux From Scratch](http://www.linuxfromscratch.org/)."
+msgstr "Attualmente Findnrun viene sviluppato e collaudato su Linux a 64 bit [Fatdog64](http://distro.ibiblio.org/fatdog/web/), un derivato di [Puppy Linux](http://puppylinux.com/) e di [Linux From Scratch](http://www.linuxfromscratch.org/)."
 
 #: /usr/share/doc/findnrun/index.md:27
 msgid "To clarify the names, which can be confusing at first:"
@@ -502,87 +502,87 @@ msgstr "**Utenti diversi e istanze multiple** del programma sono supportati[3]"
 msgid "**Multi-language** support includes program and help documentation."
 msgstr "**Traduzioni** dell'interfaccia grafica e della guida d'uso."
 
-#: /usr/share/doc/findnrun/index.md:48
-msgid "[1] Search applications by **name**, **command line**, **comments**, and **categories**, or all at once. Search **from left**, with **regular expressions**, **case-independently**."
-msgstr "[1] Ricerca applicazioni per **nome** o **commando** o **commento** o **categoria**, oppure tutti insieme. Ricerca a partire **da sinistra**, con **espressioni regolari**, ignorando **maiuscole/minuscole**."
+#: /usr/share/doc/findnrun/index.md:49
+msgid "[1] Search for applications by **name**, **filename**, **command line**, **comments**, and **categories**, or all at once. Search **from left**, with **regular expressions**, **case-independently**. Search for applications installed with **Wine**."
+msgstr "[1] Ricerca applicazioni per **nome** o **nome del file** o **commando** o **commento** o **categoria**, oppure tutti insieme. Ricerca a partire **da sinistra**, con **espressioni regolari**, ignorando **maiuscole/minuscole**. Ricerca applicazioni installate con **Wine**."
 
-#: /usr/share/doc/findnrun/index.md:55
+#: /usr/share/doc/findnrun/index.md:56
 msgid "[2] Help documents are encoded as _markdown_. You can _read_ markdown as plain text - with some minor loss of formatting - or with the [mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index) viewer (recommended). Mdview can also _browse_ markdown, and automatically show _translated_ markdown provided that the findnrun NLS package for your language is installed."
 msgstr "[2] La guida è salvata in formato _markdown_, che si può leggere come un testo normale (con trascurabili degradazioni dell'impaginazione), ma anche con [mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index), l'apposito visualizzatore (si raccomanda). Mdview aggiunge la navigazione del testo e la sua traduzione, a patto che il pacchetto aggiuntivo 'findnrun NLS' sia stato installato per la lingua d'uso del sistema."
 
-#: /usr/share/doc/findnrun/index.md:59
+#: /usr/share/doc/findnrun/index.md:60
 msgid "[3] Run multiple searches at the same time. Each search window is separate from other running instances. Use multiple preference files to tailor each instance to your needs."
 msgstr "[3] Esegui più ricerche insieme, separandole su istanze diverse. Ogni istanza di findnrun ha la sua finestra, che può essere adattata alla specifica esigenza definendo un suo opportuno file di preferenze."
 
-#: /usr/share/doc/findnrun/index.md:61
+#: /usr/share/doc/findnrun/index.md:62
 msgid "Documentation Topics"
 msgstr "Argomenti della guida"
 
-#: /usr/share/doc/findnrun/index.md:63
+#: /usr/share/doc/findnrun/index.md:64
 msgid "[Screenshots](screenshots.md)"
 msgstr "[Immagini](screenshots.md)"
 
-#: /usr/share/doc/findnrun/index.md:64
+#: /usr/share/doc/findnrun/index.md:65
 msgid "[Installing](install.md) and Language Settings"
 msgstr "[Installazione](install.md) e configurazione lingua"
 
-#: /usr/share/doc/findnrun/index.md:65
+#: /usr/share/doc/findnrun/index.md:66
 msgid "[Starting](running.md) Findnrun"
 msgstr "[Avviare](running.md) findnrun"
 
-#: /usr/share/doc/findnrun/index.md:66
+#: /usr/share/doc/findnrun/index.md:67
 msgid "[Configuring](preference.md) Preferences"
 msgstr "[Configurare](preference.md) le preferenze"
 
-#: /usr/share/doc/findnrun/index.md:67
-msgid "[Hotkeys](hotkey.md)"
-msgstr "[Tasti rapidi d'attivazione](hotkey.md)"
-
 #: /usr/share/doc/findnrun/index.md:68
+msgid "[Hotkeys](hotkey.md)"
+msgstr "[Tasti rapidi d'avvio](hotkey.md)"
+
+#: /usr/share/doc/findnrun/index.md:69
 msgid "[Plugins](plugin.md)"
 msgstr "[Estensioni](plugin.md)"
 
-#: /usr/share/doc/findnrun/index.md:69
+#: /usr/share/doc/findnrun/index.md:70
 msgid "[Reporting bugs](issues.md)"
 msgstr "[Comunicare problemi](issues.md)"
 
-#: /usr/share/doc/findnrun/index.md:70
+#: /usr/share/doc/findnrun/index.md:71
 msgid "[Credits](CREDITS.md)"
 msgstr "[Ringraziamenti](CREDITS.md)"
 
-#: /usr/share/doc/findnrun/index.md:71
+#: /usr/share/doc/findnrun/index.md:72
 msgid "[Translating](TRANSLATING.md)"
 msgstr "[Traduzioni](TRANSLATING.md)"
 
-#: /usr/share/doc/findnrun/index.md:72
+#: /usr/share/doc/findnrun/index.md:73
 msgid "[License](LICENSE.md) GNU GPL v2"
 msgstr "[Licenza d'uso](LICENSE.md) GNU GPL v2"
 
-#: /usr/share/doc/findnrun/index.md:74
+#: /usr/share/doc/findnrun/index.md:75
 msgid "Change Log"
 msgstr "Storico delle versioni"
 
-#: /usr/share/doc/findnrun/index.md:78
+#: /usr/share/doc/findnrun/index.md:79
 msgid "See [release announcements](https://github.com/step-/find-n-run/releases) and - for fine-grained information - [commit history](https://github.com/step-/find-n-run/commits/master)."
 msgstr "Vedi [annuncio nuova versione](https://github.com/step-/find-n-run/releases) e, per maggior dettaglio, lo [storico dei commit](https://github.com/step-/find-n-run/commits/master)."
 
-#: /usr/share/doc/findnrun/index.md:80
+#: /usr/share/doc/findnrun/index.md:81
 msgid "Links"
 msgstr "Collegamenti"
 
-#: /usr/share/doc/findnrun/index.md:82
+#: /usr/share/doc/findnrun/index.md:83
 msgid "[Project home](http://github.com/step-/find-n-run)"
 msgstr "[Pagina del progetto](http://github.com/step-/find-n-run)"
 
-#: /usr/share/doc/findnrun/index.md:83
+#: /usr/share/doc/findnrun/index.md:84
 msgid "[Downloads](http://github.com/step-/find-n-run/releases)"
 msgstr "[Scaricare](http://github.com/step-/find-n-run/releases)"
 
-#: /usr/share/doc/findnrun/index.md:84
+#: /usr/share/doc/findnrun/index.md:85
 msgid "[Forum thread](http://www.murga-linux.com/puppy/viewtopic.php?t=102811)"
 msgstr "[Discussione sul forum](http://www.murga-linux.com/puppy/viewtopic.php?t=102811)"
 
-#: /usr/share/doc/findnrun/index.md:85
+#: /usr/share/doc/findnrun/index.md:86
 msgid "[Old forum thread](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)"
 msgstr "[Vecchia discussione sul forum](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)"
 
@@ -747,7 +747,7 @@ msgstr "Limitazioni e problemi noti"
 
 #: /usr/share/doc/findnrun/issues.md:16
 msgid "Freedesktop.org's [icon theme](http://standards.freedesktop.org/icon-theme-spec) support isn't implemented. This means that if multiple icon themes are installed _findnrun_ will apply the first icon found in alphabetical order. You can work around this limitation by setting hidden user preference `ICON_DIRS`."
-msgstr "Il pieno supporto per i [temi delle icone](http://standards.freedesktop.org/icon-theme-spec) di freedesktop.org non è implementato. Significa che se c'è più di un tema di icone installato, _findnrun_ applicherà il primo tema che trova in ordine alfabetico. Puoi provare ad aggirare questo punto modificando il valore della preferenza nascosta `ICON_DIRS`."
+msgstr "Il pieno supporto per i [temi delle icone](http://standards.freedesktop.org/icon-theme-spec) di freedesktop.org non è implementato. Significa che se c'è più di tema di icone installato _findnrun_ applicherà il primo tema che trova in ordine alfabetico. Puoi provare ad aggirare questo punto modificando il valore della preferenza nascosta `ICON_DIRS`."
 
 #: /usr/share/doc/findnrun/issues.md:20
 msgid "Prioritized language preferences via environment variable `LANGUAGE` are not supported. Findnrun honors the system locale code that environment variable `LANG` displays - when a matching translation file is installed."
@@ -835,7 +835,7 @@ msgstr "Estensioni di tipo Fonte"
 
 #: /usr/share/doc/findnrun/plugin.md:25
 msgid "Each source plugin - _source_ for short - does two things: it generates list items for the main window, and it processes the selected list item when the user activates the item. The _exemplar source_ is the \"application search and execution\" that findnrun performs in its most basic configuration. It is referred to as _source 1_ and labelled _Application Finder_."
-msgstr "Ogni 'estensione fonte', abbreviato in _fonte_, fa due cose: genera un elenco di risultati nella finestra principale; elabora l'elemento selezionato quando l'utente lo attiva. Un esempio per tutti è la funzione di \"ricerca e lancio di applicazioni\" che findnrun esegue nella sua configurazione base. Tale funzione è nota come _fonte 1_ e denominata _Trova applicazione_."
+msgstr "Ogni 'estensione fonte', abbreviato in _fonte_, fa due cose: genera un elenco di risultati nella finestra principale; elabora l'elemento selezionato quando l'utente lo attiva. Un esempio per tutti è la funzione di \"ricerca e lancio di applicazioni\" che findnrun esegue nella sua configurazione base. Tale funzione è nota come _fonti 1_ e denominata _Trova applicazione_."
 
 #: /usr/share/doc/findnrun/plugin.md:31
 msgid "As new plugins are installed, you get source 2, source 3, etc, each source with its own distinctive label.  The status bar located at the bottom of the main window shows the labels of the currently active source and of the _next_ source. You move through the source ring by pressing [F3](hotkey.md)."
@@ -900,7 +900,7 @@ msgstr "[2] Per la ricerca delle descrizioni necessita installare il pacchetto o
 #. i18n And, as usual, translate all text outside the code blocks.
 #.
 #: /usr/share/doc/findnrun/preference.md:1
-#: /usr/share/doc/findnrun/preference.md:97
+#: /usr/share/doc/findnrun/preference.md:98
 msgid "_Next: [Hotkeys](hotkey.md)_"
 msgstr "_Prossimo: [Tasti rapidi di ricerca](hotkey.md)_"
 
@@ -1064,7 +1064,7 @@ msgstr "    # Ricerca al contempo tra i nomi delle applicazioni, i nomi dei file
 
 #: /usr/share/doc/findnrun/preference.md:53
 msgid "    # When false and no other SEARCH* field is true search in application names only."
-msgstr "    # Se vale 'false' e nessun'altra impostazione SEARCH* vale 'true', si cercano solo i nomi delle applicazioni."
+msgstr "    # Se vale 'false' e nessun altra impostazione SEARCH* vale 'true', si cercano solo i nomi delle applicazioni."
 
 #: /usr/share/doc/findnrun/preference.md:54
 msgid "    # To search in, i.e., file names only set SEARCHCOMPLETE=false SEARCHFILENAMES=true."
@@ -1137,100 +1137,103 @@ msgid "    #GEOMETRY=460x280+100+200"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:70
-msgid "    # Desktop file search directories, space-separated list, system default."
-msgstr "    # Percorsi delle cartelle contenenti file di tipo .desktop, lista separata da spazi, predefinita dal sistema."
+msgid "    # Desktop file search directories, colon-separated list from system settings."
+msgstr "    # Percorsi delle cartelle contenenti file di tipo .desktop, lista separata coi due punti da valori predefiniti dal sistema."
 
-# NON TRADURRE
 #: /usr/share/doc/findnrun/preference.md:71
-msgid "    #DESKTOP_FILE_DIRS=\"$HOME/.local/applications /usr/share/applications +"
+msgid "    # Recursively search folders and sub-folders."
+msgstr "    # Ricerca ricorsiva in cartelle e sottocartelle."
+
+#: /usr/share/doc/findnrun/preference.md:72
+msgid "    #DESKTOP_FILE_DIRS=\"$HOME/.local/share/applications:/usr/share/applications:+"
 msgstr ""
 
 # NON TRADURRE
-#: /usr/share/doc/findnrun/preference.md:72
+#: /usr/share/doc/findnrun/preference.md:73
 msgid "    #  + /usr/local/share/applications\""
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:73
-msgid "    # Icon search directories, space-separated list, system default."
-msgstr "    # Percorsi delle cartelle contenenti le icone, lista separata da spazi, predefinita dal sistema."
-
-# NON TRADURRE
 #: /usr/share/doc/findnrun/preference.md:74
-msgid "    #ICON_DIRS=\"$HOME/.icons $HOME/.local/icons /usr/share/icons +"
-msgstr ""
+msgid "    # Icon search directories, colon-separated list from system default settings."
+msgstr "    # Percorsi delle cartelle contenenti le icone, lista separata coi due punti da valori predefiniti dal sistema."
 
 # NON TRADURRE
 #: /usr/share/doc/findnrun/preference.md:75
-msgid "    #  + /usr/local/share/icons /usr/share/pixmaps +"
+msgid "    #ICON_DIRS=\"$HOME/.icons:$HOME/.local/icons:/usr/share/icons:+"
 msgstr ""
 
 # NON TRADURRE
 #: /usr/share/doc/findnrun/preference.md:76
-msgid "    #  + /usr/share/midi-icons /usr/share/mini-icons\""
+msgid "    #  + /usr/local/share/icons:/usr/share/pixmaps:+"
 msgstr ""
 
+# NON TRADURRE
 #: /usr/share/doc/findnrun/preference.md:77
+msgid "    #  + /usr/share/midi-icons:/usr/share/mini-icons\""
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:78
 msgid "    # Preferred help viewing program (obsolete since version 2.0.0)."
 msgstr "    # Visualizzatore della guida preferito (preferenza obsoleta dalla versione 2.0.0)."
 
 # NON TRADURRE
-#: /usr/share/doc/findnrun/preference.md:78
+#: /usr/share/doc/findnrun/preference.md:79
 msgid "    #BROWSER="
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:79
+#: /usr/share/doc/findnrun/preference.md:80
 msgid "    # Set XCLIP to an alternative X clipboard copy/paste filter for hotkey F4."
 msgstr "    # Imposta, con XCLIP, un filtro di copia/incolla alternativo, attivato dalla scorciatoia di tastiera F4."
 
-#: /usr/share/doc/findnrun/preference.md:80
+#: /usr/share/doc/findnrun/preference.md:81
 msgid "    # Default value: the xclip binary file, if it's installed."
 msgstr "    # Valore predefinito: il file eseguibile xclip, se è installato."
 
-#: /usr/share/doc/findnrun/preference.md:81
+#: /usr/share/doc/findnrun/preference.md:82
 msgid "    # Use 'none' to disable clipboard copying; output is sent to stderr."
 msgstr "    # Imposta 'none' per disattivare la copia nel blocco degli appunti: l'output viene inviato a stderr."
 
-#: /usr/share/doc/findnrun/preference.md:82
+#: /usr/share/doc/findnrun/preference.md:83
 msgid "    # Piping and/or redirection are also supported, .i.e.,"
 msgstr "    # Supporta anche pipe e ridirezione, es."
 
 # NON TRADURRE
-#: /usr/share/doc/findnrun/preference.md:83
+#: /usr/share/doc/findnrun/preference.md:84
 msgid "    #   env XCLIP=\"|cut -f2 >/dev/stderr\" findnrun &"
 msgstr ""
 
 # NON TRADURRE
-#: /usr/share/doc/findnrun/preference.md:84
+#: /usr/share/doc/findnrun/preference.md:85
 msgid "    #   env XCLIP=\">/tmp/myfile\" findnrun &"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:85
+#: /usr/share/doc/findnrun/preference.md:86
 msgid "    # Built-in sources honor this setting. Some plugins may not."
 msgstr "    # Le fonti predefinite rispettano questa impostazione, ma qualche plugin potrebbe non rispettarla."
 
 # NON TRADURRE
-#: /usr/share/doc/findnrun/preference.md:86
+#: /usr/share/doc/findnrun/preference.md:87
 msgid "    #XCLIP="
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:87
+#: /usr/share/doc/findnrun/preference.md:88
 msgid "    # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included."
 msgstr "    # Inserendo IBOL+IBOL nel campo di ricerca tutti i caratteri a sinistra di IBOL+IBOL compreso saranno ignorati."
 
-#: /usr/share/doc/findnrun/preference.md:88
+#: /usr/share/doc/findnrun/preference.md:89
 msgid "    # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun."
-msgstr "    # Questa preferenza è per uso interno: non va modificata. Se per sbaglio lo fosse, cancella la linea e riavvia findnrun."
+msgstr "    # Questa preferenza è per uso interno: non va modificata. Se per sbaglio lo fosse cancellare la linea e riavviare findnrun."
 
 # NON TRADURRE
-#: /usr/share/doc/findnrun/preference.md:89
+#: /usr/share/doc/findnrun/preference.md:90
 msgid "    IBOL=' '"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:93
+#: /usr/share/doc/findnrun/preference.md:94
 msgid "See Also"
 msgstr "Si veda inoltre"
 
-#: /usr/share/doc/findnrun/preference.md:95
+#: /usr/share/doc/findnrun/preference.md:96
 msgid "_Environment Variables_ in [Starting Findnrun](running.md)."
 msgstr "_Variabili d'ambiente_ in [Avviare Findnrun](running.md)."
 
