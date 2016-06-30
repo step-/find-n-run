@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: find-n-run 2.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
 "POT-Creation-Date: 2016-06-27 19:23+0000\n"
-"PO-Revision-Date: 2016-06-29 07:50+0200\n"
+"PO-Revision-Date: 2016-06-30 14:18+0200\n"
 "Last-Translator: xanad <xanad@mail.com>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -338,15 +338,15 @@ msgstr "`[Escape]` - termina findnrun"
 
 #: /usr/share/doc/findnrun/hotkey.md:12
 msgid "`[Page Down]` - Rotate down search result items[1]"
-msgstr "`[Pagina Giù]` - Ruota in basso l'elenco dei risultati di ricerca[1]"
+msgstr "`[Pagina Giù]` - ruota in basso l'elenco dei risultati di ricerca[1]"
 
 #: /usr/share/doc/findnrun/hotkey.md:13
 msgid "`[Page Up]` - Rotate up search result items[1]"
-msgstr "`[Pagina Su]` - Routa in alto l'elenco dei risultati di ricerca[1]"
+msgstr "`[Pagina Su]` - ruota in alto l'elenco dei risultati di ricerca[1]"
 
 #: /usr/share/doc/findnrun/hotkey.md:14
 msgid "`[Tab]` - cycle through user interface controls"
-msgstr "`[Tabulatore]` - sposta a circuito chiuso attraverso tutti gli elementi dell'interfaccia utente"
+msgstr "`[Tabulatore]` - sposta il cursore attraverso tutti gli elementi dell'interfaccia utente"
 
 #: /usr/share/doc/findnrun/hotkey.md:16
 msgid "`[Ctrl+1]` .. `[Ctrl+9]` - start search plugin `1` through `9`. Usually `1` is findnrun's default application search."
@@ -1047,7 +1047,7 @@ msgstr "    # Mostra le categorie nel campo dei commenti."
 
 #: /usr/share/doc/findnrun/preference.md:49
 msgid "    # Set 'hidden' to hide category labels in the comment field."
-msgstr "    # Se vale 'hidden' allora non mostr le categorie nel campo dei commenti."
+msgstr "    # Se vale 'hidden' allora non mostra le categorie nel campo dei commenti."
 
 #: /usr/share/doc/findnrun/preference.md:50
 msgid "    # In search input field prepend ';' to search for category only, i.e., ';office'."
