@@ -12,11 +12,18 @@ A progressive finder.
 
 ## News
 
- * **13-Jun-2016 Release 2.2.0 is a recommended upgrade for all users**
+**8-Aug-2016 Release 2.3.0 is a recommended upgrade for all users.**
+ * Support applications installed by `wine`.
+ * Recursive search for applications.
+ * Allow spaces in .desktop file search paths.
+ * Update Italian translation by xanad.
 
-   **You do need to update your existing configuration file** to run this version.
-   This is explained in the [release announcement](https://github.com/step-/find-n-run/releases/tag/2.2.0).
-   New features, a new plugin, and some bugs fixes.
+**You need to edit your existing configuration file** as explained in the
+[2.3.0 release announcement](https://github.com/step-/find-n-run/releases/tag/2.3.0).
+
+**Upgrading from a version prior to 2.2.0** - You need to edit your
+existing configuration file as explained in the
+[2.2.0 release announcement](https://github.com/step-/find-n-run/releases/tag/2.2.0).
 
 ## Introduction, Features, Installing, Documentation and more
 
@@ -30,6 +37,7 @@ and - for fine-grained information -
 
 ## Old News
 
+ * 13-Jun-2016 Release 2.2.0 is a recommended upgrade for all users.
  * 25-Apr-2016 Release 2.1.1 is a recommended upgrade for all users.
  * 11-Mar-2016 Release 2.1.0 is a recommended upgrade for all users.
  * 23-Jan-2016 Release 2.0.0 adds plugins and new features!
