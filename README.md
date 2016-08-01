@@ -12,7 +12,7 @@ A progressive finder.
 
 ## News
 
-**8-Aug-2016 Release 2.3.0 is a recommended upgrade for all users.**
+**1-Aug-2016 Release 2.3.0 is a recommended upgrade for all users.**
  * Support applications installed by `wine`.
  * Recursive search for applications.
  * Allow spaces in .desktop file search paths.
