@@ -19,6 +19,9 @@ These values can be set also from the main window:
     varICONS=false
     # Return keyboard focus to the search input field.
     varFOCUSSEARCH=true
+    # Ignore the NoDisplay=true attribute value of .desktop files (not recommended).
+    # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default.
+    SHOWNODISPLAY=false
 ```
 
 ### Hidden Preferences
@@ -64,9 +67,6 @@ power users and custom applications:
     CASEDEPENDENT=false
     # Main window geometry, no default.
     # Command-line option --geometry=WxH+X+Y overrides this value.
-    # Ignore the NoDisplay=true attribute value of .desktop files (not recommended).
-    # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default.
-    SHOWNODISPLAY=false
     #GEOMETRY=460x280+100+200
     # Desktop file search directories, colon-separated list from system settings.
     # Recursively search folders and sub-folders.
