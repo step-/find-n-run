@@ -1297,6 +1297,17 @@ start_dialog << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
+      ${REMARK# [[[. EXP0 expander activates EXP1}
+      <expander expanded="false" tooltip-text="$(gettext "More...")">
+        <text visible="false"></text>
+        <variable export="false">EXP0</variable>
+        <action>if false show:EXP1</action>${REMARK# show the other expander and...}
+        <action>if false activate:EXP1</action>${REMARK# ...expand it}
+        <action>if true activate:EXP0</action>${REMARK# shrink myself and...}
+        <action>hide:EXP0</action>${REMARK# ...hide myself immediately}
+        <label>""</label>
+      </expander>
+      ${REMARK# ]]]}
       ${REMARK# [[[. varOPEN checkbox}
       <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays.")">
         <label>$(gettext "_Keep window")</label>
@@ -1355,6 +1366,35 @@ start_dialog << EOF
         <action>exit:EXIT</action>
       </button>
       ${REMARK# ]]]}
+    </hbox>
+    ${REMARK# ]]]}
+    ${REMARK# [[[. EXP1 expander shows More options}
+    <hbox>
+      <expander expanded="false" visible="false" space-fill="true" space-expand="true" label-fill="true" tooltip-text="$(gettext "Click to hide.")">
+        <hbox space-fill="false" space-expand="false">
+          ${REMARK# [[[. SHOWNODISPLAY checkbox}
+          <checkbox use-underline="true" tooltip-text="$(gettext "Show also hidden system applications.")">
+            <label>$(gettext "Show _hidden")</label>
+            <default>${SHOWNODISPLAY}</default>
+            <variable>SHOWNODISPLAY</variable>
+            ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
+            <action>awk -v s=SHOWNODISPLAY=\${SHOWNODISPLAY} '/^SHOWNODISPLAY=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+          </checkbox>
+          ${REMARK# ]]]}
+          ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
+          <text space-fill="true" space-expand="true"><label>""</label></text>
+          ${REMARK# [[[. 'edit' button}
+          <button tooltip-text="$(gettext "Edit configuration file directly. Restart required to take effect.")" stock-icon-size="1">
+            <input file stock="gtk-edit"></input>
+            <action>open=$({ command -v rox || command -v xdg-open; } 2>/dev/null); \$open "$CONFIG" &</action>
+          </button>
+          ${REMARK# ]]]}
+        </hbox>
+        <label>" "</label>
+        <variable export="false">EXP1</variable>
+        <action>if false show:EXP0</action>
+        <action>if false hide:EXP1</action>
+      </expander>
     </hbox>
     ${REMARK# ]]]}
     ${REMARK# [[[. Menubar (nearly hidden 1x1).}
