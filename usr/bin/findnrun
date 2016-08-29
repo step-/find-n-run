@@ -563,7 +563,7 @@ if [ -n "$invalid" ]; then
 fi
 #]]]
 # Prepare the database builder script. [[[1
-# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v LIST_FILE="list_file" | files ]
+# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v SHOWNODISPLAY=true|false] [-v LIST_FILE="list_file" | files ]
 # Specify input file names either as lines of LIST_FILE or as command arguments
 # The former style allows for handling read file errors gracefully.
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
@@ -575,7 +575,7 @@ BEGIN { # [[[2
   sh = "'${SH}'" # not used as a coprocess
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
   if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
-  SHOWNODISPLAY="'"${SHOWNODISPLAY:-false}"'"
+  if(""==SHOWNODISPLAY) SHOWNODISPLAY = "false"
   MSG1="'"$(gettext "SHOWNODISPLAY false excludes file '%s'")"'"
   MSG2="'"$(gettext "filename '%s': Icon '%s' not found.")"'"
   # Read files specified by list of file names.
@@ -847,7 +847,7 @@ ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS
 # Recursive search supports common wine games.
 find "$@" -type f -name '*.desktop' > "$LIST_FILE" 2>/dev/null
 IFS=$ifs
-gawk -v ALL_ICONS=${varICONS} -f "${AWKB}" -v LIST_FILE="$LIST_FILE" > "${DATF}"
+gawk -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -f "${AWKB}" -v LIST_FILE="$LIST_FILE" > "${DATF}"
 [ "${DEBUG1}" ] && { >/tmp/varSEARCH; echo >&2 === READING SEARCH INPUT ALSO FROM /tmp/varSEARCH; }
 NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
@@ -1328,7 +1328,7 @@ start_dialog << EOF
         ${DEBUG2:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
         ${DEBUG2:+<action>if true echo >&2 in true rebuilding database...</action>}
-        <action>if true gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
+        <action>if true gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
         ${DEBUG2:+<action>if true echo >&2 in true clear:varLIST</action>}
         <action>if true clear:varLIST</action>
         ${DEBUG2:+<action>if true echo >&2 in true refresh:varLIST</action>}
@@ -1336,7 +1336,7 @@ start_dialog << EOF
         ${DEBUG2:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/findnrun-\*</action>}
         <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
         ${DEBUG2:+<action>if false echo >&2 in false rebuilding database...</action>}
-        <action>if false gawk -v ALL_ICONS=\${varICONS} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
+        <action>if false gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
         ${DEBUG2:+<action>if false echo >&2 in false clear:varLIST</action>}
         <action>if false clear:varLIST</action>
         ${DEBUG2:+<action>if false echo >&2 in false refresh:varLIST</action>}
@@ -1379,6 +1379,8 @@ start_dialog << EOF
             <variable>SHOWNODISPLAY</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
             <action>awk -v s=SHOWNODISPLAY=\${SHOWNODISPLAY} '/^SHOWNODISPLAY=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+            <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
+            <action>refresh:varLIST</action>
           </checkbox>
           ${REMARK# ]]]}
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
