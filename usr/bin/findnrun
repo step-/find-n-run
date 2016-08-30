@@ -1176,10 +1176,12 @@ generate_restart_window() # [[[2
 {
   # Restart findnrun dialog with all command line arguments.
   printf %s \
-    "for pid in $TMPD/.$$-*; do :; done" \
+    "Xdialog --title '$APP_NAME' --yesno" \
+      " '$(gettext "Restart findnrun?")' 0x0 &&" \
+    "{ for pid in $TMPD/.$$-*; do :; done" \
     '; pid=${pid##*-}' \
     "; cat /proc/$$/cmdline | xargs -0 env -- &" \
-    ' kill $pid'
+    ' kill $pid; }'
 }
 
 # Prepare and show the main window. [[[1
@@ -1379,7 +1381,7 @@ start_window << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. EXP1 expander shows More options}
     <hbox>
-      <expander expanded="false" visible="false" space-fill="true" space-expand="true" label-fill="true" tooltip-text="$(gettext "Click to hide.")">
+      <expander expanded="false" visible="false" space-fill="true" space-expand="true" label-fill="false" tooltip-text="$(gettext "Click to hide.")">
         <hbox space-fill="false" space-expand="false">
           ${REMARK# [[[. SHOWNODISPLAY checkbox}
           <checkbox use-underline="true" tooltip-text="$(gettext "Show also hidden system applications.")">
@@ -1392,6 +1394,16 @@ start_window << EOF
             <action>refresh:varLIST</action>
           </checkbox>
           ${REMARK# ]]]}
+          ${REMARK# [[[. SEARCHCOMPLETE checkbox}
+          <checkbox use-underline="true" tooltip-text="$(gettext "Search in application names, file names, command lines, comments and categories all at once.")">
+            <label>$(gettext "Search _complete")*</label>
+            <default>${SEARCHCOMPLETE}</default>
+            <variable>SEARCHCOMPLETE</variable>
+            ${DEBUG2:+<action>echo>&2 ,,, SEARCHCOMPLETE ,,,</action>}
+            <action>awk -v s=SEARCHCOMPLETE=\${SEARCHCOMPLETE} '/^SEARCHCOMPLETE=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+            <action>$(generate_restart_window)</action>${REMARK# restart findnrun w/ args}
+          </checkbox>
+          ${REMARK# ]]]}
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
           <text space-fill="true" space-expand="true"><label>""</label></text>
           ${REMARK# [[[. 'edit' button}
@@ -1401,7 +1413,7 @@ start_window << EOF
           </button>
           ${REMARK# ]]]}
         </hbox>
-        <label>" "</label>
+        <label>"$(gettext "application finder options       * = restarts findnrun")"</label>
         <variable export="false">EXP1</variable>
         <action>if false show:EXP0</action>
         <action>if false hide:EXP1</action>
