@@ -73,6 +73,7 @@ trap_handler() # [[[
     cd - >/dev/null
   fi
   rm -rf "${tmpd}"* ${DEBUG1:+/tmp/varSEARCH}
+  exit
 }
 #]]]
 trap trap_handler INT QUIT TERM HUP ABRT 0
@@ -1151,7 +1152,7 @@ generate_source_hotkeys() # [[[2
   done
 }
 
-start_dialog() # Returns when gtkdialog terminates [[[2
+start_window() # Returns when gtkdialog terminates [[[2
 {
   local dialog findnrun
   dialog="${TMPD}/.main.xml"
@@ -1171,6 +1172,16 @@ start_dialog() # Returns when gtkdialog terminates [[[2
   wait # for traps to PID
 }
 
+generate_restart_window() # [[[2
+{
+  # Restart findnrun dialog with all command line arguments.
+  printf %s \
+    "for pid in $TMPD/.$$-*; do :; done" \
+    '; pid=${pid##*-}' \
+    "; cat /proc/$$/cmdline | xargs -0 env -- &" \
+    ' kill $pid'
+}
+
 # Prepare and show the main window. [[[1
 # Tip: if your /bin/sh is bash you can use the following stanza in
 # <action>s, <input>s, etc. to print the execution line on stderr:
@@ -1181,7 +1192,7 @@ unset showcategories
 # i18n Main window widgets
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext's limitation
-start_dialog << EOF
+start_window << EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>
     ${REMARK# [[[. varSEARCH: progressive typing search input field.}
