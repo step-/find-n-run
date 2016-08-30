@@ -98,30 +98,21 @@ LR=${LANG%.*} #ex:pt_BR
 LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
-# Unexport these variables before running the selected command.
+# Unexport these variables before running the selected tap-command.
 UNEXPORT="unset GUI_ABOUT varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET"
 # unset varLIST and varF3 separately
 
 # Prepare the configuration file. [[[1
 # Defaults - match same variable/value pairs in the next block. [[[2
+# Leave alone the next three configuration values for historical reasons.
 defOPEN=false
 export varICONS=false
 export varFOCUSSEARCH=false
-# IBOL+IBOL in search field ignores all characters to beginning of line.
-IBOL="­" # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
-# Hotkey format: accel-mods':'key-sym':'accel-key
-# cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
-HOTKEY_F2=0:F2:0xffbf
-HOTKEY_F3=0:F3:0xffc0
-HOTKEY_F4=0:F4:0xffc1
-HOTKEY_F12=0:F12:0xffc9
-# Built-in sources
-# space separated list
-SOURCES="FNRstart FNRsc"
 
 # Read / supplement $CONFIG. [[[2
 [ -e "$CONFIG" ] || > "$CONFIG"; . "$CONFIG"
 # Add missing/hidden defaults.
+# Define and initialize ALL configuration values here.
 awk '
   /^ICONCACHE=/{f1=1}
   /^SEARCHCOMMENTS=/{f2=1}
@@ -141,11 +132,13 @@ awk '
   /^SHOWNODISPLAY=/{f13=1}
   /^SEARCHFILENAMES=/{f14=1}
   /^HOTKEY_F4=/{f15=1}
-  END{
-    if(!f9) print "HOTKEY_F2='"${HOTKEY_F2}"'">>ARGV[1]
-    if(!f10) print "HOTKEY_F3='"${HOTKEY_F3}"'">>ARGV[1]
-    if(!f15) print "HOTKEY_F4='"${HOTKEY_F4}"'">>ARGV[1]
-    if(!f11) print "HOTKEY_F12='"${HOTKEY_F12}"'">>ARGV[1]
+  END{ # Follow desired configuration file order
+    # Hotkey format: accel-mods":"key-sym":"accel-key
+    # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
+    if(!f9) print "HOTKEY_F2=\"0:F2:0xffbf\"">>ARGV[1]
+    if(!f10) print "HOTKEY_F3=\"0:F3:0xffc0\"">>ARGV[1]
+    if(!f15) print "HOTKEY_F4=\"0:F4:0xffc1\"">>ARGV[1]
+    if(!f11) print "HOTKEY_F12=\"0:F12:0xffc9\"">>ARGV[1]
     if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
     if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
     if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
@@ -155,10 +148,13 @@ awk '
     if(!f4) print "SEARCHREGEX=false">>ARGV[1]
     if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
     if(!f13) print "SHOWNODISPLAY=false">>ARGV[1]
-    if(!f8) print "IBOL=\"'"${IBOL}"'\" # reserved">>ARGV[1]
-    if(!f12) print "SOURCES=\"'"${SOURCES}"'\"">>ARGV[1]
+    # IBOL+IBOL in search field ignores all characters to beginning of line.
+    # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
+    if(!f8) printf "IBOL=\"%c\" # reserved\n", 0xAD >>ARGV[1]
+    # Built-in sources - space separated list
+    if(!f12) print "SOURCES=\"FNRstart FNRsc\"">>ARGV[1]
   }
-  ' "${CONFIG}"
+  ' "${CONFIG}" && . "$CONFIG"
 
 # Values that depend on defaults.
 # Icons [[[2
