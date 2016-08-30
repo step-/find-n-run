@@ -1425,6 +1425,16 @@ start_window << EOF
             <action>launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </checkbox>
           ${REMARK# ]]]}
+          ${REMARK# [[[. SEARCHREGEX checkbox}
+          <checkbox use-underline="true" tooltip-text="$(gettext "Interpret the search pattern as a POSIX Basic regular expression.")">
+            <label>$(gettext "_Regex")*</label>
+            <default>${SEARCHREGEX}</default>
+            <variable>SEARCHREGEX</variable>
+            ${DEBUG2:+<action>echo>&2 ,,, SEARCHREGEX ,,,</action>}
+            <action>awk -v s=SEARCHREGEX=\${SEARCHREGEX} '/^SEARCHREGEX=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+            <action>launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+          </checkbox>
+          ${REMARK# ]]]}
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
           <text space-fill="true" space-expand="true"><label>""</label></text>
           ${REMARK# [[[. 'edit' button}
