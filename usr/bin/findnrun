@@ -1153,20 +1153,22 @@ generate_source_hotkeys() # [[[2
 
 start_dialog() # Returns when gtkdialog terminates [[[2
 {
-  local dialog gtkdialog
+  local dialog findnrun
   dialog="${TMPD}/.main.xml"
-  gtkdialog="$TMPD/${0##*/}"
-  ln -sf "$(command -v $GTKDIALOG)" "$gtkdialog"
+  findnrun="$TMPD/${0##*/}"
+  ln -sf "$(command -v $GTKDIALOG)" "$findnrun"
   cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
     cat
     return
   fi &&
   if [ "${ENABLESTDOUT}" ]; then
-    "$gtkdialog" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}"
+    "$findnrun" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" &
   else
-    "$gtkdialog" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null
+    "$findnrun" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null &
   fi
+  mv "$TMPD/.$$" "$TMPD/.$$-$!" # track PPID-PID
+  wait # for traps to PID
 }
 
 # Prepare and show the main window. [[[1
