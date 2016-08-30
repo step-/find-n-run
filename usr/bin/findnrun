@@ -113,7 +113,7 @@ export varFOCUSSEARCH=false
 [ -e "$CONFIG" ] || > "$CONFIG"; . "$CONFIG"
 # Add missing/hidden defaults.
 # Define and initialize ALL configuration values here.
-awk '
+gawk '
   /^ICONCACHE=/{f1=1}
   /^SEARCHCOMMENTS=/{f2=1}
   /^SEARCHFROMLEFT=/{f3=1}
@@ -150,7 +150,7 @@ awk '
     if(!f13) print "SHOWNODISPLAY=false">>ARGV[1]
     # IBOL+IBOL in search field ignores all characters to beginning of line.
     # 0xAD, dec(173), soft-hyphen, gtk-dialog invisible
-    if(!f8) printf "IBOL=\"%c\" # reserved\n", 0xAD >>ARGV[1]
+    if(!f8) printf "IBOL=\"%c\" # reserved\n", 0xAD >>ARGV[1] # requires gawk
     # Built-in sources - space separated list
     if(!f12) print "SOURCES=\"FNRstart FNRsc\"">>ARGV[1]
   }
