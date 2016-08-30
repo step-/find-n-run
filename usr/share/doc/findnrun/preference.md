@@ -23,6 +23,9 @@ These values can be set also from the main window:
     # When false and no other SEARCH* field is true search in application names only.
     # To search in, i.e., file names only set SEARCHCOMPLETE=false SEARCHFILENAMES=true.
     SEARCHCOMPLETE=true
+    # Search pattern is a POSIX Basic regular expression.
+    # Applied also to comment search and category search.
+    SEARCHREGEX=false
     # Ignore the NoDisplay=true attribute value of .desktop files (not recommended).
     # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default.
     SHOWNODISPLAY=false
@@ -60,9 +63,6 @@ power users and custom applications:
     # Search pattern must match from the leftmost character.
     # Ignored for category search.
     SEARCHFROMLEFT=false
-    # Search pattern is a POSIX Basic regular expression.
-    # Applied also to comment search and category search.
-    SEARCHREGEX=false
     # Enforce case-dependent searching.
     CASEDEPENDENT=false
     # Main window geometry, no default.
