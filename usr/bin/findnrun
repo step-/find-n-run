@@ -1176,13 +1176,34 @@ generate_restart_window() # [[[2
 {
   # Restart findnrun dialog with all command line arguments.
   printf %s \
-    "Xdialog --title '$APP_NAME' --yesno" \
-      " '$(gettext "Restart findnrun?")' 0x0 &&" \
-    "{ for pid in $TMPD/.$$-*; do :; done" \
+    "for pid in $TMPD/.$$-*; do :; done" \
     '; pid=${pid##*-}' \
     "; cat /proc/$$/cmdline | xargs -0 env -- &" \
-    ' kill $pid; }'
+    ' kill $pid'
 }
+
+# Restart window dialog. [[[1
+# i18n restart window dialog
+export RESTART_WINDOW='
+<window title="'"$APP_TITLE"'" icon-name="edit-find" resizable="false" window-position="2">
+  <vbox>
+    <text justify="0">
+      <label>"     '"$(gettext "Restart Findnrun?")"'     "</label>
+    </text>
+    <hbox>
+      <text space-fill="true" space-expand="true"><label>""</label></text>
+      <button yes>
+        <action>'"$(generate_restart_window)"'</action>
+      </button>
+      <button no>
+        <action>closewindow:RESTART_WINDOW</action>
+      </button>
+      <text space-fill="true" space-expand="true"><label>""</label></text>
+    </hbox>
+  </vbox>
+  <variable>RESTART_WINDOW</variable>
+  <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:RESTART_WINDOW</action>
+</window>'
 
 # Prepare and show the main window. [[[1
 # Tip: if your /bin/sh is bash you can use the following stanza in
@@ -1401,7 +1422,7 @@ start_window << EOF
             <variable>SEARCHCOMPLETE</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHCOMPLETE ,,,</action>}
             <action>awk -v s=SEARCHCOMPLETE=\${SEARCHCOMPLETE} '/^SEARCHCOMPLETE=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
-            <action>$(generate_restart_window)</action>${REMARK# restart findnrun w/ args}
+            <action>launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </checkbox>
           ${REMARK# ]]]}
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
@@ -1413,7 +1434,7 @@ start_window << EOF
           </button>
           ${REMARK# ]]]}
         </hbox>
-        <label>"$(gettext "application finder options       * = restarts findnrun")"</label>
+        <label>"$(gettext "application finder options       * = restart required")"</label>
         <variable export="false">EXP1</variable>
         <action>if false show:EXP0</action>
         <action>if false hide:EXP1</action>
