@@ -842,7 +842,7 @@ END {
 LIST_FILE="${AWKB}.list-file"
 ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS
 # Recursive search supports common wine games.
-find "$@" -type f -name '*.desktop' > "$LIST_FILE" 2>/dev/null
+find -L "$@" -type f -name '*.desktop' > "$LIST_FILE" 2>/dev/null
 IFS=$ifs
 gawk -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -f "${AWKB}" -v LIST_FILE="$LIST_FILE" > "${DATF}"
 [ "${DEBUG1}" ] && { >/tmp/varSEARCH; echo >&2 === READING SEARCH INPUT ALSO FROM /tmp/varSEARCH; }
