@@ -88,6 +88,7 @@ FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
 F3SF="${TMPD}/.f3s"; >"${F3SF}" # built-in/plugin source list view cycler
 F4SF="${TMPD}/search-output" # saved items
+RWMF="${TMPD}/.msg_restart" # RESTART_WINDOW message
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 SEP=`echo -e "\b"` # field separator of packed values
@@ -1187,9 +1188,14 @@ generate_restart_window() # [[[2
 export RESTART_WINDOW='
 <window title="'"$APP_TITLE"'" icon-name="edit-find" resizable="false" window-position="2">
   <vbox>
+    <text wrap="true" xalign="0">
+      <variable export="false">RESTART_WINDOW_MESSAGE</variable>
+      <input>2>/dev/null head -n 1 "'"$TMPD/.msg_restart"'"</input>
+    </text>
     <text justify="0">
       <label>"     '"$(gettext "Restart Findnrun?")"'     "</label>
     </text>
+    <text><label>""</label></text>
     <hbox>
       <text space-fill="true" space-expand="true"><label>""</label></text>
       <button yes>
@@ -1422,6 +1428,7 @@ start_window << EOF
             <variable>SEARCHCOMPLETE</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHCOMPLETE ,,,</action>}
             <action>awk -v s=SEARCHCOMPLETE=\${SEARCHCOMPLETE} '/^SEARCHCOMPLETE=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+            <action>: >"$RWMF"</action>
             <action>launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </checkbox>
           ${REMARK# ]]]}
@@ -1432,15 +1439,18 @@ start_window << EOF
             <variable>SEARCHREGEX</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHREGEX ,,,</action>}
             <action>awk -v s=SEARCHREGEX=\${SEARCHREGEX} '/^SEARCHREGEX=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+            <action>: >"$RWMF"</action>
             <action>launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </checkbox>
           ${REMARK# ]]]}
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
           <text space-fill="true" space-expand="true"><label>""</label></text>
           ${REMARK# [[[. 'edit' button}
-          <button tooltip-text="$(gettext "Edit configuration file directly. Restart required to take effect.")" stock-icon-size="1">
+          <button tooltip-text="$(gettext "Edit configuration file directly. Restart required for changes to take effect.*")" stock-icon-size="1">
             <input file stock="gtk-edit"></input>
             <action>open=$({ command -v rox || command -v xdg-open; } 2>/dev/null); \$open "$CONFIG" &</action>
+            <action>gettext -s "When you are finished making your changes come back to this window and restart findnrun." >"$RWMF"</action>
+            <action>launch:RESTART_WINDOW</action>
           </button>
           ${REMARK# ]]]}
         </hbox>
