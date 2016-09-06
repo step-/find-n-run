@@ -1,6 +1,6 @@
 # Findnrun 2.4.0.
 # Copyright (C) 2015-2016 step; 2015 FSH, L18L, step
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the find-n-run package.
 # step, 2015 https://github.com/step-/
 #
 #, fuzzy
