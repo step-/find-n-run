@@ -3,7 +3,7 @@
 
 # =============================================================================
 # Findnrun - a progressive finder
-  Version=2.3.0
+  Version=2.4.0
 # authors: Copyright (C)2015-2016 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
 # depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only)
