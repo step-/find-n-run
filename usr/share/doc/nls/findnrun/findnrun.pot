@@ -459,7 +459,7 @@ msgid "**Findrun** - A progressive finder"
 msgstr ""
 
 #: /usr/share/doc/findnrun/index.md:5
-msgid "_2.2.0_"
+msgid "_2.4.0_"
 msgstr ""
 
 #: /usr/share/doc/findnrun/index.md:8
