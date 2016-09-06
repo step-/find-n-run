@@ -1,14 +1,14 @@
-# Findnrun 2.2.0.
+# Findnrun 2.4.0.
 # Copyright (C) 2015-2016 step; 2015 FSH, L18L, step
-# This file is distributed under the same license as the find-n-run package.
+# This file is distributed under the same license as the PACKAGE package.
 # step, 2015 https://github.com/step-/
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: find-n-run 2.2.0\n"
+"Project-Id-Version: find-n-run 2.4.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2016-06-27 19:23+0000\n"
+"POT-Creation-Date: 2016-09-06 05:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,45 +55,45 @@ msgstr ""
 msgid "Findnrun"
 msgstr ""
 
-#: /usr/bin/findnrun:232
+#: /usr/bin/findnrun:230
 msgid "application finder"
 msgstr ""
 
-#: /usr/bin/findnrun:244
+#: /usr/bin/findnrun:242
 msgid "shell completion"
 msgstr ""
 
 #. i18n Source plugin validation.
-#: /usr/bin/findnrun:285
+#: /usr/bin/findnrun:283
 msgid "fatal source error: %d%s\\n"
 msgstr ""
 
-#: /usr/bin/findnrun:286
+#: /usr/bin/findnrun:284
 msgid "recoverable source error: %d%s\\n"
 msgstr ""
 
-#: /usr/bin/findnrun:287
+#: /usr/bin/findnrun:285
 msgid "source warning: %d%s\\n"
 msgstr ""
 
-#: /usr/bin/findnrun:561
+#: /usr/bin/findnrun:559
 msgid "Invalid source plugins found and disabled:\\n%s"
 msgstr ""
 
-#: /usr/bin/findnrun:579
+#: /usr/bin/findnrun:577
 msgid "SHOWNODISPLAY false excludes file '%s'"
 msgstr ""
 
-#: /usr/bin/findnrun:580
+#: /usr/bin/findnrun:578
 msgid "filename '%s': Icon '%s' not found."
 msgstr ""
 
-#: /usr/bin/findnrun:884
+#: /usr/bin/findnrun:882
 msgid "_Help"
 msgstr ""
 
 #. i18n About dialog widgets: window text; number of apps text (singular/plural)
-#: /usr/bin/findnrun:902
+#: /usr/bin/findnrun:900
 msgid ""
 "%s %s\n"
 "authors: %s\n"
@@ -105,116 +105,161 @@ msgid ""
 "configuration: %s\n"
 msgstr ""
 
-#: /usr/bin/findnrun:913 /usr/bin/findnrun:1110
+#: /usr/bin/findnrun:911 /usr/bin/findnrun:1108
 msgid "%s application found"
 msgid_plural "%s applications found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /usr/bin/findnrun:914 /usr/bin/findnrun:1109
+#: /usr/bin/findnrun:912 /usr/bin/findnrun:1107
 msgid "%s source loaded"
 msgid_plural "%s sources loaded"
 msgstr[0] ""
 msgstr[1] ""
 
-#: /usr/bin/findnrun:921
+#: /usr/bin/findnrun:919
 msgid "_OK"
 msgstr ""
 
-#: /usr/bin/findnrun:956
+#: /usr/bin/findnrun:954
 msgid "%s: invalid SAVEFLT redirection '%s'\\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1106
+#: /usr/bin/findnrun:1104
 msgid "[ctrl+%d]"
 msgstr ""
 
-#: /usr/bin/findnrun:1106
+#: /usr/bin/findnrun:1104
 msgid "[%s]"
 msgstr ""
 
-#: /usr/bin/findnrun:1108
+#: /usr/bin/findnrun:1106
 msgid "Click the status bar or press a hotkey to activate the next source.\\n%s\\n%s"
+msgstr ""
+
+#. i18n restart window dialog
+#: /usr/bin/findnrun:1196
+msgid "Restart Findnrun?"
 msgstr ""
 
 #. i18n Main window widgets
 #. i18n "0" (invisible, disregard).
-#: /usr/bin/findnrun:1185
+#: /usr/bin/findnrun:1223
 msgid "0"
 msgstr ""
 
-#: /usr/bin/findnrun:1191
+#: /usr/bin/findnrun:1229
 msgid "Press ENTER to select"
 msgstr ""
 
-#: /usr/bin/findnrun:1199
+#: /usr/bin/findnrun:1237
 msgid "Type some letters to refine the list"
 msgstr ""
 
-#: /usr/bin/findnrun:1210
+#: /usr/bin/findnrun:1248
 msgid "Clear entry"
 msgstr ""
 
-#: /usr/bin/findnrun:1218
+#: /usr/bin/findnrun:1256
 msgid "Press ENTER or double-click to run the selected item"
 msgstr ""
 
-#: /usr/bin/findnrun:1259
+#: /usr/bin/findnrun:1297
 msgid "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit."
 msgstr ""
 
-#: /usr/bin/findnrun:1261
+#: /usr/bin/findnrun:1299
 msgid "Press Down Arrow to grab selected item"
 msgstr ""
 
-#: /usr/bin/findnrun:1276
+#: /usr/bin/findnrun:1314
 msgid "Remove entry from history"
 msgstr ""
 
-#: /usr/bin/findnrun:1293
+#: /usr/bin/findnrun:1331
 msgid "Comment about current item"
 msgstr ""
 
-#: /usr/bin/findnrun:1301
+#: /usr/bin/findnrun:1339
+msgid "More..."
+msgstr ""
+
+#: /usr/bin/findnrun:1350
 msgid "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays."
 msgstr ""
 
-#: /usr/bin/findnrun:1302
+#: /usr/bin/findnrun:1351
 msgid "_Keep window"
 msgstr ""
 
-#: /usr/bin/findnrun:1310
+#: /usr/bin/findnrun:1359
 msgid "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache."
 msgstr ""
 
-#: /usr/bin/findnrun:1311
+#: /usr/bin/findnrun:1360
 msgid "_Show all icons"
 msgstr ""
 
-#: /usr/bin/findnrun:1336
+#: /usr/bin/findnrun:1385
 msgid "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item."
 msgstr ""
 
-#: /usr/bin/findnrun:1337
+#: /usr/bin/findnrun:1386
 msgid "_Focus search"
 msgstr ""
 
-#: /usr/bin/findnrun:1347
+#: /usr/bin/findnrun:1396
 msgid "About and help"
 msgstr ""
 
-#: /usr/bin/findnrun:1353
+#: /usr/bin/findnrun:1402
 msgid "Exit"
+msgstr ""
+
+#: /usr/bin/findnrun:1411
+msgid "Click to hide."
+msgstr ""
+
+#: /usr/bin/findnrun:1414
+msgid "Show also hidden system applications."
+msgstr ""
+
+#: /usr/bin/findnrun:1415
+msgid "Show _hidden"
+msgstr ""
+
+#: /usr/bin/findnrun:1425
+msgid "Search in application names, file names, command lines, comments and categories all at once."
+msgstr ""
+
+#: /usr/bin/findnrun:1426
+msgid "Search _complete"
+msgstr ""
+
+#: /usr/bin/findnrun:1436
+msgid "Interpret the search pattern as a POSIX Basic regular expression."
+msgstr ""
+
+#: /usr/bin/findnrun:1437
+msgid "_Regex"
+msgstr ""
+
+#: /usr/bin/findnrun:1449
+msgid "Edit configuration file directly. Restart required for changes to take effect.*"
+msgstr ""
+
+#: /usr/bin/findnrun:1457
+msgid "application finder options       * = restart required"
 msgstr ""
 
 #. i18n Findnrun own .desktop file. [[[1
 #. i18n Translate the Name[xx] field to be added to file findnrun.desktop
-#: /usr/bin/findnrun:1619
+#: /usr/bin/findnrun:1723
 msgid "Findnrun."
 msgstr ""
 
 #. i18n Translate the Comment[xx] field to be added to file findnrun.desktop
-#: /usr/bin/findnrun:1621
+#: /usr/bin/findnrun:1725
 msgid "Find applications and much more."
 msgstr ""
 
@@ -940,170 +985,170 @@ msgstr ""
 msgid "    varFOCUSSEARCH=true"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:24
-msgid "Hidden Preferences"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:27
-msgid "These values aren't available from the main window. They are intended mostly for power users and custom applications:"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:28
-msgid "    # Hotkey format: accel-mods':'key-sym':'accel-key"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:29
-msgid "    # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:30
-msgid "    # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:31
-msgid "    HOTKEY_F2=0:F2:0xffbf"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:32
-msgid "    # Pressing HOTKEY_F3 starts the next available source plugin."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:33
-msgid "    HOTKEY_F3=0:F3:0xffc0"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:34
-msgid "    # Pressing HOTKEY_F4 saves+filters search results (see XCLIP)"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:35
-msgid "    HOTKEY_F4=0:F4:0xffc1"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:36
-msgid "    # Pressing HOTKEY_F12 activates the top search result list item."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:37
-msgid "    HOTKEY_F12=0:F12:0xffc9"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:38
-msgid "    # Icon cache location."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:39
-msgid "    ICONCACHE=${HOME}/.icons"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:40
-msgid "    # Extend search subject to .desktop file names."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:41
-#: /usr/share/doc/findnrun/preference.md:44
-#: /usr/share/doc/findnrun/preference.md:48
-msgid "    # Subsumed by SEARCHCOMPLETE=true."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:42
-msgid "    SEARCHFILENAMES=false"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:43
-msgid "    # Extend search subject to application comments."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:45
-msgid "    SEARCHCOMMENTS=false"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:46
-msgid "    # Extend search subject to application categories."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:47
-msgid "    # Show category labels in the comment field."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:49
-msgid "    # Set 'hidden' to hide category labels in the comment field."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:50
-msgid "    # In search input field prepend ';' to search for category only, i.e., ';office'."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:51
-msgid "    SEARCHCATEGORIES=false"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:52
+#: /usr/share/doc/findnrun/preference.md:21
 msgid "    # Search in application names, file names, command lines, comments and categories all at once."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:53
+#: /usr/share/doc/findnrun/preference.md:22
 msgid "    # When false and no other SEARCH* field is true search in application names only."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:54
+#: /usr/share/doc/findnrun/preference.md:23
 msgid "    # To search in, i.e., file names only set SEARCHCOMPLETE=false SEARCHFILENAMES=true."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:55
+#: /usr/share/doc/findnrun/preference.md:24
 msgid "    SEARCHCOMPLETE=true"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:56
-msgid "    # Search pattern must match from the leftmost character."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:57
-msgid "    # Ignored for category search."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:58
-msgid "    SEARCHFROMLEFT=false"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:59
+#: /usr/share/doc/findnrun/preference.md:25
 msgid "    # Search pattern is a POSIX Basic regular expression."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:60
+#: /usr/share/doc/findnrun/preference.md:26
 msgid "    # Applied also to comment search and category search."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:61
+#: /usr/share/doc/findnrun/preference.md:27
 msgid "    SEARCHREGEX=false"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:62
-msgid "    # Enforce case-dependent searching."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:63
-msgid "    CASEDEPENDENT=false"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:64
-msgid "    # Main window geometry, no default."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:65
-msgid "    # Command-line option --geometry=WxH+X+Y overrides this value."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:66
+#: /usr/share/doc/findnrun/preference.md:28
 msgid "    # Ignore the NoDisplay=true attribute value of .desktop files (not recommended)."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:67
+#: /usr/share/doc/findnrun/preference.md:29
 msgid "    # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:68
+#: /usr/share/doc/findnrun/preference.md:30
 msgid "    SHOWNODISPLAY=false"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:34
+msgid "Hidden Preferences"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:37
+msgid "These values aren't available from the main window. They are intended mostly for power users and custom applications:"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:38
+msgid "    # Hotkey format: accel-mods':'key-sym':'accel-key"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:39
+msgid "    # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:40
+msgid "    # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:41
+msgid "    HOTKEY_F2=0:F2:0xffbf"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:42
+msgid "    # Pressing HOTKEY_F3 starts the next available source plugin."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:43
+msgid "    HOTKEY_F3=0:F3:0xffc0"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:44
+msgid "    # Pressing HOTKEY_F4 saves+filters search results (see XCLIP)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:45
+msgid "    HOTKEY_F4=0:F4:0xffc1"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:46
+msgid "    # Pressing HOTKEY_F12 activates the top search result list item."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:47
+msgid "    HOTKEY_F12=0:F12:0xffc9"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:48
+msgid "    # Icon cache location."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:49
+msgid "    ICONCACHE=${HOME}/.icons"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:50
+msgid "    # Extend search subject to .desktop file names."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:51
+#: /usr/share/doc/findnrun/preference.md:54
+#: /usr/share/doc/findnrun/preference.md:58
+msgid "    # Subsumed by SEARCHCOMPLETE=true."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:52
+msgid "    SEARCHFILENAMES=false"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:53
+msgid "    # Extend search subject to application comments."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:55
+msgid "    SEARCHCOMMENTS=false"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:56
+msgid "    # Extend search subject to application categories."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:57
+msgid "    # Show category labels in the comment field."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:59
+msgid "    # Set 'hidden' to hide category labels in the comment field."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:60
+msgid "    # In search input field prepend ';' to search for category only, i.e., ';office'."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:61
+msgid "    SEARCHCATEGORIES=false"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:62
+msgid "    # Search pattern must match from the leftmost character."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:63
+msgid "    # Ignored for category search."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:64
+msgid "    SEARCHFROMLEFT=false"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:65
+msgid "    # Enforce case-dependent searching."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:66
+msgid "    CASEDEPENDENT=false"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:67
+msgid "    # Main window geometry, no default."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:68
+msgid "    # Command-line option --geometry=WxH+X+Y overrides this value."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:69

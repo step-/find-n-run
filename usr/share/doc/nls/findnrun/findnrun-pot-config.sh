@@ -50,7 +50,7 @@ is_to_be_translated() # $1-filepath
 }
 
 # Required project header settings {{{1
-PACKAGE_VERSION="2.2.0"
+PACKAGE_VERSION="2.4.0"
 PACKAGE_NAME="find-n-run"
 PACKAGE_TITLE="Findnrun $PACKAGE_VERSION"
 PACKAGE_COPYRIGHT="2015-2016 step; 2015 FSH, L18L, step"
