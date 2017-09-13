@@ -12,11 +12,8 @@ A progressive finder.
 
 ## News
 
-**6-Sep-2016 Release 2.4.0 is a recommended upgrade for all users.**
- * The main window displays more configuration settings.
- * Open the configuration file for editing directly from the main window.
- * Symbolic links to .desktop files are supported.
- * Updated Italian translation by xanad.
+**13-Sep-2017 Release 2.4.1**
+ * Updated German translation by L18L.
 
 **Upgrading**
 
@@ -35,11 +32,13 @@ file as explained in the
 ## Change Log
 
 See [release announcements](https://github.com/step-/find-n-run/releases)
-and - for fine-grained information - 
+and
 [commit history](https://github.com/step-/find-n-run/commits/master).
 
 ## Old News
 
+ * 6-Sep-2016 Release
+   [2.4.0](https://github.com/step-/find-n-run/releases/tag/2.4.0)
  * 1-Aug-2016 Release
    [2.3.0](https://github.com/step-/find-n-run/releases/tag/2.3.0)
    is a recommended upgrade for all users.
