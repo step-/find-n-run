@@ -1179,7 +1179,6 @@ start_window() # Returns when gtkdialog terminates [[[2
     "$findnrun" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null &
   fi
   mv "$TMPD/.$$" "$TMPD/.$$-$!" # track PPID-PID
-  echo $$ $! > "$TMPD"/.ppid-pid
   if [ "${FNRDEBUG}" ]; then
     echo "$RESTART_WINDOW" > "${dialog#.xml}"_RESTART_WINDOW.xml
     echo "$GUI_ABOUT" > "${dialog#.xml}"_GUI_ABOUT.xml
@@ -1236,8 +1235,10 @@ unset showcategories
 # i18n Main window widgets
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext limitation
+# Ensure that we have a unique title handle to the window
+xwininfo -name "$APP_TITLE" >/dev/null 2>&1 && APP_TITLE_UNIQ="$APP_TITLE [$$]"
 start_window << EOF
-<window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
+<window title="${APP_TITLE_UNIQ:-$APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>
     ${REMARK# [[[. varSEARCH: progressive typing search input field.}
     <hbox spacing="0">
