@@ -4,7 +4,7 @@
 # =============================================================================
 # Findnrun - a progressive finder
   Version=2.4.1
-# authors: Copyright (C)2015-2017 step; (C)2015 SFR, L18L
+# authors: Copyright (C)2015-2018 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
 # depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only)
 # source: https://github.com/step-/find-n-run
@@ -562,15 +562,15 @@ fi
 #]]]
 # Prepare the database builder script. [[[1
 # Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v SHOWNODISPLAY=true|false] [-v LIST_FILE="list_file" | files ]
-# Specify input file names either as lines of LIST_FILE or as command arguments
-# The former style allows for handling read file errors gracefully.
+# Specify input file names either as lines of LIST_FILE or as command arguments.
+# The former style allows for handling read file errors gracefully and is used throughout this script.
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN { # [[[2
   if('${DEBUG1:-0}') print "\n=== DB BUILDER (set FNRDEBUG= 2 for more)\n[[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
   RS="^~cannot~match~me~" # enable slurp read mode.
   # Choose a shell for ongoing command execution - see icon_workaround().
-  sh = "'${SH}'" # not used as a coprocess
+  sh = "'${SH}'" # not used as a co-process
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
   if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
   if(""==SHOWNODISPLAY) SHOWNODISPLAY = "false"
@@ -681,7 +681,6 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) { # [[[2
   if("" == IFP) return
   # If the work-around is not up-to-date run sh/find/ln to create icon links.
   if(!ICONUPDATED) {
-    #printf "L" > "/dev/stderr"
     ifp = IFP
     c = ""
     if(-1 == getline < ifp) { # file ifp does not exist
@@ -736,6 +735,7 @@ function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) { # [[[2
 function is_icon_workaround_uptodate(   uptodate,x) { # [[[2
 # Is the icon work-around enabled and up-to-date? - icon_workaround() helper.
   if(uptodate = ("true" == ALL_ICONS)) {
+    # test for file existence
     if(uptodate = (-1 != (getline < (x = ICONSTEM".uptodate"))))
       close(x)
   }
@@ -1158,6 +1158,7 @@ start_window() # Returns when gtkdialog terminates [[[2
   local dialog findnrun
   dialog="${TMPD}/.main.xml"
   findnrun="$TMPD/${0##*/}"
+  # Rename GTKDIALOG "$findnrun" in the ps/htop process list.
   ln -sf "$(command -v $GTKDIALOG)" "$findnrun"
   cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
@@ -1220,7 +1221,7 @@ unset showcategories
 [ hidden = "${SEARCHCATEGORIES}" ] && unset showcategories
 # i18n Main window widgets
 # i18n "0" (invisible, disregard).
-gettext 0 >/dev/null # work around an xgettext's limitation
+gettext 0 >/dev/null # work around an xgettext limitation
 start_window << EOF
 <window title="${APP_TITLE}" icon-name="edit-find" window-position="2">
   <vbox>
