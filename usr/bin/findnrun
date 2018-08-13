@@ -6,7 +6,7 @@
   Version=2.4.1
 # authors: Copyright (C)2015-2018 step; (C)2015 SFR, L18L
 # license: GNU GPL applies
-# depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only)
+# depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only), xwininfo, yad
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
 # =============================================================================
@@ -23,7 +23,6 @@ export OUTPUT_CHARSET=UTF-8
 # Initialize variables that can be changed. [[[1
 # i18n Main window title
 APP_NAME=$(gettext "Findnrun")
-APP_TITLE="${APP_NAME}"
 
 XDG_DATA_DIRS=${XDG_DATA_DIRS:-/usr/share:/usr/local/share}
 XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local}
@@ -46,6 +45,7 @@ ICON_DIRS="$HOME/.icons:${ICON_DIRS}:/usr/share/pixmaps:/usr/share/midi-icons:/u
 FNRHELPINDEX=${FNRHELPINDEX:-/usr/share/doc/findnrun/index.md:/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.html}
 
 # Initialize variables that should not be changed. [[[1
+APP_TITLE="${APP_NAME}" # see also APP_TITLE_UNIQ in start_window()
 REMARK= # leave unset
 FNRDEBUG=${FNRDEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-10
 if [ -n "${FNRDEBUG}" ]; then # set DEBUG1, DEBUG2, ... [[[
@@ -91,6 +91,7 @@ F4SF="${TMPD}/search-output" # saved items
 RWMF="${TMPD}/.msg_restart" # RESTART_WINDOW message
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
+YPID="${TMPD}/.yad.pid"; >"${YPID}" # yad --progress PID
 SEP=`echo -e "\b"` # field separator of packed values
 XDGHOMEICONS="${HOME}/.icons" # freedesktop.org standard user's icon location
 
@@ -576,6 +577,7 @@ BEGIN { # [[[2
   if(""==SHOWNODISPLAY) SHOWNODISPLAY = "false"
   MSG1="'"$(gettext "SHOWNODISPLAY false excludes file '%s'")"'"
   MSG2="'"$(gettext "filename '%s': Icon '%s' not found.")"'"
+  MSG3="'"$(gettext "analyzing %d applications...")"'"
   # Read files specified by list of file names.
   if(LIST_FILE) {
     NFILES = read_list_file(LIST_FILE, file)
@@ -597,6 +599,10 @@ END { # [[[2
   }
   # Decode .desktop files.
   if('${DEBUG1:-0}') print "awk decoding",NFILES,"files..." > "/dev/stderr"
+  if(!ICONUPDATED && "true"==ALL_ICONS && NFILES > 10) {
+    # show a progress gauge while re-building a big (>10) icon cache
+    PROGRESS_PID = show_progress_dialog(sprintf(MSG3, NFILES))
+  }
   for(i=1; i<=NFILES; i++) {
     fil=file[i]
     name=exec=icnpath=icnname=icnext=comment=category=""
@@ -650,6 +656,7 @@ END { # [[[2
   # Close shell.
   print "exit" | sh
   close(sh)
+  close_progress_dialog(PROGRESS_PID)
   if('${DEBUG1:-0}') print "]] BUILDER" >"/dev/stderr"
 }
 
@@ -782,6 +789,48 @@ function read_list_file(list_file, acontent,   name,nname,nfiles,f,i,s) { # [[[2
     }
   }
   return(0+nfiles)
+}
+
+function show_progress_dialog(message,   pid,c,p,s,A,px,py,w,h,g,cmd) { # [[[2
+  # Center the dialog over the main window.
+  c="xwininfo -name \"'"${APP_TITLE_UNIQ:-$APP_TITLE}"'\""
+  c | getline s # slurp wininfo output
+  close(c)
+  if('${DEBUG2:-0}') print "XWININFO("c")[[\n"s"\n]] XWININFO" >"/dev/stderr"
+  ## Make pattern
+  p =   "Absolute upper-left X:[[:space:]]+(-?[[:digit:]]+)" ".*"
+  p = p "Absolute upper-left Y:[[:space:]]+(-?[[:digit:]]+)" ".*"
+  p = p "Relative upper-left X:[[:space:]]+(-?[[:digit:]]+)" ".*"
+  p = p "Relative upper-left Y:[[:space:]]+(-?[[:digit:]]+)" ".*"
+  p = p "Width:[[:space:]]+([[:digit:]]+)" ".*"
+  p = p "Height:[[:space:]]+([[:digit:]]+)"
+  if(!match(s, p, A))
+    { return("") }
+  ## Calculate new size and position.
+  px = A[1] - A[3] + 1; py = A[2] - A[4]; w = A[5] - 1; h = A[6]
+  if('${DEBUG2:-0}') printf "px(%d) py(%d) w(%d) h(%d)\n", px,py,w,h >"/dev/stderr"
+  py = h / 2 + py; h = 0 # uncontrained height
+  if(px < 0) { w += px; px = 0 }
+  if(py < 0) { py = 0 }
+  if('${DEBUG2:-0}') printf "px(%d) py(%d) w(%d) h(%d)\n", px,py,w,h >"/dev/stderr"
+  ### Display progress dialog.
+  cmd = " --progress-text=\""message"\" --progress --pulsate --splash --no-buttons < /dev/null & echo $! >\"'"${YPID}"'\""
+  g = sprintf("--geometry %dx%d+%d+%d --width=%d --height=%d", w, h, px, py, w, h)
+  if('${DEBUG2:-0}') print "geometry("g")" >"/dev/stderr"
+  if(system("yad "g cmd))
+      { return("") }
+  getline pid < "'"${YPID}"'" # running yads PID
+  close("'"${YPID}"'")
+  if('${DEBUG2:-0}') print message" PROGRESS_PID="pid >"/dev/stderr"
+  return(pid)
+}
+
+function close_progress_dialog(pid,   killer) { # [[[2
+  if(PROGRESS_PID) { # close the progress gauge
+    killer = "/bin/kill "PROGRESS_PID
+    print "" | killer
+    close(killer)
+  }
 }
 
 ' # [[[2]]] awk script end
