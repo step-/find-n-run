@@ -1450,7 +1450,7 @@ start_window << EOF
           <button tooltip-text="$(gettext "Edit configuration file directly. Restart required for changes to take effect.*")" stock-icon-size="1">
             <input file stock="gtk-edit"></input>
             <action>open=$({ command -v rox || command -v xdg-open; } 2>/dev/null); \$open "$CONFIG" &</action>
-            <action>gettext -s "When you are finished making your changes come back to this window and restart findnrun." >"$RWMF"</action>
+            <action>echo "$(gettext "When you are finished making your changes come back to this window and restart findnrun.")" >"$RWMF"</action>
             <action>launch:RESTART_WINDOW</action>
           </button>
           ${REMARK# ]]]}
