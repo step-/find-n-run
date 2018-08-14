@@ -564,7 +564,7 @@ fi
 #]]]
 # Prepare the database builder script. [[[1
 # Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v SHOWNODISPLAY=true|false] [-v LIST_FILE="list_file" | files ]
-# Specify input file names either as lines of LIST_FILE or as command arguments.
+# Specify input files (.desktop) either as lines of LIST_FILE or as awk arguments.
 # The former style allows for handling read file errors gracefully and is used throughout this script.
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
@@ -586,7 +586,7 @@ BEGIN { # [[[2
   }
 }
 # main loop # [[[2
-# Read files specified by command line arguments.
+# Read .desktop files specified by command line arguments.
 # Use when you are certain that all files are readable.
 {
   # Slurp NFILES .desktop files.
@@ -603,6 +603,9 @@ END { # [[[2
   if(!ICONUPDATED && "true"==ALL_ICONS && NFILES > 10) {
     # show a progress gauge while re-building a big (>10) icon cache
     PROGRESS_PID = show_progress_dialog(sprintf(MSG3, NFILES))
+  }
+  if(ALL_ICONS == "true") {
+    icon_wa_init()
   }
   for(i=1; i<=NFILES; i++) {
     fil=file[i]
@@ -642,8 +645,19 @@ END { # [[[2
         while(key[k = k"%<"]);
       }
       key[k] = k
-      if(ALL_ICONS == "true") icon_workaround(sh)
+      if(ALL_ICONS == "true") {
+        delete Ret
+        icon_wa_push_icnname(i, Ret)
+        icnpath = Ret["icnpath"]
+        icnname = Ret["icnname"]
+      }
       out[k] = format_item()
+    }
+  }
+  if(ALL_ICONS == "true" && ! ICONUPDATED) {
+    if(icon_wa_find_icon_files()) {
+      icon_wa_match_and_link(sh)
+      icon_wa_bind(out)
     }
   }
   # Sort by name and print.
@@ -665,7 +679,7 @@ function format_item(   ic,cols) { # [[[2
 # Format tree widget item - columns: icon, name, all-packed-values.
 # Note: assert data does not include characters "|" and $SEP.
   ic = format_icon_cell()
-  # The second column, always empty, is reserved for future expansion.
+  # The second column, which is always empty, is reserved for future expansion.
   # The tree widget does display its value.
   cols = sprintf("%s||%s|%s", \
     ic, name, \
@@ -682,62 +696,105 @@ function format_icon_cell( ) { # [[[2
   return(icnpath ? icnpath icnname "." icnext : icnname)
 }
 
-function icon_workaround(sh,    a,c,IFP,ifp,x,lnk,ext) { # [[[2
-# Workaround for gtkdialog tree widget not displaying icons with path.
-  # Supposedly, IFP is the icon full path (it is used as the icon index key).
-  IFP = icnpath icnname (icnext ?".":"") icnext
-  if("" == IFP) return
-  # If the work-around is not up-to-date run sh/find/ln to create icon links.
-  if(!ICONUPDATED) {
+function icon_wa_push_icnname(i,byRef,   IFP,a) { # [[[2
+# Push caller`s data that icon_wa_find_icon_files and icon_wa_bind will use.
+# Return icnpath and icnname (resolved if possible otherwise as a slot to be bound subsequently).
+
+  # IFP is the icon full filepath, which is used as the ICONINDEX key.
+  WA[++nWA,"IFP"] = IFP = icnpath icnname (icnext ?".":"") icnext
+  WA[nWA,"desktop"] = filename
+  WA[nWA,"icnname"] = icnname
+
+  # Return icnname either resolved or as a slot to be bound subsequently:
+  # Gtkdialog is very finicky: the icon name passed to the tree widget must
+  # not include dot+extension but the link file name must include the
+  # extension!
+  # We prefix all names with "findnrun-" to reflect that they are located in
+  # the cache directory ICONSTEM->.
+  if(ICONUPDATED) { # see icon_wa_match_and_link for comments
+    split(ICONINDEX[IFP], a, "\x00")
+    byRef["icnname"] = "findnrun-"a[3] # file name w/o ext
+  } else {
+    # "<id=...>" is a slot for icon_wa_bind to fill.
+    byRef["icnname"] = "findnrun-<id="nWA">" # file name w/o ext
+  }
+
+  # Return icnpath:
+  byRef["icnpath"] = "" # this tells format_item() to use icnname only
+}
+
+function icon_wa_init() { # [[[2
+  WA_ICON_POOL = ""
+  delete WA
+  nWA = 0
+}
+
+function icon_wa_find_icon_files(   c,icon_dirs) { # [[[2
+  icon_dirs = "'"$ICON_DIRS"'"
+  gsub(/:/, "\" \"", icon_dirs)
+  icon_dirs = "\"" icon_dirs "\""
+  c = "2>/dev/null find -L " icon_dirs \
+    " -type f -regex \".*\\.\\(png\\|svg\\|xpm\\)\" -print"
+  c | getline WA_ICON_POOL
+  return(""!=WA_ICON_POOL)
+}
+
+function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
+# Workaround for gtkdialog tree widget failing to display icons with path.
+  WA_ICON_POOL = "\n" WA_ICON_POOL "\n"
+  for(i = 1; i <= nWA; i++) {
+    # IFP is the icon full filepath, which is used as the ICONINDEX key.
+    IFP = WA[i,"IFP"]
+    if("" == IFP) continue # defensive
+    # If the work-around data needs updating then create icon links, etc.
+    # Refresh the icon filepath. [[[3
     ifp = IFP
-    c = ""
-    if(-1 == getline < ifp) { # file ifp does not exist
-      # This could happen because .desktop file sets Icon=name-only (valid), but
-      # we cannot trust gtkdialog to show icons by name without extension, so
-      # get the full pathname; ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#icon_lookup
-      # next 3 lines: expand colon-separated list to shell words
-      icon_dirs = "'"$ICON_DIRS"'"
-      gsub(/:/, "\" \"", icon_dirs)
-      icon_dirs = "\"" icon_dirs "\""
-      c = "2>/dev/null find -L " icon_dirs \
-        " -type f \\( -name \""icnname".png\" -o -name \""icnname".svg\" -o -name \""icnname".xpm\" \\) -print0 -quit"
-        # ! -path "*/.*/*" excludes all matches within any hidden dir, neat!
-        # -print0 ensures match string does not include \n character
-        # -quit exits after first match, if any; GNU awk (gawk) extension.
-      # Read found path into ifp, which stays == "" if nothing found.
-      ifp=""; c | getline ifp; close(c)
-      # Note that ifp is null-terminated. See \x00 below.
-    } else { # file ifp exists
-      close(ifp)
+    if(-1 != getline < ifp) {
+      close(ifp) # icon file ifp exists
+    } else { # file ifp does not exist
+      # Find the full icon pathname from the icon name only, if any.
+      # cf. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#icon_lookup
+      icnname = WA[i,"icnname"]
+      if(match(WA_ICON_POOL, "\\n[^\\n]+/"icnname"\\.(png|svg|xpm)\\n")) {
+        ifp = substr(WA_ICON_POOL, RSTART + 1, RLENGTH -2)
+      } else {
+        ifp = ""
+      }
     }
-    if("" != ifp) {
-      sub(/\x00/,"",ifp)
-    } else {
-      printf(MSG2"\n", filename, icnpath icnname ("" != icnext ? "."icnext : "")) >"/dev/stderr"
-      return
+    if("" == ifp) { # no icon resource can be found.
+      printf MSG2"\n", WA[i,"desktop"], WA[i,"IFP"]  >"/dev/stderr"
+      continue
     }
-    # try symlinking target ifp
+
+    # Symlink the target ifp. [[[3
+    # Note that link file creation may be postponed until END performs close(sh).
+    # The link name is located in the icon cache directory ICONSTEM->.
+    # Gtkdialog is very finicky: the icon name passed to the tree widget
+    # must not include dot+extension but the link file name must include the
+    # extension!
     x = split(ifp, a, /\//)
     lnk = a[x] # link name lnk <- icon-name[.ext] (no path)
     ext = (x = split(lnk, a, /\./)) ?"."a[x] :"" # ".ext" if any
     if(ext) x-- # forget ext from split link name
     # implode link name while replacing all dots with underscores
     lnk = ""; for(c=1; c<=x; c++) lnk = lnk "_" a[c]; lnk = substr(lnk, 2)
-    # Symlink the icon.
     print "2>/dev/null ln -s \""ifp"\" \"" ICONSTEM lnk ext "\"" | sh
-    # Progressively build the icon index file.
-    printf "%s\x00%s\x00%s\x00%s\n", IFP, ifp, lnk, ext >> (ICONSTEM".index")
-  } else {
-    #printf "I" > "/dev/stderr"
-    # The work-around is up-to-date so use ICONINDEX map to speed things up
-    split(ICONINDEX[IFP], a, "\x00")
-    lnk = a[3]
-  }
 
-  icnpath = "" # this tells format_item() to use icnname only
-  icnname = "findnrun-" lnk # no ext
-  # gtkdialog is very finicky: icon name must not include dots nor extension
-  # but the link name must include an extension!
+    # Store the link value for icon_wa_bind to bind. [[[3
+    WA[i,"bind"] = lnk # 
+
+    # Progressively build the icon index file. [[[3
+    printf "%s\x00%s\x00%s\x00%s\n", IFP, ifp, lnk, ext >> (ICONSTEM".index")
+  }
+}
+
+function icon_wa_bind(byRef,   k,M) { # [[[2
+  # Bind all slots "<id="nWA">".
+  for(k in byRef) {
+    if(match(byRef[k], /<id=([[:digit:]]+)>/, M)) {
+      byRef[k] = substr(byRef[k], 1, RSTART -1) WA[M[1],"bind"] substr(byRef[k], RSTART + RLENGTH)
+    }
+  }
 }
 
 function is_icon_workaround_uptodate(   uptodate,x) { # [[[2
