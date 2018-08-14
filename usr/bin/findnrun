@@ -571,7 +571,7 @@ fi
 BEGIN { # [[[2
   if('${DEBUG1:-0}') print "\n=== DB BUILDER (set FNRDEBUG= 2 for more)\n[[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
   RS="^~cannot~match~me~" # enable slurp read mode.
-  # Choose a shell for ongoing command execution - see icon_workaround().
+  # Choose a shell for ongoing command execution - see icon_wa_match_and_link().
   sh = "'${SH}'" # not used as a co-process
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
   if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
@@ -593,14 +593,14 @@ BEGIN { # [[[2
   file[++NFILES]=";"FILENAME"\n"$0
 }
 END { # [[[2
-  # Is the icon work-around enabled and up-to-date?
-  if(ICONUPDATED = is_icon_workaround_uptodate()) {
-    # Speed up icon_workaround() by reading the icon index file.
+  # Is the icon work-around enabled and are its data up-to-date?
+  if(ICON_WA_READY = is_icon_wa_uptodate()) {
+    # Speed up icon search by reading the icon index file.
     read_icon_index() # creates ICONINDEX map
   }
   # Decode .desktop files.
   if('${DEBUG1:-0}') print "awk decoding",NFILES,"files..." > "/dev/stderr"
-  if(!ICONUPDATED && "true"==ALL_ICONS && NFILES > 10) {
+  if(!ICON_WA_READY && "true"==ALL_ICONS && NFILES > 10) {
     # show a progress gauge while re-building a big (>10) icon cache
     PROGRESS_PID = show_progress_dialog(sprintf(MSG3, NFILES))
   }
@@ -654,7 +654,7 @@ END { # [[[2
       out[k] = format_item()
     }
   }
-  if(ALL_ICONS == "true" && ! ICONUPDATED) {
+  if(ALL_ICONS == "true" && ! ICON_WA_READY) {
     if(icon_wa_find_icon_files()) {
       icon_wa_match_and_link(sh)
       icon_wa_bind(out)
@@ -666,8 +666,8 @@ END { # [[[2
     print substr(out[key[i]], 1, 510)
     # 510 works around gtkdialog tree widget buffer overflow limit
   }
-  # Remember if we performed a complete icon work-around.
-  mark_icon_workaround_uptodate()
+  # Remember that we performed a complete icon work-around.
+  mark_icon_wa_is_uptodate()
   # Close shell.
   print "exit" | sh
   close(sh)
@@ -711,7 +711,7 @@ function icon_wa_push_icnname(i,byRef,   IFP,a) { # [[[2
   # extension!
   # We prefix all names with "findnrun-" to reflect that they are located in
   # the cache directory ICONSTEM->.
-  if(ICONUPDATED) { # see icon_wa_match_and_link for comments
+  if(ICON_WA_READY) { # see icon_wa_match_and_link for comments
     split(ICONINDEX[IFP], a, "\x00")
     byRef["icnname"] = "findnrun-"a[3] # file name w/o ext
   } else {
@@ -797,19 +797,19 @@ function icon_wa_bind(byRef,   k,M) { # [[[2
   }
 }
 
-function is_icon_workaround_uptodate(   uptodate,x) { # [[[2
-# Is the icon work-around enabled and up-to-date? - icon_workaround() helper.
+function is_icon_wa_uptodate(   uptodate,x) { # [[[2
+# Is the icon work-around requested and are its data up-to-date?
   if(uptodate = ("true" == ALL_ICONS)) {
     # test for file existence
     if(uptodate = (-1 != (getline < (x = ICONSTEM".uptodate"))))
       close(x)
   }
-  if('${DEBUG2:-0}') print "is_icon_workaround_uptodate="uptodate > "/dev/stderr"
+  if('${DEBUG2:-0}') print "is_icon_wa_uptodate="uptodate > "/dev/stderr"
   return(uptodate)
 }
 
 function read_icon_index(   a,b,data,i,x) { # [[[2
-# Read the index file - icon_workaround() helper
+# Read the index file located in the icon work-around data directory.
   if('${DEBUG2:-0}') print "in read_icon_index" >"/dev/stderr"
   if(1 == (getline data < (x = ICONSTEM".index"))) {
     close(x)
@@ -821,11 +821,11 @@ function read_icon_index(   a,b,data,i,x) { # [[[2
   }
 }
 
-function mark_icon_workaround_uptodate( ) { # [[[2
-# If the icon work-around is enabled, mark whether it is up-to-date.
+function mark_icon_wa_is_uptodate( ) { # [[[2
+# If the icon work-around is enabled, mark whether its date are up-to-date.
   if("true" == ALL_ICONS) {
     print "" > (ICONSTEM".uptodate")
-    if('${DEBUG3:-0}') print "\nmark_icon_workaround_uptodate() created", ICONSTEM".uptodate" > "/dev/stderr"
+    if('${DEBUG3:-0}') print "\nmark_icon_wa_is_uptodate() created", ICONSTEM".uptodate" > "/dev/stderr"
   }
 }
 
