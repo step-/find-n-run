@@ -22,7 +22,7 @@ export OUTPUT_CHARSET=UTF-8
 
 # Initialize variables that can be changed. [[[1
 # i18n Main window title
-APP_NAME=$(gettext "Findnrun")
+APP_NAME=$i18n_Findnrun
 
 XDG_DATA_DIRS=${XDG_DATA_DIRS:-/usr/share:/usr/local/share}
 XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local}
@@ -228,7 +228,7 @@ fi
 # Default built-in source "Desktop Apps" [[[2
 SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
-TITLE_FNRstart=$(gettext "application finder")
+TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='/usr/share/doc/findnrun/findnrun.svg' # Filmstrip plugin expects.
 # save item label, .desktop file fullpath, exec line, comments, categories
 SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
@@ -240,7 +240,7 @@ x="${TMPD}/.FNRsc"; mkdir "$x" &&
 # Embedded newline characters not allowed.
 TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do { cd "$i" && ls -1 *"${term}"* ;} 2>/dev/null; done | findnrun-formatter -- -O su | tee "$t"; else grep -F'$i' "${term}" "$t"; fi;'
 ICON_FNRsc='/usr/share/doc/findnrun/FNRsc.svg'
-TITLE_FNRsc=$(gettext "shell completion")
+TITLE_FNRsc=$i18n_shell_completion
 # save item label == exec line
 SAVEFLT_FNRsc="CUT=\"-4\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
@@ -281,9 +281,9 @@ store_valid_sources() # [[[
 #]]]
 # i18n Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
-    -v MSG1="$(gettext "fatal source error: %d%s")\n" \
-    -v MSG2="$(gettext "recoverable source error: %d%s")\n" \
-    -v MSG3="$(gettext "source warning: %d%s")\n" \
+    -v MSG1="${i18n_fatal_source_error}\n" \
+    -v MSG2="${i18n_recoverable_source_error}\n" \
+    -v MSG3="${i18n_source_warning}\n" \
 '#!/usr/bin/gawk -f
 BEGIN {
   TEXTDOMAIN="'"${TEXTDOMAIN}"'"
@@ -600,7 +600,7 @@ if [ -n "$invalid" ]; then
     --image gtk-dialog-warning --buttons-layout=center --margins=4 \
     --button=gtk-ok \
     --text "$(printf \
-      "$(gettext 'Invalid source plugins found and disabled:\n%s')" \
+      "$i18n_Invalid_source_plugins" \
       "$invalid")"
 fi
 #]]]
@@ -1036,7 +1036,7 @@ EOF
       esac &&
       helpbutton="
 <button use-underline=\"true\">
-  <label>$(gettext "_Help")</label>
+  <label>$i18n_Help</label>
   <input file stock=\"gtk-help\"></input>
   <action>${helpviewer} &</action>
   <action>closewindow:GUI_ABOUT</action>
@@ -1054,26 +1054,19 @@ export GUI_ABOUT='
   <vbox>
     <frame>
       <text justify="0" selectable="true" can-focus="false">
-        <label>"'"$(printf "$(gettext "%s %s
-authors: %s
-Open source - GNU GPL license applies
-
-%s
-%s
-
-configuration: %s
-")" "${APP_NAME}" "${Version}" "step, SFR, L18L" \
+        <label>"'"$(printf "$i18n_gui_about" \
+"${APP_NAME}" "${Version}" "step, SFR, L18L" \
 "http://www.murga-linux.com/puppy/viewtopic.php?t=98330" \
 "https://github.com/step-/find-n-run" "${CONFIG}")
-$(n="${NDATF}"; printf "$(ngettext "%s application found" "%s applications found" "$n")" "$n")
-$(n="${NSOURCES}"; printf "$(ngettext "%s source loaded" "%s sources loaded" "$n")" "$n"
+$(n="${NDATF}"; printf "$(ngettext "$i18n_application_found" "$i18n_applications_found" "$n")" "$n")
+$(n="${NSOURCES}"; printf "$(ngettext "$i18n_source_loaded" "$i18n_sources_loaded" "$n")" "$n"
 )"'"</label>
       </text>
     </frame>
     <hbox homogeneous="true">
       <text space-fill="true" space-expand="true"><label>""</label></text>
       <button use-underline="true">
-        <label>'"$(gettext "_OK")"'</label>
+        <label>'"$i18n_OK"'</label>
         <input file stock="gtk-ok"></input>
         <action>closewindow:GUI_ABOUT</action>
       </button>
@@ -1108,7 +1101,7 @@ BEGIN {
   } else if(match(RDR, /^[ \t]*[>]/)) {
     redirect = "printer"
   } else {
-    printf "'"$(gettext "%s: invalid SAVEFLT redirection '%s'")\n"'", \
+    printf "'"$i18n_invalid_SAVEFLT_redirection"'", \
       ENVIRON["ID"], RDR > "/dev/stderr"
     exit(1)
   }
@@ -1258,11 +1251,11 @@ generate_status_bar() # [[[2
   #i18n Status bar: Ctrl+0... and F3... hotkeys
   local ctrlnkey funckey keysymF3 tooltip
   keysymF3=${HOTKEY_F3#*:}; keysymF3=${keysymF3%:*}
-  ctrlnkey=$(gettext "[ctrl+%d]") funckey=$(gettext "[%s]")
-  tooltip=$(printf "$(gettext \
-    "Click the status bar or press a hotkey to activate the next source.\n%s\n%s")" \
-    "$(n="${NSOURCES}"; printf "$(ngettext "%s source loaded" "%s sources loaded" "$n")" "$n")" \
-    "$(n="${NDATF}"; printf "$(ngettext "%s application found" "%s applications found" "$n")" "$n")" \
+  ctrlnkey=$i18n_ctrl_digit funckey=$i18n_boxed_string
+  tooltip=$(printf \
+    "$i18n_Click_the_status_bar" \
+    "$(n="${NSOURCES}"; printf "$(ngettext "$i18n_source_loaded" "$i18n_sources_loaded" "$n")" "$n")" \
+    "$(n="${NDATF}"; printf "$(ngettext "$i18n_application_found" "$i18n_applications_found" "$n")" "$n")" \
   )
   echo -n '
     <vbox>
@@ -1356,7 +1349,7 @@ export RESTART_WINDOW='
       <input>2>/dev/null head -n 1 "'"$TMPD/.msg_restart"'"</input>
     </text>
     <text justify="0">
-      <label>"     '"$(gettext "Restart Findnrun?")"'     "</label>
+      <label>"     '"$i18n_Restart_Findnrun"'     "</label>
     </text>
     <text><label>""</label></text>
     <hbox>
@@ -1391,7 +1384,7 @@ start_window << EOF
   <vbox>
     ${REMARK# [[[. varSEARCH: progressive typing search input field.}
     <hbox spacing="0">
-      <entry auto-refresh="${DEBUG1:+true}" tooltip-text="$(gettext "Press ENTER to select")">
+      <entry auto-refresh="${DEBUG1:+true}" tooltip-text="$i18n_Press_ENTER_to_select">
         ${REMARK# [[[. Entering IBOL+IBOL makes the search input field}
         ${REMARK# ignore all characters to the left of IBOL+IBOL included.}
         ${REMARK# IBOL stands for Ignore To Beginning Of Line. Its default}
@@ -1399,7 +1392,7 @@ start_window << EOF
         ${REMARK# gtkdialog. Here we append IBOL+IBOL to the default search}
         ${REMARK# term so that the entire value --which is simply a help tip}
         ${REMARK# is ignored, and the search engine can perform a clean query.}
-        <default>$(gettext "Type some letters to refine the list")${IBOL}${IBOL}</default>
+        <default>$i18n_Type_some_letters${IBOL}${IBOL}</default>
         ${REMARK# ]]]}
         <variable>varSEARCH</variable>
         ${REMARK# The entry widget ignores initial input unless it is refreshed, see varSEARCH0.}
@@ -1410,7 +1403,7 @@ start_window << EOF
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
       </entry>
-      <button tooltip-text="$(gettext "Clear entry")" stock-icon-size="1">
+      <button tooltip-text="$i18n_Clear_entry" stock-icon-size="1">
         <input file stock="gtk-clear"></input>
         <action>grabfocus:varSEARCH</action>
         <action>clear:varSEARCH</action>
@@ -1418,7 +1411,7 @@ start_window << EOF
     </hbox>
     ${REMARK# ]]]}
     ${REMARK# [[[. varLIST: list tap-data records; invoke selected.}
-    <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$(gettext "Press ENTER or double-click to run the selected item")">
+    <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$i18n_Press_ENTER_or_double_click">
       ${REMARK# Column names below. Only Reserved and Label are visible.}
       ${REMARK# Consider also that there is an icon column, so a full input}
       ${REMARK# record is defined as Icon|Reserved|Label|PackedValues }
@@ -1459,9 +1452,9 @@ start_window << EOF
     <hbox space-fill="false" space-expand="false">
       ${REMARK# This widget doubles as a varLIST item grabber and as a pull-down history list.}
       ${REMARK#  [[[. Pull-down list and input entry field combo.}
-      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$(gettext "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.")">
+      <comboboxentry space-expand="true" space-fill="true" tooltip-text="$i18n_Press_the_Down_Arrow_key">
         <variable>varCMD</variable>
-        <default>$(gettext "Press Down Arrow to grab selected item")</default>
+        <default>$i18n_Press_Down_Arrow</default>
         ${REMARK# Append a space to the grabbed varLIST item \$@ so we can tell it from history items.}
         ${REMARK# Note that the entry widget discards trailing spaces, so our space is a unique mark.}
         <input>$(generate_get_drain_cmd); echo "\$@ "; awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "$HSTF"</input>
@@ -1476,7 +1469,7 @@ start_window << EOF
       </comboboxentry>
       ${REMARK#  ]]]}
       ${REMARK#  [[[. History item delete button.}
-      <button tooltip-text="$(gettext "Remove entry from history")" stock-icon-size="1">
+      <button tooltip-text="$i18n_Remove_entry_from_history" stock-icon-size="1">
         <input file stock="gtk-remove"></input>
         <action>grabfocus:varCMD</action>
         ${REMARK# pull-down-list ::= varLIST-item + history-file-contents.}
@@ -1493,7 +1486,7 @@ start_window << EOF
     </hbox>
     ${REMARK# ]]]}
     ${REMARK# [[[. varCOMMENT: display item comment.}
-    <entry sensitive="false" tooltip-text="$(gettext "Comment about current item")">
+    <entry sensitive="false" tooltip-text="$i18n_Comment_about_current_item">
       <variable>varCOMMENT</variable>
       <input>IFS=${SEP}; set -- \${varLIST}; echo "\$4${showcategories:+ \$5}"</input>
     </entry>
@@ -1501,7 +1494,7 @@ start_window << EOF
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. EXP0 expander activates EXP1}
-      <expander expanded="false" tooltip-text="$(gettext "More...")">
+      <expander expanded="false" tooltip-text="$i18n_More">
         <text visible="false"></text>
         <variable export="false">EXP0</variable>
         <action>if false show:EXP1</action>${REMARK# show the other expander and...}
@@ -1512,8 +1505,8 @@ start_window << EOF
       </expander>
       ${REMARK# ]]]}
       ${REMARK# [[[. varOPEN checkbox}
-      <checkbox use-underline="true" tooltip-text="$(gettext "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays.")">
-        <label>$(gettext "_Keep window")</label>
+      <checkbox use-underline="true" tooltip-text="$i18n_Keep_this_window_open">
+        <label>$i18n_Keep_window</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varOPEN ,,,</action>}
@@ -1521,8 +1514,8 @@ start_window << EOF
       </checkbox>
       ${REMARK# ]]]}
       ${REMARK# [[[. varICONS checkbox}
-      <checkbox use-underline="true" tooltip-text="$(gettext "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.")">
-        <label>$(gettext "_Show all icons")</label>
+      <checkbox use-underline="true" tooltip-text="$i18n_Display_all_available_icons">
+        <label>$i18n_Show_all_icons</label>
         <default>${varICONS}</default>
         <variable>varICONS</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varICONS ,,,</action>}
@@ -1547,8 +1540,8 @@ start_window << EOF
       </checkbox>
       ${REMARK# ]]]}
       ${REMARK# [[[. varFOCUSSEARCH checkbox}
-      <checkbox use-underline="true" tooltip-text="$(gettext "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item.")">
-        <label>$(gettext "_Focus search")</label>
+      <checkbox use-underline="true" tooltip-text="$i18n_Return_the_keyboard_focus">
+        <label>$i18n_Focus_search</label>
         <default>${varFOCUSSEARCH}</default>
         <variable>varFOCUSSEARCH</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varFOCUSSEARCH ,,,</action>}
@@ -1558,13 +1551,13 @@ start_window << EOF
       ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
       <text space-fill="true" space-expand="true"><label>""</label></text>
       ${REMARK# [[[. 'help' button}
-      <button tooltip-text="$(gettext "About and help")" stock-icon-size="1">
+      <button tooltip-text="$i18n_About_and_help" stock-icon-size="1">
         <input file stock="gtk-about"></input>
         <action>launch:GUI_ABOUT</action>
       </button>
       ${REMARK# ]]]}
       ${REMARK# [[[. 'exit' button}
-      <button tooltip-text="$(gettext "Exit")" stock-icon-size="1">
+      <button tooltip-text="$i18n_Exit" stock-icon-size="1">
         <input file stock="gtk-quit"></input>
         <action>exit:EXIT</action>
       </button>
@@ -1573,11 +1566,11 @@ start_window << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. EXP1 expander shows More options}
     <hbox>
-      <expander expanded="false" visible="false" space-fill="true" space-expand="true" label-fill="false" tooltip-text="$(gettext "Click to hide.")">
+      <expander expanded="false" visible="false" space-fill="true" space-expand="true" label-fill="false" tooltip-text="$i18n_Click_to_hide">
         <hbox space-fill="false" space-expand="false">
           ${REMARK# [[[. SHOWNODISPLAY checkbox}
-          <checkbox use-underline="true" tooltip-text="$(gettext "Show also hidden system applications.")">
-            <label>$(gettext "Show _hidden")</label>
+          <checkbox use-underline="true" tooltip-text="$i18n_Show_hidden_system_applications">
+            <label>$i18n_Show_hidden</label>
             <default>${SHOWNODISPLAY}</default>
             <variable>SHOWNODISPLAY</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
@@ -1587,8 +1580,8 @@ start_window << EOF
           </checkbox>
           ${REMARK# ]]]}
           ${REMARK# [[[. SEARCHCOMPLETE checkbox}
-          <checkbox use-underline="true" tooltip-text="$(gettext "Search in application names, file names, command lines, comments and categories all at once.")">
-            <label>$(gettext "Search _complete")*</label>
+          <checkbox use-underline="true" tooltip-text="$i18n_Search_in_application_names_etc">
+            <label>${i18n_Search_complete}*</label>
             <default>${SEARCHCOMPLETE}</default>
             <variable>SEARCHCOMPLETE</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHCOMPLETE ,,,</action>}
@@ -1598,8 +1591,8 @@ start_window << EOF
           </checkbox>
           ${REMARK# ]]]}
           ${REMARK# [[[. SEARCHREGEX checkbox}
-          <checkbox use-underline="true" tooltip-text="$(gettext "Interpret the search pattern as a POSIX Basic regular expression.")">
-            <label>$(gettext "_Regex")*</label>
+          <checkbox use-underline="true" tooltip-text="$i18n_Interpret_search_as_BRE">
+            <label>$i18n_Regex*</label>
             <default>${SEARCHREGEX}</default>
             <variable>SEARCHREGEX</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHREGEX ,,,</action>}
@@ -1611,15 +1604,15 @@ start_window << EOF
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
           <text space-fill="true" space-expand="true"><label>""</label></text>
           ${REMARK# [[[. 'edit' button}
-          <button tooltip-text="$(gettext "Edit configuration file directly. Restart required for changes to take effect.*")" stock-icon-size="1">
+          <button tooltip-text="$i18n_Edit_configuration_file" stock-icon-size="1">
             <input file stock="gtk-edit"></input>
             <action>open=$({ command -v rox || command -v xdg-open; } 2>/dev/null); \$open "$CONFIG" &</action>
-            <action>echo "$(gettext "When you are finished making your changes come back to this window and restart findnrun.")" >"$RWMF"</action>
+            <action>echo "$i18n_When_you_are_finished" >"$RWMF"</action>
             <action>launch:RESTART_WINDOW</action>
           </button>
           ${REMARK# ]]]}
         </hbox>
-        <label>"$(gettext "application finder options       * = restart required")"</label>
+        <label>"$i18n_application_finder_options"</label>
         <variable export="false">EXP1</variable>
         <action>if false show:EXP0</action>
         <action>if false hide:EXP1</action>
@@ -1885,7 +1878,7 @@ EOF
 
 # i18n Findnrun own .desktop file. [[[1
 # i18n Translate the Name[xx] field to be added to file findnrun.desktop
-Name=$(gettext "Findnrun.")
+Name=$i18n_Name_desktop
 # i18n Translate the Comment[xx] field to be added to file findnrun.desktop
-Comment=$(gettext "Find applications and much more.")
+Comment=$i18n_Comment_desktop
 
