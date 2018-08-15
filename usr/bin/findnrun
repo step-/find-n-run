@@ -14,6 +14,8 @@
 # Localization settings. [[[1
 export TEXTDOMAIN=findnrun
 export OUTPUT_CHARSET=UTF-8
+. ./i18n_table.sh && i18n_table || exit 1 # TODO set final location
+# TODO update instructions below
 >/dev/null gettext 'INSTRUCTIONS FOR TRANSLATORS
 1 Download the latest commented translation template from:
   https://raw.githubusercontent.com/step-/find-n-run/master/usr/share/doc/nls/findnrun/findnrun.pot
