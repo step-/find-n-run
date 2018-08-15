@@ -1312,7 +1312,7 @@ start_window() # Returns when gtkdialog terminates [[[2
   ln -sf "$(command -v $GTKDIALOG)" "$findnrun"
   cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
-    cat
+    cat "$dialog"
     return
   fi &&
   if [ "${ENABLESTDOUT}" ]; then
