@@ -318,12 +318,30 @@ BEGIN {
     # VGI[] array of parsed RHS values a[3], indices type,name a[1],a[2]
     I[a[2]] = a[2]
     if("SOURCE" == a[1]) S[a[2]] = a[2]
-    # Assert: Input stream ("set |") single quoted all values.
-    # Note the difference between ash and bash: bash "env" single quotes
-    # just the values that include spaces, while ash "env" single
-    # quote all values regardless. So we strip exterior single quotes
-    # conditionally to keep compatibility with both shells.
-    VGI[a[1], a[2]] = unquote(a[3])
+
+    # Notes about quote handling: [[[
+    # Stdin comes from "set |" and consists of lines in the form
+    # <shell identifier>=[<sq>]<word>[<word>...][<sq>]
+    # <sq> is a single quote in ash, dash and bash. However, ash and bash omit
+    # <sq> if there is only one <word>.
+    # For all literal groups, i.e, TITLE, MODE, etc.  we trim <sq>, see
+    # {UNQUOTE} below.
+    # However, for code group (DRAIN, TAP) we never trim or change the data.
+
+    # For code groups, if <word> contains a single quote character \x27, i.e.
+    # "A\x27B", `set` could output either \x27A\x27\\\x27\x27B\x27 or
+    # \x27A\x27"\x27"\x27B\x27, depending on the shell.  A plugin that aims to
+    # be compatible with the three shells should avoid using single quotes and
+    # use exterior double quotes and escaped interior double quotes if
+    # necessary.
+    #
+    # Attention plugin authors: Older shell versions output single quotes
+    # differently, so the new shell versions might have broken compatibility
+    # with older findnrun plugins, which should be updated to use (possibly
+    # escaped interior) double quotes instead of single quotes.
+    # ]]]
+
+    VGI[a[1], a[2]] = ("TAP" == a[1] || "DRAIN" == a[1]) ? a[3] : unquote(a[3])
     if('${DEBUG5:-0}') print a[1],"**",a[2],"**",a[3] > "/dev/stderr"
     #]]]
   }
@@ -332,28 +350,28 @@ END {
   if('${DEBUG3:-0}') {
     print  "# Builtin sources:", BUILTIN >"/dev/stderr"
     print  "# Active sources :", SOURCES >"/dev/stderr"
-    if('${DEBUG4:-0}') {
-      printf "# I:" >"/dev/stderr"; for(i in I) printf(" %s", i) >"/dev/stderr"
-      print "" >"/dev/stderr"
-      printf "# S:" >"/dev/stderr"; for(s in S) printf(" %s", s) >"/dev/stderr"
-      print "" >"/dev/stderr"
-      for(i in I) {
-        for(j=1; j<=nG; j++) {
-          g = G[j]
-          if((g, i) in VGI)
-            printf("# <%s, %s> = %s\n", g, i, VGI[g, i]) >"/dev/stderr"
-        }
+    printf "# All LHS Ids    :" >"/dev/stderr"; for(i in I) printf(" %s", i) >"/dev/stderr"
+    print "" >"/dev/stderr"
+    printf "# All LHS Sources:" >"/dev/stderr"; for(s in S) printf(" %s", s) >"/dev/stderr"
+    print "" >"/dev/stderr"
+  }
+  if('${DEBUG4:-0}') {
+    for(i in I) {
+      for(j=1; j<=nG; j++) {
+        g = G[j]
+        if((g, i) in VGI)
+          printf("# <%s, %s> = %s\n", g, i, VGI[g, i]) >"/dev/stderr"
       }
     }
   }
-  # TS[] array of tap-ids by source-id
-  # DS[] array of drain-ids by source-id
+  # TS[] array of tap-ids, index source-id
+  # DS[] array of drain-ids, index source-id
   for(s in S) {
     split(VGI["SOURCE",s], a, /:/)
     # TODO next three lines, index a[] by symbol instead of position
-    if(a[1]) TS[s] = a[1] # TODO should use symbols, not number
-    if(a[2]) DS[s] = a[2] # ditto
-    # Localize title; ditto
+    if(a[1]) TS[s] = a[1]
+    if(a[2]) DS[s] = a[2]
+    # Get title translation, if any in TEXTDOMAIN "findnrun-plugin-"<source-name>
     if(a[4]) VGI["TITLE", a[4]] = dcgettext(VGI["TITLE", a[4]], "findnrun-plugin-"s)
 
     if('${DEBUG5:-0}')
@@ -406,7 +424,7 @@ END {
   for(j = 0; j <= 2; j++) printf("%d:%s:", nbin[j], bin[j])
   printf "\n"
 }
-function syntax_check(group, A, I, code,   i, checker, status) { # [[[
+function syntax_check(group, A, I, err_code,   shell_code, i, checker, status) { # [[[
   # Checks all items of A. Deletes items of I.
 
   # "sh -n" is quite a limited syntax checker but it is built-in.
@@ -423,13 +441,17 @@ function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   #   If source-id i is still in the set of valid ids (I)
   #   && its group-id A[i] has an associated value in VGI...
   for(i in A) if(i in I && ((group, A[i]) in VGI)) {
-    if(match(BUILTIN, i)) continue # optimization: skip built-in sources
+    if(match(BUILTIN, i)) continue # optimize: skip built-in sources
+    shell_code = VGI[group, A[i]]
     if('${DEBUG4:-0}') #[[[
-      print "now checking",i"'"'"'s", group, A[i],"=>", \
-        VGI[group, A[i]] >"/dev/stderr" #]]]
-    print VGI[group, A[i]] | checker
-    if(close(checker)) { # non-zero exit code on invalid syntax
-      recoverable(code, group": "VGI[group, A[i]], i)
+      print "now checking",i"'"'"'s", group, A[i],"=>",shell_code >"/dev/stderr"
+    #]]]
+    # The shell_code we get is formatted as a (quoted) shell string because it
+    # comes from "set |". So we echo it to turn it into plain text for the
+    # checker to validate.
+    if(system("echo " shell_code " | " checker)) {
+      # non-zero exit code means invalid syntax, disable this source
+      recoverable(err_code, group": "shell_code, i)
       delete I[i]
     }
   }
@@ -450,7 +472,8 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
   #   A    see buf="array"
   # Return value: 0:enabled-in-Store 1:disabled 2:hidden-in-Store
 
-  # Assert: The calling outer loop has stripped all exterior single quotes.
+  # Assert: The calling outer loop has stripped exterior single quotes
+  # except for shell code values (TAP, DRAIN). See {UNQUOTE} above.
   if("" == buf) {
     buf = sprintf("ID='"'%s'"'", s)
     split(s":"VGI["SOURCE",s], I, /:/)
@@ -458,7 +481,12 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
       g = G[j]; i = (j in I) ?I[j] :"N\x08NULL" # \x08 => never "(g,i) in VGI"
       if('${DEBUG3:-0}') printf ("<%s, %s> ", g, i) > "/dev/stderr"
       if((g, i) in VGI) {
+        if("TAP" == g || "DRAIN" == g) {
+          # store verbatim value, see {UNQUOTE}
+          buf = buf sprintf("\n%s=%s", g, VGI[g, i])
+        } else {
           buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, i])
+        }
       } else { # the plugin does not declare a value for group id g
         if("TITLE" == g) {
           # on no title-id output source-id as title value
@@ -532,6 +560,7 @@ function warning(code, subject, source) { #[[[
     (source ?" "source":" :"") (subject ?" "subject :"")) > "/dev/stderr"
 }#]]]
 function unquote(s,   p,t,l) { # [[[
+# Trim exterior, paired single quotes. See {UNQUOTE} above.
   if((p = index("\x27", t = substr(s,1,1))) && p < 2) {
     if(t == substr(s, l = length(s)))
       return(substr(s, 2, l-2))
