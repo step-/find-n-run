@@ -302,18 +302,20 @@ BEGIN {
   # Fall back to BUILTIN source.
   if("" == valid_sources) valid_sources = "FNRstart"
   #]]]
-  # id types
+  # valid type names
   ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH|MODE|PLGDIR|SAVEFLT"
-  # G[] array of types
   nG = split(ordered_G, G, /\|/)
-  pattern = "^("ordered_G")_([^=]+)=(.*)"
+  pattern = "^("ordered_G")_([^=]+)=(.*)" # => yields a[1] a[2] a[3]
 }
 {
   if(match($0, pattern, a)) {
     # Parse declarations [[[
-    # I[] array of any-type ids a[2]
-    # S[] array of source-ids a[1] contained in I[]
-    # VGI[] values a[3] by (group a[1], id a[2])
+    # In .findnrnrc we have: (LHS) <type>'_'<name>'='<value> (RHS)
+    # and in particular:    'SOURCE_'<source-name>'='<name>[':'<name-ref>|<value>...]
+    # G[] array of possible LHS types a[1] (aka groups), index numeric
+    # I[] array of parsed LHS type-names a[2] (aka ids), index type-name
+    # S[] array of parsed LHS source-names a[2] (aka sources), I[] contains S[], index source-name
+    # VGI[] array of parsed RHS values a[3], indices type,name a[1],a[2]
     I[a[2]] = a[2]
     if("SOURCE" == a[1]) S[a[2]] = a[2]
     # Assert: Input stream ("set |") single quoted all values.
@@ -327,6 +329,9 @@ BEGIN {
   }
 }
 END {
+  if('${DEBUG3:-0}') {
+    print  "# Builtin sources:", BUILTIN >"/dev/stderr"
+    print  "# Active sources :", SOURCES >"/dev/stderr"
     if('${DEBUG4:-0}') {
       printf "# I:" >"/dev/stderr"; for(i in I) printf(" %s", i) >"/dev/stderr"
       print "" >"/dev/stderr"
@@ -340,14 +345,17 @@ END {
         }
       }
     }
+  }
   # TS[] array of tap-ids by source-id
   # DS[] array of drain-ids by source-id
   for(s in S) {
     split(VGI["SOURCE",s], a, /:/)
+    # TODO next three lines, index a[] by symbol instead of position
     if(a[1]) TS[s] = a[1] # TODO should use symbols, not number
     if(a[2]) DS[s] = a[2] # ditto
     # Localize title; ditto
     if(a[4]) VGI["TITLE", a[4]] = dcgettext(VGI["TITLE", a[4]], "findnrun-plugin-"s)
+
     if('${DEBUG5:-0}')
       printf "source %s: TAP %s DRAIN %s\n", s, \
         (s in TS) ?TS[s] :"NULL", (s in DS) ?DS[s] :"NULL" >"/dev/stderr"
@@ -401,7 +409,8 @@ END {
 function syntax_check(group, A, I, code,   i, checker, status) { # [[[
   # Checks all items of A. Deletes items of I.
 
-  # The best syntax checker that we can get, but still quite limited.
+  # "sh -n" is quite a limited syntax checker but it is built-in.
+  # https://www.shellcheck.net/ is much better.
   checker = "sh -n"
 
   if('${DEBUG4:-0}') { #[[[
@@ -780,8 +789,8 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
     lnk = ""; for(c=1; c<=x; c++) lnk = lnk "_" a[c]; lnk = substr(lnk, 2)
     print "2>/dev/null ln -s \""ifp"\" \"" ICONSTEM lnk ext "\"" | sh
 
-    # Store the link value for icon_wa_bind to bind. [[[3
-    WA[i,"bind"] = lnk # 
+    # Store values for icon_wa_bind to bind. [[[3
+    WA[i,"bind"] = lnk # link name for "findnrun-"lnk
 
     # Progressively build the icon index file. [[[3
     printf "%s\x00%s\x00%s\x00%s\n", IFP, ifp, lnk, ext >> (ICONSTEM".index")
