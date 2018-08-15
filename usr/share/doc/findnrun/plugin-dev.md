@@ -75,7 +75,7 @@ in a value.  All values can be null except for `<tap-data>`.
  * `<icon-reference>` is an icon _reference_. See section _Findnrun User
    Interface and Source Plugins_.
  * `<tap-reserved>` is available for a plugin to associate special data
-   to the tap-record record for custom activation. Currently this field
+   to the tap-record for custom activation. Currently this field
    isn't processed or further exposed in the plugin interface awaiting
    feedback from plugin developers.
  * `<label>` is displayed in the list widget. If the label value is null
@@ -224,6 +224,7 @@ When the user presses hotkey `F4` findnrun saves the search results to a
 file and invokes save-filter-command as follows:
 ```
     eval <save-filter-command>
+```
 
 Then save-filter-command can process the file to its own liking. The
 command string can use `${file}` to refer to the input save file, and
@@ -321,7 +322,7 @@ SVG files, are recommended whenever possible.
 
 **Icon References**
 
-Simply put, an _icon reference_ is a icon file path that is formatted
+Simply put, an _icon reference_ is an icon file path that is formatted
 in a way and located in a place where gtkdialog knows how to use
 it. Gtkdialog follows freedesktop.org's rules for enumerating
 icons. Icon files must be placed in specific directories, the details
