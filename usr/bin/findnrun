@@ -281,9 +281,9 @@ store_valid_sources() # [[[
 #]]]
 # i18n Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
-    -v MSG1="$(gettext "fatal source error: %d%s\n")" \
-    -v MSG2="$(gettext "recoverable source error: %d%s\n")" \
-    -v MSG3="$(gettext "source warning: %d%s\n")" \
+    -v MSG1="$(gettext "fatal source error: %d%s")\n" \
+    -v MSG2="$(gettext "recoverable source error: %d%s")\n" \
+    -v MSG3="$(gettext "source warning: %d%s")\n" \
 '#!/usr/bin/gawk -f
 BEGIN {
   TEXTDOMAIN="'"${TEXTDOMAIN}"'"
@@ -1066,7 +1066,7 @@ BEGIN {
   } else if(match(RDR, /^[ \t]*[>]/)) {
     redirect = "printer"
   } else {
-    printf "'"$(gettext "%s: invalid SAVEFLT redirection '%s'\n")"'", \
+    printf "'"$(gettext "%s: invalid SAVEFLT redirection '%s'")\n"'", \
       ENVIRON["ID"], RDR > "/dev/stderr"
     exit(1)
   }
