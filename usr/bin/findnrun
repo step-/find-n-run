@@ -442,6 +442,10 @@ function syntax_check(group, A, I, err_code,   shell_code, i, checker, status) {
   #   && its group-id A[i] has an associated value in VGI...
   for(i in A) if(i in I && ((group, A[i]) in VGI)) {
     if(match(BUILTIN, i)) continue # optimize: skip built-in sources
+    if(!match(SOURCES, i)) continue # optimize: skip inactive sources
+    # Note: if A`s tap references B`s tap and B is inactive, A`s tap [[[
+    # won`t be validated/available. The work-around is to declare B
+    # as an active source, but hide it with MODE HIDDEN. ]]]
     shell_code = VGI[group, A[i]]
     if('${DEBUG4:-0}') #[[[
       print "now checking",i"'"'"'s", group, A[i],"=>",shell_code >"/dev/stderr"
