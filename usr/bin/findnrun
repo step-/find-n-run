@@ -5,7 +5,7 @@
 # Findnrun - a progressive finder
   Version=2.4.1
 # authors: Copyright (C)2015-2018 step; (C)2015 SFR, L18L
-# license: GNU GPL applies
+# license: GNU GPL version 2
 # depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only), xwininfo, yad
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
@@ -44,7 +44,8 @@ DESKTOP_FILE_DIRS=${DESKTOP_FILE_DIRS#:} ICON_DIRS=${ICON_DIRS#:}
 ICON_DIRS="$HOME/.icons:${ICON_DIRS}:/usr/share/pixmaps:/usr/share/midi-icons:/usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
-FNRHELPINDEX=${FNRHELPINDEX:-/usr/share/doc/findnrun/index.md:/usr/share/doc/findnrun/help[en].tar.gz:/usr/share/doc/findnrun/index.html}
+x="${0%/*}/../share/doc/$SN"
+FNRHELPINDEX=${FNRHELPINDEX:-$x/index.md:$x/help[en].tar.gz:$x/index.html}
 
 # Initialize variables that should not be changed. [[[1
 APP_TITLE="${APP_NAME}" # see also APP_TITLE_UNIQ in start_window()
