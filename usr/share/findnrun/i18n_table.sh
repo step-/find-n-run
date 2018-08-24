@@ -6,9 +6,9 @@ i18n_table() # {{{1
 #    strings from calls to 'gettext -es'. Therefore the .pot template is
 #    generated with the help of usr/share/doc/findnrun/xgettext.sh.
 # 2. From this point on:
-#    A. Never use \n inside your msgstr. For yad and gtkdialog dialog \r can
-#       replace \n.
-#    B. Always end your msgstr with \n.
+#    A. Never use \n **inside** a msgstr. For yad and gtkdialog you can replace
+#    \n with \r.
+#    B. However, always **end** your msgstr with \n.
 #    C. Replace trailing spaces (hex 20) with non-breaking spaces (hex A0).
 #
   {
