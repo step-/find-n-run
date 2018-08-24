@@ -1,5 +1,15 @@
 # This file is sourced not run
 
+# =============================================================================
+# finnrun-pot-config.sh - Project configuration for findnrun .pot file creator
+  Version=1.1.0
+# author: Copyright (C)2015-2018 step
+# license: GNU GPL version 2
+# depends: GNU gettext package, mdview
+# source: https://github.com/step-/find-n-run
+# forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
+# =============================================================================
+
 # Optional settings {{{1
 MDVIEW=mdview
 # since version 2.2.0 using Fatdog64-710 alpha mdview 2016.04.26 - which includes my patches.
@@ -7,13 +17,17 @@ MDVIEW=mdview
 # Required script settings {{{1
 # Output file name
 FPOT=findnrun.new.pot
-# $XSRC source file is scanned for msgids with xgettext $XOPT
+# Firstly $XSRC source file is scanned for msgids with xgettext $XOPT
 XSRC=../../../../bin/findnrun
 XOPT="-ci18n -L Shell"
+# Then $XTBL source file is scanned for msgids with $XXGT
+XTBL=../../../../share/findnrun/i18n_table.sh
+XXGT=./xgettext.sh
+XXGTOPT="-- -ci18n -L Shell"
 # Multiple files in list_md_files() are scanned for msgids with mdview --po {{{2
 list_md_files()
 {
-  local d=../../findnrun
+  local d=../../../../share/doc/findnrun
   set +f
   printf "%s\n" "$d/"*.md "$D/../examples/"*/*.md
 }
@@ -50,11 +64,11 @@ is_to_be_translated() # $1-filepath
 }
 
 # Required project header settings {{{1
-PACKAGE_VERSION="2.4.0"
+PACKAGE_VERSION="2.5.0"
 PACKAGE_NAME="find-n-run"
 PACKAGE_TITLE="Findnrun $PACKAGE_VERSION"
-PACKAGE_COPYRIGHT="2015-2016 step; 2015 FSH, L18L, step"
-PACKAGE_FIRST_POT_AUTHOR="step, 2015 https://github.com/step-/"
+PACKAGE_COPYRIGHT="2015-2018 step; 2015 SFR, L18L, step"
+PACKAGE_FIRST_POT_AUTHOR="step, https://github.com/step-/"
 PACKAGE_POT_CREATION_TZ="UTC"
 PACKAGE_POT_LANGUAGE="en"
 PACKAGE_CHARSET="UTF-8"
@@ -63,6 +77,8 @@ PACKAGE_POT_BUGS_ADDRESS="https://github.com/step-/find-n-run/issues/"
 __notes_on_pot_file() # {{{1
 {
   echo '
+#. Example of Plural-Forms value valid for English; adapt for your language:
+#.   "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 #.
 #. =======================================================================
 #. i18n User documentation in markdown format from .md files follows.

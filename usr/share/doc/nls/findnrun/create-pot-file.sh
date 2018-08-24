@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # =============================================================================
-# Create findnrun GNU GetText template file
-  Version=1.0.0
-# author: Copyright (C)2016 step
-# license: GNU GPL applies
+# create-pot-file.sh - Create findnrun GNU GetText template file
+  Version=1.1.0
+# author: Copyright (C)2016-2018 step
+# license: GNU GPL version 2
 # depends: GNU gettext package, mdview
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
@@ -13,7 +13,7 @@
 # Stubs for configuration file.
 is_to_be_translated() { :; }
 list_md_files() { :; }
-FPOT= XSRC= XOPT=
+FPOT= XSRC= XOPT= XTBL= XXGT= XXGTOPT=
 
 CONFIG=$1
 [ -z "$CONFIG" ] && CONFIG="${0%.sh}-config.sh"
@@ -39,7 +39,7 @@ create_pot_file() # $1-pot-file $2...-xgettext-options {{{1
 {
   local f x fpot xopt
   fpot=$1; shift
-  rm -f "$fpot.tmp"
+  rm  -f "$fpot."*tmp
 
   # Create pot file header
   init_po_file "$fpot.tmp" || {
@@ -51,6 +51,10 @@ create_pot_file() # $1-pot-file $2...-xgettext-options {{{1
   scan_source_file "$XSRC" "$@" --omit-header >> "$fpot.tmp" || {
     ERRORS="${ERRORS}
     scan_source_file '$XSRC'"; return 1; }
+  # Append i18n_table source file scan
+  scan_i18n_table_file "$XTBL" --omit-header >> "$fpot.tmp" || {
+    ERRORS="${ERRORS}
+    scan_i18n_table_file '$XTBL'"; return 1; }
   # Append notes again
   type __notes_on_pot_file >/dev/null 2>&1 &&
     __notes_on_pot_file >> "$fpot.tmp"
@@ -59,11 +63,13 @@ create_pot_file() # $1-pot-file $2...-xgettext-options {{{1
     is_to_be_translated "$f" || continue
     scan_md_file "$f" "$fpot.2.tmp"
     # Cumulate unique messages, all comments and all file positions.
-    msgcat --no-wrap -o "$fpot.tmp" "$fpot.tmp" "$fpot.2.tmp" || ERRORS="${ERRORS}
+    msgcat --no-wrap -o "$fpot.tmp" "$fpot.tmp" "$fpot.2.tmp" 2>> "$fpot.warn.tmp" || ERRORS="${ERRORS}
     msgcat '$f'"
   done << EOF
   $(list_md_files)
 EOF
+  # Output warnings except those related to "...\r..."
+  sort -u "$fpot.warn.tmp" | grep -vF '\r' >&2
   # Delete annoyances
   sed '
 /#-#-#-#-#/d
@@ -80,12 +86,23 @@ scan_source_file() # $1-filepath $2...-xgettext-options {{{1
 {
   local f
   f=$1; shift &&
+  echo >&2 "$f" &&
   env TZ="$PACKAGE_POT_CREATION_TZ" \
     xgettext "$@" --no-wrap -o -  \
       --package-name="$PACKAGE_NAME" \
       --package-version="$PACKAGE_VERSION" \
       --msgid-bugs-address="$PACKAGE_POT_BUGS_ADDRESS" \
     "$f"
+}
+
+scan_i18n_table_file() # $1-filepath $2...-xgettext-options {{{1
+{
+  local f sep
+  f=$1; shift &&
+  echo >&2 "$f" &&
+  case $XXGTOPT in
+    *' '--' '*|--' '*|*' '-- ) : ;; *) sep="--" ;; esac &&
+    "$XXGT" $XXGTOPT $sep "$@" --no-wrap "$f"
 }
 
 init_po_file() # $1-po(t)-OUTPUT-file $2...-xgettext-options {{{1
