@@ -1015,7 +1015,7 @@ find_help() #[[[
 {
   # In:  ${FNRHELPINDEX} paths.
   # Out: ${helpviewer} command, ${helpbutton} gtk code.
-  local IFS=:
+  local IFS=: subject="${i18n_Help%%_*}${i18n_Help##*_}"
   set ${FNRHELPINDEX}
   for i; do
     unset x p s helpviewer helpbutton; hf="$i"
@@ -1031,7 +1031,7 @@ $(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
 EOF
       case ${helpviewer} in
         '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
-        *mdview) helpviewer='v() { for a; do [ -e "$a" ] && cd "${a%/*}" && exec "'"$helpviewer"'" "${a%/*}" "${a##*/}" "'"$APP_TITLE"'" & sleep 0.4 || sleep 1; done ;}; v "'"$hf"'"' ;;
+        *mdview) helpviewer='v() { for a; do [ -e "$a" ] && cd "${a%/*}" && exec "'"$helpviewer"'" "${a%/*}" "${a##*/}" "'"$subject - $APP_TITLE"'" & sleep 0.4 || sleep 1; done ;}; v "'"$hf"'"' ;;
         *browser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
         *) # dup help files to protect sources from text editors
           if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
@@ -1053,7 +1053,7 @@ find_help
 
 # i18n About dialog widgets: window text; number of apps text (singular/plural)
 export GUI_ABOUT='
-<window title="'"${APP_TITLE}"'" icon-name="edit-find" window-position="2">
+<window title="'"$i18n_About_and_help - ${APP_TITLE}"'" icon-name="edit-find" window-position="2">
   <vbox>
     <frame>
       <text justify="0" selectable="true" can-focus="false">
