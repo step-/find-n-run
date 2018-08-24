@@ -12,8 +12,15 @@ A progressive finder.
 
 ## News
 
-**13-Sep-2017 Release 2.4.1**
- * Updated German translation by L18L.
+**24-Aug-2018 Release 2.5.0**
+* Faster application start thanks to new translation lookup method, new
+  icon caching algorithm, and optimized plugin validation.
+* New progress dialog for long scans.
+* Change: yad replaces Xdialog for sub-dialogs.
+* Updated "de" (63%) and "it" (100%) translations.
+* Fix: single quote in plugin code was invalid.
+* Fix: some documentation typos.
+* New translation tools.
 
 **Upgrading**
 
@@ -37,17 +44,21 @@ and
 
 ## Old News
 
+ * 13-Sep-2017 Release
+   [2.4.1](https://github.com/step-/find-n-run/releases/tag/2.4.1)
+   updates the German translation.
  * 6-Sep-2016 Release
    [2.4.0](https://github.com/step-/find-n-run/releases/tag/2.4.0)
+   is a recommended feature upgrade for all users.
  * 1-Aug-2016 Release
    [2.3.0](https://github.com/step-/find-n-run/releases/tag/2.3.0)
-   is a recommended upgrade for all users.
+   is a recommended feature upgrade for all users.
  * 1-Aug-2016 Release
    [2.3.0](https://github.com/step-/find-n-run/releases/tag/2.3.0)
-   is a recommended upgrade for all users.
+   is a recommended feature upgrade for all users.
  * 13-Jun-2016 Release
    [2.2.0](https://github.com/step-/find-n-run/releases/tag/2.2.0)
-   is a recommended upgrade for all users.
+   is a recommended feature upgrade for all users.
  * 25-Apr-2016 Release
    [2.1.1](https://github.com/step-/find-n-run/releases/tag/2.1.1)
    is a recommended upgrade for all users.
