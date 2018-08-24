@@ -1,14 +1,14 @@
-# Findnrun 2.4.0.
-# Copyright (C) 2015-2016 step; 2015 FSH, L18L, step
+# Findnrun 2.5.0.
+# Copyright (C) 2015-2018 step; 2015 SFR, L18L, step
 # This file is distributed under the same license as the PACKAGE package.
-# step, 2015 https://github.com/step-/
+# step, https://github.com/step-/
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: find-n-run 2.4.0\n"
+"Project-Id-Version: find-n-run 2.5.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2016-09-06 05:26+0000\n"
+"POT-Creation-Date: 2018-08-24 11:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+#. Example of Plural-Forms value valid for English; adapt for your language:
+#.   "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 #.
 #. =======================================================================
 #. i18n User documentation in markdown format from .md files follows.
@@ -41,7 +43,7 @@ msgstr ""
 #. i18n Do NOT translate VARIABLE names or variable assignments.
 #. i18n And, as usual, translate all text outside the code blocks.
 #.
-#: /usr/bin/findnrun:17
+#: /usr/bin/findnrun:19
 msgid ""
 "INSTRUCTIONS FOR TRANSLATORS\n"
 "1 Download the latest commented translation template from:\n"
@@ -50,222 +52,338 @@ msgid ""
 "  https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/TRANSLATING.md"
 msgstr ""
 
-#. i18n Main window title
-#: /usr/bin/findnrun:25
-msgid "Findnrun"
-msgstr ""
-
-#: /usr/bin/findnrun:230
-msgid "application finder"
-msgstr ""
-
-#: /usr/bin/findnrun:242
-msgid "shell completion"
-msgstr ""
-
-#. i18n Source plugin validation.
-#: /usr/bin/findnrun:283
-msgid "fatal source error: %d%s\\n"
-msgstr ""
-
-#: /usr/bin/findnrun:284
-msgid "recoverable source error: %d%s\\n"
-msgstr ""
-
-#: /usr/bin/findnrun:285
-msgid "source warning: %d%s\\n"
-msgstr ""
-
-#: /usr/bin/findnrun:559
-msgid "Invalid source plugins found and disabled:\\n%s"
-msgstr ""
-
-#: /usr/bin/findnrun:577
+#: /usr/bin/findnrun:623
 msgid "SHOWNODISPLAY false excludes file '%s'"
 msgstr ""
 
-#: /usr/bin/findnrun:578
+#: /usr/bin/findnrun:624
 msgid "filename '%s': Icon '%s' not found."
 msgstr ""
 
-#: /usr/bin/findnrun:882
-msgid "_Help"
+#: /usr/bin/findnrun:625
+msgid "analyzing %d applications..."
 msgstr ""
 
-#. i18n About dialog widgets: window text; number of apps text (singular/plural)
-#: /usr/bin/findnrun:900
-msgid ""
-"%s %s\n"
-"authors: %s\n"
-"Open source - GNU GPL license applies\n"
-"\n"
-"%s\n"
-"%s\n"
-"\n"
-"configuration: %s\n"
+#. Notes for translators:
+#. 1. Apparently the standard xgettext utility doesn't know how to extract
+#.    strings from calls to 'gettext -es'. Therefore the .pot template is
+#.    generated with the help of usr/share/doc/findnrun/xgettext.sh.
+#. 2. From this point on:
+#.    A. Never use \n **inside** a msgstr. For yad and gtkdialog you can replace
+#.    \n with \r.
+#.    B. However, always **end** your msgstr with \n.
+#.    C. Replace trailing spaces (hex 20) with non-breaking spaces (hex A0).
+#.
+#. i18n_Findnrun
+#: /usr/share/findnrun/i18n_table.sh:67
+#: /usr/share/findnrun/i18n_table.sh:15
+#: /usr/share/findnrun/i18n_table.sh:68
+msgid "Findnrun\n"
 msgstr ""
 
-#: /usr/bin/findnrun:911 /usr/bin/findnrun:1108
-msgid "%s application found"
-msgid_plural "%s applications found"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /usr/bin/findnrun:912 /usr/bin/findnrun:1107
-msgid "%s source loaded"
-msgid_plural "%s sources loaded"
-msgstr[0] ""
-msgstr[1] ""
-
-#: /usr/bin/findnrun:919
-msgid "_OK"
+#. i18n_application_finder
+#: /usr/share/findnrun/i18n_table.sh:16
+#: /usr/share/findnrun/i18n_table.sh:69
+msgid "application finder\n"
 msgstr ""
 
-#: /usr/bin/findnrun:954
-msgid "%s: invalid SAVEFLT redirection '%s'\\n"
+#. i18n_shell_completion
+#: /usr/share/findnrun/i18n_table.sh:17
+#: /usr/share/findnrun/i18n_table.sh:70
+msgid "shell completion\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1104
-msgid "[ctrl+%d]"
+#. i18n_fatal_source_error
+#: /usr/share/findnrun/i18n_table.sh:18
+#: /usr/share/findnrun/i18n_table.sh:71
+msgid "fatal source error: %d%s\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1104
-msgid "[%s]"
+#. i18n_recoverable_source_error
+#: /usr/share/findnrun/i18n_table.sh:19
+#: /usr/share/findnrun/i18n_table.sh:72
+msgid "recoverable source error: %d%s\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1106
-msgid "Click the status bar or press a hotkey to activate the next source.\\n%s\\n%s"
+#. i18n_source_warning
+#: /usr/share/findnrun/i18n_table.sh:20
+#: /usr/share/findnrun/i18n_table.sh:73
+msgid "source warning: %d%s\n"
 msgstr ""
 
-#. i18n restart window dialog
-#: /usr/bin/findnrun:1196
-msgid "Restart Findnrun?"
+#. i18n_Invalid_source_plugins
+#: /usr/share/findnrun/i18n_table.sh:21
+#: /usr/share/findnrun/i18n_table.sh:74
+msgid "Invalid source plugins found and disabled:\r%s\n"
 msgstr ""
 
-#. i18n Main window widgets
-#. i18n "0" (invisible, disregard).
-#: /usr/bin/findnrun:1223
-msgid "0"
+#. i18n_SHOWNODISPLAY_false_excludes
+#: /usr/share/findnrun/i18n_table.sh:22
+#: /usr/share/findnrun/i18n_table.sh:75
+msgid "SHOWNODISPLAY false excludes file '%s'\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1229
-msgid "Press ENTER to select"
+#. i18n_filename_Icon_not_found
+#: /usr/share/findnrun/i18n_table.sh:23
+#: /usr/share/findnrun/i18n_table.sh:76
+msgid "filename '%s': Icon '%s' not found.\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1237
-msgid "Type some letters to refine the list"
+#. i18n_analyzing_applications
+#: /usr/share/findnrun/i18n_table.sh:24
+#: /usr/share/findnrun/i18n_table.sh:77
+msgid "analyzing %d applications...\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1248
-msgid "Clear entry"
+#. i18n_Help
+#: /usr/share/findnrun/i18n_table.sh:25
+#: /usr/share/findnrun/i18n_table.sh:78
+msgid "_Help\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1256
-msgid "Press ENTER or double-click to run the selected item"
+#. i18n_gui_about
+#: /usr/share/findnrun/i18n_table.sh:26
+#: /usr/share/findnrun/i18n_table.sh:79
+msgid "%s %s\rauthors: %s\rOpen source - GNU GPL license applies\r\r%s\r%s\r\rconfiguration: %s\r\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1297
-msgid "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit."
+#. i18n_application_found
+#: /usr/share/findnrun/i18n_table.sh:27
+#: /usr/share/findnrun/i18n_table.sh:80
+msgid "%s application found\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1299
-msgid "Press Down Arrow to grab selected item"
+#. i18n_applications_found
+#: /usr/share/findnrun/i18n_table.sh:28
+#: /usr/share/findnrun/i18n_table.sh:81
+msgid "%s applications found\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1314
-msgid "Remove entry from history"
+#. i18n_source_loaded
+#: /usr/share/findnrun/i18n_table.sh:29
+#: /usr/share/findnrun/i18n_table.sh:82
+msgid "%s source loaded\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1331
-msgid "Comment about current item"
+#. i18n_sources_loaded
+#: /usr/share/findnrun/i18n_table.sh:30
+#: /usr/share/findnrun/i18n_table.sh:83
+msgid "%s sources loaded\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1339
-msgid "More..."
+#. i18n_OK
+#: /usr/share/findnrun/i18n_table.sh:31
+#: /usr/share/findnrun/i18n_table.sh:84
+msgid "_OK\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1350
-msgid "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays."
+#. i18n_invalid_SAVEFLT_redirection
+#: /usr/share/findnrun/i18n_table.sh:32
+#: /usr/share/findnrun/i18n_table.sh:85
+msgid "%s: invalid SAVEFLT redirection '%s'\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1351
-msgid "_Keep window"
+#. i18n_ctrl_digit
+#: /usr/share/findnrun/i18n_table.sh:33
+#: /usr/share/findnrun/i18n_table.sh:86
+msgid "[ctrl+%d]\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1359
-msgid "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache."
+#. i18n_boxed_string
+#: /usr/share/findnrun/i18n_table.sh:34
+#: /usr/share/findnrun/i18n_table.sh:87
+msgid "[%s]\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1360
-msgid "_Show all icons"
+#. i18n_Click_the_status_bar
+#: /usr/share/findnrun/i18n_table.sh:35
+#: /usr/share/findnrun/i18n_table.sh:88
+msgid "Click the status bar or press a hotkey to activate the next source.\r%s\r%s\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1385
-msgid "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item."
+#. i18n_Restart_Findnrun
+#: /usr/share/findnrun/i18n_table.sh:36
+#: /usr/share/findnrun/i18n_table.sh:89
+msgid "Restart Findnrun?\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1386
-msgid "_Focus search"
+#. i18n_Press_ENTER_to_select
+#: /usr/share/findnrun/i18n_table.sh:37
+#: /usr/share/findnrun/i18n_table.sh:90
+msgid "Press ENTER to select\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1396
-msgid "About and help"
+#. i18n_Type_some_letters
+#: /usr/share/findnrun/i18n_table.sh:38
+#: /usr/share/findnrun/i18n_table.sh:91
+msgid "Type some letters to refine the list\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1402
-msgid "Exit"
+#. i18n_Clear_entry
+#: /usr/share/findnrun/i18n_table.sh:39
+#: /usr/share/findnrun/i18n_table.sh:92
+msgid "Clear entry\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1411
-msgid "Click to hide."
+#. i18n_Press_ENTER_or_double_click
+#: /usr/share/findnrun/i18n_table.sh:40
+#: /usr/share/findnrun/i18n_table.sh:93
+msgid "Press ENTER or double-click to run the selected item\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1414
-msgid "Show also hidden system applications."
+#. i18n_Press_the_Down_Arrow_key
+#: /usr/share/findnrun/i18n_table.sh:41
+#: /usr/share/findnrun/i18n_table.sh:94
+msgid "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1415
-msgid "Show _hidden"
+#. i18n_Press_Down_Arrow
+#: /usr/share/findnrun/i18n_table.sh:42
+#: /usr/share/findnrun/i18n_table.sh:95
+msgid "Press Down Arrow to grab selected item\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1425
-msgid "Search in application names, file names, command lines, comments and categories all at once."
+#. i18n_Remove_entry_from_history
+#: /usr/share/findnrun/i18n_table.sh:43
+#: /usr/share/findnrun/i18n_table.sh:96
+msgid "Remove entry from history\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1426
-msgid "Search _complete"
+#. i18n_Comment_about_current_item
+#: /usr/share/findnrun/i18n_table.sh:44
+#: /usr/share/findnrun/i18n_table.sh:97
+msgid "Comment about current item\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1436
-msgid "Interpret the search pattern as a POSIX Basic regular expression."
+#. i18n_More
+#: /usr/share/findnrun/i18n_table.sh:45
+#: /usr/share/findnrun/i18n_table.sh:98
+msgid "More...\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1437
-msgid "_Regex"
+#. i18n_Keep_this_window_open
+#: /usr/share/findnrun/i18n_table.sh:46
+#: /usr/share/findnrun/i18n_table.sh:99
+msgid "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays.\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1449
-msgid "Edit configuration file directly. Restart required for changes to take effect.*"
+#. i18n_Keep_window
+#: /usr/share/findnrun/i18n_table.sh:47
+#: /usr/share/findnrun/i18n_table.sh:100
+msgid "_Keep window\n"
 msgstr ""
 
-#: /usr/bin/findnrun:1457
-msgid "application finder options       * = restart required"
+#. i18n_Display_all_available_icons
+#: /usr/share/findnrun/i18n_table.sh:48
+#: /usr/share/findnrun/i18n_table.sh:101
+msgid "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.\n"
 msgstr ""
 
-#. i18n Findnrun own .desktop file. [[[1
-#. i18n Translate the Name[xx] field to be added to file findnrun.desktop
-#: /usr/bin/findnrun:1723
-msgid "Findnrun."
+#. i18n_Show_all_icons
+#: /usr/share/findnrun/i18n_table.sh:49
+#: /usr/share/findnrun/i18n_table.sh:102
+msgid "_Show all icons\n"
 msgstr ""
 
-#. i18n Translate the Comment[xx] field to be added to file findnrun.desktop
-#: /usr/bin/findnrun:1725
-msgid "Find applications and much more."
+#. i18n_Return_the_keyboard_focus
+#: /usr/share/findnrun/i18n_table.sh:50
+#: /usr/share/findnrun/i18n_table.sh:103
+msgid "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item.\n"
+msgstr ""
+
+#. i18n_Focus_search
+#: /usr/share/findnrun/i18n_table.sh:51
+#: /usr/share/findnrun/i18n_table.sh:104
+msgid "_Focus search\n"
+msgstr ""
+
+#. i18n_About_and_help
+#: /usr/share/findnrun/i18n_table.sh:52
+#: /usr/share/findnrun/i18n_table.sh:105
+msgid "About and help\n"
+msgstr ""
+
+#. i18n_Exit
+#: /usr/share/findnrun/i18n_table.sh:53
+#: /usr/share/findnrun/i18n_table.sh:106
+msgid "Exit\n"
+msgstr ""
+
+#. i18n_Click_to_hide
+#: /usr/share/findnrun/i18n_table.sh:54
+#: /usr/share/findnrun/i18n_table.sh:107
+msgid "Click to hide.\n"
+msgstr ""
+
+#. i18n_Show_hidden_system_applications
+#: /usr/share/findnrun/i18n_table.sh:55
+#: /usr/share/findnrun/i18n_table.sh:108
+msgid "Show also hidden system applications.\n"
+msgstr ""
+
+#. i18n_Show_hidden
+#: /usr/share/findnrun/i18n_table.sh:56
+#: /usr/share/findnrun/i18n_table.sh:109
+msgid "Show _hidden\n"
+msgstr ""
+
+#. i18n_Search_in_application_names_etc
+#: /usr/share/findnrun/i18n_table.sh:57
+#: /usr/share/findnrun/i18n_table.sh:110
+msgid "Search in application names, file names, command lines, comments and categories all at once.\n"
+msgstr ""
+
+#. i18n_Search_complete
+#: /usr/share/findnrun/i18n_table.sh:58
+#: /usr/share/findnrun/i18n_table.sh:111
+msgid "Search _complete\n"
+msgstr ""
+
+#. i18n_Interpret_search_as_BRE
+#: /usr/share/findnrun/i18n_table.sh:59
+#: /usr/share/findnrun/i18n_table.sh:112
+msgid "Interpret the search pattern as a POSIX Basic regular expression.\n"
+msgstr ""
+
+#. i18n_Regex
+#: /usr/share/findnrun/i18n_table.sh:60
+#: /usr/share/findnrun/i18n_table.sh:113
+msgid "_Regex\n"
+msgstr ""
+
+#. i18n_Edit_configuration_file
+#: /usr/share/findnrun/i18n_table.sh:61
+#: /usr/share/findnrun/i18n_table.sh:114
+msgid "Edit configuration file directly. Restart required for changes to take effect.*\n"
+msgstr ""
+
+#. i18n_When_you_are_finished
+#: /usr/share/findnrun/i18n_table.sh:62
+#: /usr/share/findnrun/i18n_table.sh:115
+msgid "When you are finished making your changes come back to this window and restart findnrun.\n"
+msgstr ""
+
+#. i18n_application_finder_options
+#: /usr/share/findnrun/i18n_table.sh:63
+#: /usr/share/findnrun/i18n_table.sh:116
+msgid "application finder options       * = restart required\n"
+msgstr ""
+
+#. i18n_desktop_Name
+#: /usr/share/findnrun/i18n_table.sh:64
+#: /usr/share/findnrun/i18n_table.sh:117
+msgid "Findnrun.\n"
+msgstr ""
+
+#. i18n_desktop_Comment
+#: /usr/share/findnrun/i18n_table.sh:65
+#: /usr/share/findnrun/i18n_table.sh:118
+msgid "Find applications and much more.\n"
 msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/CREDITS.md
+#. i18n ../../../../share/doc/findnrun/CREDITS.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/CREDITS.md:1
@@ -338,7 +456,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/hotkey.md
+#. i18n ../../../../share/doc/findnrun/hotkey.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/hotkey.md:1
@@ -447,7 +565,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/index.md
+#. i18n ../../../../share/doc/findnrun/index.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/index.md:1
@@ -459,7 +577,7 @@ msgid "**Findrun** - A progressive finder"
 msgstr ""
 
 #: /usr/share/doc/findnrun/index.md:5
-msgid "_2.4.0_"
+msgid "_2.5.0_"
 msgstr ""
 
 #: /usr/share/doc/findnrun/index.md:8
@@ -624,7 +742,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/install.md
+#. i18n ../../../../share/doc/findnrun/install.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/install.md:1
@@ -714,7 +832,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/install-require.md
+#. i18n ../../../../share/doc/findnrun/install-require.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/install-require.md:1
@@ -767,7 +885,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/issues.md
+#. i18n ../../../../share/doc/findnrun/issues.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/issues.md:1
@@ -796,7 +914,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/plugin-list.md
+#. i18n ../../../../share/doc/findnrun/plugin-list.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/plugin-list.md:1
@@ -843,7 +961,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/plugin.md
+#. i18n ../../../../share/doc/findnrun/plugin.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/plugin.md:1
@@ -916,7 +1034,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/preference.md
+#. i18n ../../../../share/doc/findnrun/preference.md
 #. ---------------------------------------------------------
 #.
 #. i18n File 'preference.md' includes markdown CODE BLOCKS. Generally, you
@@ -1249,7 +1367,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/running.md
+#. i18n ../../../../share/doc/findnrun/running.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/running.md:1
@@ -1415,7 +1533,7 @@ msgstr ""
 
 #.
 #. ---------------------------------------------------------
-#. i18n ../../findnrun/screenshots.md
+#. i18n ../../../../share/doc/findnrun/screenshots.md
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/screenshots.md:1
