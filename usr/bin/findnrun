@@ -1322,7 +1322,7 @@ start_window() # Returns when gtkdialog terminates [[[2
   else
     "$findnrun" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null &
   fi
-  mv "$TMPD/.$$" "$TMPD/.$$-$!" # track PPID-PID
+  mv "$TMPD"/.$$ "$TMPD/.$$-$!" # track PPID-PID
   if [ "${FNRDEBUG}" ]; then
     echo "$RESTART_WINDOW" > "${dialog#.xml}"_RESTART_WINDOW.xml
     echo "$GUI_ABOUT" > "${dialog#.xml}"_GUI_ABOUT.xml
