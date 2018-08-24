@@ -621,9 +621,9 @@ BEGIN { # [[[2
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
   if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
   if(""==SHOWNODISPLAY) SHOWNODISPLAY = "false"
-  MSG1="'"$(gettext "SHOWNODISPLAY false excludes file '%s'")"'"
-  MSG2="'"$(gettext "filename '%s': Icon '%s' not found.")"'"
-  MSG3="'"$(gettext "analyzing %d applications...")"'"
+  MSG1="'"$i18n_SHOWNODISPLAY_false_excluds"'"
+  MSG2="'"$i18n_filename_Icon_not_found"'"
+  MSG3="'"$i18n_analyzing_applications"'"
   # Read files specified by list of file names.
   if(LIST_FILE) {
     NFILES = read_list_file(LIST_FILE, file)
