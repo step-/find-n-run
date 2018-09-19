@@ -112,18 +112,21 @@ A source plugin is installed by adding its declaration into
 `.findnrunrc` as follows:
 ```
     SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<title-id>:<init-search-id>'
-    TAP_<tap-id>='<tap-command>'
-    DRAIN_<drain-id>='<drain-command>'          # optional
+    TAP_<tap-id>='<tap-command>'                # code
+    DRAIN_<drain-id>='<drain-command>'          # optional, code
     ICON_<icon-id>='<icon-filepath>'            # optional
     TITLE_<title-id>='<source-title>'           # optional
     INITSEARCH_<init-search-id>='<init-search>' # optional
     MODE_<mode-id>='<mode-mask>'                # optional
     PLGDIR_<plgdir-id>='<plugin-dir-path>'      # optional
-    SAVEFLT_<filter-id>='<save-filter-command>' # optional
+    SAVEFLT_<filter-id>='<save-filter-command>' # optional, code
+    INIT_<init-id>='<init-command>              # optional, code
 ```
 
+ * Items marked 'code' are expected to contain shell source code fragments of
+   the kind that shell's `eval` can interpret.
  * Each `<...-id>` identifier must be unique within its declaration
-   group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_).
+   group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_, INIT\_).
  * `<tap-command>` is a valid shell command.
  * `<drain-command>` is also a valid shell command.
  * `<icon-filepath>` is the full path to a supported icon image file.
@@ -132,6 +135,7 @@ A source plugin is installed by adding its declaration into
  * `<mode-mask>` is a bit mask of plugin modifiers, for instance "disabled".
  * `<plugin-dir-path>` is the location of the plugin resource files, if any.
  * `<save-filter-command>` is a valid shell command.
+ * `<init-command>` isa valid shell command.
  * Declarations marked "optional" can be omitted by leaving their
    respective `<...-id>` slot empty in the `SOURCE_<source-id>`
    declaration.
@@ -194,9 +198,16 @@ execute.
 
 ### Plugin Invocation
 
-Findnrun _invokes_ three kinds of commands. While the user is typing
-into the search innput field, findnrun invokes the tap-command as
-follows:
+Findnrun _invokes_ four kinds of commands. When a source is first
+invoked at program start, the init-command is invoked as follows:
+```
+    eval <init-command>
+```
+This is where a plugin can do all sorts of private initializations. The
+init-command is invoked once only.
+
+While the user is typing into the search innput field, findnrun invokes the
+tap-command as follows:
 ```
     eval <tap-command>
 ```
@@ -236,10 +247,13 @@ run.
 The _invocation environment_ provides tap-, drain- and save-filter-
 commands with the following preset variables:
 
- * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${TITLE}`, `${ICON}`,
-   `${INITSEARCH}`, `${MODE}` - from the source declaration
+ * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${ICON}`, `${TITLE}`, `${INITSEARCH}`,
+   `${MODE}`, `${PLGDIR}`, `${SAVEFLT}` and `${INIT}` - from the source
+   declaration
  * `${ID}` - the source-id
- * `${NSOURCES} - number of sources
+ * `${NSOURCES}` - number of sources
+ * `${THISFILE}` - the shell file that sets all of the above variables.
+
  * `${FNRPID}` - findnrun gtkdialog process id [1]
  * `${FNRTMP}` - findnrun temporary folder full path [2]
  * `${FNREVENT}` - invocation event name [3]
