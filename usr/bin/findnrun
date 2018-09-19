@@ -230,7 +230,14 @@ if [ -z "$XCLIP" -o none = "$XCLIP" ]; then
 fi
 
 # FNRstart - Default built-in source "Desktop Apps" [[[2
-SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart"
+SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
+# INIT is run once only, on the first time this gtkdialog invokes this source.
+# The single invocation code generator can be found at {ONCE_ONLY}.  Gist
+# below: Up to "f >..." create a list of .desktop file paths. Then gawk -f
+# AWKB outputs the .desktop db given the paths. Then echo NDATF appends NDATF
+# to the source declaration file (THISFILE).  The subsequent TAP's gawk -f AWKQ
+# queries the .desktop db on each search box keypress.
+INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\$(wc -l < \"${DATF}\") >> \"\$THISFILE\""
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='/usr/share/doc/findnrun/findnrun.svg' # Filmstrip plugin expects.
@@ -1012,24 +1019,6 @@ BEGIN {
 END {
   if('${DEBUG1:-0}') print "]] QUERY" >"/dev/stderr"
 } '
-
-# Build FNRstart's database of .desktop file entries. [[[1
-# TODO This should be postponed until FNRstart_START's first activation, if any
-find_desktop_files() # [[[1
-{
-ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS; IFS=$ifs
-# Wine games and some system tools are located in sub-folders so use find.
-find -L "$@" -type f -name '*.desktop' 2>/dev/null
-true
-}
-fnr_start_data() # [[[1
-{
-  ! [ -s "$DSKL" ] && find_desktop_files > "$DSKL"
-  gawk -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -f "${AWKB}" -v DSKL="$DSKL" > "${DATF}"
-  ! [ "$NDATF" ] && NDATF=$(wc -l < "${DATF}")
-  true
-}
-fnr_start_data
 
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
