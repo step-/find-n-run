@@ -244,7 +244,7 @@ unset opts
 [ true = "${SEARCHREGEX}" ] && opts="${opts}E" || opts="${opts}F"
 x="${TMPD}/.FNRsc"; mkdir "$x" &&
 # Embedded newline characters not allowed.
-TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do cd "$i" && ls -1 *"${term}"*; done 2>/dev/null | findnrun-formatter -- -O su | tee "$t"; else gawk -f "'"${AWKQ}"'" -v GREP="${term}" "$t"'"${REDIRECT2}"'; fi'
+TAP_FNRsc="t=\"$x/.dat\"; if ! [ -s \"\$t\" ]; then set +f; IFS=:; for i in \$PATH; do cd \"\$i\" && ls -1 *\"\${term}\"*; done 2>/dev/null | findnrun-formatter -- -O su | tee \"\$t\"; else gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"\$t\"${REDIRECT2}; fi"
 ICON_FNRsc='/usr/share/doc/findnrun/FNRsc.svg'
 TITLE_FNRsc=$i18n_shell_completion
 # save item label == exec line
