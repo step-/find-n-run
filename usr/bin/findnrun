@@ -1060,19 +1060,27 @@ EOF
 #]]]
 find_help
 
-# i18n About dialog widgets: window text; number of apps text (singular/plural)
+# Helpers [[[1
+generate_about_text() # [[[2
+{
+  # Echo sh code that outputs text content for the About dialog.
+  # i18n About dialog widgets
+  
+  echo -n 'printf "'"$i18n_gui_about"'"'
+  echo -n ' "'"${APP_NAME}"'" "'"${Version}"'" "'"step, SFR, L18L"'"'
+  echo -n ' "'"http://www.murga-linux.com/puppy/viewtopic.php?t=98330"'"'
+  echo -n ' "'"https://github.com/step-/find-n-run"'" "'"${CONFIG}"'" | tr \\r \\n'
+  echo -n '; n="'"${NSOURCES}"'"; printf "$(ngettext "'"$i18n_source_loaded"'" "'"$i18n_sources_loaded"'" "$n")\n" "$n"'
+  echo -n '; set -- $(wc -l "'"${DATF}"'"); printf "$(ngettext "'"$i18n_application_found"'" "'"$i18n_applications_found"'" $1)\n" $1'
+}
+
 export GUI_ABOUT='
 <window title="'"$i18n_About_and_help - ${APP_TITLE}"'" icon-name="edit-find" window-position="2">
   <vbox>
     <frame>
-      <text justify="0" selectable="true" can-focus="false">
-        <label>"'"$(printf "$i18n_gui_about" \
-"${APP_NAME}" "${Version}" "step, SFR, L18L" \
-"http://www.murga-linux.com/puppy/viewtopic.php?t=98330" \
-"https://github.com/step-/find-n-run" "${CONFIG}")
-$(n="${NDATF}"; printf "$(ngettext "$i18n_application_found" "$i18n_applications_found" "$n")" "$n")
-$(n="${NSOURCES}"; printf "$(ngettext "$i18n_source_loaded" "$i18n_sources_loaded" "$n")" "$n"
-)"'"</label>
+      <text xalign="0" selectable="true" can-focus="false">
+        <variable export="false">about_text</variable>
+        <input>'"$(generate_about_text)"'</input>
       </text>
     </frame>
     <hbox homogeneous="true">
