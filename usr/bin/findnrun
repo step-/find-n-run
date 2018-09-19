@@ -1277,7 +1277,6 @@ generate_status_bar() # [[[2
   tooltip=$(printf \
     "$i18n_Click_the_status_bar" \
     "$(n="${NSOURCES}"; printf "$(ngettext "$i18n_source_loaded" "$i18n_sources_loaded" "$n")" "$n")" \
-    "$(n="${NDATF}"; printf "$(ngettext "$i18n_application_found" "$i18n_applications_found" "$n")" "$n")" \
   )
   echo -n '
     <vbox>
@@ -1342,6 +1341,8 @@ Limit $APP_NAME to a single instance because /tmp/varSEARCH can't be shared.
   cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
     cat "$dialog"
+    echo "$RESTART_WINDOW"
+    echo "$GUI_ABOUT"
     return
   fi &&
   if [ "${ENABLESTDOUT}" ]; then
