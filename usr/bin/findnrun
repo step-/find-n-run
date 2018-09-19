@@ -83,6 +83,7 @@ trap trap_handler INT QUIT TERM HUP ABRT 0
 TMPD=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 700 "${TMPD}"
 TMP0="${TMPD}/.FNRstart"; mkdir "${TMP0}" # built-in source resources
 DATF="${TMP0}/.dat" # database of .desktop file entries
+DSKL="${TMP0}/.desktop-ls" # list of .desktop file paths
 AWKB="${TMP0}/.build.awk" # builds (and queries) database
 AWKQ="${TMP0}/.query.awk" # queries database (faster)
 AWK4="${TMPD}/.saveflt.awk" # filters saved items
@@ -611,8 +612,8 @@ if [ -n "$invalid" ]; then
 fi
 #]]]
 # Prepare the .desktop database builder script. [[[1
-# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v SHOWNODISPLAY=true|false] [-v LIST_FILE="list_file" | files ]
-# Specify input files (.desktop) either as lines of LIST_FILE or as awk arguments.
+# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v SHOWNODISPLAY=true|false] [-v DSKL="desktop-file-list" | desktop-files ]
+# Specify input files (.desktop) either as lines of DSKL or as awk arguments.
 # The former style allows for handling read file errors gracefully and is used throughout this script.
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
@@ -628,8 +629,8 @@ BEGIN { # [[[2
   MSG2="'"$i18n_filename_Icon_not_found"'"
   MSG3="'"$i18n_analyzing_applications"'"
   # Read files specified by list of file names.
-  if(LIST_FILE) {
-    NFILES = read_list_file(LIST_FILE, file)
+  if(DSKL) {
+    NFILES = read_list_file(DSKL, file)
     exit # go to END - skip main loop
   }
 }
@@ -1001,13 +1002,21 @@ END {
 
 # Build FNRstart's database of .desktop file entries. [[[1
 # TODO This should be postponed until FNRstart_START's first activation, if any
-LIST_FILE="${AWKB}.list-file"
-ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS
-# Recursive search supports common wine games.
-find -L "$@" -type f -name '*.desktop' > "$LIST_FILE" 2>/dev/null
-IFS=$ifs
-gawk -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -f "${AWKB}" -v LIST_FILE="$LIST_FILE" > "${DATF}"
-NDATF=$(wc -l < "${DATF}")
+find_desktop_files() # [[[1
+{
+ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS; IFS=$ifs
+# Wine games and some system tools are located in sub-folders so use find.
+find -L "$@" -type f -name '*.desktop' 2>/dev/null
+true
+}
+fnr_start_data() # [[[1
+{
+  ! [ -s "$DSKL" ] && find_desktop_files > "$DSKL"
+  gawk -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -f "${AWKB}" -v DSKL="$DSKL" > "${DATF}"
+  ! [ "$NDATF" ] && NDATF=$(wc -l < "${DATF}")
+  true
+}
+fnr_start_data
 
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
@@ -1534,7 +1543,7 @@ start_window << EOF
         ${DEBUG2:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
         ${DEBUG2:+<action>if true echo >&2 in true rebuilding database...</action>}
-        <action>if true gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
+        <action>if true gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
         ${DEBUG2:+<action>if true echo >&2 in true clear:varLIST</action>}
         <action>if true clear:varLIST</action>
         ${DEBUG2:+<action>if true echo >&2 in true refresh:varLIST</action>}
@@ -1542,7 +1551,7 @@ start_window << EOF
         ${DEBUG2:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/findnrun-\*</action>}
         <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
         ${DEBUG2:+<action>if false echo >&2 in false rebuilding database...</action>}
-        <action>if false gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
+        <action>if false gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
         ${DEBUG2:+<action>if false echo >&2 in false clear:varLIST</action>}
         <action>if false clear:varLIST</action>
         ${DEBUG2:+<action>if false echo >&2 in false refresh:varLIST</action>}
@@ -1585,7 +1594,7 @@ start_window << EOF
             <variable>SHOWNODISPLAY</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
             <action>awk -v s=SHOWNODISPLAY=\${SHOWNODISPLAY} '/^SHOWNODISPLAY=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
-            <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v LIST_FILE='$LIST_FILE' > '${DATF}'</action>
+            <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
             <action>refresh:varLIST</action>
           </checkbox>
           ${REMARK# ]]]}
