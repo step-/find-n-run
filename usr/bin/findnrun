@@ -271,6 +271,7 @@ store_valid_sources() # [[[
 # 102 null tap-command
 # 103 invalid tap-command sh syntax
 # 104 invalid drain-command sh syntax
+# 105 invalid init-command sh syntax
 # 111 broken tap-id (leads nowhere)    TODO 111 and up
 # 112 broken drain-id
 # 113 broken title-id
@@ -308,10 +309,18 @@ BEGIN {
   # Fall back to BUILTIN source.
   if("" == valid_sources) valid_sources = "FNRstart"
   #]]]
-  # valid type names
-  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH|MODE|PLGDIR|SAVEFLT"
+  # Here we declare input tokens and their attributes [[[
+  ordered_G = "SOURCE|TAP|DRAIN|ICON|TITLE|INITSEARCH|MODE|PLGDIR|SAVEFLT|INIT"
   nG = split(ordered_G, G, /\|/)
   pattern = "^("ordered_G")_([^=]+)=(.*)" # => yields a[1] a[2] a[3]
+  # The following are considered "shell code" while the remaining members of
+  # ordered_G are considered "literal labels" or "simple assignaments". This
+  # matters for quote handling, as explained in NOTES ABOUT QUOTE HANDLING.
+  IsCode["TAP"]   = 103
+  IsCode["DRAIN"] = 104
+  IsCode["INIT"]  = 105
+  # SAVEFLT could be considered shell code too
+  # ]]]
 }
 {
   if(match($0, pattern, a)) {
@@ -325,17 +334,16 @@ BEGIN {
     I[a[2]] = a[2]
     if("SOURCE" == a[1]) S[a[2]] = a[2]
 
-    # Notes about quote handling: [[[
+    # NOTES ABOUT QUOTE HANDLING: [[[
     # Stdin comes from "set |" and consists of lines in the form
     # <shell identifier>=[<sq>]<word>[<word>...][<sq>]
     # <sq> is a single quote in ash, dash and bash. However, ash and bash omit
     # <sq> if there is only one <word>.
-    # For all literal groups, i.e, TITLE, MODE, etc.  we trim <sq>, see
-    # {UNQUOTE} below.
-    # However, for code group (DRAIN, TAP) we never trim or change the data.
+    # For literal groups, i.e, TITLE, MODE, etc. we trim <sq>, see {UNQUOTE} below.
+    # For groups that contain shell code (IsCode) we never change the data.
 
-    # For code groups, if <word> contains a single quote character \x27, i.e.
-    # "A\x27B", `set` could output either \x27A\x27\\\x27\x27B\x27 or
+    # For groups in IsCode, if <word> contains a single quote character \x27,
+    # i.e.  "A\x27B", `set` could output either \x27A\x27\\\x27\x27B\x27 or
     # \x27A\x27"\x27"\x27B\x27, depending on the shell.  A plugin that aims to
     # be compatible with the three shells should avoid using single quotes and
     # use exterior double quotes and escaped interior double quotes if
@@ -347,7 +355,7 @@ BEGIN {
     # escaped interior) double quotes instead of single quotes.
     # ]]]
 
-    VGI[a[1], a[2]] = ("TAP" == a[1] || "DRAIN" == a[1]) ? a[3] : unquote(a[3])
+    VGI[a[1], a[2]] = (a[1] in IsCode) ? a[3] : unquote(a[3])
     if('${DEBUG5:-0}') print a[1],"**",a[2],"**",a[3] > "/dev/stderr"
     #]]]
   }
@@ -390,11 +398,10 @@ END {
     delete S[s]
   }
   #]]]
-  # Invalid tap-command sh syntax? 103 [[[
-  syntax_check("TAP", TS, S, 103) # deletes elements of S
-  #]]]
-  # Invalid drain-command sh syntax? 104 [[[
-  syntax_check("DRAIN", DS, S, 104) # deletes elements of S
+  # Invalid shell code syntax? [[[
+  for(g in IsCode) {
+    syntax_check(g, TS, S, IsCode[g]) # deletes elements of S
+  }
   #]]]
   # Store remaining valid sources for gtkdialog shell. [[[
   # Treat sources as an ordered list.
@@ -413,14 +420,14 @@ END {
   for(x = 0; x <= 2; x++) {
     bin[x] = substr(bin[x], 2)
     nbin[x] = split(bin[x], source)
-    # Output enabled (visible/hidden) sources only.
+    # Output enabled (visible/hidden) sources only, each to its own file.
+    # Insert THISFILE= path of output file, NSOURCES= number of visible sources.
     if(x != 0x1) {
       for(j = 1; j <= nbin[x]; j++) {
         buf = Store[source[j]]
         p = index(buf, "\n")
         saveas = substr(buf, 1, p-1)
-        # While saving source to disk add NSOURCES= number of visible sources
-        printf("%s\nNSOURCES='"'%d'"'\n", substr(buf, p+1), nbin[0]) > saveas
+        printf("THISFILE='"'%s'"'\nNSOURCES='"'%d'"'\n%s\n", saveas, nbin[0], substr(buf, p+1)) > saveas
         close(saveas)
       }
     }
@@ -483,21 +490,27 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
   # Return value: 0:enabled-in-Store 1:disabled 2:hidden-in-Store
 
   # Assert: The calling outer loop has stripped exterior single quotes
-  # except for shell code values (TAP, DRAIN). See {UNQUOTE} above.
+  # except for shell code values (IsCode). See {UNQUOTE} above.
   if("" == buf) {
     buf = sprintf("ID='"'%s'"'", s)
     split(s":"VGI["SOURCE",s], I, /:/)
     for(j = 1; j <= nG; j++) {
       g = G[j]; i = (j in I) ?I[j] :"N\x08NULL" # \x08 => never "(g,i) in VGI"
       if('${DEBUG3:-0}') printf ("<%s, %s> ", g, i) > "/dev/stderr"
-      if((g, i) in VGI) {
-        if("TAP" == g || "DRAIN" == g) {
-          # store verbatim value, see {UNQUOTE}
+      if((g, i) in VGI) { # parsed source_<g>roup=value and non-null value
+        if(g in IsCode) {
+          # do not change the value, see {UNQUOTE} above.
           buf = buf sprintf("\n%s=%s", g, VGI[g, i])
-        } else {
+          if("INIT" == g) { #{ONCE_ONLY}
+            # Add shell code that invokes INIT once only.
+            buf = buf sprintf("\nif [ \"$INIT\" ]; then\n%s\n%s\nfi",\
+              "  eval $INIT",\
+              "  sed -i \"$THISFILE\" -e \"s/^INIT=/#&/\""  )
+          }
+        } else { # store quoted value
           buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, i])
         }
-      } else { # the plugin does not declare a value for group id g
+      } else { # parsed either source_<g>roup= or the source does not declare <g>
         if("TITLE" == g) {
           # on no title-id output source-id as title value
           buf = buf sprintf("\n%s='"'%s'"'", g, s)
