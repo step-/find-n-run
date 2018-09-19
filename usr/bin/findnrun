@@ -238,7 +238,9 @@ SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\
 
 # Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc"
-[ true = "${CASEDEPENDENT}" ] && unset i || i=i
+unset opts
+! [ true = "${CASEDEPENDENT}" ] && opts="${opts}i"
+[ true = "${SEARCHREGEX}" ] && opts="${opts}E" || opts="${opts}F"
 x="${TMPD}/.FNRsc"; mkdir "$x" &&
 # Embedded newline characters not allowed.
 TAP_FNRsc="t='$x/.dat';"' if ! [ -s "$t" ]; then set +f; IFS=:; for i in $PATH; do cd "$i" && ls -1 *"${term}"*; done 2>/dev/null | findnrun-formatter -- -O su | tee "$t"; else gawk -f "'"${AWKQ}"'" -v GREP="${term}" "$t"'"${REDIRECT2}"'; fi'
