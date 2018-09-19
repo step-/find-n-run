@@ -977,11 +977,16 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
 fi
 > "${AWKQ}" echo '#!/usr/bin/gawk -f
 BEGIN {
-  if('${DEBUG3:-0}') {
-    print "\n=== DB QUERY [[ GREP=\""GREP"\"" >"/dev/stderr"
-    print "expression=('"${subject}${left} ${fnameleft} ${commleft} ${categ}"')" >"/dev/stderr"
+  if('${DEBUG1:-0}') {
+    searchexpr="'"${subject}${left} ${fnameleft} ${commleft} ${categ}"'"
+    gsub("GREP", "\""GREP"\"", searchexpr)
+    print "\n=== DB QUERY [[ " searchexpr > "/dev/stderr"
   }
   FS="|"
+}
+('${DEBUG1:-0}') && (1 == NR) {
+  pa = $0; gsub("'"${SEP}"'", "<SEP>", pa)
+  print "RECORD #"NR" a="pa > "/dev/stderr"
 }
 {'"${extract_data_fields}"'
   # narrow matches by GREP pattern
@@ -991,7 +996,7 @@ BEGIN {
   }
 }
 END {
-  if('${DEBUG3:-0}') print "]] QUERY" >"/dev/stderr"
+  if('${DEBUG1:-0}') print "]] QUERY" >"/dev/stderr"
 } '
 
 # Build FNRstart's database of .desktop file entries. [[[1
@@ -1002,6 +1007,7 @@ ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS
 find -L "$@" -type f -name '*.desktop' > "$LIST_FILE" 2>/dev/null
 IFS=$ifs
 gawk -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -f "${AWKB}" -v LIST_FILE="$LIST_FILE" > "${DATF}"
+NDATF=$(wc -l < "${DATF}")
 if [ "${DEBUG1}" ]; then
   : >/tmp/varSEARCH
   cat >&2 <<EOF
@@ -1011,7 +1017,6 @@ Limit $APP_NAME to a single instance because /tmp/varSEARCH can't be shared.
 ----
 EOF
 fi
-NDATF=$(wc -l "${DATF}"); NDATF=${NDATF%% *}
 
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
