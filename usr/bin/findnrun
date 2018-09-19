@@ -228,7 +228,7 @@ if [ -z "$XCLIP" -o none = "$XCLIP" ]; then
   XCLIP=">/dev/stderr"
 fi
 
-# Default built-in source "Desktop Apps" [[[2
+# FNRstart - Default built-in source "Desktop Apps" [[[2
 SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart"
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
@@ -236,7 +236,7 @@ ICON_FNRstart='/usr/share/doc/findnrun/findnrun.svg' # Filmstrip plugin expects.
 # save item label, .desktop file fullpath, exec line, comments, categories
 SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
-# Built-in source "Shell Completion" [[[2
+# FNRsc - Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc"
 unset opts
 ! [ true = "${CASEDEPENDENT}" ] && opts="${opts}i"
@@ -249,7 +249,7 @@ TITLE_FNRsc=$i18n_shell_completion
 # save item label == exec line
 SAVEFLT_FNRsc="CUT=\"-4\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
-# Prepare sources. [[[1
+# Compile built-in and plugin sources. [[[1
 # Don't change next two formats; functions generate_invoke*()
 # assume them, and so may also findnrun-formatter in the future.
 SRCSTEM="${TMPD}/.source-" # prefix to source filenames
@@ -595,7 +595,8 @@ x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
 ifs=$IFS; IFS=:
 read NSOURCES VISIBLE_SOURCES x DISABLED_SOURCES x HIDDEN_SOURCES x < "${TMPD}/.$$"
 IFS=$ifs
-# Initialize gtkdialog source defaults from the first source.
+
+# Set default source to the first element of SOURCES. [[[1
 . "${SRCSTEM}0-"*.sh
 
 # Display warning dialog if some source declarations were found invalid. [[[
@@ -609,7 +610,7 @@ if [ -n "$invalid" ]; then
       "$invalid")"
 fi
 #]]]
-# Prepare the database builder script. [[[1
+# Prepare the .desktop database builder script. [[[1
 # Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v SHOWNODISPLAY=true|false] [-v LIST_FILE="list_file" | files ]
 # Specify input files (.desktop) either as lines of LIST_FILE or as awk arguments.
 # The former style allows for handling read file errors gracefully and is used throughout this script.
@@ -940,7 +941,7 @@ function close_progress_dialog(pid,   killer) { # [[[2
 
 ' # [[[2]]] awk script end
 
-# Prepare the database query script. [[[1
+# Prepare the generic database query script. [[[1
 # Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
 unset case subject commleft left categ REDIRECT2 func extract_data_fields
 [ true = "${CASEDEPENDENT}" ] || case=tolower
@@ -993,7 +994,8 @@ END {
   if('${DEBUG3:-0}') print "]] QUERY" >"/dev/stderr"
 } '
 
-# Build database of .desktop file entries. [[[1
+# Build FNRstart's database of .desktop file entries. [[[1
+# TODO This should be postponed until FNRstart_START's first activation, if any
 LIST_FILE="${AWKB}.list-file"
 ifs=$IFS; IFS=:; set -- $DESKTOP_FILE_DIRS
 # Recursive search supports common wine games.
