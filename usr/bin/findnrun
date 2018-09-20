@@ -1217,32 +1217,34 @@ ${DEBUG3:+'; set +x; echo >&2 "]]"'}
 #]]]
 set_GET_SOURCE
 
-generate_invoke_source_tap() # [[[2
+set_INVOKE_SOURCE_TAP() # [[[2
 {
-  # Echo sh code that invokes source[varF3]'s tap-command.
-  # Extract search input value as $term with IBOL+IBOL correction. [[[
-  echo -n 'ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}";'
-  #]]]
-  # Get source[varF3]'s values. [[[
-# Optimization: use cached <variable>TAP</variable>.
-  generate_get_source invoke_source_tap
-  # ]]]
-  # Start tap-command. [[[
-  echo -n ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}' # trim timestamp
-  if [ -n "${DEBUG1}" ]; then #[[[
-    echo -n ' && >&2 printf %s "$(date +%H:%M:%S.%N) INVOKE TAP event=${fnrevent}"'
-    [ -n "${DEBUG3}" ] && echo -n ' && eval ">&2 echo -n \" term(hex)=\$(echo -n \${term} |xxd -p)\""'
-    echo -n ' && eval ">&2 echo \" term=\${term} \${TAP}\""'
-  fi
-  #]]]
-  # Unexport all vars.
-  # cf. UNEXPORT in generate_invoke_source_drain.
-  echo -n " && ${UNEXPORT} varLIST varF3 invokeTAP invokeDRAIN"
-  echo -n ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
-  echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
-  echo -n ' eval ${TAP}'
-  #]]]
+  # Code that invokes source[varF3]'s tap-command.
+  # 1. Extract search input value as $term with IBOL+IBOL correction.
+  # 2. Get source[varF3]'s values. Optimization: use cached <variable>TAP</variable>.
+  # 3. Start tap-command (the first line trims the event timestamp).
+  # 4. Unexport all vars. Cf. UNEXPORT in set_INVOKE_SOURCE_DRAIN.
+  # 5. Set invocation environment and invoke tap-command.
+  INVOKE_SOURCE_TAP=\
+': 1'\
+';ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}"'\
+';: 2'\
+${DEBUG2:+'eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_tap\""'}\
+";${GET_SOURCE}"\
+' && : 3'\
+' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}'\
+${DEBUG1:+' && >&2 printf %s "$(date +%H:%M:%S.%N) INVOKE TAP event=${fnrevent}"'}\
+${DEBUG3:+' && eval ">&2 echo -n \" term(hex)=\$(echo -n \${term} |xxd -p)\""'}\
+${DEBUG1:+' && eval ">&2 echo \" term=\${term} \${TAP}\""'}\
+'&& : 4'\
+" && ${UNEXPORT} varLIST varF3 invokeTAP invokeDRAIN"\
+'&& : 5'\
+' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
+' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
+' eval ${TAP}'
 }
+#]]]
+set_INVOKE_SOURCE_TAP
 
 generate_invoke_source_drain() # [[[2
 {
@@ -1250,7 +1252,7 @@ generate_invoke_source_drain() # [[[2
   # Extract selected list item value as "$@".
   echo -n "$GET_DRAIN_COMMAND"
   # Unexport all vars but varF3 and varLIST.
-  # cf. 'UNEXPORT' in generate_invoke_source_tap and 'unset' further down
+  # cf. 'UNEXPORT' in set_INVOKE_SOURCE_TAP and 'unset' further down
   echo -n "; ${UNEXPORT}"
   # Load source[varF3]'s values into drain's invocation environment. [[[
   echo -n '; '; generate_get_source invoke_source_drain
@@ -1466,7 +1468,7 @@ start_window << EOF
       <variable>varLIST</variable>
       <output file>$F4SF</output>
       ${REMARK# [[[. Populate list view.}
-      <input icon-column="0">$(generate_invoke_source_tap)</input>
+      <input icon-column="0">${INVOKE_SOURCE_TAP}</input>
       ${REMARK# ]]]}
       ${DEBUG2:+<action>echo>&2 ,,, varLIST ,,,</action>}
       ${REMARK# [[[. Invoke list view selected item.}
