@@ -1246,41 +1246,51 @@ ${DEBUG1:+' && eval ">&2 echo \" term=\${term} \${TAP}\""'}\
 #]]]
 set_INVOKE_SOURCE_TAP
 
-generate_invoke_source_drain() # [[[2
+set_INVOKE_SOURCE_DRAIN() # [[[2
 {
-  # Echo sh code that invokes source[varF3]'s drain-command.
-  # Extract selected list item value as "$@".
-  echo -n "$GET_DRAIN_COMMAND"
-  # Unexport all vars but varF3 and varLIST.
-  # cf. 'UNEXPORT' in set_INVOKE_SOURCE_TAP and 'unset' further down
-  echo -n "; ${UNEXPORT}"
-  # Load source[varF3]'s values into drain's invocation environment. [[[
-  echo -n '; '; generate_get_source invoke_source_drain
-  # ]]]
-  # Save drain-command to history lists. [[[
-  # To the source's own history list file and to the global history list file
-  # $HSTF, which is the history widget input file (varCMD).
-  echo -n "; echo \$DRAIN\ \"\$@\" >> \"$TMPD/.hist-\$ID.sh\""
-  echo -n "; echo \$DRAIN \"\$@\" >> '$HSTF'"
-  #]]]
-  # Start drain-command. [[[
-  echo -n '; set -- ${DRAIN} "$@"'
+  # Code that invokes source[varF3]'s drain-command.
+  # 1. Extract selected list item value as "$@".
+  # 2. Unexport some vars.  Cf. UNEXPORT in set_INVOKE_SOURCE_TAP and also further down below.
+  # 3. Load source[varF3]'s values into drain's invocation environment.
+  # 4. Save drain-command to history lists. [[[
+  #    To the source's own history list file and to the global history list file
+  #    $HSTF, which is the history widget input file (varCMD). ]]]
+  # 5. Start drain-command.
+  # 6. Update plugin event. '%% *' trims the event timestamp. [[[
   # NOTE: v.2.0.0 main window's gtkdialog doesn't implement variable
   # invokeDRAIN. So, for the plugin interface, here it's sufficient to
   # pretend that invokeDRAIN is implemented, and handle it similarly to
-  # what we do for invokeTAP, which instead is fully implemented.
-  echo -n '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}' # trim timestamp
-  if [ -n "${DEBUG1}" ]; then #[[[
-    echo -n ' && >&2 printf %s $(date +%H:%M:%S.%N)'
-    echo -n ' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'
-  fi
-  #]]]
-  echo -n '; unset varF3 varLIST invokeTAP invokeDRAIN TAP DRAIN ICON TITLE INITSEARCH MODE PLGDIR SAVEFLT'
-  echo -n '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"
-  echo -n ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
-  echo -n ' eval "$@" &'
-  #]]]
+  # what we do for invokeTAP, which instead is fully implemented. ]]]
+  # 7. Debug messages.
+  # 8. Unexport all remaining variables.
+  # 9. Set invocation environment and start drain-command.
+  INVOKE_SOURCE_DRAIN=\
+': 1'\
+";$GET_DRAIN_COMMAND"\
+';: 2'\
+"; $UNEXPORT $UNEXP_GUI1"\
+';: 3'\
+${DEBUG2:+'eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain\""'}\
+";${GET_SOURCE}"\
+';: 4'\
+"; echo \$DRAIN\ \"\$@\" >> \"$TMPD/.hist-\$ID.sh\""\
+"; echo \$DRAIN \"\$@\" >> '$HSTF'"\
+';: 5'\
+'; set -- ${DRAIN} "$@"'\
+';: 6'\
+'; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}'\
+';: 7'\
+${DEBUG1:+' && >&2 printf %s $(date +%H:%M:%S.%N)'}\
+${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'}\
+';: 8'\
+"; $UNEXPORT $UNEXP_GUI2 $UNEXP_INVK $dont_UNEXP_PLUGIN $dont_UNEXP_SOURCE"\
+';: 9'\
+'; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
+' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
+' eval "$@" &'
 }
+#]]]
+set_INVOKE_SOURCE_DRAIN
 
 generate_status_bar() # [[[2
 {
@@ -1472,7 +1482,7 @@ start_window << EOF
       ${REMARK# ]]]}
       ${DEBUG2:+<action>echo>&2 ,,, varLIST ,,,</action>}
       ${REMARK# [[[. Invoke list view selected item.}
-      <action signal="row-activated">$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
+      <action signal="row-activated">${INVOKE_SOURCE_DRAIN}</action>${REMARK# which saves item to history.}
       <action signal="row-activated">refresh:varCMD</action>
       ${REMARK# ]]]}
       <action condition="active_is_false(varOPEN)">exit:EXIT</action>
@@ -1687,7 +1697,7 @@ start_window << EOF
         ${REMARK#   [[[. Key F12 activates the top varLIST item.}
         <menuitem accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
           <action>grabfocus:varLIST</action>
-          <action>$(generate_invoke_source_drain)</action>${REMARK# which saves item to history.}
+          <action>${INVOKE_SOURCE_DRAIN}</action>${REMARK# which saves item to history.}
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
           <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         </menuitem>
