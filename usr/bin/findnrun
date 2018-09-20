@@ -1158,20 +1158,26 @@ function printer(f,a,n,   i) { # [[[2
 '
 
 # Helpers [[[1
-generate_get_drain_cmd() # [[[2
+set_GET_DRAIN_COMMAND() # [[[
 {
-  # Echo sh code that extracts the drain command of the selected list item.
+  # Code that extracts the drain command of the selected list item.
   # Command is returned in "$@" - Command defined per plugin-dev.md.
 
-  # KLUDGE work around the peculiar Windows paths that winemenubuilder generates.
-  echo -n 'case $varLIST in *wine\ *\\\\\\\\*)'
-  echo -n ' varLIST=$(echo -n "$varLIST" | sed -e "s/\\\\\\\\/\\\\/g") ;;'
-  echo -n 'esac'
-
-  echo -n '; ifs="${IFS}"'
-  echo -n '; IFS="'"${SEP}"'"; set -f; set -- $varLIST; set -- $3; set +f'
-  echo -n '; IFS="${ifs}"'
+  # 1. KLUDGE work around the challenging Windows paths that winemenubuilder generates. [[[
+  # input: Exec=env WINEPREFIX="/home/spot/.wine" wine C:\\\\windows\\\\command\\\\start.exe /Unix /home/spot/.wine/dosdevices/c:/users/Public/Start\\ Menu/Programs/Calendar\\ Magic/Calendar\\ Magic.lnk
+  # output: env WINEPREFIX="/home/spot/.wine" wine C:\\windows\\command\\start.exe /Unix /home/spot/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Calendar\ Magic/Calendar\ Magic.lnk 
+  # ]]]
+  GET_DRAIN_COMMAND=\
+'case $varLIST in *wine\ *\\\\\\\\*)'\
+' varLIST=$(echo -n "$varLIST" | sed -e "s/\\\\\\\\/\\\\/g") ;;'\
+'esac'\
+\
+'; ifs="${IFS}"'\
+'; IFS="'"${SEP}"'"; set -f; set -- $varLIST; set -- $3; set +f'\
+'; IFS="${ifs}"'
 }
+# ]]]
+set_GET_DRAIN_COMMAND
 
 generate_get_source() # [$1-event] [[[2
 {
@@ -1230,7 +1236,7 @@ generate_invoke_source_drain() # [[[2
 {
   # Echo sh code that invokes source[varF3]'s drain-command.
   # Extract selected list item value as "$@".
-  generate_get_drain_cmd
+  echo -n "$GET_DRAIN_COMMAND"
   # Unexport all vars but varF3 and varLIST.
   # cf. 'UNEXPORT' in generate_invoke_source_tap and 'unset' further down
   echo -n "; ${UNEXPORT}"
@@ -1486,7 +1492,7 @@ start_window << EOF
         <default>$i18n_Press_Down_Arrow</default>
         ${REMARK# Append a space to the grabbed varLIST item \$@ so we can tell it from history items.}
         ${REMARK# Note that the entry widget discards trailing spaces, so our space is a unique mark.}
-        <input>$(generate_get_drain_cmd); echo "\$@ "; awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "$HSTF"</input>
+        <input>${GET_DRAIN_COMMAND}; echo "\$@ "; awk '{a[++i]=\$0}END{while(i>0)print a[i--]}#tac' "$HSTF"</input>
         <output file>$HSTF</output>
         ${DEBUG2:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
