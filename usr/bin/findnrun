@@ -1022,14 +1022,14 @@ END {
 
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
-find_help() #[[[
+set_HELP_BUTTON() #[[[
 {
   # In:  ${FNRHELPINDEX} paths.
   # Out: ${helpviewer} command, ${helpbutton} gtk code.
-  local IFS=: subject="${i18n_Help%%_*}${i18n_Help##*_}"
-  set ${FNRHELPINDEX}
+  local IFS=: subject="${i18n_Help%%_*}${i18n_Help##*_}" i x p s helpviewer hf hd
+  set -- ${FNRHELPINDEX}
   for i; do
-    unset x p s helpviewer helpbutton; hf="$i"
+    unset x p s helpviewer HELP_BUTTON; hf="$i"
     case "${hf}" in *\[*\]*) p="${hf%[*}["; s="]${hf##*]}" # search for translation
       [ -e "$p${LL}$s" ] && hf="$p${LL}$s"; [ -e "$p${LR}$s" ] && hf="$p${LR}$s"; [ -e "$p${LANG}$s" ] && hf="$p${LANG}$s" ;;
     esac
@@ -1048,7 +1048,7 @@ EOF
           if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
           helpviewer="cd '${hd}' && '${helpviewer}' 'no-help.md'" ;;#${hf##*.}'";;
       esac &&
-      helpbutton="
+      HELP_BUTTON="
 <button use-underline=\"true\">
   <label>$i18n_Help</label>
   <input file stock=\"gtk-help\"></input>
@@ -1060,7 +1060,7 @@ EOF
   done
 }
 #]]]
-find_help
+set_HELP_BUTTON
 
 export GUI_ABOUT='
 <window title="'"$i18n_About_and_help - ${APP_TITLE}"'" icon-name="edit-find" window-position="2">
@@ -1078,7 +1078,7 @@ export GUI_ABOUT='
         <input file stock="gtk-ok"></input>
         <action>closewindow:GUI_ABOUT</action>
       </button>
-      '"${helpbutton}"'
+      '"${HELP_BUTTON}"'
       <text space-fill="true" space-expand="true"><label>""</label></text>
     </hbox>
   </vbox>
