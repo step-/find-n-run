@@ -1179,7 +1179,7 @@ set_GET_DRAIN_COMMAND() # [[[
 # ]]]
 set_GET_DRAIN_COMMAND
 
-generate_get_source() # [$1-event] [[[2
+generate_get_source() # [$1-event] [[[2  TODO REMOVEME
 {
   # Echo sh code that loads the current source's field values.
   # Values are returned as shell variables - Values defined per plugin-dev.md.
@@ -1204,6 +1204,18 @@ generate_invoke_source_save_filter() # [[[2
   echo -n   " eval \$SAVEFLT"
   echo -n '; fi'
 }
+
+set_GET_SOURCE() # [[[2
+{
+  # Echo sh code that loads the current source fields.
+  # Fields are returned as shell variables - See doc/plugin-dev.md.
+  GET_SOURCE=\
+${DEBUG3:+'>&2 echo "[["; set -x;'}\
+". \"${SRCSTEM}\"\${varF3:-0}-*.sh"\
+${DEBUG3:+'; set +x; echo >&2 "]]"'}
+}
+#]]]
+set_GET_SOURCE
 
 generate_invoke_source_tap() # [[[2
 {
