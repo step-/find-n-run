@@ -1061,6 +1061,20 @@ EOF
 }
 #]]]
 set_HELP_BUTTON
+set_ABOUT_TEXT() # [[[
+{
+  # Text content for the About dialog.
+  # i18n About dialog widgets
+  
+  ABOUT_TEXT='printf "'"$i18n_gui_about"'"'\
+' "'"${APP_NAME}"'" "'"${Version}"'" "'"step, SFR, L18L"'"'\
+' "'"http://www.murga-linux.com/puppy/viewtopic.php?t=98330"'"'\
+' "'"https://github.com/step-/find-n-run"'" "'"${CONFIG}"'" | tr \\r \\n'\
+' ; n="'"${NSOURCES}"'"; printf "$(ngettext "'"$i18n_source_loaded"'" "'"$i18n_sources_loaded"'" "$n")\n" "$n"'\
+' ; set -- $(wc -l "'"${DATF}"'"); printf "$(ngettext "'"$i18n_application_found"'" "'"$i18n_applications_found"'" $1)\n" $1'
+}
+#]]]
+set_ABOUT_TEXT
 
 export GUI_ABOUT='
 <window title="'"$i18n_About_and_help - ${APP_TITLE}"'" icon-name="edit-find" window-position="2">
@@ -1068,7 +1082,7 @@ export GUI_ABOUT='
     <frame>
       <text xalign="0" selectable="true" can-focus="false">
         <variable export="false">about_text</variable>
-        <input>'"$(generate_about_text)"'</input>
+        <input>'"${ABOUT_TEXT}"'</input>
       </text>
     </frame>
     <hbox homogeneous="true">
@@ -1144,19 +1158,6 @@ function printer(f,a,n,   i) { # [[[2
 '
 
 # Helpers [[[1
-generate_about_text() # [[[2
-{
-  # Echo sh code that outputs text content for the About dialog.
-  # i18n About dialog widgets
-  
-  echo -n 'printf "'"$i18n_gui_about"'"'
-  echo -n ' "'"${APP_NAME}"'" "'"${Version}"'" "'"step, SFR, L18L"'"'
-  echo -n ' "'"http://www.murga-linux.com/puppy/viewtopic.php?t=98330"'"'
-  echo -n ' "'"https://github.com/step-/find-n-run"'" "'"${CONFIG}"'" | tr \\r \\n'
-  echo -n '; n="'"${NSOURCES}"'"; printf "$(ngettext "'"$i18n_source_loaded"'" "'"$i18n_sources_loaded"'" "$n")\n" "$n"'
-  echo -n '; set -- $(wc -l "'"${DATF}"'"); printf "$(ngettext "'"$i18n_application_found"'" "'"$i18n_applications_found"'" $1)\n" $1'
-}
-
 generate_get_drain_cmd() # [[[2
 {
   # Echo sh code that extracts the drain command of the selected list item.
