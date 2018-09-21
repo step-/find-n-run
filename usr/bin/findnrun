@@ -277,13 +277,14 @@ ICON_FNRstart='/usr/share/doc/findnrun/findnrun.svg' # Filmstrip plugin expects.
 SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
 # FNRsc - Built-in source "Shell Completion" [[[2
-SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc"
+SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc:FNRsc"
 unset opts
 ! [ true = "${CASEDEPENDENT}" ] && opts="${opts}i"
 [ true = "${SEARCHREGEX}" ] && opts="${opts}E" || opts="${opts}F"
-x="${TMPD}/.FNRsc"; mkdir "$x" &&
+p="${TMPD}/.FNRsc"; mkdir -p "$p"
 # Embedded newline characters not allowed.
-TAP_FNRsc="t=\"$x/.dat\"; if ! [ -s \"\$t\" ]; then set +f; IFS=:; for i in \$PATH; do cd \"\$i\" && ls -1 *\"\${term}\"*; done 2>/dev/null | findnrun-formatter -- -O su | tee \"\$t\"; else gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"\$t\"${REDIRECT2}; fi"
+INIT_FNRsc="set +f; ifs=\$IFS; IFS=:; for d in \$PATH; do cd \"\$d\" && ls -1 *\"\${term}\"*; done 2>/dev/null | findnrun-formatter -- -O su >\"$p/.dat\"; IFS=\$ifs"
+TAP_FNRsc="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"$p/.dat\"${REDIRECT2}"
 ICON_FNRsc='/usr/share/doc/findnrun/FNRsc.svg'
 TITLE_FNRsc=$i18n_shell_completion
 # save item label == exec line
