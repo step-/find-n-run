@@ -1400,16 +1400,18 @@ Limit $APP_NAME to a single instance because /tmp/varSEARCH can't be shared.
   wait # for traps on gtkdialog's PID
 }
 
-generate_restart_window() # [[[2
+set_DO_RESTART_WINDOW() # [[[2
 {
-  # Restart findnrun dialog with all command line arguments.
+  # Code to restart findnrun dialog with all command line arguments.
   # Note: gtkdialog doesn't allow '<' redirection, so we need to 'cat |'.
-  printf %s \
-    "for pid in $TMPD/.$$-*; do :; done" \
-    '; pid=${pid##*-}' \
-    "; cat /proc/$$/cmdline | xargs -0 env -- &" \
-    ' kill $pid'
+DO_RESTART_WINDOW=\
+"for pid in $TMPD/.$$-*; do :; done"\
+'; pid=${pid##*-}'\
+"; cat /proc/$$/cmdline | xargs -0 env -- &"\
+' kill $pid'
 }
+#]]]
+set_DO_RESTART_WINDOW
 
 # Restart window dialog. [[[1
 # i18n restart window dialog
