@@ -1191,19 +1191,25 @@ generate_get_source() # [$1-event] [[[2  TODO REMOVEME
   [ -n "${DEBUG3}" ] && echo -n '; set +x; echo >&2 "]]"'
 }
 
-generate_invoke_source_save_filter() # [[[2
+set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 {
-  # Echo sh code that invokes source[varF3]'s save-filter-command.
-  # Unexport all vars.
-  echo -n "$UNEXPORT varLIST varF3 invokeTAP invokeDRAIN"
-  echo -n "; if [ -n \"\$SAVEFLT\" ]; then"
-  echo -n   " file=\"$F4SF\""
-  echo -n   "; FNRDEBUG=$FNRDEBUG"
-  echo -n   " FNRTMP=\"$TMPD\" FNRPID=$FNRPID FNRRPC=\"$FNRRPC\""
-  echo -n   " FNRSAVEFLT=\"$FNRSAVEFLT\" FNRXCLIP=\"$XCLIP\"" # specifically for save-filter
-  echo -n   " eval \$SAVEFLT"
-  echo -n '; fi'
+  # Code that invokes source[varF3]'s save-filter-command.
+  # 1. Unexport some vars.
+  # 2. Set invocation environment and start save-filter-command. [[[
+  #    FNRXCLIP is specific for the save-filte-command invocation environment. ]]]
+  INVOKE_SOURCE_SAVE_FILTER=\
+': 1'\
+"$UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_INVK $dont_UNEXP_PLUGIN $dont_UNEXP_SOURCE"\
+';: 2'\
+"; if [ -n \"\$SAVEFLT\" ]; then"\
+" file=\"$F4SF\""\
+"; FNRDEBUG=$FNRDEBUG FNRTMP=\"$TMPD\" FNRPID=$FNRPID FNRRPC=\"$FNRRPC\""\
+" FNRSAVEFLT=\"$FNRSAVEFLT\" FNRXCLIP=\"$XCLIP\""\
+" eval \$SAVEFLT"\
+'; fi'
 }
+#]]]
+set_INVOKE_SOURCE_SAVE_FILTER
 
 set_GET_SOURCE() # [[[2
 {
@@ -1707,7 +1713,7 @@ start_window << EOF
         ${REMARK#   [[[. Key F4 saves search results and invokes a filter.}
         <menuitem accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
           <action>save:varLIST</action>
-          <action>$(generate_invoke_source_save_filter)</action>
+          <action>${INVOKE_SOURCE_SAVE_FILTER}</action>
         </menuitem>
         ${REMARK#   ]]]}
       ${REMARK#  ]]]}
