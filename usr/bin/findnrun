@@ -105,9 +105,19 @@ LR=${LANG%.*} #ex:pt_BR
 LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
-# Unexport these variables before running the selected tap-command.
-UNEXPORT="unset GUI_ABOUT varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET"
-# unset varLIST and varF3 separately
+# Variables to be unexported before running tap-command. [[[1
+# Applies to drain-command, save-filter-command and init-command too.
+# Cf. share/doc/findnrun/plugin-dev.md for terminology.
+# 1. These vars would "pollute" the *-command's env because they are truly exported.
+# varICONS and varFOCUSSEARCH shouldn't be unexported before gtkdialog starts.
+UNEXPORT=unset
+UNEXP_GUI1="varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET GUI_ABOUT RESTART_WINDOW"
+UNEXP_GUI2="varLIST varF3" # in some cases they can be unexported but only at a later stage
+UNEXP_INVK="invokeTAP invokeDRAIN" # not sure about these
+# 2. plugin-dev.md says these vars are part of the invocation environment therefore
+# they shouldn't be unexported (technically they are set but not exported).
+#UNEXP_PLUGIN="ID NSOURCES THISFILE"
+#UNEXP_SOURCE="TAP DRAIN ICON TITLE INITSEARCH MODE PLGDIR SAVEFLT INIT"
 
 # Prepare the configuration file. [[[1
 # Defaults - match same variable/value pairs in the next block. [[[2
@@ -618,7 +628,9 @@ read NSOURCES VISIBLE_SOURCES x DISABLED_SOURCES x HIDDEN_SOURCES x < "${TMPD}/.
 IFS=$ifs
 
 # Set default source to the first element of SOURCES. [[[1
-. "${SRCSTEM}0-"*.sh
+# Note: source with SKIP-INIT not to eval init-command directly in my
+# environment in which init-command could see/change all existing variables.
+SKIP_INIT=true . "${SRCSTEM}0-"*.sh
 
 # Display warning dialog if some source declarations were found invalid. [[[
 invalid=$(list_diff "$SOURCES" "$VISIBLE_SOURCES $DISABLED_SOURCES $HIDDEN_SOURCES")
@@ -1189,7 +1201,7 @@ set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
   #    FNRXCLIP is specific for the save-filte-command invocation environment. ]]]
   INVOKE_SOURCE_SAVE_FILTER=\
 ': 1'\
-"$UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_INVK $dont_UNEXP_PLUGIN $dont_UNEXP_SOURCE"\
+"$UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_INVK"\
 ';: 2'\
 "; if [ -n \"\$SAVEFLT\" ]; then"\
 " file=\"$F4SF\""\
@@ -1236,6 +1248,8 @@ ${DEBUG1:+' && >&2 printf %s "$(date +%H:%M:%S.%N) INVOKE TAP event=${fnrevent}"
 ${DEBUG3:+' && eval ">&2 echo -n \" term(hex)=\$(echo -n \${term} |xxd -p)\""'}\
 ${DEBUG1:+' && eval ">&2 echo \" term=\${term} \${TAP}\""'}\
 '&& : 5'\
+" && $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_INVK"\
+'&& : 6'\
 ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
 ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
 ' eval ${TAP}'
@@ -1280,7 +1294,7 @@ ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_dr
 ${DEBUG1:+' && >&2 printf %s $(date +%H:%M:%S.%N)'}\
 ${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'}\
 ';: 8'\
-"; $UNEXPORT $UNEXP_GUI2 $UNEXP_INVK $dont_UNEXP_PLUGIN $dont_UNEXP_SOURCE"\
+"; $UNEXPORT $UNEXP_GUI2 $UNEXP_INVK"\
 ';: 9'\
 '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
 ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
@@ -1527,7 +1541,7 @@ start_window << EOF
         <output file>$HSTF</output>
         ${DEBUG2:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
-        <action signal="activate">set -- \$varCMD; echo "\$@" >> '$HSTF'; echo "\$@" >> "$TMPD/.hist-\$ID.sh"; $UNEXPORT varLIST varF3; eval "\$@" &</action>
+        <action signal="activate">set -- \$varCMD; echo "\$@" >> '$HSTF'; echo "\$@" >> "$TMPD/.hist-\$ID.sh"; $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
         <action signal="activate" condition="command_is_true(echo \$varFOCUSSEARCH)">grabfocus:varSEARCH</action>
         <action signal="activate" condition="command_is_false(echo \$varFOCUSSEARCH)">grabfocus:varLIST</action>
