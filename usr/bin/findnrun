@@ -263,7 +263,7 @@ fi
 # FNRstart - Default built-in source "Desktop Apps" [[[2
 SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 # INIT is run once only, on the first time this gtkdialog invokes this source.
-# The single invocation code generator can be found at {ONCE_ONLY}.  Gist
+# The single invocation code generator can be found at {INVOKEINIT}.  Gist
 # below: Up to "f >..." create a list of .desktop file paths. Then gawk -f
 # AWKB outputs the .desktop db given the paths. Then echo NDATF appends NDATF
 # to the source declaration file (THISFILE).  The subsequent TAP's gawk -f AWKQ
@@ -465,7 +465,9 @@ END {
         buf = Store[source[j]]
         p = index(buf, "\n")
         saveas = substr(buf, 1, p-1)
-        printf("THISFILE='"'%s'"'\nNSOURCES='"'%d'"'\n%s\n", saveas, nbin[0], substr(buf, p+1)) > saveas
+        printf("%sTHISFILE='"'%s'"'\nNSOURCES='"'%d'"'\n%s\n",\
+          '${DEBUG2:-0}' ?("echo >&2 Reading \""saveas"\"${SKIP_INIT:+ and skipping INIT}...\n") :"",\
+          saveas, nbin[0], substr(buf, p+1)) > saveas
         close(saveas)
       }
     }
@@ -539,11 +541,14 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
         if(g in IsCode) {
           # do not change the value, see {UNQUOTE} above.
           buf = buf sprintf("\n%s=%s", g, VGI[g, i])
-          if("INIT" == g) { #{ONCE_ONLY}
-            # Add shell code that invokes INIT once only.
-            buf = buf sprintf("\nif [ \"$INIT\" ]; then\n%s\n%s\nfi",\
-              "  eval $INIT",\
-              "  sed -i \"$THISFILE\" -e \"s/^INIT=/#&/\""  )
+          if("INIT" == g) { #{INVOKEINIT}
+            # Add shell code to run INIT once only. env SKIP_INIT=1 ... to skip.
+            buf = buf sprintf("\nif [ \"$INIT\" -a ! \"$SKIP_INIT\" ]; then\n%s\nfi",\
+              ('${DEBUG1:-0}' ?("__t0=$(date +%s.%N)\n") :"")\
+              "  set >&2; eval $INIT\n"\
+              ('${DEBUG1:-0}' ?("__t1=$(date +%s.%N)\n") :"")\
+              ('${DEBUG1:-0}' ?("  awk -v fmt=\"INIT $ID %g ms elapsed\\n\" -v t0=$__t0 -v t1=$__t1 \x27""BEGIN {printf fmt, (t1-t0)*1000;exit}\x27 >&2\n") :"")\
+              "  sed -i \"$THISFILE\" -e \"s/^INIT=/DID_&/\"\n"  )
           }
         } else { # store quoted value
           buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, i])
