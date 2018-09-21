@@ -11,6 +11,27 @@
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
 # =============================================================================
 
+if [ "$FNRDEBUG" ]; then # [[[1 timer
+  timer() {
+    # $3 and $4 are optional
+    awk -v t1=$1 -v t2=$2 -v t0=$3 -v label=$4 '
+BEGIN {
+  if("" == label) {
+    label = "ELAPSED ms partial/total"
+  }
+  partial = (t2 - t1) * 1000
+  if("" != t0) {
+    total = (t2 - t0) * 1000
+    fmt = "%s %g %g\n"
+  } else {
+    fmt = "%s %g%s\n"
+  }
+  printf fmt, label, partial, total
+  exit
+}'
+  }
+  TIMER0=$(date +%s.%N) # needs GNU date
+fi
 SN=findnrun
 # Localization settings. [[[1
 export TEXTDOMAIN=findnrun
@@ -626,6 +647,7 @@ x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
 ifs=$IFS; IFS=:
 read NSOURCES VISIBLE_SOURCES x DISABLED_SOURCES x HIDDEN_SOURCES x < "${TMPD}/.$$"
 IFS=$ifs
+[ "$DEBUG1" ] && TIMER1=$(date +%s.%N) && timer $TIMER0 $TIMER1 $TIMER0 >&2
 
 # Set default source to the first element of SOURCES. [[[1
 # Note: source with SKIP-INIT not to eval init-command directly in my
@@ -1375,10 +1397,13 @@ set_SOURCE_HOTKEYS
 start_window() # Returns when gtkdialog terminates [[[2
 {
   if [ "${DEBUG1}" ]; then
+    TIMERN=$(date +%s.%N)
     : >/tmp/varSEARCH
-    echo >&2 "==== DEBUG SEARCH INPUT ENABLED ====
-You can \"type a search\" by writing a term to file /tmp/varSEARCH.
+    echo >&2 "==== STARTING GTKDIALOG - DEBUG SEARCH INPUT ENABLED ===="
+    timer $TIMER1 $TIMERN $TIMER0 >&2
+echo "You can \"type a search\" by writing a term to file /tmp/varSEARCH.
 Limit $APP_NAME to a single instance because /tmp/varSEARCH can't be shared.
+Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | vim -R -
 ----"
   fi
   local dialog findnrun
