@@ -1022,7 +1022,7 @@ END {
 
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
-set_HELP_BUTTON() #[[[
+set_HELP_BUTTON() #[[[2
 {
   # In:  ${FNRHELPINDEX} paths.
   # Out: ${helpviewer} command, ${helpbutton} gtk code.
@@ -1061,7 +1061,8 @@ EOF
 }
 #]]]
 set_HELP_BUTTON
-set_ABOUT_TEXT() # [[[
+
+set_ABOUT_TEXT() # [[[2
 {
   # Text content for the About dialog.
   # i18n About dialog widgets
@@ -1158,38 +1159,27 @@ function printer(f,a,n,   i) { # [[[2
 '
 
 # Helpers [[[1
-set_GET_DRAIN_COMMAND() # [[[
+set_GET_DRAIN_COMMAND() # [[[2
 {
   # Code that extracts the drain command of the selected list item.
-  # Command is returned in "$@" - Command defined per plugin-dev.md.
+  # Command is returned in "$@" - Command defined per doc/findnrun/plugin-dev.md.
 
   # 1. KLUDGE work around the challenging Windows paths that winemenubuilder generates. [[[
   # input: Exec=env WINEPREFIX="/home/spot/.wine" wine C:\\\\windows\\\\command\\\\start.exe /Unix /home/spot/.wine/dosdevices/c:/users/Public/Start\\ Menu/Programs/Calendar\\ Magic/Calendar\\ Magic.lnk
   # output: env WINEPREFIX="/home/spot/.wine" wine C:\\windows\\command\\start.exe /Unix /home/spot/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Calendar\ Magic/Calendar\ Magic.lnk 
   # ]]]
   GET_DRAIN_COMMAND=\
+': 1;'\
 'case $varLIST in *wine\ *\\\\\\\\*)'\
 ' varLIST=$(echo -n "$varLIST" | sed -e "s/\\\\\\\\/\\\\/g") ;;'\
 'esac'\
-\
+';: 2'\
 '; ifs="${IFS}"'\
 '; IFS="'"${SEP}"'"; set -f; set -- $varLIST; set -- $3; set +f'\
 '; IFS="${ifs}"'
 }
 # ]]]
 set_GET_DRAIN_COMMAND
-
-generate_get_source() # [$1-event] [[[2  TODO REMOVEME
-{
-  # Echo sh code that loads the current source's field values.
-  # Values are returned as shell variables - Values defined per plugin-dev.md.
-  local eventfmt
-  eventfmt="${1:+ on event:}$1${1:+ }"
-  [ -n "${DEBUG2}" ] && echo -n 'eval ">&2 echo \"GET SOURCE \${varF3:-0}'"${eventfmt}"'\"";'
-  [ -n "${DEBUG3}" ] && echo -n '>&2 echo "[["; set -x;'
-  echo -n ". \"${SRCSTEM}\"\${varF3:-0}-*.sh"
-  [ -n "${DEBUG3}" ] && echo -n '; set +x; echo >&2 "]]"'
-}
 
 set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 {
@@ -1214,7 +1204,7 @@ set_INVOKE_SOURCE_SAVE_FILTER
 set_GET_SOURCE() # [[[2
 {
   # Echo sh code that loads the current source fields.
-  # Fields are returned as shell variables - See doc/plugin-dev.md.
+  # Fields are returned as shell variables - See doc/findnrun/plugin-dev.md.
   GET_SOURCE=\
 ${DEBUG3:+'>&2 echo "[["; set -x;'}\
 ". \"${SRCSTEM}\"\${varF3:-0}-*.sh"\
@@ -1227,23 +1217,24 @@ set_INVOKE_SOURCE_TAP() # [[[2
 {
   # Code that invokes source[varF3]'s tap-command.
   # 1. Extract search input value as $term with IBOL+IBOL correction.
-  # 2. Get source[varF3]'s values. Optimization: use cached <variable>TAP</variable>.
-  # 3. Start tap-command (the first line trims the event timestamp).
-  # 4. Unexport all vars. Cf. UNEXPORT in set_INVOKE_SOURCE_DRAIN.
-  # 5. Set invocation environment and invoke tap-command.
+  # 2. Get source[varF3]'s values. [[[
+  #    Optimization: use cached <variable>TAP</variable>. ]]]
+  # 3. Update plugin event. '%% *' trims the event timestamp.
+  # 4. Debug messages.
+  # 5. Unexport all vars but source's. Cf. UNEXPORT in set_INVOKE_SOURCE_DRAIN.
+  # 6. Set invocation environment and start tap-command.
   INVOKE_SOURCE_TAP=\
 ': 1'\
 ';ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}"'\
 ';: 2'\
-${DEBUG2:+'eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_tap\""'}\
+${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_tap\""'}\
 ";${GET_SOURCE}"\
 ' && : 3'\
 ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}'\
+' && : 4'\
 ${DEBUG1:+' && >&2 printf %s "$(date +%H:%M:%S.%N) INVOKE TAP event=${fnrevent}"'}\
 ${DEBUG3:+' && eval ">&2 echo -n \" term(hex)=\$(echo -n \${term} |xxd -p)\""'}\
 ${DEBUG1:+' && eval ">&2 echo \" term=\${term} \${TAP}\""'}\
-'&& : 4'\
-" && ${UNEXPORT} varLIST varF3 invokeTAP invokeDRAIN"\
 '&& : 5'\
 ' && FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
 ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
@@ -1276,7 +1267,7 @@ set_INVOKE_SOURCE_DRAIN() # [[[2
 ';: 2'\
 "; $UNEXPORT $UNEXP_GUI1"\
 ';: 3'\
-${DEBUG2:+'eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain\""'}\
+${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain\""'}\
 ";${GET_SOURCE}"\
 ';: 4'\
 "; echo \$DRAIN\ \"\$@\" >> \"$TMPD/.hist-\$ID.sh\""\
@@ -1313,6 +1304,7 @@ set_STATUS_BAR() # [[[2
     "$i18n_Click_the_status_bar" \
     "$(n="${NSOURCES}"; printf "$(ngettext "$i18n_source_loaded" "$i18n_sources_loaded" "$n")" "$n")" \
   )
+  #]]]
   # 1. Title - TITLE is a gtkdialog widget sub-shell variable [[[
   #    It's set by the <input> tag, which is activated only after
   #    refresh:TITLE.  Adding a <default> tag value for TITLE would initialize
@@ -1328,15 +1320,15 @@ set_STATUS_BAR() # [[[2
           <variable export="false">varSBAR</variable>
           <input>'\
 ': 1'\
-${DEBUG3:+'echo >&2 "=== GENERATE STATUS BAR [["; set -x;'}\
-'title="${TITLE}"'\
+${DEBUG3:+'; echo >&2 "=== GENERATE STATUS BAR [["; set -x'}\
+'; title="${TITLE}"'\
 '; [ -z "${title}" ] && SKIP_INIT=1 . "'"${SRCSTEM}"'"${varF3:-0}-*.sh && title="${TITLE}"'\
 ';: 2'\
 '; SKIP_INIT=1 . "'"${SRCSTEM}"'"$(((${varF3:-0} + 1) % ${NSOURCES:-'${NSOURCES}'}))-*.sh'\
 '; next="${TITLE}"'\
 ';: 3'\
 '; printf "'"%s ${ctrlnkey}  »  ${funckey} %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}"'\
-${DEBUG3:+'set +x; echo >&2 "]]";'}\
+${DEBUG3:+'; set +x; echo >&2 "]]"'}\
 "</input>
         ${DEBUG2:+<action>echo>&2 ,,, varSBAR ,,,</action>}
         </statusbar>
@@ -1429,7 +1421,7 @@ export RESTART_WINDOW='
     <hbox>
       <text space-fill="true" space-expand="true"><label>""</label></text>
       <button yes>
-        <action>'"$(generate_restart_window)"'</action>
+        <action>'"${DO_RESTART_WINDOW}"'</action>
       </button>
       <button no>
         <action>closewindow:RESTART_WINDOW</action>
