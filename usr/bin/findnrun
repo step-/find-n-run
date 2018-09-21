@@ -1348,19 +1348,23 @@ ${DEBUG3:+'set +x; echo >&2 "]]";'}\
 #]]]
 set_STATUS_BAR
 
-generate_source_hotkeys() # [[[2
+set_SOURCE_HOTKEYS() # [[[2
 {
   # Actions for keys Ctrl+1..Ctrl+9
   local h i
-  h=0
+  h=0 SOURCE_HOTKEYS=
   for i in 1 2 3 4 5 6 7 8 9; do
-    echo '<menuitem accel-key="0x003'"$i"'" accel-mods="4">'
-    printf "  <action>%s</action>\n" "echo -n $h >\"${F3SF}\"" "refresh:varF3"
-    echo "</menuitem>"
+    SOURCE_HOTKEYS="$SOURCE_HOTKEYS
+<menuitem accel-key=\"0x003$i\" accel-mods=\"4\">
+  <action>printf $h >\"${F3SF}\"</action>
+  <action>refresh:varF3</action>
+</menuitem>"
     [ $i = $NSOURCES ] && break
     h=$i
   done
 }
+#]]]
+set_SOURCE_HOTKEYS
 
 start_window() # Returns when gtkdialog terminates [[[2
 {
@@ -1745,7 +1749,7 @@ start_window << EOF
         ${REMARK#   ]]]}
       ${REMARK#  ]]]}
       ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
-        $(generate_source_hotkeys)
+        ${SOURCE_HOTKEYS}
       ${REMARK#  ]]]}
         <label>""</label>
       </menu>
