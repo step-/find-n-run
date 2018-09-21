@@ -6,7 +6,8 @@
   Version=2.5.1-WIP
 # authors: Copyright (C)2015-2018 step; (C)2015 SFR, L18L
 # license: GNU GPL version 2
-# depends: gtk-dialog 0.8.3+, gawk, ash (or bash), mdview (NLS help only), xwininfo, yad
+# depend: gtk-dialog 0.8.3+, gawk, ash (or bash), xwininfo, yad
+# suggest: mdview (markdown help), proc(5) (restart findnrun), GNU date (debug)
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
 # =============================================================================
@@ -1418,9 +1419,10 @@ Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | vim -R -
   ln -sf "$(command -v $GTKDIALOG)" "$findnrun"
   cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
-    cat "$dialog"
-    echo "$RESTART_WINDOW"
-    echo "$GUI_ABOUT"
+    { cat "$dialog"
+      echo "$RESTART_WINDOW"
+      echo "$GUI_ABOUT"
+    } | tr \\r \\n
     return
   fi &&
   if [ "${ENABLESTDOUT}" ]; then
