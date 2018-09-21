@@ -1298,9 +1298,9 @@ ${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \"
 #]]]
 set_INVOKE_SOURCE_DRAIN
 
-generate_status_bar() # [[[2
+set_STATUS_BAR() # [[[2
 {
-  # Echo sh code that loads the current and next source's titles
+  # XML fragment + Code that loads the current and next source's titles
   # and sets them as navigation hotkey labels.
   set -- ${VISIBLE_SOURCES:-FNRStart}
   [ $# -lt 2 ] && return # no status bar unless:
@@ -1313,37 +1313,40 @@ generate_status_bar() # [[[2
     "$i18n_Click_the_status_bar" \
     "$(n="${NSOURCES}"; printf "$(ngettext "$i18n_source_loaded" "$i18n_sources_loaded" "$n")" "$n")" \
   )
-  echo -n '
+  # 1. Title - TITLE is a gtkdialog widget sub-shell variable [[[
+  #    It's set by the <input> tag, which is activated only after
+  #    refresh:TITLE.  Adding a <default> tag value for TITLE would initialize
+  #    its **widget** value but not its findnrun sh value.  Since the code
+  #    deals with the gtkdialog sh value it deals with the null value case,
+  #    which occrs once when gtkdialog starts. ]]]
+  # 2. Load next source's values and grab its TITLE too.
+  # 3. Format titles as hotkey labels. <action>s copied from <menuitem> HOTKEY_F3.
+  STATUS_BAR='
     <vbox>
       <eventbox>
         <statusbar has-resize-grip="false" sensitive="false" tooltip-text="'"$tooltip"'">
           <variable export="false">varSBAR</variable>
-          <input>'
-  [ -n "${DEBUG3}" ] && echo -n 'echo >&2 "=== GENERATE STATUS BAR [["; set -x;'
-  echo -n 'title="${TITLE}"' # This is a gtkdialog sh variable and...
-  # [[[ ... it gets its value from the <input> tag, which is activated only
-  # after refresh:TITLE. Adding a <default> tag value for TITLE doesn't
-  # initialize its **sh value**. It only initializes its **widget** value.
-  # Again, here we deal with the gtkdialog sh value, so we need to be
-  # prepared to the null value case, which manifests itself only once,
-  # when gtkdialog starts. Here it goes.
-  #]]]
-  echo -n '; [ -z "${title}" ] && . "'"${SRCSTEM}"'"${varF3:-0}-*.sh && title="${TITLE}"'
-  # Load next source's values
-  echo -n '; . "'"${SRCSTEM}"'"$(((${varF3:-0} + 1) % ${NSOURCES:-'${NSOURCES}'}))-*.sh'
-  echo -n '; next="${TITLE}"'
-  # Send formatted data to SBAR.
-  echo -n '; printf "'"%s ${ctrlnkey}  »  ${funckey} %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}"'
-  [ -n "${DEBUG3}" ] && echo -n 'set +x; echo >&2 "]]";'
-  echo "</input>
+          <input>'\
+': 1'\
+${DEBUG3:+'echo >&2 "=== GENERATE STATUS BAR [["; set -x;'}\
+'title="${TITLE}"'\
+'; [ -z "${title}" ] && SKIP_INIT=1 . "'"${SRCSTEM}"'"${varF3:-0}-*.sh && title="${TITLE}"'\
+';: 2'\
+'; SKIP_INIT=1 . "'"${SRCSTEM}"'"$(((${varF3:-0} + 1) % ${NSOURCES:-'${NSOURCES}'}))-*.sh'\
+'; next="${TITLE}"'\
+';: 3'\
+'; printf "'"%s ${ctrlnkey}  »  ${funckey} %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}"'\
+${DEBUG3:+'set +x; echo >&2 "]]";'}\
+"</input>
         ${DEBUG2:+<action>echo>&2 ,,, varSBAR ,,,</action>}
         </statusbar>
         <action signal=\"button-press-event\">set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \${#}))>'$F3SF'</action>
         <action signal=\"button-press-event\">refresh:varF3</action>
       </eventbox>
     </vbox>" # Copy <action>s from <menuitem> HOTKEY_F3.
-  #]]]
 }
+#]]]
+set_STATUS_BAR
 
 generate_source_hotkeys() # [[[2
 {
@@ -1750,9 +1753,9 @@ start_window << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. varSBAR statusbar}
     ${REMARK# Do not vbox the status bar here; keep the vbox under the control}
-    ${REMARK# of generate_status_bar to be able to hide the status bar without}
+    ${REMARK# of set_STATUS_BAR to be able to hide the status bar without}
     ${REMARK# leaving a tiny empty strip at the bottom of the main window.}
-    $(generate_status_bar)
+    ${STATUS_BAR}
     ${REMARK# ]]]}
   </vbox>
   ${REMARK# Do not vbox/hbox hidden widgets because boxes add some unnecessary (tiny) padding.}
