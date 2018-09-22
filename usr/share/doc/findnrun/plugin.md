@@ -10,6 +10,14 @@ starting an application" to "finding something and doing something with
 it".  Some plugins are bundled so you can immediately use them.  Shell
 scripting ability suffices to write your own plugin.
 
+### Plugin Security
+
+_Warning: plugins installed from untrustued sources can be a security threat._
+
+Plugins run code in your system, so they can do anything your user login can
+do.  Don't install plugins from untrusted sources. Trusted, reviewed, proven
+plugins pose no security threat - however bugs are always possible.
+
 ### Plugin Types
 
 There is just one type of plugin, the _source_ plugin.

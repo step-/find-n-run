@@ -111,7 +111,7 @@ In the following discussion:
 A source plugin is installed by adding its declaration into
 `.findnrunrc` as follows:
 ```
-    SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<title-id>:<init-search-id>'
+    SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<title-id>:<init-search-id>:<mode-id>:<plgdir-id>:<saveflt-id>:<init-id>'
     TAP_<tap-id>='<tap-command>'                # code
     DRAIN_<drain-id>='<drain-command>'          # optional, code
     ICON_<icon-id>='<icon-filepath>'            # optional
@@ -123,27 +123,41 @@ A source plugin is installed by adding its declaration into
     INIT_<init-id>='<init-command>              # optional, code
 ```
 
- * Items marked 'code' are expected to contain shell source code fragments of
-   the kind that shell's `eval` can interpret.
+ * Declarations marked 'code' are expected to contain shell source code
+   fragments of the kind that shell's `eval` can interpret.
+ * Declarations marked "optional" can be omitted by leaving their respective
+   `<...-id>` slot empty in the `SOURCE_<source-id>` declaration.[1]
  * Each `<...-id>` identifier must be unique within its declaration
-   group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_, INIT\_).
- * `<tap-command>` is a valid shell command.
- * `<drain-command>` is also a valid shell command.
+   group (SOURCE\_, TAP\_, DRAIN\_, ICON\_, TITLE\_, INITSEARCH\_, MODE\_,
+   PLGDIR\_, SAVEFLT\_, INIT\_).
+ * Given a declaration `SOURCE_<source-id>`, the other <...-id>`s in the
+   declaration may be the same word, which can be `<source_id>`. In fact, this
+   is the most common case, e.g.,
+
+    SOURCE_My=My:My:My:My:My:My:My:My:My
+    TAP_My=...
+    DRAIN_My=...
+    ...
+    INIT_My=...
+
+ * `<tap-command>` is any valid shell command.
+ * `<drain-command>` is any valid shell command.
  * `<icon-filepath>` is the full path to a supported icon image file.
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
  * `<mode-mask>` is a bit mask of plugin modifiers, for instance "disabled".
  * `<plugin-dir-path>` is the location of the plugin resource files, if any.
- * `<save-filter-command>` is a valid shell command.
- * `<init-command>` isa valid shell command.
- * Declarations marked "optional" can be omitted by leaving their
-   respective `<...-id>` slot empty in the `SOURCE_<source-id>`
-   declaration.
+ * `<save-filter-command>` is any valid shell command.
+ * `<init-command>` is any valid shell command.
  * Embedded newline or carriage return characters are not allowed in
    `<...-command>` values.
  * All values are quoted strings. Paired exterior double quotes work
    just as well as single quotes, but require escaping interior shell
    special characters.
+
+[1] A common pitfall is declaring, say, `INIT_My="command"` but forgetting to
+   insert `INIT_My` in its correct slot of `SOURCE_My`.  If you do so,
+   the declaration of `INIT_My` will be ignored.
 
 You can use any valid shell variable name as an `<...-id>`, but
 prefix "FNR" is reserved for findnrun's own plugins.
@@ -231,20 +245,20 @@ global history file and the plugin's history file. Currently these files
 are not exposed in the user interface, and the pull-down widget shows
 the global history. This might change in the future.
 
-When the user presses hotkey `F4` findnrun saves the search results to a
+When the user presses hotkey `F4` findnrun saves the raw search results to a
 file and invokes save-filter-command as follows:
 ```
     eval <save-filter-command>
 ```
 
-Then save-filter-command can process the file to its own liking. The
-command string can use `${file}` to refer to the input save file, and
-`$FNRSAVEFLT` to leverage the save filter code that built-in sources
-run.
+Then save-filter-command can process the file to its own liking. It can use
+`set=` to change the default save file, `${file}` to refer to the save file,
+and leverage `$FNRSAVEFLT`, a predefined save filter function that built-in
+sources use.
 
 ### Invocation Environment
 
-The _invocation environment_ provides tap-, drain- and save-filter-
+The _invocation environment_ provides tap-, drain, save-filter- and init-
 commands with the following preset variables:
 
  * `${SOURCE}`, `${TAP}`, `${DRAIN}`, `${ICON}`, `${TITLE}`, `${INITSEARCH}`,
@@ -263,7 +277,7 @@ commands with the following preset variables:
 For save-filter-command only there are also these variable that can be
 leveraged to create custom save filters:
 
- * `${FNRSAVEFLT}` - save-filter code for built-in sources[4]
+ * `${FNRSAVEFLT}` - predefined save-filter code for built-in sources[4]
  * `${FNRXCLIP}` - XCLIP redirection for built-in sources.
 
 [1] Value is `NA` if gtkdialog isn't running.
@@ -290,8 +304,8 @@ leveraged to create custom save filters:
  * **Activate** - Drain - Enter key pressed or mouse left-clicked when a
    search result list item has the focus.
 
-[4] The calling convention for `${FNRSAVEFLT}` is unusual. Look up the
-   definitions of `SAVEFLT_FNRstart` and `SAVEFLT_filmstrip` for examples.
+[4] For `${FNRSAVEFLT}`s usage read its definition in findnrun's source code,
+    and look at `SAVEFLT_FNRstart` and `SAVEFLT_filmstrip` for examples.
 
 ### Findnrun User Interface and Source Plugins
 
