@@ -167,6 +167,7 @@ gawk '
 /^IBOL=/{f8=1}
 /^HOTKEY_F2=/{f9=1}
 /^HOTKEY_F3=/{f10=1}
+/^HOTKEY_F5=/{f16=1}
 /^HOTKEY_F12=/{f11=1}
 /^SOURCES=/{f12=1}
 /^SHOWNODISPLAY=/{f13=1}
@@ -178,6 +179,7 @@ END{ # Follow desired configuration file order
   if(!f9) print "HOTKEY_F2=\"0:F2:0xffbf\"">>ARGV[1]
   if(!f10) print "HOTKEY_F3=\"0:F3:0xffc0\"">>ARGV[1]
   if(!f15) print "HOTKEY_F4=\"0:F4:0xffc1\"">>ARGV[1]
+  if(!f16) print "HOTKEY_F5=\"0:F5:0xffc2\"">>ARGV[1]
   if(!f11) print "HOTKEY_F12=\"0:F12:0xffc9\"">>ARGV[1]
   if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
   if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
@@ -1287,11 +1289,11 @@ ${DEBUG1:+' && eval ">&2 echo \" term=\${term} \${TAP}\""'}\
 #]]]
 set_INVOKE_SOURCE_TAP
 
-set_INVOKE_SOURCE_DRAIN() # [[[2
+set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
 {
-  # Code that invokes source[varF3]'s drain-command.
+  # Code that invokes source[varF3]'s drain-command, optionally in a terminal window.
   # Write the invocation __code to a private file file now. Then gtkdialog
-  # sources the file.
+  # will source the file.  Pass $1 to set INVOKE_SOURCE_DRAIN_TERM.
 
   # 1. Extract selected list item value as "$@".
   # 2. Unexport some vars.  Cf. UNEXPORT in set_INVOKE_SOURCE_TAP and also further down below.
@@ -1306,18 +1308,30 @@ set_INVOKE_SOURCE_DRAIN() # [[[2
   # pretend that invokeDRAIN is implemented, and handle it similarly to
   # what we do for invokeTAP, which instead is fully implemented. ]]]
   # 7. Debug messages.
-  # 8. Unexport all remaining variables.  # 9. Set invocation environment and start drain-command.
-  local __eval __code __xargs=:
+  # 8. Unexport all remaining variables.
+  # 9. Set invocation environment and start drain-command (optionally in terminal).
+  local __eval __code __xargs=: __terminal=$1 __term_suffix
+  if [ "$__terminal" ]; then
+    __eval="$__terminal -T \"\$1\" -e ${SHELL:-sh} -c "\
+'"'\
+'eval "$@"'\
+'; printf \"\033[7m'"$i18n_Key_Enter_to_close_terminal"'\033[0m\"'\
+'; read x'\
+'"'\
+" $SN"' "$@"'
+    __term_suffix=_term
+  else
     __eval='eval "$@" &'
     #local __xaf=${TMPD}/.drain-xargs __xargs='eval printf %s\\\\0 "$@" > "'"$__xaf"'"'
     #__eval='xargs -0 env < "'"${__xaf}"'" &'
+  fi
   __code=\
 ': 1'\
 ";$GET_DRAIN_COMMAND"\
 ';: 2'\
 "; $UNEXPORT $UNEXP_GUI1"\
 ';: 3'\
-${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain\""'}\
+${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain'$__term_suffix'\""'}\
 ";${GET_SOURCE}"\
 ';: 4'\
 "; echo \$DRAIN\ \"\$@\" >> \"$TMPD/.hist-\$ID.sh\""\
@@ -1337,11 +1351,23 @@ ${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \"
 ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
 " $__eval"
 
+  if [ "$__terminal" ]; then
+    echo "$__code" > "$DRAINR-term"
+    INVOKE_SOURCE_DRAIN_TERM=". \"$DRAINR-term\""
+  else
     echo "$__code" > "$DRAINR"
     INVOKE_SOURCE_DRAIN=". \"$DRAINR\""
+  fi
 }
 #]]]
 set_INVOKE_SOURCE_DRAIN
+
+set_INVOKE_SOURCE_DRAIN_TERM() # [[[2
+{
+  set_INVOKE_SOURCE_DRAIN "defaultterm"
+}
+#]]]
+set_INVOKE_SOURCE_DRAIN_TERM
 
 set_STATUS_BAR() # [[[2
 {
@@ -1759,6 +1785,13 @@ start_window << EOF
           <action>date '+PageDown %s'>"${ETAP}"</action>
         </menuitem>
         ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F5 start item in terminal.}
+        <menuitem accel-key="${HOTKEY_F5##*:}" accel-mods="${HOTKEY_F5%%:*}">
+          <action>grabfocus:varLIST</action>
+          <action>${INVOKE_SOURCE_DRAIN_TERM}</action>${REMARK# which saves item to history.}
+          <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
+          <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
+        </menuitem>
         ${REMARK#   [[[. Key F12 activates the top varLIST item.}
         <menuitem accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
           <action>grabfocus:varLIST</action>

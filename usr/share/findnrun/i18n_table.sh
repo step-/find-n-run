@@ -63,6 +63,7 @@ i18n_table() # {{{1
     read i18n_application_finder_options
     read i18n_desktop_Name
     read i18n_desktop_Comment
+    read i18n_Key_Enter_to_close_terminal
   } << EOF
   $(gettext -es -- \
   "Findnrun\n" \
@@ -116,6 +117,7 @@ i18n_table() # {{{1
   "application finder options       * = restart required\n" \
   "Findnrun.\n" \
   "Find applications and much more.\n" \
+  "Press the Enter key to close the terminal...\n" \
   )
 EOF
 }
