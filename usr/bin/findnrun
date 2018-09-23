@@ -264,7 +264,7 @@ if [ -z "$XCLIP" -o none = "$XCLIP" ]; then
   XCLIP=">/dev/stderr"
 fi
 
-# FNRstart - Default built-in source "Desktop Apps" [[[2
+# FNRstart - Default built-in source "Application Finder" [[[2
 SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 # INIT is run once only, on the first time this gtkdialog invokes this source.
 # The single invocation code generator can be found at {INVOKEINIT}.  Gist
@@ -550,7 +550,7 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
             # Add shell code to run INIT once only. env SKIP_INIT=1 ... to skip.
             buf = buf sprintf("\nif [ \"$INIT\" -a ! \"$SKIP_INIT\" ]; then\n%s\nfi",\
               ('${DEBUG1:-0}' ?("__t0=$(date +%s.%N)\n") :"")\
-              "  set >&2; eval $INIT\n"\
+              "  eval $INIT\n"\
               ('${DEBUG1:-0}' ?("__t1=$(date +%s.%N)\n") :"")\
               ('${DEBUG1:-0}' ?("  awk -v fmt=\"INIT $ID %g ms elapsed\\n\" -v t0=$__t0 -v t1=$__t1 \x27""BEGIN {printf fmt, (t1-t0)*1000;exit}\x27 >&2\n") :"")\
               "  sed -i \"$THISFILE\" -e \"s/^INIT=/DID_&/\"\n"  )
@@ -1447,7 +1447,7 @@ start_window() # Returns when gtkdialog terminates [[[2
     timer $TIMER1 $TIMERN $TIMER0 >&2
 echo "You can \"type a search\" by writing a term to file /tmp/varSEARCH.
 Limit $APP_NAME to a single instance because /tmp/varSEARCH can't be shared.
-Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | vim -R -
+Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | gvim -R -
 ----"
   fi
   local dialog findnrun
