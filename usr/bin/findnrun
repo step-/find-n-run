@@ -1306,10 +1306,11 @@ set_INVOKE_SOURCE_DRAIN() # [[[2
   # pretend that invokeDRAIN is implemented, and handle it similarly to
   # what we do for invokeTAP, which instead is fully implemented. ]]]
   # 7. Debug messages.
-  # 8. Unexport all remaining variables.
-  # 9. Set invocation environment and start drain-command.
-  local __eval __code
+  # 8. Unexport all remaining variables.  # 9. Set invocation environment and start drain-command.
+  local __eval __code __xargs=:
     __eval='eval "$@" &'
+    #local __xaf=${TMPD}/.drain-xargs __xargs='eval printf %s\\\\0 "$@" > "'"$__xaf"'"'
+    #__eval='xargs -0 env < "'"${__xaf}"'" &'
   __code=\
 ': 1'\
 ";$GET_DRAIN_COMMAND"\
@@ -1331,7 +1332,8 @@ ${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \"
 ';: 8'\
 "; $UNEXPORT $UNEXP_GUI2 $UNEXP_INVK"\
 ';: 9'\
-'; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
+"&& ${__xargs}"\
+'&& FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
 ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
 " $__eval"
 
