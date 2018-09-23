@@ -42,7 +42,7 @@ power users and custom applications:
     HOTKEY_F2=0:F2:0xffbf
     # Pressing HOTKEY_F3 starts the next available source plugin.
     HOTKEY_F3=0:F3:0xffc0
-    # Pressing HOTKEY_F4 saves+filters search results (see XCLIP)
+    # Pressing HOTKEY_F4 saves+filters raw search results (see XCLIP)
     HOTKEY_F4=0:F4:0xffc1
     # Pressing HOTKEY_F12 activates the top search result list item.
     HOTKEY_F12=0:F12:0xffc9
