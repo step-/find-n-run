@@ -116,6 +116,7 @@ F3SF="${TMPD}/.f3s"; >"${F3SF}" # built-in/plugin source list view cycler
 F4SF="${TMPD}/search-output" # saved items
 RWMF="${TMPD}/.msg_restart" # RESTART_WINDOW message
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
+DRAINR="${TMPD}/.sh-drain" # script to run drain
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 YPID="${TMPD}/.yad.pid"; >"${YPID}" # yad --progress PID
 SEP=`echo -e "\b"` # field separator of packed values
@@ -1289,6 +1290,9 @@ set_INVOKE_SOURCE_TAP
 set_INVOKE_SOURCE_DRAIN() # [[[2
 {
   # Code that invokes source[varF3]'s drain-command.
+  # Write the invocation __code to a private file file now. Then gtkdialog
+  # sources the file.
+
   # 1. Extract selected list item value as "$@".
   # 2. Unexport some vars.  Cf. UNEXPORT in set_INVOKE_SOURCE_TAP and also further down below.
   # 3. Load source[varF3]'s values into drain's invocation environment.
@@ -1304,7 +1308,9 @@ set_INVOKE_SOURCE_DRAIN() # [[[2
   # 7. Debug messages.
   # 8. Unexport all remaining variables.
   # 9. Set invocation environment and start drain-command.
-  INVOKE_SOURCE_DRAIN=\
+  local __eval __code
+    __eval='eval "$@" &'
+  __code=\
 ': 1'\
 ";$GET_DRAIN_COMMAND"\
 ';: 2'\
@@ -1327,7 +1333,10 @@ ${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \"
 ';: 9'\
 '; FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
 ' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
-' eval "$@" &'
+" $__eval"
+
+    echo "$__code" > "$DRAINR"
+    INVOKE_SOURCE_DRAIN=". \"$DRAINR\""
 }
 #]]]
 set_INVOKE_SOURCE_DRAIN
