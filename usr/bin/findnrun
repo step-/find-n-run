@@ -116,7 +116,6 @@ F3SF="${TMPD}/.f3s"; >"${F3SF}" # built-in/plugin source list view cycler
 F4SF="${TMPD}/search-output" # saved items
 RWMF="${TMPD}/.msg_restart" # RESTART_WINDOW message
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
-DRAINR="${TMPD}/.sh-drain" # script to run drain
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 YPID="${TMPD}/.yad.pid"; >"${YPID}" # yad --progress PID
 SEP=`echo -e "\b"` # field separator of packed values
@@ -1289,19 +1288,44 @@ ${DEBUG1:+' && eval ">&2 echo \" term=\${term} \${TAP}\""'}\
 #]]]
 set_INVOKE_SOURCE_TAP
 
+set_SAVE_ARGS_HISTORY() # [[[2
+{
+  # Code that saves "$@" the history files.
+  SAVE_ARGS_HISTORY=\
+'echo "$@" >> "'"$HSTF"'" && echo "$@" >> "'"$TMPD"'/.hist-\$ID.sh"'
+}
+#]]]
+set_SAVE_ARGS_HISTORY
+
+set_EVAL_ARGS_IN_TERM() # $1-terminal-prog+opts [[[2
+{
+  # Code that runs "$@" in a terminal.
+  # Write the code to a private file that gtkdialog will source.
+
+  local __terminal=$1 __outf=$TMPD/.eval-args-term
+  EVAL_ARGS_IN_TERM=". \"$__outf\""
+  > "$__outf" printf %s \
+"$__terminal -T \"\$1\" -e ${SHELL:-sh} -c "\
+"'"\
+'"$@"'\
+'; printf "\033[7m'"$i18n_Key_Enter_to_close_terminal"'\033[0m"'\
+'; read x'\
+"'"\
+" $SN"' "$@"'
+}
+#]]]
+set_EVAL_ARGS_IN_TERM "defaultterm"
+
 set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
 {
   # Code that invokes source[varF3]'s drain-command, optionally in a terminal window.
-  # Write the invocation __code to a private file file now. Then gtkdialog
-  # will source the file.  Pass $1 to set INVOKE_SOURCE_DRAIN_TERM.
+  # Write the code to a private file that gtkdialog will source.
+  # Pass $1 to set INVOKE_SOURCE_DRAIN_TERM.
 
   # 1. Extract selected list item value as "$@".
   # 2. Unexport some vars.  Cf. UNEXPORT in set_INVOKE_SOURCE_TAP and also further down below.
   # 3. Load source[varF3]'s values into drain's invocation environment.
-  # 4. Save drain-command to history lists. [[[
-  #    To the source's own history list file and to the global history list file
-  #    $HSTF, which is the history widget input file (varCMD). ]]]
-  # 5. Start drain-command.
+  # 4. Save drain-command to history lists.
   # 6. Update plugin event. '%% *' trims the event timestamp. [[[
   # NOTE: v.2.0.0 main window's gtkdialog doesn't implement variable
   # invokeDRAIN. So, for the plugin interface, here it's sufficient to
@@ -1310,22 +1334,12 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
   # 7. Debug messages.
   # 8. Unexport all remaining variables.
   # 9. Set invocation environment and start drain-command (optionally in terminal).
-  local __eval __code __xargs=: __terminal=$1 __term_suffix
+  local __terminal=$1 __term_suffix=${1:+_term} __outf=$TMPD/.run-drain${1:+-term}.sh
   if [ "$__terminal" ]; then
-    __eval="$__terminal -T \"\$1\" -e ${SHELL:-sh} -c "\
-'"'\
-'eval "$@"'\
-'; printf \"\033[7m'"$i18n_Key_Enter_to_close_terminal"'\033[0m\"'\
-'; read x'\
-'"'\
-" $SN"' "$@"'
-    __term_suffix=_term
-  else
-    __eval='eval "$@" &'
-    #local __xaf=${TMPD}/.drain-xargs __xargs='eval printf %s\\\\0 "$@" > "'"$__xaf"'"'
-    #__eval='xargs -0 env < "'"${__xaf}"'" &'
+    INVOKE_SOURCE_DRAIN_TERM=". \"$__outf\""
+  else INVOKE_SOURCE_DRAIN=". \"$__outf\"" 
   fi
-  __code=\
+  > "$__outf" printf %s \
 ': 1'\
 ";$GET_DRAIN_COMMAND"\
 ';: 2'\
@@ -1334,10 +1348,7 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
 ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain'$__term_suffix'\""'}\
 ";${GET_SOURCE}"\
 ';: 4'\
-"; echo \$DRAIN\ \"\$@\" >> \"$TMPD/.hist-\$ID.sh\""\
-"; echo \$DRAIN \"\$@\" >> '$HSTF'"\
-';: 5'\
-'; set -- ${DRAIN} "$@"'\
+'; eval set -- ${DRAIN} "$@"; '"$SAVE_ARGS_HISTORY"\
 ';: 6'\
 '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}'\
 ';: 7'\
@@ -1346,28 +1357,17 @@ ${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \"
 ';: 8'\
 "; $UNEXPORT $UNEXP_GUI2 $UNEXP_INVK"\
 ';: 9'\
-"&& ${__xargs}"\
 '&& FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
-' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
-" $__eval"
-
+' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
   if [ "$__terminal" ]; then
-    echo "$__code" > "$DRAINR-term"
-    INVOKE_SOURCE_DRAIN_TERM=". \"$DRAINR-term\""
+    >> "$__outf" printf %s " $EVAL_ARGS_IN_TERM"
   else
-    echo "$__code" > "$DRAINR"
-    INVOKE_SOURCE_DRAIN=". \"$DRAINR\""
+    >> "$__outf" printf %s ' "$@" &'
   fi
 }
 #]]]
 set_INVOKE_SOURCE_DRAIN
-
-set_INVOKE_SOURCE_DRAIN_TERM() # [[[2
-{
-  set_INVOKE_SOURCE_DRAIN "defaultterm"
-}
-#]]]
-set_INVOKE_SOURCE_DRAIN_TERM
+set_INVOKE_SOURCE_DRAIN "defaultterm"
 
 set_STATUS_BAR() # [[[2
 {
