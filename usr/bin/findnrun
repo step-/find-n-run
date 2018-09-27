@@ -1128,7 +1128,7 @@ EOF
   done
 }
 #]]]
-set_HELP_BUTTON
+set_HELP_BUTTON_and_HELPVIEWER
 
 set_ABOUT_TEXT() # [[[2
 {
