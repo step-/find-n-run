@@ -64,6 +64,7 @@ i18n_table() # {{{1
     read i18n_desktop_Name
     read i18n_desktop_Comment
     read i18n_Key_Enter_to_close_terminal
+    read i18n_Run_command_in_terminal
   } << EOF
   $(gettext -es -- \
   "Findnrun\n" \
@@ -118,6 +119,7 @@ i18n_table() # {{{1
   "Findnrun.\n" \
   "Find applications and much more.\n" \
   "Press the Enter key to close the terminal...\n" \
+  "Run entry in a terminal\n" \
   )
 EOF
 }

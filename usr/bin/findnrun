@@ -1638,6 +1638,13 @@ start_window << EOF
         <action signal="activate">refresh:varCMD</action>
       </comboboxentry>
       ${REMARK#  ]]]}
+      ${REMARK#  [[[. History item run in terminal button.}
+      <button tooltip-text="$i18n_Run_command_in_terminal" theme-icon-size="16">
+        <input file icon="findnrun_terminal"></input>
+        <action>grabfocus:varCMD</action>
+        <action>eval set -- \$varCMD; $SAVE_ARGS_HISTORY; $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2; $EVAL_ARGS_IN_TERM</action>
+      </button>
+      ${REMARK#  ]]]}
       ${REMARK#  [[[. History item delete button.}
       <button tooltip-text="$i18n_Remove_entry_from_history" stock-icon-size="1">
         <input file stock="gtk-remove"></input>
