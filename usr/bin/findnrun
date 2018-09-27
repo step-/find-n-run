@@ -677,7 +677,7 @@ if [ -n "$invalid" ]; then
 fi
 #]]]
 # Prepare the .desktop database builder script. [[[1
-# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v SHOWNODISPLAY=true|false] [-v DSKL="desktop-file-list" | desktop-files ]
+# Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v FALLBACK_ICON="icon-name-or-filepath"] [-v SHOWNODISPLAY=true|false] [-v DSKL="desktop-file-list" | desktop-files ]
 # Specify input files (.desktop) either as lines of DSKL or as awk arguments.
 # The former style allows for handling read file errors gracefully and is used throughout this script.
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
@@ -688,6 +688,7 @@ BEGIN { # [[[2
   # Choose a shell for ongoing command execution - see icon_wa_match_and_link().
   sh = "'${SH}'" # not used as a co-process
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
+  if("" == FALLBACK_ICON) { FALLBACK_ICON = "'"$ICON_FNRstart"'" }
   if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
   if(""==SHOWNODISPLAY) SHOWNODISPLAY = "false"
   MSG1="'"$i18n_SHOWNODISPLAY_false_excludes"'"
@@ -804,10 +805,11 @@ function format_item(   ic,cols) { # [[[2
 }
 
 function format_icon_cell( ) { # [[[2
-# Format tree row icon cell.
-# Use within <input icon-column="0"> or <stock-column="0">
+# Format gtkdialog tree widget icon cell content.
+# Cells are output to varLIST`s directive <input icon-column="0">.
 # Note: tree widget does not support icons with paths anyway.
-  return(icnpath ? icnpath icnname "." icnext : icnname)
+# FALLBACK_ICON is used as fallback icon-reference per doc/findnrun/plugin-dev.md.
+  return(icnpath ? icnpath icnname "." icnext : (""!=icnname ? icnname : FALLBACK_ICON))
 }
 
 function icon_wa_push_icnname(i,byRef,   IFP,a) { # [[[2
@@ -817,17 +819,17 @@ function icon_wa_push_icnname(i,byRef,   IFP,a) { # [[[2
   # IFP is the icon full filepath, which is used as the ICONINDEX key.
   WA[++nWA,"IFP"] = IFP = icnpath icnname (icnext ?".":"") icnext
   WA[nWA,"desktop"] = filename
-  WA[nWA,"icnname"] = icnname
+  WA[nWA,"icnname"] = ""!=icnname ? icnname : FALLBACK_ICON
 
   # Return icnname either resolved or as a slot to be bound subsequently.
   # For gtkdialog to actually be able to display an icon, the icon name for the
   # tree widget must not include dot+extension. However, when passing a symlink file
   # name the extension must be included.
   # Link names start with "$CACHEFILEPREFIX" to reflect that they are located in
-  # the cache directory ICONSTEM->.
+  # the cache directory via $ICONSTEM->.
   if(ICON_WA_READY) { # see icon_wa_match_and_link for comments
     split(ICONINDEX[IFP], a, "\x00")
-    byRef["icnname"] = "'"$CACHEFILEPREFIX"'"a[3] # file name w/o ext
+    byRef["icnname"] = "'"$CACHEFILEPREFIX"'"(""!=a[3] ? a[3] : FALLBACK_ICON) # file name w/o ext
   } else {
     # To enter this else-block: enable Show all icons; wait for search to
     # complete; exit findnrun; rm the icon cache folder; restart findnrun to
@@ -863,7 +865,10 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
   for(i = 1; i <= nWA; i++) {
     # IFP is the icon full filepath, which is used as the ICONINDEX key.
     IFP = WA[i,"IFP"]
-    if("" == IFP) continue # defensive
+    if("" == IFP) { # defensive
+      WA[i,"bind"] = FALLBACK_ICON # for icon_wa_bind to bind
+      continue
+    }
     # If the work-around data needs updating then create icon links, etc.
     # Refresh the icon filepath. [[[3
     ifp = IFP
@@ -879,8 +884,9 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
         ifp = ""
       }
     }
-    if("" == ifp) { # no icon resource can be found.
+    if("" == ifp) { # no icon resource can be found in the system.
       printf MSG2"\n", WA[i,"desktop"], WA[i,"IFP"]  >"/dev/stderr"
+      WA[i,"bind"] = FALLBACK_ICON # for icon_wa_bind to bind
       continue
     }
 
