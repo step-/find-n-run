@@ -114,7 +114,7 @@ A source plugin is installed by adding its declaration into
     SOURCE_<source-id>='<tap-id>:<drain-id>:<icon-id>:<title-id>:<init-search-id>:<mode-id>:<plgdir-id>:<saveflt-id>:<init-id>'
     TAP_<tap-id>='<tap-command>'                # code
     DRAIN_<drain-id>='<drain-command>'          # optional, code
-    ICON_<icon-id>='<icon-filepath>'            # optional
+    ICON_<icon-id>='<icon-name-or-filepath>'    # optional
     TITLE_<title-id>='<source-title>'           # optional
     INITSEARCH_<init-search-id>='<init-search>' # optional
     MODE_<mode-id>='<mode-mask>'                # optional
@@ -142,7 +142,7 @@ A source plugin is installed by adding its declaration into
 
  * `<tap-command>` is any valid shell command.
  * `<drain-command>` is any valid shell command.
- * `<icon-filepath>` is the full path to a supported icon image file.
+ * `<icon-name-or-filepath>` is a GTK icon name[2] or the full path to a supported icon image file.
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
  * `<mode-mask>` is a bit mask of plugin modifiers, for instance "disabled".
@@ -158,6 +158,9 @@ A source plugin is installed by adding its declaration into
 [1] A common pitfall is declaring, say, `INIT_My="command"` but forgetting to
    insert `INIT_My` in its correct slot of `SOURCE_My`.  If you do so,
    the declaration of `INIT_My` will be ignored.
+[2] An icon name refers to an existing icon file in the current GTK user theme
+or fallback theme (hicolor), or is a GTK stock icon name. If none of these
+conditions is met you must declare the full path to the icon file.
 
 You can use any valid shell variable name as an `<...-id>`, but
 prefix "FNR" is reserved for findnrun's own plugins.
