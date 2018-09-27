@@ -200,11 +200,12 @@ END{ # Follow desired configuration file order
 # Values that depend on defaults.
 # Icons [[[2
 # Note [ANCHOR_ICON_PATH]:
-# For XDG/GTK to be able to find icons in a non-standard icon path,
-# the path must end in '/icons' and XDG_DATA_DIRS must include the
-# parent folder path. Gtkdialog window icons (attribute icon-name)
-# must be copied to '/icons/hicolor/32x32/apps/'
-# Findnrun copies a plugin $ICON in gawk function try_store_source().
+# For XDG/GTK to be able to find icons located in non-standard icon paths, each
+# path must end in '/icons' and its parent must be listed in $XDG_DATA_DIRS.
+# Findnrun's "icon work-around" (WA) code creates an intermediate directory
+# structure ($ICONCACHE) and symlinks the Gtkdialog main window icon (attribute
+# icon-name) and plugin-declared ICONs into $ICONCACHE as needed to fulfill the
+# XDG/GTK requirement. Cf. gawk function try_store_source().
 XDG_DATA_DIRS="${XDG_DATA_DIRS}:${TMPD}" # for plugin ICONS
 if [ -z "${ICONCACHE}" ]; then
   ICONCACHE="${XDGHOMEICONS}"
@@ -212,8 +213,9 @@ else
   XDG_DATA_DIRS="${XDG_DATA_DIRS}:${ICONCACHE}"
   ICONCACHE="${ICONCACHE}/icons"
 fi
-# Prefix to worked-around icons.
-ICONSTEM="${ICONCACHE}/findnrun-" # NOT a dirpath
+# Prefix and stem path for the "icon work-around" (WA) icons.
+CACHEFILEPREFIX="findnrun___"
+ICONSTEM="$ICONCACHE/$CACHEFILEPREFIX" # NOT a dirpath
 ICONSTEM2="${TMPD}/icons/" # slash-terminated, for plugin ICONS
 ICONSTEM2A="${ICONSTEM2}/hicolor/scalable/apps/" # ditto
 mkdir -p "${ICONCACHE}" "${ICONSTEM2}" "${ICONSTEM2A}"
@@ -817,18 +819,22 @@ function icon_wa_push_icnname(i,byRef,   IFP,a) { # [[[2
   WA[nWA,"desktop"] = filename
   WA[nWA,"icnname"] = icnname
 
-  # Return icnname either resolved or as a slot to be bound subsequently:
-  # Gtkdialog is very finicky: the icon name passed to the tree widget must
-  # not include dot+extension but the link file name must include the
-  # extension!
-  # We prefix all names with "findnrun-" to reflect that they are located in
+  # Return icnname either resolved or as a slot to be bound subsequently.
+  # For gtkdialog to actually be able to display an icon, the icon name for the
+  # tree widget must not include dot+extension. However, when passing a symlink file
+  # name the extension must be included.
+  # Link names start with "$CACHEFILEPREFIX" to reflect that they are located in
   # the cache directory ICONSTEM->.
   if(ICON_WA_READY) { # see icon_wa_match_and_link for comments
     split(ICONINDEX[IFP], a, "\x00")
-    byRef["icnname"] = "findnrun-"a[3] # file name w/o ext
+    byRef["icnname"] = "'"$CACHEFILEPREFIX"'"a[3] # file name w/o ext
   } else {
-    # "<id=...>" is a slot for icon_wa_bind to fill.
-    byRef["icnname"] = "findnrun-<id="nWA">" # file name w/o ext
+    # To enter this else-block: enable Show all icons; wait for search to
+    # complete; exit findnrun; rm the icon cache folder; restart findnrun to
+    # enter this else-block.  The next run following this restart will fall
+    # into the if-block above.
+    # "<id=...>" is a slot for icon_wa_bind to fill after the symlinks have been created.
+    byRef["icnname"] = "'"$CACHEFILEPREFIX"'<id="nWA">" # file name w/o ext
   }
 
   # Return icnpath:
@@ -882,18 +888,22 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
     # Note that link file creation may be postponed until END performs close(sh).
     # The link name is located in the icon cache directory ICONSTEM->.
     # Gtkdialog is very finicky: the icon name passed to the tree widget
-    # must not include dot+extension but the link file name must include the
-    # extension!
+    # However when passing a link name the extension must be included.
     x = split(ifp, a, /\//)
     lnk = a[x] # link name lnk <- icon-name[.ext] (no path)
     ext = (x = split(lnk, a, /\./)) ?"."a[x] :"" # ".ext" if any
     if(ext) x-- # forget ext from split link name
-    # implode link name while replacing all dots with underscores
-    lnk = ""; for(c=1; c<=x; c++) lnk = lnk "_" a[c]; lnk = substr(lnk, 2)
+    # implode link name while replacing all dots and dashes with underscores
+    # (no dashes to avoid the risk of clash with GTK`s icon sub-theme name rules)
+    lnk = ""; for(c=1; c<=x; c++) {
+      gsub(/-/, "_", a[c])
+      lnk = lnk "_" a[c]
+      lnk = substr(lnk, 2)
+    }
     print "2>/dev/null ln -s \""ifp"\" \"" ICONSTEM lnk ext "\"" | sh
 
     # Store values for icon_wa_bind to bind. [[[3
-    WA[i,"bind"] = lnk # link name for "findnrun-"lnk
+    WA[i,"bind"] = lnk # link name for "$CACHEFILEPREFIX"lnk
 
     # Progressively build the icon index file. [[[3
     printf "%s\x00%s\x00%s\x00%s\n", IFP, ifp, lnk, ext >> (ICONSTEM".index")
@@ -1671,7 +1681,7 @@ start_window << EOF
         ${DEBUG2:+<action>echo>&2 ,,, varICONS ,,,</action>}
         <action>awk -v s=varICONS=\${varICONS} '/^varICONS=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
         <action>clear:varSEARCH</action>
-        ${DEBUG2:+<action>ls /usr/share/pixmaps/findnrun-.uptodate ~/.icons/findnrun-.uptodate >&2; cat ~/.findnrunrc >&2</action>}
+        ${DEBUG2:+<action>ls /usr/share/pixmaps/$CACHEFILEPREFIX.uptodate ~/.icons/$CACHEFILEPREFIX.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
         ${DEBUG2:+<action>if true echo >&2 in true rebuilding database...</action>}
         <action>if true gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
@@ -1679,7 +1689,7 @@ start_window << EOF
         <action>if true clear:varLIST</action>
         ${DEBUG2:+<action>if true echo >&2 in true refresh:varLIST</action>}
         <action>if true refresh:varLIST</action>
-        ${DEBUG2:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/findnrun-\*</action>}
+        ${DEBUG2:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/$CACHEFILEPREFIX\*</action>}
         <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
         ${DEBUG2:+<action>if false echo >&2 in false rebuilding database...</action>}
         <action>if false gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
