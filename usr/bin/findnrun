@@ -1146,7 +1146,7 @@ set_ABOUT_TEXT() # [[[2
 set_ABOUT_TEXT
 
 export GUI_ABOUT='
-<window title="'"$i18n_About_and_help - ${APP_TITLE}"'" icon-name="edit-find" window-position="2">
+<window title="'"$i18n_About_and_help - ${APP_TITLE}"'" icon-name="findnrun" window-position="2">
   <vbox>
     <frame>
       <text xalign="0" selectable="true" can-focus="false">
@@ -1519,7 +1519,7 @@ set_DO_RESTART_WINDOW
 # Restart window dialog. [[[1
 # i18n restart window dialog
 export RESTART_WINDOW='
-<window title="'"$APP_TITLE"'" icon-name="edit-find" resizable="false" window-position="2">
+<window title="'"$APP_TITLE"'" icon-name="findnrun" resizable="false" window-position="2">
   <vbox>
     <text wrap="true" xalign="0">
       <variable export="false">RESTART_WINDOW_MESSAGE</variable>
