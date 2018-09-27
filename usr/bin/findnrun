@@ -1060,26 +1060,27 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
 fi
 > "${AWKQ}" echo '#!/usr/bin/gawk -f
 BEGIN {
-  if('${DEBUG1:-0}') {
-    searchexpr="'"${subject}${left} ${fnameleft} ${commleft} ${categ}"'"
-    gsub("GREP", "\""GREP"\"", searchexpr)
-    print "\n=== DB QUERY [[ " searchexpr > "/dev/stderr"
-  }
+  '${DEBUG1:+ ' searchexpr="'"${subject}${left} ${fnameleft} ${commleft} ${categ}"'"'}'
+  '${DEBUG1:+ ' gsub("GREP", "\""GREP"\"", searchexpr)'}'
+  '${DEBUG1:+ ' print "\n=== DB QUERY [[ " searchexpr > "/dev/stderr"'}'
+  '${DEBUG1:+ ' SEP="'$SEP'"'}'
+
   FS="|"
-}
-('${DEBUG1:-0}') && (1 == NR) {
-  pa = $0; gsub("'"${SEP}"'", "<SEP>", pa)
-  print "RECORD #"NR" a="pa > "/dev/stderr"
 }
 {'"${extract_data_fields}"'
   # narrow matches by GREP pattern
   if(GREP && ('"${subject}${left} ${fnameleft} ${commleft} ${categ}"') || !GREP) {
     print substr($0, 1, 510)
     # 510 works around gtkdialog tree widget buffer overflow limit
+
+    # debug: the tree widget top row
+    #'${DEBUG1:+' if(""==_row){_row=$0;gsub(SEP,"<SEP>",_row);print _row>"/dev/stderr"}'}'
+    '${DEBUG1:+' if(""==_nR){_nR=split($0,_R,"["FS SEP"]");for(_i=1;_i<=_nR;_i++)printf"% 4d : %s\n",_i,_R[_i]>"/dev/stderr";'}'
+    '${DEBUG1:+'   if(_R[4]){while(0<(getline _s<_R[4])){print "  ",_s>"/dev/stderr"};close(_R[4])}  }#if _nR'}'
   }
 }
 END {
-  if('${DEBUG1:-0}') print "]] QUERY" >"/dev/stderr"
+  '${DEBUG1:+' print "]] QUERY" >"/dev/stderr"'}'
 } '
 
 # Prepare Help system and its GUI button (About). [[[1
