@@ -736,8 +736,8 @@ END { # [[[2
       printf(MSG1"\n", filename) > "/dev/stderr"
       continue
     }
-    match(fil, /\nExec=([^\n]+)/, m); exec=m[1]
-    if(!exec) continue # trap bogus .desktop files
+    if(! (match(fil, /\nType=Application/) && match(fil, /\nExec=([^\n]+)/, m) && exec=m[1]))
+      continue # trap bogus .desktop application files
     # Delete freedesktop.org %F parameter since Exec= value is going to sh.
     sub(/[ \t]*%[a-zA-Z][ \t]*$/, "", exec)
     match(fil, /\nIcon=([^\n]*\/)?([^\n.]+)([.][^\n]*)?/, m)
