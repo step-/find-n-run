@@ -1085,10 +1085,10 @@ END {
 
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
-set_HELP_BUTTON() #[[[2
+set_HELP_BUTTON_and_HELPVIEWER() #[[[2
 {
   # In:  ${FNRHELPINDEX} paths.
-  # Out: ${helpviewer} command, ${helpbutton} gtk code.
+  # Out: ${HELPVIEWER} command, ${HELP_BUTTON} gtk code.
   local IFS=: subject="${i18n_Help%%_*}${i18n_Help##*_}" i x p s helpviewer hf hd
   set -- ${FNRHELPINDEX}
   for i; do
@@ -1117,7 +1117,7 @@ EOF
   <input file stock=\"gtk-help\"></input>
   <action>${helpviewer} &</action>
   <action>closewindow:GUI_ABOUT</action>
-</button>"
+</button>" HELPVIEWER=$helpviewer
     break # on first valid help file path $hf found
   fi
   done
@@ -1844,7 +1844,7 @@ start_window << EOF
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F1 invokes the help viewer.}
         <menuitem accel-key="0xffbe" accel-mods="0">
-          <action>${helpviewer:-:} "\${PLGDIR:-...}/index.md" &</action>
+          <action>${HELPVIEWER:-:} "\${PLGDIR:-...}/index.md" &</action>
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
