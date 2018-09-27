@@ -65,6 +65,16 @@ i18n_table() # {{{1
     read i18n_desktop_Comment
     read i18n_Key_Enter_to_close_terminal
     read i18n_Run_command_in_terminal
+    read i18n_F10_hotkeys
+    read i18n_previous_results_page
+    read i18n_next_results_page
+    read i18n_run_top_selected_result
+    read i18n_run_top_selected_result_in_terminal
+    read i18n_save_search_results
+    read i18n_quit
+    read i18n_show_help
+    read i18n_cycle_through_input_fields
+    read i18n_cycle_through_search_sources
   } << EOF
   $(gettext -es -- \
   "Findnrun\n" \
@@ -120,6 +130,16 @@ i18n_table() # {{{1
   "Find applications and much more.\n" \
   "Press the Enter key to close the terminal...\n" \
   "Run entry in a terminal\n" \
+  "[F10] hotkeys\n" \
+  "previous results page\n" \
+  "next results page\n" \
+  "run top/selected result\n" \
+  "run top/selected result in a terminal\n" \
+  "save search results\n" \
+  "quit\n" \
+  "show help\n" \
+  "cycle through input fields\n" \
+  "cycle through search sources\n" \
   )
 EOF
 }

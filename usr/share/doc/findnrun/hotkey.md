@@ -1,5 +1,9 @@
 ## Hotkeys
 
+This page lists _default_ hotkey assignments. You can redefine assigned keys as
+explained in [Hidden Preferences](preference.md).  Press `[F10]` in the main
+window to see a short list of the currently assigned keys.
+
 **Anywhere in the main window**
 
  * `[F1]` - view help documentation

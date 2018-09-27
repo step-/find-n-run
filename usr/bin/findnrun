@@ -469,11 +469,16 @@ END {
     if(x != 0x1) {
       for(j = 1; j <= nbin[x]; j++) {
         buf = Store[source[j]]
-        p = index(buf, "\n")
+        p = index(buf, "\n") # THISFILE \n its lines
         saveas = substr(buf, 1, p-1)
-        printf("%sTHISFILE='"'%s'"'\nNSOURCES='"'%d'"'\n%s\n",\
+        lines = substr(buf, p+1)
+        # move TITLE=... to the first line to speed up sh function set_SOURCE_HOTKEYS
+        if(match(lines, "^(.*)(TITLE=[^\n]*\n)(.*)$", A)) {
+          lines = A[1] A[3]; title = A[2] # ends with \n
+        } else { title = "" }
+        printf("%s%sTHISFILE='"'%s'"'\nNSOURCES='"'%d'"'\n%s\n",\
           '${DEBUG2:-0}' ?("echo >&2 Reading \""saveas"\"${SKIP_INIT:+ and skipping INIT}...\n") :"",\
-          saveas, nbin[0], substr(buf, p+1)) > saveas
+          title, saveas, nbin[0], lines) > saveas
         close(saveas)
       }
     }
@@ -1427,7 +1432,7 @@ ${DEBUG3:+'; echo >&2 "=== GENERATE STATUS BAR [["; set -x'}\
 '; SKIP_INIT=1 . "'"${SRCSTEM}"'"$(((${varF3:-0} + 1) % ${NSOURCES:-'${NSOURCES}'}))-*.sh'\
 '; next="${TITLE}"'\
 ';: 3'\
-'; printf "'"%s ${ctrlnkey}  »  ${funckey} %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}"'\
+'; printf "'"%s ${ctrlnkey} » ${funckey} %s      %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}" "'"$i18n_F10_hotkeys"'"'\
 ${DEBUG3:+'; set +x; echo >&2 "]]"'}\
 "</input>
         ${DEBUG2:+<action>echo>&2 ,,, varSBAR ,,,</action>}
@@ -1443,17 +1448,19 @@ set_STATUS_BAR
 set_SOURCE_HOTKEYS() # [[[2
 {
   # Actions for keys Ctrl+1..Ctrl+9
-  local h i
+  local h i title
   h=0 SOURCE_HOTKEYS=
-  for i in 1 2 3 4 5 6 7 8 9; do
+  head -qn1 "${SRCSTEM}"*.sh > "$TMPD"/.titles
+  while read title; do
+    title=${title#TITLE=?}; title=${title%?}
+    i=$((h+1))
     SOURCE_HOTKEYS="$SOURCE_HOTKEYS
-<menuitem accel-key=\"0x003$i\" accel-mods=\"4\">
+<menuitem label=\"$title\" accel-key=\"0x003$i\" accel-mods=\"4\">
   <action>printf $h >\"${F3SF}\"</action>
   <action>refresh:varF3</action>
 </menuitem>"
-    [ $i = $NSOURCES ] && break
     h=$i
-  done
+  done < "$TMPD"/.titles
 }
 #]]]
 set_SOURCE_HOTKEYS
@@ -1805,22 +1812,22 @@ start_window << EOF
       ${REMARK#  [[[. Hotkeys for varENTRY.}
         ${REMARK#   [[[. Keys PageUp/PageDown paginate the current source plugin tap.}
         ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
-        <menuitem accel-key="0xff55" accel-mods="0">
+        <menuitem label="$i18n_previous_results_page" accel-key="0xff55" accel-mods="0">
           <action>date '+PageUp %s'>"${ETAP}"</action>
         </menuitem>
-        <menuitem accel-key="0xff56" accel-mods="0">
+        <menuitem label="$i18n_next_results_page" accel-key="0xff56" accel-mods="0">
           <action>date '+PageDown %s'>"${ETAP}"</action>
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F5 start item in terminal.}
-        <menuitem accel-key="${HOTKEY_F5##*:}" accel-mods="${HOTKEY_F5%%:*}">
+        <menuitem label="$i18n_run_top_selected_result_in_terminal" accel-key="${HOTKEY_F5##*:}" accel-mods="${HOTKEY_F5%%:*}">
           <action>grabfocus:varLIST</action>
           <action>${INVOKE_SOURCE_DRAIN_TERM}</action>${REMARK# which saves item to history.}
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
           <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         </menuitem>
         ${REMARK#   [[[. Key F12 activates the top varLIST item.}
-        <menuitem accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
+        <menuitem label="$i18n_run_top_selected_result" accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
           <action>grabfocus:varLIST</action>
           <action>${INVOKE_SOURCE_DRAIN}</action>${REMARK# which saves item to history.}
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
@@ -1830,7 +1837,7 @@ start_window << EOF
       ${REMARK#  ]]]}
       ${REMARK#  [[[. Hotkeys for varLIST.}
         ${REMARK#   [[[. Key F4 saves search results and invokes a filter.}
-        <menuitem accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
+        <menuitem label="$i18n_save_search_results" accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
           <action>save:varLIST</action>
           <action>${INVOKE_SOURCE_SAVE_FILTER}</action>
         </menuitem>
@@ -1838,23 +1845,23 @@ start_window << EOF
       ${REMARK#  ]]]}
       ${REMARK#  [[[. Hotkeys for the main window widget.}
         ${REMARK#   [[[. Key ESC terminates findnrun.}
-        <menuitem accel-key="0xff1b" accel-mods="0">
+        <menuitem label="$i18n_quit" accel-key="0xff1b" accel-mods="0">
           <action>exit:EXIT</action>
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F1 invokes the help viewer.}
-        <menuitem accel-key="0xffbe" accel-mods="0">
+        <menuitem label="$i18n_show_help" accel-key="0xffbe" accel-mods="0">
           <action>${HELPVIEWER:-:} "\${PLGDIR:-...}/index.md" &</action>
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
-        <menuitem accel-key="${HOTKEY_F2##*:}" accel-mods="${HOTKEY_F2%%:*}">
+        <menuitem label="$i18n_cycle_through_input_fields" accel-key="${HOTKEY_F2##*:}" accel-mods="${HOTKEY_F2%%:*}">
           <action>case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
           <action>refresh:varF2</action>
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
-        <menuitem accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
+        <menuitem label="$i18n_cycle_through_search_sources" accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
           <action>set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \${#}))>'${F3SF}'</action>
           <action>refresh:varF3</action>
         </menuitem>

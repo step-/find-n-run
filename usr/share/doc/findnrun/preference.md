@@ -44,6 +44,8 @@ power users and custom applications:
     HOTKEY_F3=0:F3:0xffc0
     # Pressing HOTKEY_F4 saves+filters raw search results (see XCLIP)
     HOTKEY_F4=0:F4:0xffc1
+    # Pressing HOTKEY_F5 runs the top/selected search result item in a terminal
+    HOTKEY_F5=0:F5:0xffc2
     # Pressing HOTKEY_F12 activates the top search result list item.
     HOTKEY_F12=0:F12:0xffc9
     # Icon cache location.
