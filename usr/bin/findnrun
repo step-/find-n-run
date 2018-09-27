@@ -166,12 +166,12 @@ gawk '
 /^IBOL=/{f8=1}
 /^HOTKEY_F2=/{f9=1}
 /^HOTKEY_F3=/{f10=1}
-/^HOTKEY_F5=/{f16=1}
 /^HOTKEY_F12=/{f11=1}
 /^SOURCES=/{f12=1}
 /^SHOWNODISPLAY=/{f13=1}
 /^SEARCHFILENAMES=/{f14=1}
 /^HOTKEY_F4=/{f15=1}
+/^HOTKEY_F5=/{f16=1}
 END{ # Follow desired configuration file order
   # Hotkey format: accel-mods":"key-sym":"accel-key
   # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
@@ -295,8 +295,8 @@ TITLE_FNRsc=$i18n_shell_completion
 SAVEFLT_FNRsc="CUT=\"-4\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
 # Compile built-in and plugin sources. [[[1
-# Don't change next two formats; functions generate_invoke*()
-# assume them, and so may also findnrun-formatter in the future.
+# Don't change next two formats without mirroring them in functions set_INVOKE*
+# and possibly also in findnrun-formatter.
 SRCSTEM="${TMPD}/.source-" # prefix to source filenames
 SRCFMT='%d-%s.sh' # source filename format, i.e., printf "%s${SRCFMT}" "${SRCSTEM}" 0 FNRstart
 store_valid_sources() # [[[
@@ -585,7 +585,7 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
     return 1 # DISABLED source
   }
   # Else continue to store the current source
-  Store[s] = sprintf("%s\n%s", # filepath[.hide] + contents
+  Store[s] = sprintf("%s\n%s", # filepath[.hide] \n contents
     format_saveas(_global_try_store_source++, s, mode), buf)
   # Copy plugin icon, ref. note [ANCHOR_ICON_PATH] [[[
   # Get ICON: [1] fullpath, [2] dirname, [3] basename.
@@ -887,7 +887,7 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
     # Symlink the target ifp. [[[3
     # Note that link file creation may be postponed until END performs close(sh).
     # The link name is located in the icon cache directory ICONSTEM->.
-    # Gtkdialog is very finicky: the icon name passed to the tree widget
+    # The icon name passed to the tree widget must not include dot+extension.
     # However when passing a link name the extension must be included.
     x = split(ifp, a, /\//)
     lnk = a[x] # link name lnk <- icon-name[.ext] (no path)
