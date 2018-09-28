@@ -471,14 +471,9 @@ END {
         buf = Store[source[j]]
         p = index(buf, "\n") # THISFILE \n its lines
         saveas = substr(buf, 1, p-1)
-        lines = substr(buf, p+1)
-        # move TITLE=... to the first line to speed up sh function set_SOURCE_HOTKEYS
-        if(match(lines, "^(.*)(TITLE=[^\n]*\n)(.*)$", A)) {
-          lines = A[1] A[3]; title = A[2] # ends with \n
-        } else { title = "" }
         printf("%s%sTHISFILE='"'%s'"'\nNSOURCES='"'%d'"'\n%s\n",\
           '${DEBUG2:-0}' ?("echo >&2 Reading \""saveas"\"${SKIP_INIT:+ and skipping INIT}...\n") :"",\
-          title, saveas, nbin[0], lines) > saveas
+          title, saveas, nbin[0], substr(buf, p+1)) > saveas
         close(saveas)
       }
     }
@@ -1450,7 +1445,7 @@ set_SOURCE_HOTKEYS() # [[[2
   # Actions for keys Ctrl+1..Ctrl+9
   local h i title
   h=0 SOURCE_HOTKEYS=
-  head -qn1 "${SRCSTEM}"*.sh > "$TMPD"/.titles
+  grep -hm1 "^TITLE=" "${SRCSTEM}"*.sh > "$TMPD"/.titles
   while read title; do
     title=${title#TITLE=?}; title=${title%?}
     i=$((h+1))
