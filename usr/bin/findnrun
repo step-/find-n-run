@@ -109,6 +109,7 @@ DSKL="${TMP0}/.desktop-ls" # list of .desktop file paths
 AWKB="${TMP0}/.build.awk" # builds (and queries) database
 AWKQ="${TMP0}/.query.awk" # queries database (faster)
 AWK4="${TMPD}/.saveflt.awk" # filters saved items
+TTLF="${TMPD}/.titles" # source titles
 HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
 FCSF="${TMPD}/.fcs"; >"${FCSF}" # triggers varSEARCH focus grabber
 F2SF="${TMPD}/.f2s"; >"${F2SF}" # varCMD/varSEARCH focus cycler
@@ -520,7 +521,7 @@ function syntax_check(group, A, I, err_code,   shell_code, i, checker, status) {
   }
 }
 #]]]
-function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cachedpath, rval, mode) { #[[[
+function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cachedpath, rval, title, mode) { #[[[
   # try_store_source stores BY REFERENCE in map Store the current
   # source s unless the source "disabled" bit is on.
   # Upon storing s, try_store_source increments global static variable _global_try_store_source.
@@ -572,7 +573,8 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
           buf = buf sprintf("\n%s='"'%s'"'", g, rval = "")
         }
       }
-      if("MODE" == g) { mode = rval }
+      if("TITLE" == g) { title = rval }
+      else if("MODE" == g) { mode = rval }
     }
   } else if("array" == buf) { # NOT USED
     buf = sprintf("ID='"'%s'"'", s)
@@ -612,6 +614,7 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
   }
 
   if('${DEBUG3:-0}') print "\nPlugin is enabled [[\n"buf"\n]]" > "/dev/stderr"
+  print title >> "'"$TTLF"'"
   return 0
 }
 #]]]
@@ -1445,9 +1448,7 @@ set_SOURCE_HOTKEYS() # [[[2
   # Actions for keys Ctrl+1..Ctrl+9
   local h i title
   h=0 SOURCE_HOTKEYS=
-  grep -hm1 "^TITLE=" "${SRCSTEM}"*.sh > "$TMPD"/.titles
   while read title; do
-    title=${title#TITLE=?}; title=${title%?}
     i=$((h+1))
     SOURCE_HOTKEYS="$SOURCE_HOTKEYS
 <menuitem label=\"$title\" accel-key=\"0x003$i\" accel-mods=\"4\">
@@ -1455,7 +1456,7 @@ set_SOURCE_HOTKEYS() # [[[2
   <action>refresh:varF3</action>
 </menuitem>"
     h=$i
-  done < "$TMPD"/.titles
+  done < "$TTLF"
 }
 #]]]
 set_SOURCE_HOTKEYS
