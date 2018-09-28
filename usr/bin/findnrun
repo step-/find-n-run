@@ -520,7 +520,7 @@ function syntax_check(group, A, I, err_code,   shell_code, i, checker, status) {
   }
 }
 #]]]
-function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cachedpath) { #[[[
+function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cachedpath, rval, mode) { #[[[
   # try_store_source stores BY REFERENCE in map Store the current
   # source s unless the source "disabled" bit is on.
   # Upon storing s, try_store_source increments global static variable _global_try_store_source.
@@ -529,10 +529,11 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
   # In => Out: (all output values are wrapped in SINGLE quotes)
   #   s      source-id
   #   S      global array of valid source ids
-  #   Store  return array of composed sources
-  #   buf==""      => compose from globals G and VGI for s; OR
-  #   buf=="array" => compose from A["SOURCE"]=source-id, A["TAP"]=tap-command, ...
+  #   Store  return array of assembled sources
+  #   buf==""      => assembled from globals G and VGI for s; OR
+  #   buf=="array" => assembled from A["SOURCE"]=source-id, A["TAP"]=tap-command, ...
   #   A    see buf="array"
+  #   rval   current RHS unquoted value (output)
   # Return value: 0:enabled-in-Store 1:disabled 2:hidden-in-Store
 
   # Assert: The calling outer loop has stripped exterior single quotes
@@ -546,7 +547,7 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
       if((g, i) in VGI) { # parsed source_<g>roup=value and non-null value
         if(g in IsCode) {
           # do not change the value, see {UNQUOTE} above.
-          buf = buf sprintf("\n%s=%s", g, VGI[g, i])
+          buf = buf sprintf("\n%s=%s", g, rval = VGI[g, i])
           if("INIT" == g) { #{INVOKEINIT}
             # Add shell code to run INIT once only. env SKIP_INIT=1 ... to skip.
             buf = buf sprintf("\nif [ \"$INIT\" -a ! \"$SKIP_INIT\" ]; then\n%s\nfi",\
@@ -557,31 +558,30 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
               "  sed -i \"$THISFILE\" -e \"s/^INIT=/DID_&/\"\n"  )
           }
         } else { # store quoted value
-          buf = buf sprintf("\n%s='"'%s'"'", g, VGI[g, i])
+          buf = buf sprintf("\n%s='"'%s'"'", g, rval = VGI[g, i])
         }
       } else { # parsed either source_<g>roup= or the source does not declare <g>
         if("TITLE" == g) {
           # on no title-id output source-id as title value
-          buf = buf sprintf("\n%s='"'%s'"'", g, s)
+          buf = buf sprintf("\n%s='"'%s'"'", g, rval = s)
         } else if("MODE" == g) {
           # on no mode-id output MODE="0" for bit mask
-          buf = buf sprintf("\n%s='"'%d'"'", g, 0)
+          buf = buf sprintf("\n%s='"'%d'"'", g, rval = 0)
         } else {
           # on no "other" id output null value, i.e., VAR="" << IMPORTANT
-          buf = buf sprintf("\n%s='"''"'", g)
+          buf = buf sprintf("\n%s='"'%s'"'", g, rval = "")
         }
       }
+      if("MODE" == g) { mode = rval }
     }
   } else if("array" == buf) { # NOT USED
     buf = sprintf("ID='"'%s'"'", s)
     for(a in A)
       buf = buf sprintf("\n%s='"'%s'"'", a, A[a])
   }
-  # Get MODE: [1] bit mask
-  match(buf, /MODE=\x27([^\x27]+)\x27/, a); mode = a[1]
   # Do not store the current source if MODE "disabled" bit (0x1) is set
   if(and(mode, 0x1)) {
-    if('${DEBUG3:-0}') print "\n!!! Plugin mode DISABLED [[\n"buf"\n]]" > "/dev/stderr"
+    if('${DEBUG3:-0}') print "\n!!! Plugin is DISABLED [[\n"buf"\n]]" > "/dev/stderr"
     return 1 # DISABLED source
   }
   # Else continue to store the current source
@@ -607,12 +607,12 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
   #]]]
 
   if(and(mode, 0x2)) {
-    if('${DEBUG3:-0}') print "\n!!! Plugin mode HIDDEN [[\n"buf"\n]]" > "/dev/stderr"
+    if('${DEBUG3:-0}') print "\n!!! Plugin is HIDDEN [[\n"buf"\n]]" > "/dev/stderr"
     return 2 # HIDDEN source
-  } else {
-    if('${DEBUG3:-0}') print "\nPlugin is enabled [[\n"buf"\n]]" > "/dev/stderr"
-    return 0
   }
+
+  if('${DEBUG3:-0}') print "\nPlugin is enabled [[\n"buf"\n]]" > "/dev/stderr"
+  return 0
 }
 #]]]
 function format_saveas(num, name, mode,   saveas) { #[[[
