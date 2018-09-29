@@ -78,6 +78,10 @@ power users and custom applications:
     #ICON_DIRS="$HOME/.icons:$HOME/.local/icons:/usr/share/icons:+
     #  + /usr/local/share/icons:/usr/share/pixmaps:+
     #  + /usr/share/midi-icons:/usr/share/mini-icons"
+    # GTK2 icon-theme-name value initialized from ~/.gtkrc-2.0 (or in included file).
+    # Icons found in the icon theme directory take precedence over other icons.
+    # You may change this settings to experience another installed icon theme.
+    #GTK_ICON_THEME_NAME="/path/to/icon-theme-directory" # optional
     # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
     # Set XCLIP to an alternative X clipboard copy/paste filter for hotkey F4.

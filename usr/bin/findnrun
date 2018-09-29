@@ -64,12 +64,11 @@ $(
 EOF
 DESKTOP_FILE_DIRS=${DESKTOP_FILE_DIRS#:} ICON_DIRS=${ICON_DIRS#:}
 # Ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
-# Note: Search by icon *theme* isn't implemented.
 
-# freedesktop.org standard user's icon location
-XDGHOMEICONS="$HOME/.icons"
+# freedesktop.org standard (historical) user's icon location
+HOME_ICONS_LEGACY="$HOME/.icons" # don't change
 # Additional Fatdog64-specific locations start at .../midi-icons.
-ICON_DIRS="$XDGHOMEICONS:$ICON_DIRS:/usr/share/pixmaps:/usr/share/midi-icons:/usr/share/mini-icons"
+ICON_DIRS="$HOME_ICONS_LEGACY:$ICON_DIRS:/usr/share/pixmaps:/usr/share/midi-icons:/usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
 x="${0%/*}/../share/doc/$SN"
@@ -110,7 +109,8 @@ trap trap_handler INT QUIT TERM HUP ABRT 0
 TMPD=`mktemp -d -p "${TMPDIR:-/tmp}" ${0##*/}_XXXXXX` && chmod 700 "${TMPD}"
 TMP0="${TMPD}/.FNRstart"; mkdir "${TMP0}" # built-in source resources
 DATF="${TMP0}/.dat" # database of .desktop file entries
-DSKL="${TMP0}/.desktop-ls" # list of .desktop file paths
+DSKL="${TMP0}/.desktop-ls" # list .desktop file paths
+AIPF="${TMPD}/.installed-icon-ls" # list system/usr installed icon file paths
 AWKB="${TMP0}/.build.awk" # builds (and queries) database
 AWKQ="${TMP0}/.query.awk" # queries database (faster)
 AWK4="${TMPD}/.saveflt.awk" # filters saved items
@@ -159,6 +159,7 @@ export varFOCUSSEARCH=false
 # Add missing/hidden defaults.
 # Define and initialize ALL configuration values here.
 gawk '
+# look for existing settings [[[
 /^ICONCACHE=/{f1=1}
 /^SEARCHCOMMENTS=/{f2=1}
 /^SEARCHFROMLEFT=/{f3=1}
@@ -178,7 +179,45 @@ gawk '
 /^SEARCHFILENAMES=/{f14=1}
 /^HOTKEY_F4=/{f15=1}
 /^HOTKEY_F5=/{f16=1}
-END{ # Follow desired configuration file order
+/^GTK_ICON_THEME_NAME=/{f17=1}
+#]]]
+END{ # lookup GTK2 icon theme name [[[
+    # TODO implement GTK3 lookup
+  if(!f17) {
+    delete RESULT; CURR = 0
+    include("'"$HOME/.gtkrc-2.0"'", 0)
+    GTK_ICON_THEME_NAME = CURR ? RESULT[CURR] : "" 
+  }
+} #]]]
+function include(file,   s, A, p) { #[[[
+  if(top > 15) {
+    print "Error: Recursion too deep in", file > "/dev/stderr"
+    exit(1)
+  }
+  if(1 != index(file, "/")) { # resolve relative path
+    # TODO implement $GTK_PATH https://developer.gnome.org/gtk3/3.1/gtk-running.html
+    # https://developer.gnome.org/gtk2/stable/gtk-running.html
+    file = "'"$HOME"'/" file
+  }
+  while(0 < (getline s < file)) {
+    sub(/^[[:space:]]*/, "", s)
+    if(1 == index(s, "#")) {
+      continue
+    } else if(match(s, /^include[[:space:]]+"([^"]+)"/, A)) {
+      p = A[1]
+      if(match(p, "/themes/([^/]+)/", A)) { # presumably p is a theme file
+        # its folder name is also its icon theme name
+        RESULT[++CURR] = A[1]
+      }
+      include(p)
+    } else if(match(s, /^gtk-icon-theme-name[^"]+"([^"]+)"/, A)) {
+        RESULT[++CURR] = A[1]
+    }
+  }
+  close(file)
+} #]]]
+END{ # create config file and add missing settings [[[
+  # Follow desired configuration file order
   # Hotkey format: accel-mods":"key-sym":"accel-key
   # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
   if(!f9) print "HOTKEY_F2=\"0:F2:0xffbf\"">>ARGV[1]
@@ -186,7 +225,8 @@ END{ # Follow desired configuration file order
   if(!f15) print "HOTKEY_F4=\"0:F4:0xffc1\"">>ARGV[1]
   if(!f16) print "HOTKEY_F5=\"0:F5:0xffc2\"">>ARGV[1]
   if(!f11) print "HOTKEY_F12=\"0:F12:0xffc9\"">>ARGV[1]
-  if(!f1) print "ICONCACHE=\"'"${XDGHOMEICONS}"'\"">>ARGV[1]
+  if(!f17 && GTK_ICON_THEME_NAME) print "GTK_ICON_THEME_NAME=\""GTK_ICON_THEME_NAME"\"">>ARGV[1]
+  if(!f1) print "ICONCACHE=\"'"${HOME_ICONS_LEGACY}"'\"">>ARGV[1]
   if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
   if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
   if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
@@ -200,27 +240,30 @@ END{ # Follow desired configuration file order
   if(!f8) printf "IBOL=\"%c\" # reserved\n", 0xAD >>ARGV[1] # requires gawk
   # Built-in sources - space separated list
   if(!f12) print "SOURCES=\"FNRstart FNRsc\"">>ARGV[1]
-}
+} #]]]
 ' "${CONFIG}" && . "$CONFIG"
 [ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+processing $CONFIG" >&2
 
-# Values that depend on defaults.
-# Icons [[[2
+# Icon paths [[[1
 # Note [ANCHOR_ICON_PATH]:
 # For XDG/GTK to be able to find icons located in non-standard icon paths, each
 # path must end in '/icons' and its parent must be listed in $XDG_DATA_DIRS.
+# https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
 # Findnrun's "icon work-around" (WA) code creates an intermediate directory
 # structure ($ICONCACHE) and symlinks the Gtkdialog main window icon (attribute
 # icon-name) and plugin-declared ICONs into $ICONCACHE as needed to fulfill the
 # XDG/GTK requirement. Cf. gawk function try_store_source().
 XDG_DATA_DIRS="${XDG_DATA_DIRS}:${TMPD}" # for plugin ICONS
 if [ -z "${ICONCACHE}" ]; then
-  ICONCACHE="${XDGHOMEICONS}"
+  # This value is also set in file $CONFIG for setting f1
+  ICONCACHE="$HOME_ICONS_LEGACY"
 else
   XDG_DATA_DIRS="${XDG_DATA_DIRS}:${ICONCACHE}"
   ICONCACHE="${ICONCACHE}/icons"
 fi
+
 # Prefix and stem path for the "icon work-around" (WA) icons.
+# The prefix aims at ensuring a unique icon name match across all elements of $ICON_DIRS.
 CACHEFILEPREFIX="findnrun___"
 ICONSTEM="$ICONCACHE/$CACHEFILEPREFIX" # NOT a dirpath
 ICONSTEM2="${TMPD}/icons/" # slash-terminated, for plugin ICONS
@@ -869,17 +912,46 @@ function icon_wa_init() { # [[[2
   nWA = 0
 }
 
-function icon_wa_find_icon_files(   c,icon_dirs) { # [[[2
+function icon_wa_find_icon_files(   c,aifp,icon_dirs,icon_theme_name,p1,p2,e1,e2) { # [[[2
+  aifp = "'"$AIPF"'"
+  if(0 < (getline WA_ALL_ICON_PATHS < aifp)) {
+    close(aifp)
+    return(1)
+  }
+  icon_theme_name = "'"$GTK_ICON_THEME_NAME"'"
+  # Find paths (colon-separated)
   icon_dirs = "'"$ICON_DIRS"'"
+  # Find expression that matches icon file names (find -D opt)
+  e1 = "-type f \\( -name \\*.xpm -o -name \\*.png -o -name \\*.svg \\) -print"
+  if("" == icon_theme_name) {
+    e2 = e1
+  } else {
+    p1 = "'"$HOME_ICONS_LEGACY"'/"icon_theme_name
+    p2 = "/usr/share/icons/"icon_theme_name
+    # Find user`s selected theme icons before any other icons
+    icon_dirs = p1":"p2":"icon_dirs
+    # visit p1 or p2 but ignore all other icon_theme_name directories
+    e2 = " -depth -path \""p1"/*\" " e1 \
+      " -o -depth -path \""p2"/*\" " e1 \
+      " -o -name \""icon_theme_name"\" -prune"
+    # visit other (non-ignored) directories
+    e2 = e2 " -o " e1
+  }
+  # split/quote paths
   gsub(/:/, "\" \"", icon_dirs)
   icon_dirs = "\"" icon_dirs "\""
-  c = "2>/dev/null find -L " icon_dirs \
-    " -type f -regex \".*\\.\\(png\\|svg\\|xpm\\)\" -print"
+
+  c = "2>/dev/null find -L " icon_dirs " " e2
   c | getline WA_ALL_ICON_PATHS; close(c)
-  return("" != WA_ALL_ICON_PATHS)
+  if("" != WA_ALL_ICON_PATHS) {
+    printf WA_ALL_ICON_PATHS > aifp
+    close(aifp)
+    return(1)
+  }
+  return(0) # No system/user icons found (shouldn`t happen)
 }
 
-function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
+function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext,p) { # [[[2
 # Workaround for gtkdialog tree widget failing to display icons with path.
   WA_ALL_ICON_PATHS = "\n" WA_ALL_ICON_PATHS "\n"
   for(i = 1; i <= nWA; i++) {
