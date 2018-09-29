@@ -65,8 +65,11 @@ EOF
 DESKTOP_FILE_DIRS=${DESKTOP_FILE_DIRS#:} ICON_DIRS=${ICON_DIRS#:}
 # Ref. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
 # Note: Search by icon *theme* isn't implemented.
+
+# freedesktop.org standard user's icon location
+XDGHOMEICONS="$HOME/.icons"
 # Additional Fatdog64-specific locations start at .../midi-icons.
-ICON_DIRS="$HOME/.icons:${ICON_DIRS}:/usr/share/pixmaps:/usr/share/midi-icons:/usr/share/mini-icons"
+ICON_DIRS="$XDGHOMEICONS:$ICON_DIRS:/usr/share/pixmaps:/usr/share/midi-icons:/usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
 x="${0%/*}/../share/doc/$SN"
@@ -123,7 +126,6 @@ ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 YPID="${TMPD}/.yad.pid"; >"${YPID}" # yad --progress PID
 SEP=`echo -e "\b"` # field separator of packed values
-XDGHOMEICONS="${HOME}/.icons" # freedesktop.org standard user's icon location
 
 # -----------------------------------------------------------------------------
 #LANG=de_DE.UTF-8 # just for demo
