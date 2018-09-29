@@ -14,20 +14,23 @@
 
 if [ "$FNRDEBUG" ]; then # [[[1 timer
   timer() {
-    # $3 and $4 are optional
-    awk -v t1=$1 -v t2=$2 -v t0=$3 -v label=$4 '
+    # $3 and $4 are optional, start $4 with "+" to insert default label
+    awk -v "t1=$1" -v "t2=$2" -v "t0=$3" -v "label=$4" '
 BEGIN {
+  label0 = "ELAPSED ms"
   if("" == label) {
-    label = "ELAPSED ms partial/total"
+    label = label0
+  } else if(1 == index(label, "+")) {
+  label = label0 " " substr(label, 2)
   }
   partial = (t2 - t1) * 1000
   if("" != t0) {
     total = (t2 - t0) * 1000
-    fmt = "%s %g %g\n"
+    fmt = "%s %g (total %g)"
   } else {
-    fmt = "%s %g%s\n"
+    fmt = "%s %g%s"
   }
-  printf fmt, label, partial, total
+  printf "\033[7m" fmt "\033[0m\n", label, partial, total
   exit
 }'
   }
@@ -143,6 +146,7 @@ UNEXP_INVK="invokeTAP invokeDRAIN" # not sure about these
 #UNEXP_SOURCE="TAP DRAIN ICON TITLE INITSEARCH MODE PLGDIR SAVEFLT INIT"
 
 # Prepare the configuration file. [[[1
+TIMER1=$(date +%s.%N)
 # Defaults - match same variable/value pairs in the next block. [[[2
 # Leave alone the next three configuration values for historical reasons.
 defOPEN=false
@@ -197,6 +201,7 @@ END{ # Follow desired configuration file order
   if(!f12) print "SOURCES=\"FNRstart FNRsc\"">>ARGV[1]
 }
 ' "${CONFIG}" && . "$CONFIG"
+[ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+processing $CONFIG" >&2
 
 # Values that depend on defaults.
 # Icons [[[2
@@ -296,6 +301,7 @@ TITLE_FNRsc=$i18n_shell_completion
 SAVEFLT_FNRsc="CUT=\"-4\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
 
 # Compile built-in and plugin sources. [[[1
+TIMER1=$(date +%s.%N)
 # Don't change next two formats without mirroring them in functions set_INVOKE*
 # and possibly also in findnrun-formatter.
 SRCSTEM="${TMPD}/.source-" # prefix to source filenames
@@ -664,7 +670,7 @@ x=$?; [ 0 -lt $? -a $? -lt 100 ] && exit $x # fatal errors
 ifs=$IFS; IFS=:
 read NSOURCES VISIBLE_SOURCES x DISABLED_SOURCES x HIDDEN_SOURCES x < "${TMPD}/.$$"
 IFS=$ifs
-[ "$DEBUG1" ] && TIMER1=$(date +%s.%N) && timer $TIMER0 $TIMER1 $TIMER0 >&2
+[ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+compiling sources" >&2
 
 # Set default source to the first element of SOURCES. [[[1
 # Note: source with SKIP-INIT not to eval init-command directly in my
@@ -1464,10 +1470,10 @@ set_SOURCE_HOTKEYS
 start_window() # Returns when gtkdialog terminates [[[2
 {
   if [ "${DEBUG1}" ]; then
-    TIMERN=$(date +%s.%N)
+    TIMER1=$(date +%s.%N)
     : >/tmp/varSEARCH
     echo >&2 "==== STARTING GTKDIALOG - DEBUG SEARCH INPUT ENABLED ===="
-    timer $TIMER1 $TIMERN $TIMER0 >&2
+    timer $TIMER2 $TIMER1 $TIMER0 "+since last split time" >&2
 echo "You can \"type a search\" by writing a term to file /tmp/varSEARCH.
 Limit $APP_NAME to a single instance because /tmp/varSEARCH can't be shared.
 Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | gvim -R -
