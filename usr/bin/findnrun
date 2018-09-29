@@ -94,9 +94,8 @@ trap_handler() # [[[
   trap - HUP INT QUIT TERM ABRT 0
   local tmpd ids id
   tmpd=$(readlink -f "${TMPD}")
-  [ -d "${tmpd}" ] || exit
-  if cd "${tmpd}"; then
-    # kill process / process group pids; guard system processes such as init (1).
+  if [ -d "${tmpd}" ] && cd "${tmpd}"; then
+    # kill tracked pids; defensive: guard system processes (pids 0,1)
     for id in $(grep --include .pidof_\* -hr .); do
       case ${id} in 0|1) ;; *) ids="${ids} ${id}" ;; esac
     done
@@ -124,7 +123,7 @@ F4SF="${TMPD}/search-output" # saved items
 RWMF="${TMPD}/.msg_restart" # RESTART_WINDOW message
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
-YPID="${TMPD}/.yad.pid"; >"${YPID}" # yad --progress PID
+YPID="${TMPD}/.pidof_yad_progress"; >"${YPID}" # yad --progress PID
 SEP=`echo -e "\b"` # field separator of packed values
 
 # -----------------------------------------------------------------------------
