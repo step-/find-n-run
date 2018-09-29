@@ -561,7 +561,7 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
               ('${DEBUG1:-0}' ?("__t0=$(date +%s.%N)\n") :"")\
               "  eval $INIT\n"\
               ('${DEBUG1:-0}' ?("__t1=$(date +%s.%N)\n") :"")\
-              ('${DEBUG1:-0}' ?("  awk -v fmt=\"INIT $ID %g ms elapsed\\n\" -v t0=$__t0 -v t1=$__t1 \x27""BEGIN {printf fmt, (t1-t0)*1000;exit}\x27 >&2\n") :"")\
+              ('${DEBUG1:-0}' ?("  awk -v fmt=\"\\033[7mINIT $ID %g ms elapsed\\033[0m\\n\" -v t0=$__t0 -v t1=$__t1 \x27""BEGIN {printf fmt, (t1-t0)*1000;exit}\x27 >&2\n") :"")\
               "  sed -i \"$THISFILE\" -e \"s/^INIT=/DID_&/\"\n"  )
           }
         } else { # store quoted value
