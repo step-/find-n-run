@@ -863,7 +863,7 @@ function icon_wa_push_icnname(i,byRef,   IFP,a) { # [[[2
 }
 
 function icon_wa_init() { # [[[2
-  WA_ICON_POOL = ""
+  WA_ALL_ICON_PATHS = ""
   delete WA
   nWA = 0
 }
@@ -874,13 +874,13 @@ function icon_wa_find_icon_files(   c,icon_dirs) { # [[[2
   icon_dirs = "\"" icon_dirs "\""
   c = "2>/dev/null find -L " icon_dirs \
     " -type f -regex \".*\\.\\(png\\|svg\\|xpm\\)\" -print"
-  c | getline WA_ICON_POOL
-  return(""!=WA_ICON_POOL)
+  c | getline WA_ALL_ICON_PATHS; close(c)
+  return("" != WA_ALL_ICON_PATHS)
 }
 
 function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
 # Workaround for gtkdialog tree widget failing to display icons with path.
-  WA_ICON_POOL = "\n" WA_ICON_POOL "\n"
+  WA_ALL_ICON_PATHS = "\n" WA_ALL_ICON_PATHS "\n"
   for(i = 1; i <= nWA; i++) {
     # IFP is the icon full filepath, which is used as the ICONINDEX key.
     IFP = WA[i,"IFP"]
@@ -897,8 +897,8 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
       # Find the full icon pathname from the icon name only, if any.
       # cf. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#icon_lookup
       icnname = WA[i,"icnname"]
-      if(match(WA_ICON_POOL, "\\n[^\\n]+/"icnname"\\.(png|svg|xpm)\\n")) {
-        ifp = substr(WA_ICON_POOL, RSTART + 1, RLENGTH -2)
+      if(match(WA_ALL_ICON_PATHS, "\\n[^\\n]+/"icnname"\\.(png|svg|xpm)\\n")) {
+        ifp = substr(WA_ALL_ICON_PATHS, RSTART + 1, RLENGTH -2)
       } else {
         ifp = ""
       }
