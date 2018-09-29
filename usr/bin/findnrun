@@ -695,7 +695,10 @@ fi
 [ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
 > "${AWKB}" echo '#!/usr/bin/gawk -f
 BEGIN { # [[[2
-  if('${DEBUG1:-0}') print "\n=== .desktop DB BUILDER (set FNRDEBUG=2 for more)\n[[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
+  if('${DEBUG1:-0}') {
+    (__c = "date +%s.%N") | getline __t0; close(__c)
+    print "\n=== .desktop app db BUILDER (set FNRDEBUG=2 for more)\n[[ ALL_ICONS="ALL_ICONS >"/dev/stderr"
+  }
   RS="^~cannot~match~me~" # enable slurp read mode.
   # Choose a shell for ongoing command execution - see icon_wa_match_and_link().
   sh = "'${SH}'" # not used as a co-process
@@ -799,7 +802,11 @@ END { # [[[2
   print "exit" | sh
   close(sh)
   close_progress_dialog(PROGRESS_PID)
-  if('${DEBUG1:-0}') print "]] BUILDER" >"/dev/stderr"
+  if('${DEBUG1:-0}') {
+    (__c = "date +%s.%N") | getline __t1; close(__c)
+    printf "\033[7mELAPSED ms building .desktop application database %g\033[0m\n", (__t1-__t0)*1000 >"/dev/stderr"
+    print "]] .desktop app db BUILDER" >"/dev/stderr"
+  }
 }
 
 function format_item(   ic,cols) { # [[[2
