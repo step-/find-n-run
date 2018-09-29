@@ -52,7 +52,7 @@ export OUTPUT_CHARSET=UTF-8
 APP_NAME=$i18n_Findnrun
 
 XDG_DATA_DIRS=${XDG_DATA_DIRS:-/usr/share:/usr/local/share}
-XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local}
+XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 
 { read DESKTOP_FILE_DIRS; read ICON_DIRS; } << EOF
 $(
