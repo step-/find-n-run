@@ -898,10 +898,16 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext) { # [[[2
       # Find the full icon pathname from the icon name only, if any.
       # cf. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#icon_lookup
       icnname = WA[i,"icnname"]
-      if(match(WA_ALL_ICON_PATHS, "\\n[^\\n]+/"icnname"\\.(png|svg|xpm)\\n")) {
-        ifp = substr(WA_ALL_ICON_PATHS, RSTART + 1, RLENGTH -2)
-      } else {
-        ifp = ""
+      ifp = ""
+      # matched without regex for a huge speed increase
+      if(p = index(WA_ALL_ICON_PATHS, "/"icnname".")) { # potential match
+        # look back enough (-512) and look ahead enough (+6: +4 for
+        # /.(png|svg|xpm)/ and +2 for /\n./) to cross \n boundaries
+        x = substr(WA_ALL_ICON_PATHS, p -512, +512+length(icnname) +6)
+        x = split(x, a, /\n/)
+        if(index(a[x -1], "/"icnname".")) { # confirmed that it`s an actual match
+          ifp = a[x -1]
+        }
       }
     }
     if("" == ifp) { # no icon resource can be found in the system.
