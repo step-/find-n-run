@@ -1423,7 +1423,7 @@ set_EVAL_ARGS_IN_TERM() # $1-terminal-prog+opts [[[2
 "$__terminal -T \"\$1\" -e ${SHELL:-sh} -c "\
 "'"\
 '"$@"'\
-'; printf "\033[7m'"$i18n_Key_Enter_to_close_terminal"'\033[0m"'\
+'; printf "\033[7m'"$i18n_Key_Enter_to_close_terminal"'\033[0m" "'"$i18n_Findnrun"'"' \
 '; read x'\
 "'"\
 " $SN"' "$@"'

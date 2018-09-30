@@ -128,7 +128,7 @@ i18n_table() # {{{1
   "application finder options       * = restart required\n" \
   "Findnrun.\n" \
   "Find applications and much more.\n" \
-  "Press the Enter key to close the terminal...\n" \
+  "Press ENTER to close the terminal [%s]\n" \
   "Run entry in a terminal\n" \
   "[F10] hotkeys\n" \
   "previous results page\n" \
