@@ -1435,7 +1435,7 @@ set_SAVE_ARGS_HISTORY() # [[[2
 {
   # Code that saves "$@" the history files.
   SAVE_ARGS_HISTORY=\
-'echo "$@" >> "'"$HSTF"'" && echo "$@" >> "'"$TMPD"'/.hist-\$ID.sh"'
+'echo "$@" >> "'"$HSTF"'" && echo "$@" >> "'"$TMPD"'/.hist-$ID.sh"'
 }
 #]]]
 set_SAVE_ARGS_HISTORY
