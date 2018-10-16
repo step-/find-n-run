@@ -324,7 +324,7 @@ SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 # AWKB outputs the .desktop db given the paths. Then echo NDATF appends NDATF
 # to the source declaration file (THISFILE).  The subsequent TAP's gawk -f AWKQ
 # queries the .desktop db on each search box keypress.
-INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\$(wc -l < \"${DATF}\") >> \"\$THISFILE\""
+INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\"'\$(wc -l < \"${DATF}\")'\" >> \"\$THISFILE\""
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='findnrun'
