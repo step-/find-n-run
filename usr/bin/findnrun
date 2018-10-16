@@ -125,6 +125,7 @@ ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 YPID="${TMPD}/.pidof_yad_progress"; >"${YPID}" # yad --progress PID
 SEP=`echo -e "\b"` # field separator of packed values
+SVAR="${TMPD}/.vars-" # set_REFRESH_SOURCE_VARS_FOR_INPUT_FILE
 
 # -----------------------------------------------------------------------------
 #LANG=de_DE.UTF-8 # just for demo
@@ -1359,6 +1360,33 @@ set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 #]]]
 set_INVOKE_SOURCE_SAVE_FILTER
 
+set_REFRESH_SOURCE_VARS_FOR_INPUT_FILE() # [[[2
+{
+  # Echo sh code that writes each source field value to its own file, which
+  # gtkdialog <variable>s can read via <input file>.
+
+  # Match every variable assignment and print the assigned value to a file
+  # named after the variable name (plus prefix P).  Variable names with
+  # lowercase letters in them are ignored.  Each value is expected to be
+  # within (single) quotes, which are stripped when the value is written.
+  REFRESH_SOURCE_VARS_FOR_INPUT_FILE=\
+'awk -v P="'"$SVAR"'" "{'\
+'if(match(\$0,/^[A-Z0-9_]+=/)){'\
+'v=substr(\$0,RLENGTH+2,length(\$0)-RLENGTH-2);'\
+'f=(P)substr(\$0,1,RLENGTH-1);'\
+'print v >f;close(f)'\
+'}}" "'"$SRCSTEM"'"${varF3:-0}-*.sh'
+
+  # Touch the files to keep gtkdialog from complaining if they don't exist.
+  awk -v P="$SVAR" '{
+if(match($0,/<input file>\${SVAR}[^<]+/)){
+  f=(P)substr($0,RSTART+19,RLENGTH-19)
+  printf "">>f;close(f)
+}}' "$0"
+}
+#]]]
+set_REFRESH_SOURCE_VARS_FOR_INPUT_FILE
+
 set_GET_SOURCE() # [[[2
 {
   # Echo sh code that loads the current source fields.
@@ -1375,8 +1403,7 @@ set_INVOKE_SOURCE_TAP() # [[[2
 {
   # Code that invokes source[varF3]'s tap-command.
   # 1. Extract search input value as $term with IBOL+IBOL correction.
-  # 2. Get source[varF3]'s values. [[[
-  #    Optimization: use cached <variable>TAP</variable>. ]]]
+  # 2. Get source[varF3]'s values.
   # 3. Update plugin event. '%% *' trims the event timestamp.
   # 4. Debug messages.
   # 5. Unexport all vars but source's. Cf. UNEXPORT in set_INVOKE_SOURCE_DRAIN.
@@ -1976,84 +2003,58 @@ start_window << EOF
   <timer milliseconds="true" interval="100" visible="false">
     <variable export="false">varSEARCH0</variable>
     <action>refresh:varSEARCH</action>
+    <action>${REFRESH_SOURCE_VARS_FOR_INPUT_FILE}</action>
     ${REMARK# varF3 re-enables this timer when another plugin gets loaded.}
     <action>disable:varSEARCH0</action>
   </timer>
   ${REMARK# -  ]]]}
   ${REMARK# - ]]]}
-  ${REMARK# [[[. Cached source declaration variables (hidden).}
+  ${REMARK# [[[. Source declaration variables (hidden) see set_REFRESH_SOURCE_VARS_FOR_INPUT_FILE.}
+  ${REMARK# An action outside these VARNAME entries must refresh:VARNAME to use its value, e.g. PLGDIR for F1.}
   <entry visible="false" sensitive="false">
     <variable>TAP</variable>
     <default>${TAP}</default>
-    ${REMARK# Cache TAP until next refresh:TAP.}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TAP}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE TAP [\$varF3] \$TAP</action>}
+    <input file>${SVAR}TAP</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>DRAIN</variable>
-    <default>${DRAIN:-null}</default>
-    ${REMARK# Cache DRAIN until next refresh:DRAIN.}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${DRAIN}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE DRAIN [\$varF3] \$DRAIN</action>}
+    <input file>${SVAR}DRAIN</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>ICON</variable>
-    <default>${ICON:-null}</default>
-    ${REMARK# Cache ICON until next refresh:ICON.}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${ICON}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE ICON [\$varF3] \$ICON</action>}
+    <input file>${SVAR}ICON</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>TITLE</variable>
-    <default>${TITLE:-null}</default>
-    ${REMARK# Cache TITLE until next refresh:TITLE.}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${TITLE}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE TITLE [\$varF3] \$TITLE</action>}
+    <input file>${SVAR}TITLE</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>SOURCE</variable>
-    <default>${SOURCE}</default>
-    ${REMARK# Cache SOURCE until next refresh:SOURCE}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${SOURCE}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE SOURCE [\$varF3] \$SOURCE</action>}
+    <input file>${SVAR}SOURCE</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>ID</variable>
-    <default>${ID}</default>
-    ${REMARK# Cache ID until next refresh:ID.}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${ID}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE ID [\$varF3] \$ID</action>}
+    <input file>${SVAR}ID</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>NSOURCES</variable>
-    <default>${NSOURCES}</default>
-    ${REMARK# Cache NSOURCES until next refresh:NSOURCES.}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${NSOURCES}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE NSOURCES [\$varF3] \$NSOURCES</action>}
+    <input file>${SVAR}NSOURCES</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>INITSEARCH</variable>
-    ${REMARK# Cache INITSEARCH until next refresh:INITSEARCH}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${INITSEARCH}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE INITSEARCH [\$varF3] \$INITSEARCH</action>}
+    <input file>${SVAR}INITSEARCH</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>MODE</variable>
-    ${REMARK# Cache MODE until next refresh:MODE}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${MODE}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE MODE [\$varF3] \$MODE</action>}
+    <input file>${SVAR}MODE</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>PLGDIR</variable>
-    ${REMARK# Cache PLGDIR until next refresh:PLGDIR}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${PLGDIR}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE PLGDIR [\$varF3] \$PLGDIR</action>}
+    <input file>${SVAR}PLGDIR</input>
   </entry>
   <entry visible="false" sensitive="false">
     <variable>SAVEFLT</variable>
-    ${REMARK# Cache SAVEFLT until next refresh:SAVEFLT}
-    <input>. "${SRCSTEM}\${varF3:-0}-"*.sh && echo "\${SAVEFLT}"</input>
-    ${DEBUG2:+<action>echo>&2 === CACHE SAVEFLT [\$varF3] \$SAVEFLT</action>}
+    <input file>${SVAR}SAVEFLT</input>
   </entry>
   ${REMARK# ]]]}
   ${REMARK# [[[. Read-only values (hidden).}
@@ -2107,28 +2108,16 @@ start_window << EOF
   </checkbox>
   ${REMARK#  ]]]}
   ${REMARK#  [[[. refresh:varF3 to switch the list view to another source.}
-  ${REMARK# Key F3 demonstrates how.}
   <entry visible="false" sensitive="false">
     <variable>varF3</variable>
     <default>0</default>
     <input file>${F3SF}</input>
     ${DEBUG2:+<action>echo>&2 ,,, varF3 ,,,</action>}
-    ${REMARK# [[[. Optimization: Cache current source values.}
-    <action>refresh:TAP</action>
-    <action>refresh:DRAIN</action>
-    <action>refresh:ICON</action>
-    <action>refresh:TITLE</action>
-    <action>refresh:INITSEARCH</action>
-    <action>refresh:MODE</action>
-    <action>refresh:PLGDIR</action>
-    <action>refresh:SAVEFLT</action>
-    <action>refresh:SOURCE</action>
-    <action>refresh:ID</action>
-    ${REMARK# ]]]}
     ${DEBUG2:+<action>echo>&2 ,,, refresh varSBAR [[</action>}
     <action>refresh:varSBAR</action>
     ${DEBUG2:+<action>echo>&2 ]] ,,,</action>}
     <action>clear:varSEARCH</action>
+    ${REMARK# Run code associated with timer varSEARCH0.}
     <action>enable:varSEARCH0</action>
     <action>refresh:varLIST</action>
   </entry>
