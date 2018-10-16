@@ -1201,7 +1201,8 @@ $(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
 EOF
       case ${helpviewer} in
         '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
-        *mdview) helpviewer='v() { for a; do [ -e "$a" ] && cd "${a%/*}" && exec "'"$helpviewer"'" "${a%/*}" "${a##*/}" "'"$subject - $APP_TITLE"'" & sleep 0.4 || sleep 1; done ;}; v "'"$hf"'"' ;;
+        *mdview) # used to invoke the main index.md then a plugind index.md, if any: `v ${PLGDIR:-.../index.md}`
+          helpviewer='v() { for a; do [ -e "$a" ] && [ -d "${a%/*}" ] && exec "'"$helpviewer"'" "${a%/*}" "${a##*/}" "'"$subject - $APP_TITLE"'" & sleep 0.4 || sleep 1; done ;}; v "'"$hf"'"' ;;
         *browser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
         *) # dup help files to protect sources from text editors
           if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
@@ -1966,6 +1967,7 @@ start_window << EOF
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F1 invokes the help viewer.}
         <menuitem label="$i18n_show_help" accel-key="0xffbe" accel-mods="0">
+          <action>refresh:PLGDIR</action>
           <action>${HELPVIEWER:-:} "\${PLGDIR:-...}/index.md" &</action>
         </menuitem>
         ${REMARK#   ]]]}
