@@ -1341,9 +1341,27 @@ set_GET_DRAIN_COMMAND() # [[[2
 # ]]]
 set_GET_DRAIN_COMMAND
 
+set_SELECT_NEXT_SOURCE() # [[[2
+{
+  # Code that advances the global pointer to the current source compiled declaration file.
+  SELECT_NEXT_SOURCE="set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \${#}))>'$F3SF'"
+}
+#]]]
+set_SELECT_NEXT_SOURCE
+
+set_LOAD_COMMON_INVOCATION_ENV() # [[[2
+{
+  # Code that loads the current source's invocation environment as defined in doc/findnrun/plugin-dev.md.
+  LOAD_COMMON_INVOCATION_ENV=". \"${SRCSTEM}\"\${varF3:-0}-*.sh"
+  # Code that loads the next source's invocation environenment
+  LOAD_NEXT_COMMON_INVOCATION_ENV=". \"${SRCSTEM}\"\$(((\${varF3:-0} + 1) % \${NSOURCES:-${NSOURCES}}))-*.sh"
+}
+#]]]
+set_LOAD_COMMON_INVOCATION_ENV
+
 set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 {
-  # Code that invokes source[varF3]'s save-filter-command.
+  # Code that invokes the current source's save-filter-command.
   # 1. Unexport some vars.
   # 2. Set invocation environment and start save-filter-command. [[[
   #    FNRXCLIP is specific for the save-filte-command invocation environment. ]]]
@@ -1394,7 +1412,7 @@ set_GET_SOURCE() # [[[2
   # Fields are returned as shell variables - See doc/findnrun/plugin-dev.md.
   GET_SOURCE=\
 ${DEBUG3:+'>&2 echo "[["; set -x;'}\
-". \"${SRCSTEM}\"\${varF3:-0}-*.sh"\
+"$LOAD_COMMON_INVOCATION_ENV"\
 ${DEBUG3:+'; set +x; echo >&2 "]]"'}
 }
 #]]]
@@ -1402,9 +1420,9 @@ set_GET_SOURCE
 
 set_INVOKE_SOURCE_TAP() # [[[2
 {
-  # Code that invokes source[varF3]'s tap-command.
+  # Code that invokes the current source's tap-command.
   # 1. Extract search input value as $term with IBOL+IBOL correction.
-  # 2. Get source[varF3]'s values.
+  # 2. Get source's values.
   # 3. Update plugin event. '%% *' trims the event timestamp.
   # 4. Debug messages.
   # 5. Unexport all vars but source's. Cf. UNEXPORT in set_INVOKE_SOURCE_DRAIN.
@@ -1461,13 +1479,13 @@ set_EVAL_ARGS_IN_TERM "defaultterm"
 
 set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
 {
-  # Code that invokes source[varF3]'s drain-command, optionally in a terminal window.
+  # Code that invokes the current source's drain-command, optionally in a terminal window.
   # Write the code to a private file that gtkdialog will source.
   # Pass $1 to set INVOKE_SOURCE_DRAIN_TERM.
 
   # 1. Extract selected list item value as "$@".
   # 2. Unexport some vars.  Cf. UNEXPORT in set_INVOKE_SOURCE_TAP and also further down below.
-  # 3. Load source[varF3]'s values into drain's invocation environment.
+  # 3. Load source's values into drain's invocation environment.
   # 4. Save drain-command to history lists.
   # 6. Update plugin event. '%% *' trims the event timestamp. [[[
   # NOTE: v.2.0.0 main window's gtkdialog doesn't implement variable
@@ -1545,9 +1563,9 @@ set_STATUS_BAR() # [[[2
 ': 1'\
 ${DEBUG3:+'; echo >&2 "=== GENERATE STATUS BAR [["; set -x'}\
 '; title="${TITLE}"'\
-'; [ -z "${title}" ] && SKIP_INIT=1 . "'"${SRCSTEM}"'"${varF3:-0}-*.sh && title="${TITLE}"'\
+'; [ -z "${title}" ] && SKIP_INIT=1 '"$LOAD_COMMON_INVOCATION_ENV"' && title="${TITLE}"'\
 ';: 2'\
-'; SKIP_INIT=1 . "'"${SRCSTEM}"'"$(((${varF3:-0} + 1) % ${NSOURCES:-'${NSOURCES}'}))-*.sh'\
+'; SKIP_INIT=1 '"$LOAD_NEXT_COMMON_INVOCATION_ENV"\
 '; next="${TITLE}"'\
 ';: 3'\
 '; printf "'"%s ${ctrlnkey} » ${funckey} %s      %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}" "'"$i18n_F10_hotkeys"'"'\
@@ -1555,7 +1573,7 @@ ${DEBUG3:+'; set +x; echo >&2 "]]"'}\
 "</input>
         ${DEBUG2:+<action>echo>&2 ,,, varSBAR ,,,</action>}
         </statusbar>
-        <action signal=\"button-press-event\">set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \${#}))>'$F3SF'</action>
+        <action signal=\"button-press-event\">$SELECT_NEXT_SOURCE</action>
         <action signal=\"button-press-event\">refresh:varF3</action>
       </eventbox>
     </vbox>" # Copy <action>s from <menuitem> HOTKEY_F3.
@@ -1979,7 +1997,7 @@ start_window << EOF
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
         <menuitem label="$i18n_cycle_through_search_sources" accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
-          <action>set -- $VISIBLE_SOURCES; echo -n \$(((\${varF3} + 1) % \${#}))>'${F3SF}'</action>
+          <action>$SELECT_NEXT_SOURCE</action>
           <action>refresh:varF3</action>
         </menuitem>
         ${REMARK#   ]]]}
