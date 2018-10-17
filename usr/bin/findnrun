@@ -726,7 +726,7 @@ SKIP_INIT=true . "${SRCSTEM}0-"*.sh
 invalid=$(list_diff "$SOURCES" "$VISIBLE_SOURCES $DISABLED_SOURCES $HIDDEN_SOURCES")
 if [ -n "$invalid" ]; then
   yad --title "${APP_NAME}" --window-icon=edit-find --center --on-top \
-    --image gtk-dialog-warning --buttons-layout=center --margins=4 \
+    --image gtk-dialog-warning --buttons-layout=center --borders=4 \
     --button=gtk-ok \
     --text "$(printf \
       "$i18n_Invalid_source_plugins" \
