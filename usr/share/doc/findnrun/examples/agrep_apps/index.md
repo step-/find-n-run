@@ -66,7 +66,7 @@ Example: search for 'audio' OR 'office' assuming `REGEXSEARCH=false`:
 ### Saving Results
 
 You can save search results by pressing hotkey F4. This is the same save
-function that the built-in application search uses. See 'XCLIP' in the
+function that the built-in application search uses. See 'RDR' in the
 _Configuring Preferences_ section of the main help file.
 
 ### Translations

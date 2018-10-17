@@ -254,11 +254,6 @@ file and invokes save-filter-command as follows:
     eval <save-filter-command>
 ```
 
-Then save-filter-command can process the file to its own liking. It can use
-`set=` to change the default save file, `${file}` to refer to the save file,
-and leverage `$FNRSAVEFLT`, a predefined save filter function that built-in
-sources use.
-
 ### Invocation Environment
 
 The _invocation environment_ provides tap-, drain, save-filter- and init-
@@ -277,11 +272,9 @@ commands with the following preset variables:
  * `${FNRRPC}` - call interface mailbox file, see section _Remote Call Interface_
  * `${FNRDEBUG}` - findnrun debugging level 1-9.
 
-For save-filter-command only there are also these variable that can be
-leveraged to create custom save filters:
+For save-filter-command these additional variables can be used:
 
- * `${FNRSAVEFLT}` - predefined save-filter code for built-in sources[4]
- * `${FNRXCLIP}` - XCLIP redirection for built-in sources.
+ * `${FNRSAVEFLT}` - predefined save-filter code used by built-in sources[4]
 
 [1] Value is `NA` if gtkdialog isn't running.
 
@@ -307,8 +300,7 @@ leveraged to create custom save filters:
  * **Activate** - Drain - Enter key pressed or mouse left-clicked when a
    search result list item has the focus.
 
-[4] For `${FNRSAVEFLT}`s usage read its definition in findnrun's source code,
-    and look at `SAVEFLT_FNRstart` and `SAVEFLT_filmstrip` for examples.
+[4] See section _Saving Search Results_.
 
 ### Findnrun User Interface and Source Plugins
 
@@ -443,6 +435,32 @@ Recognized calls:
    invoke `<tap-command>`
  * `PageUp` - Paginate up, cf. _Paginating Search Results_
  * `PageDown` - Paginate down
+
+### Saving Search Results
+
+When the user presses hotkey `F4` findnrun saves the raw search results to a
+file and invokes save-filter-command. Built-in sources use a predefined
+save-filter-command, which is exported to the SAVEFLT invocation environment as
+`${FNRSAVEFLT}`. Your plugin can use it or define a custom save filter
+altogether.
+
+FNRSAVEFLT's behavior can be tuned via environment variables `CUT` and `RDR`,
+which can be set also in file [~/.findnrunrc](preference.md). `CUT` selects
+which columns to save, and `RDR` defines where to save them (a filepath or a
+command pipe).
+
+For details please read the FNRSAVEFLT source code in the findnrun script file,
+and look at the definitions of `SAVEFLT_FNRstart`, `SAVEFLT_FNRsc` and
+`SAVEFLT_filmstrip` for inspiration.
+
+When FNRSAVEFLT is used:
+
+* Findnrun displays a confirmation dialog when the data is saved to a filepath.
+* The filepath must exist (except its last component, the filename, which may not).
+
+When a custom save filter is used:
+
+* it can get input data by reading file `${file}`.
 
 ### Findnrun Termination and Plugins
 

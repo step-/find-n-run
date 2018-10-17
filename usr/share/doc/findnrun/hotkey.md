@@ -9,7 +9,7 @@ window to see a short list of the currently assigned keys.
  * `[F1]` - view help documentation
  * `[F2]` - cycle keyboard focus between the history field and the search input field
  * `[F3]` - start the next search plugin
- * `[F4]` - copy raw search results to file and/or clipboard ([XCLIP](preference.md) required)
+ * `[F4]` - save search results to file or command pipeline
  * `[F5]` - activate in terminal the top or highlighted search result item[0]
  * `[F12]` - activate the top or highlighted search result item[0]
  * `[Escape]` - exit findnrun

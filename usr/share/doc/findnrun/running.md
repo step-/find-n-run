@@ -109,9 +109,9 @@ initialization files.
 
     env GEOMETRY=500x200+100+100 findnrun
 
-`XCLIP`
+`RDR`
 
-  Advanced setting for the save filter function. See XCLIP in [user preferences](preference.md).
+  Advanced setting for the save filter function. See RDR in [user preferences](preference.md).
 
 `FNRDEBUG`
 

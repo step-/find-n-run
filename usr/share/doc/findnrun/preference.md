@@ -42,7 +42,7 @@ power users and custom applications:
     HOTKEY_F2=0:F2:0xffbf
     # Pressing HOTKEY_F3 starts the next available source plugin.
     HOTKEY_F3=0:F3:0xffc0
-    # Pressing HOTKEY_F4 saves+filters raw search results (see XCLIP)
+    # Pressing HOTKEY_F4 saves+filters search results
     HOTKEY_F4=0:F4:0xffc1
     # Pressing HOTKEY_F5 runs the top/selected search result item in a terminal
     HOTKEY_F5=0:F5:0xffc2
@@ -84,14 +84,18 @@ power users and custom applications:
     #GTK_ICON_THEME_NAME="/path/to/icon-theme-directory" # optional
     # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
-    # Set XCLIP to an alternative X clipboard copy/paste filter for hotkey F4.
-    # Default value: the xclip binary file, if it's installed.
-    # Use 'none' to disable clipboard copying; output is sent to stderr.
-    # Piping and/or redirection are also supported, .i.e.,
-    #   env XCLIP="|cut -f2 >/dev/stderr" findnrun &
-    #   env XCLIP=">/tmp/myfile" findnrun &
-    # Built-in sources honor this setting. Some plugins may not.
-    #XCLIP=
+    # Change the output destination to which hotkey F4 saves search results.
+    # Default value: '@timestamp'.
+    # Use '@timestamp' for a timestamped, tab-separated-value (.tsv) file in your home folder.
+    # Use 'none' to disable saving search results.
+    # Use '>/path/to/filename' to save to filename. /path/to must exist.
+    # Command pipelines are supported, too, i.e.,
+    #   RDR="|cut -f1,2 |tee /dev/stderr" # label & .desktop full path to stderr
+    #   RDR="|xclip" # all columns to the clipboard
+    # Changing RDR affects the destination of all sources.
+    # To changes single sources read plugin-dev.md.
+    # Built-in sources honor RDR. Some external plugins may not.
+    #RDR=@timestamp
     # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included. 
     # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
     IBOL=' '

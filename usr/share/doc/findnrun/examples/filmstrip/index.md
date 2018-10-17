@@ -61,18 +61,18 @@ image viewer. This action can be customized with CUSTOM\_CLICK.
 You can save search results by pressing hotkey F4. By default
 tab-separated text data fields are copied to the clipboard if xclip is
 installed, otherwise data are sent to the standard error stream.  To save
-to a file start findnrun like so:
+to a file start findnrun like so (or set RDR in file ~/.findnrun):
 ```
-    XCLIP=">/path/to/save-file.tab" findnrun &
+    RDR=">/path/to/save-file.tsv" findnrun &
 ```
 To keep just specific columns use a filter command, i.e.:
 ```
-    XCLIP="|cut -f2 >/path/to/save-file.csv" findnrun &
+    RDR="|cut -f2 >/path/to/save-file.tsv" findnrun &
     # -f2 : image file full path
 ```
 To copy to the clipboard:
 ```
-    XCLIP="|xclip" findnrun &
+    RDR="|xclip" findnrun &
 ```
 
 Search results can be paginated by pressing the PageDown or PageUp keys
