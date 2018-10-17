@@ -1349,15 +1349,19 @@ set_SELECT_NEXT_SOURCE() # [[[2
 #]]]
 set_SELECT_NEXT_SOURCE
 
-set_LOAD_COMMON_INVOCATION_ENV() # [[[2
+set_LOAD_INVOCATION_ENV() # [[[2
 {
   # Code that loads the current source's invocation environment as defined in doc/findnrun/plugin-dev.md.
-  LOAD_COMMON_INVOCATION_ENV=". \"${SRCSTEM}\"\${varF3:-0}-*.sh"
+  LOAD_INVOCATION_ENV=\
+${DEBUG3:+'>&2 echo "[["; set -x;'}\
+". \"${SRCSTEM}\"\${varF3:-0}-*.sh"\
+${DEBUG3:+'; set +x; echo >&2 "]]"'}
   # Code that loads the next source's invocation environenment
-  LOAD_NEXT_COMMON_INVOCATION_ENV=". \"${SRCSTEM}\"\$(((\${varF3:-0} + 1) % \${NSOURCES:-${NSOURCES}}))-*.sh"
+  LOAD_NEXT_INVOCATION_ENV=\
+". \"${SRCSTEM}\"\$(((\${varF3:-0} + 1) % \${NSOURCES:-${NSOURCES}}))-*.sh"
 }
 #]]]
-set_LOAD_COMMON_INVOCATION_ENV
+set_LOAD_INVOCATION_ENV
 
 set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 {
@@ -1406,18 +1410,6 @@ if(match($0,/<input file>\${SVAR}[^<]+/)){
 #]]]
 set_REFRESH_SOURCE_VARS_FOR_INPUT_FILE
 
-set_GET_SOURCE() # [[[2
-{
-  # Echo sh code that loads the current source fields.
-  # Fields are returned as shell variables - See doc/findnrun/plugin-dev.md.
-  GET_SOURCE=\
-${DEBUG3:+'>&2 echo "[["; set -x;'}\
-"$LOAD_COMMON_INVOCATION_ENV"\
-${DEBUG3:+'; set +x; echo >&2 "]]"'}
-}
-#]]]
-set_GET_SOURCE
-
 set_INVOKE_SOURCE_TAP() # [[[2
 {
   # Code that invokes the current source's tap-command.
@@ -1432,7 +1424,7 @@ set_INVOKE_SOURCE_TAP() # [[[2
 ';ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}"'\
 ';: 2'\
 ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_tap\""'}\
-";${GET_SOURCE}"\
+";$LOAD_INVOCATION_ENV"\
 ' && : 3'\
 ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}'\
 ' && : 4'\
@@ -1507,7 +1499,7 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
 "; $UNEXPORT $UNEXP_GUI1"\
 ';: 3'\
 ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain'$__term_suffix'\""'}\
-";${GET_SOURCE}"\
+";$LOAD_INVOCATION_ENV"\
 ';: 4'\
 '; eval set -- ${DRAIN} "$@"; '"$SAVE_ARGS_HISTORY"\
 ';: 6'\
@@ -1563,9 +1555,9 @@ set_STATUS_BAR() # [[[2
 ': 1'\
 ${DEBUG3:+'; echo >&2 "=== GENERATE STATUS BAR [["; set -x'}\
 '; title="${TITLE}"'\
-'; [ -z "${title}" ] && SKIP_INIT=1 '"$LOAD_COMMON_INVOCATION_ENV"' && title="${TITLE}"'\
+'; [ -z "${title}" ] && SKIP_INIT=1 '"$LOAD_INVOCATION_ENV"' && title="${TITLE}"'\
 ';: 2'\
-'; SKIP_INIT=1 '"$LOAD_NEXT_COMMON_INVOCATION_ENV"\
+'; SKIP_INIT=1 '"$LOAD_NEXT_INVOCATION_ENV"\
 '; next="${TITLE}"'\
 ';: 3'\
 '; printf "'"%s ${ctrlnkey} » ${funckey} %s      %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}" "'"$i18n_F10_hotkeys"'"'\
