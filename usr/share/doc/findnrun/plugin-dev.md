@@ -145,22 +145,23 @@ A source plugin is installed by adding its declaration into
  * `<icon-name-or-filepath>` is a GTK icon name[2] or the full path to a supported icon image file.
  * `<source-title>` is displayed in the user interface.
  * `<init-search>` can be used to initialize the search input field.
- * `<mode-mask>` is a bit mask of plugin modifiers, for instance "disabled".
+ * `<mode-mask>` is a bit mask of plugin modifiers, e.g. "disabled".
  * `<plugin-dir-path>` is the location of the plugin resource files, if any.
  * `<save-filter-command>` is any valid shell command.
  * `<init-command>` is any valid shell command.
  * Embedded newline or carriage return characters are not allowed in
    `<...-command>` values.
- * All values are quoted strings. Paired exterior double quotes work
-   just as well as single quotes, but require escaping interior shell
+ * All values are quoted strings. Paired exterior double quotes work just as
+   well as single quotes, but require escaping interior double quotes and shell
    special characters.
 
 [1] A common pitfall is declaring, say, `INIT_My="command"` but forgetting to
    insert `INIT_My` in its correct slot of `SOURCE_My`.  If you do so,
    the declaration of `INIT_My` will be ignored.
+
 [2] An icon name refers to an existing icon file in the current GTK user theme
-or fallback theme (hicolor), or is a GTK stock icon name. If none of these
-conditions is met you must declare the full path to the icon file.
+   or fallback theme (hicolor), or is a GTK stock icon name. If none of these
+   conditions is met you must declare the full path to the icon file.
 
 You can use any valid shell variable name as an `<...-id>`, but
 prefix "FNR" is reserved for findnrun's own plugins.
@@ -199,7 +200,7 @@ values:
     0x2  HIDDEN    Plugin is installed/validated/allocated but invisible *NOT IMPLEMENTED*
 ```
 
-**Example of disabled plugin**
+**Disabling a plugin**
 ```
     # tap:drain:default_icon:title:search_term:mode_bit_mask
     SOURCE_find_file='find_file:filer_select:find_file:find_file::disabled'
@@ -244,9 +245,9 @@ If the drain-command value is null findnrun starts `<tap-data>` with the
 shell builtin command `eval`.
 
 [1] Findnrun's _history service_ also saves two other history files: the
-global history file and the plugin's history file. Currently these files
-are not exposed in the user interface, and the pull-down widget shows
-the global history. This might change in the future.
+   global history file and the plugin's history file. Currently these files
+   are not exposed in the user interface, and the pull-down widget shows
+   the global history. This might change in the future.
 
 When the user presses hotkey `F4` findnrun saves the raw search results to a
 file and invokes save-filter-command as follows:

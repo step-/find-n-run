@@ -1369,7 +1369,7 @@ set_LOAD_INVOCATION_ENV() # [[[2
 ${DEBUG3:+'>&2 echo "[["; set -x;'}\
 ". \"${SRCSTEM}\"\${varF3:-0}-*.sh"\
 ${DEBUG3:+'; set +x; echo >&2 "]]"'}
-  # Code that loads the next source's invocation environenment
+  # Code that loads the next source's invocation environnment
   LOAD_NEXT_INVOCATION_ENV=\
 ". \"${SRCSTEM}\"\$(((\${varF3:-0} + 1) % \${NSOURCES:-${NSOURCES}}))-*.sh"
 }
@@ -1388,7 +1388,7 @@ set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 "; $LOAD_INVOCATION_ENV"\
 "; if [ -n \"\$SAVEFLT\" ]; then"\
 " file=\"$F4SF\""\
-"; FNRDEBUG=$FNRDEBUG FNRTMP=\"$TMPD\" FNRPID=$FNRPID FNRRPC=\"$FNRRPC\""\
+"; FNRDEBUG=$FNRDEBUG FNRTMP=\"$TMPD\" FNRPID=\$FNRPID FNRRPC=\"$FNRRPC\""\
 " FNRSAVEFLT=\"$FNRSAVEFLT\""\
 " eval \$SAVEFLT"\
 '; fi'
