@@ -2109,7 +2109,7 @@ start_window << EOF
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey targets (hidden).}
   ${REMARK#  [[[. refresh:varF2 to cycle focus between the search field and the command entry field.}
-  ${REMARK# Key F2 demonstrates how.}
+  ${REMARK# Used by key F2.}
   <checkbox visible="false">
     <default>false</default>
     <label>F2</label>
@@ -2121,6 +2121,7 @@ start_window << EOF
   </checkbox>
   ${REMARK#  ]]]}
   ${REMARK#  [[[. refresh:varF3 to switch the list view to another source.}
+  ${REMARK# Used by key F3.}
   <entry visible="false" sensitive="false">
     <variable>varF3</variable>
     <default>0</default>
@@ -2136,7 +2137,7 @@ start_window << EOF
   </entry>
   ${REMARK#  ]]]}
   ${REMARK#  [[[. Write event name to file $ETAP to invoke the current tap.}
-  ${REMARK# Keys PageDown/PageUp demonstrate how.}
+  ${REMARK# Used by keys PageDown/PageUp.}
   <entry visible="false" auto-refresh="true">
     <default>Search</default>
     <variable>invokeTAP</variable>
