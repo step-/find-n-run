@@ -290,7 +290,7 @@ done
 
 # Initialize more variables [[[1
 # Some environment variables may affect operations:
-# BROWSER, GEOMETRY, LANG, XCLIP, and more.
+# BROWSER, GEOMETRY, LANG, and more.
 
 which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
 
@@ -300,21 +300,7 @@ which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
 BUILTIN_SOURCES="FNRstart|FNRsc"
 
 # Built-in save-filter-command. [[[2
-FNRSAVEFLT="gawk -f \"$AWK4\""
-# usage:
-#   SAVEFLT_<source-id>="CUT\"=i,j,k,...\" RDR="redirection" \$FNRSAVEFLT \"${file}\""
-# CUT and RDR explained at script AWK4 - see examples for FNRstart and Filmstrip source.
-
-# save-filter-command setup for built-in sources. [[[2
-# If xclip command exists then copy stdout to clipboard else to awk's stderr.
-# User preference XCLIP can override/disable clipboard copying.
-if [ -z "$XCLIP" ]; then
-  XCLIP=$(which xclip 2>/dev/null)
-  [ -e "$XCLIP" ] && XCLIP="|$XCLIP"
-fi
-if [ -z "$XCLIP" -o none = "$XCLIP" ]; then
-  XCLIP=">/dev/stderr"
-fi
+FNRSAVEFLT="gawk -f \"$AWK4\"" # usage is given at awk script AWK4
 
 # FNRstart - Default built-in source "Application Finder" [[[2
 SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
@@ -328,8 +314,7 @@ INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='findnrun'
-# save item label, .desktop file fullpath, exec line, comments, categories
-SAVEFLT_FNRstart="CUT=\"-4,1,3,4,5\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
+SAVEFLT_FNRstart="\$FNRSAVEFLT CUT=\"$CUT\" RDR=\"$RDR\" \"\${file}\""
 
 # FNRsc - Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc:FNRsc"
@@ -342,8 +327,8 @@ ICON_FNRsc='findnrun_sc'
 INIT_FNRsc="set +f; ifs=\$IFS; IFS=:; for d in \$PATH; do cd \"\$d\" && ls -1 *\"\${term}\"*; done 2>/dev/null | findnrun-formatter -- -I $ICON_FNRsc -O su >\"$p/.dat\"; IFS=\$ifs"
 TAP_FNRsc="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"$p/.dat\"${REDIRECT2}"
 TITLE_FNRsc=$i18n_shell_completion
-# save item label == exec line
-SAVEFLT_FNRsc="CUT=\"-4\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"\${file}\""
+# save item label(-4) == exec line(3)
+SAVEFLT_FNRsc="\$FNRSAVEFLT CUT=\"-4\" RDR=\"$RDR\" \"\${file}\""
 
 # Compile built-in and plugin sources. [[[1
 TIMER1=$(date +%s.%N)
@@ -1261,34 +1246,50 @@ export GUI_ABOUT='
   <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:GUI_ABOUT</action>
 </window>'
 
-# Prepare the save filter script. [[[1
-# Usage: gawk -f "$AWK4" "\${file}" with $CUT and $RDR environment variables
+# Prepare the built-in FNRSAVEFLT save filter script. [[[1
 > "${AWK4}" echo '#!/usr/bin/gawk -f
+# Usage: gawk -f "$AWK4" [CUT="..."] [RDR="..."] "\${file}"
+#   SAVEFLT_<source-id>="\$FNRSAVEFLT [CUT\"=i,j,k,...\"] [RDR=\"<redirection>\"] \"${file}\""
+#
 # "CUT=i,j,k,..." selects which fields to print:
 # Positive indexes select source-defined fields.
 # Negative indexes select tree widget item fields in reverse order.
 # Thus -1 is the icon, and -4 is the item label.
 # "\t" (tab) is the output field separator.
 #
-# Typical redirections:
-# RDR=">/dev/stderr" or RDR=">/path/to/output/file"
+# <redirection> defines the output sink. Typical <redirection>s:
+# RDR="none" or RDR="@timestamp" (default)
+# RDR=">/path/to/output/file" (including /dev/stderr, etc.)
 # RDR="|xclip" or RDR="|/path/to/executable-file"
+#
+# Examples: see SAVEFLT_FNRstart, SAVEFLT_FNRsc, SAVEFLT_filmstrip.
 
-BEGIN {
+BEGINFILE {
   FS = "|"
-  CUT=ENVIRON["CUT"]
-  RDR=ENVIRON["RDR"]
-  n = split(CUT, f, /,/)
-  if(match(RDR, /^[ \t]*[|]/)) {
-    redirect = "piper"
-  } else if(match(RDR, /^[ \t]*[>]/)) {
-    redirect = "printer"
-  } else {
-    printf "'"$i18n_invalid_SAVEFLT_redirection"'", \
-      ENVIRON["ID"], RDR > "/dev/stderr"
-    exit(1)
+  if("" == CUT) {
+    # item label(-4), .desktop file fullpath(1), exec line(3), comments(4), categories(5)
+    CUT = "-4,1,3,4,5"
   }
-  RDR = substr(RDR, RSTART+RLENGTH)
+  if("" == RDR) {
+    RDR = "@timestamp"
+  }
+  n = split(CUT, f, /,/)
+  if(match(RDR, /^[[:blank:]]*[|][[:blank:]]*(.+)/, m)) {
+    redirect = "to_pipe"
+    RDR = m[1]; FILE = ""
+    exit_msg = "none"
+  } else if(match(RDR, /^[[:blank:]]*[>][[:blank:]]*(.+)/, m)) {
+    redirect = "to_tsv_file"
+    RDR = FILE = m[1]
+  } else if(match(RDR, /^[ \t]*[@]timestamp/)) {
+    # accept @timestamp only
+    RDR = FILE = "'"$HOME/$SN-"'"strftime("%F-%T")".tsv"
+    redirect = "to_tsv_file"
+  } else {
+    FILE = ""
+    exit_msg = sprintf("'"$i18n_invalid_SAVEFLT_redirection"'", ENVIRON["ID"], RDR)
+    exit
+  }
 }
 {
   # positive indexes
@@ -1298,23 +1299,35 @@ BEGIN {
   while(!(++w>=NF)) {
     a[-w] = $(w)
   }
-  @redirect(f,a,n)
+  emit(f,a,n)
 }
-function piper(f,a,n,   i) { # [[[2
+ENDFILE {
+  close(RDR)
+  if("" != FILE) {
+    exit_msg = sprintf("'"$i18n_Search_results_saved_as"'", FILE)
+    icon = "gtk-ok"
+  } else {
+    icon = "gtk-dialog-warning"
+  }
+  if("none" != exit_msg) {
+    system("yad --text=\""exit_msg"\" --button=gtk-ok --window-icon="icon" --title=\"'"$APP_NAME"'\" --center --on-top --buttons-layout=center --borders=4 &")
+  }
+}
+function emit(f,a,n,   i) { # [[[2
   while(!(++i>=n)) {
-    printf "%s\t", a[f[i]] | RDR
+    @redirect(a[f[i]], "\t")
   }
   if(n) {
-    print a[f[n]] | RDR
+    @redirect(a[f[n]], "\n")
   }
 }
-function printer(f,a,n,   i) { # [[[2
-  while(!(++i>=n)) {
-    printf "%s\t", a[f[i]] > RDR
-  }
-  if(n) {
-    print a[f[n]] > RDR
-  }
+function to_pipe(f, s) {
+  gsub(/\t/, "\\t", f) # defensive, since field could embed \t
+  printf "%s%s", f, s | RDR
+}
+function to_tsv_file(f, s) { # [[[2
+  gsub(/\t/, "\\t", f) # defensive, since field could embed \t
+  printf "%s%s", f, s > RDR
 }
 '
 
@@ -1367,8 +1380,7 @@ set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 {
   # Code that invokes the current source's save-filter-command.
   # 1. Unexport some vars.
-  # 2. Set invocation environment and start save-filter-command. [[[
-  #    FNRXCLIP is specific for the save-filte-command invocation environment. ]]]
+  # 2. Set invocation environment and start save-filter-command.
   INVOKE_SOURCE_SAVE_FILTER=\
 ': 1'\
 "$UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_INVK"\
@@ -1377,7 +1389,7 @@ set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 "; if [ -n \"\$SAVEFLT\" ]; then"\
 " file=\"$F4SF\""\
 "; FNRDEBUG=$FNRDEBUG FNRTMP=\"$TMPD\" FNRPID=$FNRPID FNRRPC=\"$FNRRPC\""\
-" FNRSAVEFLT=\"$FNRSAVEFLT\" FNRXCLIP=\"$XCLIP\""\
+" FNRSAVEFLT=\"$FNRSAVEFLT\""\
 " eval \$SAVEFLT"\
 '; fi'
 }

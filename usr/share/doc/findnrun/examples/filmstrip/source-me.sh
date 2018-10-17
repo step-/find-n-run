@@ -27,12 +27,12 @@ define_source_plugin () { #{{{
   ICON_filmstrip='/usr/share/doc/findnrun/examples/filmstrip/filmstrip.svg'
   INITSEARCH_filmstrip=''
   # save-filter definition {{{
-    # Cf. same variable definitions in filmstrip/tap.sh
-    local TMPD RESF
-    TMPD="\${FNRTMP:-/tmp}/.\${ID:-filmstrip}" # deferred
-    RESF="${TMPD}/.result" # search results for each ${term}
-  # extract item label, image file fullpath, full exif description
-  SAVEFLT_filmstrip="CUT=\"-3,-4,-5\" RDR=\"\$FNRXCLIP\" \$FNRSAVEFLT \"$RESF\""
+  # Cf. same variable definitions in filmstrip/tap.sh
+  local TMPD RESF
+  TMPD="\${FNRTMP:-/tmp}/.\${ID:-filmstrip}" # deferred
+  RESF="${TMPD}/.result" # search results for each ${term}
+  # extract item label(-3), image file fullpath(-4), full exif description(-5)
+  SAVEFLT_filmstrip="\$FNRSAVEFLT CUT=\"-3,-4,-5\" RDR=\"$RDR\" \"$RESF\""
   #}}}
 }
 #}}}
