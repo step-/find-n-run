@@ -75,6 +75,7 @@ i18n_table() # {{{1
     read i18n_show_help
     read i18n_cycle_through_input_fields
     read i18n_cycle_through_search_sources
+    read i18n_Search_results_saved_as
   } << EOF
   $(gettext -es -- \
   "Findnrun\n" \
@@ -94,7 +95,7 @@ i18n_table() # {{{1
   "%s source loaded\n" \
   "%s sources loaded\n" \
   "_OK\n" \
-  "%s: invalid SAVEFLT redirection '%s'\n" \
+  "Source %s defines an invalid SAVEFLT redirection: '%s'.\n" \
   "[ctrl+%d]\n" \
   "[%s]\n" \
   "Click the status bar or press a hotkey to activate the next source.\r%s\r%s\n" \
@@ -140,6 +141,7 @@ i18n_table() # {{{1
   "show help\n" \
   "cycle through input fields\n" \
   "cycle through search sources\n" \
+  "Search results saved as '%s'.\n" \
   )
 EOF
 }
