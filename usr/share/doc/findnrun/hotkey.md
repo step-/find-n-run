@@ -20,6 +20,7 @@ window to see a short list of the currently assigned keys.
    Usually `1` is findnrun's default application search.
 
 [0] Focus moves according to user preference 'Focus search'.
+
 [1] Plugin only feature. Demo plugin: 'Filmstrip'.
    The number of lines that get rotated varies with each plugin.
 
