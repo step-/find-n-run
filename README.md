@@ -12,6 +12,33 @@ A progressive finder.
 
 ## News
 
+**19-Oct-2018 Release 3.0.0**
+* Faster program start.
+* Huge speed increase "Showing all icons".
+* New: Dash compatible out-of-the-box (sh, bash and ash too).
+* New: Hotkey help - hotkey F10 lists hotkey assignments.
+* New: Save results - hotkey F4 saves search results to a file or command pipe defined via `RDR` in file ~/.findnrunrc.
+* New: Run in terminal - hotkey F5 starts selected item in a terminal window.
+* New: Run in terminal - UI button to run command entry field in a terminal window.
+* New: Icon theme support - icons honor the GTK2 icon theme, if any, e.g. in file ~/.gtkrc-2.0:
+    `gtk-icon-theme-name="Clarity"
+* New: Icon theme support - override GTK2 icon them with new preference `GTK_ICON_THEME_NAME` in file ~/.findnrunrc.
+* New: Source property - Add `INIT_<source>` to built-in and plugin source declarations.
+* New: display fallback icon when no app icon exists.
+* New: Allow icon names (not just paths) for built-in and plugin sources.
+* Changed: Move icons from /usr/share/doc/findnrun to /usr/share/icons.
+* Changed: Use icon name 'findnrun' for all sub-windows but Help.
+* Changed: Reject non- `Type=Application` .desktop files.
+* Changed: Variables XCLIP (preferences.md) and FNRSAVEFLT (plugin-dev.md) are no longer supported.
+* Fix: No window auto-close after hotkey F12.
+* Fix: wrong `XDG_DATA_HOME` initialization.
+* Fix: `yad --progress` still visible after main window exit.
+* Fix: Regex search fails for _Shell Completion_ source.
+* Several UI messages added and changed (translations needed).
+* Help and documentation files updated (translations needed).
+* i18n translation template (.pot file) updated.
+* Plugins: New `INIT_<source>`, _Saving Search Results_.
+
 **24-Aug-2018 Release 2.5.0**
 * Faster application start thanks to new translation lookup method, new
   icon caching algorithm, and optimized plugin validation.
