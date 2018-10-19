@@ -5,39 +5,39 @@ already meet the minimum requirements for findnrun.  Other Debian-based
 distributions, such as Ubuntu and Mint, need additional packages before
 they can use findnrun. More information for Debian systems is available
 on the
-[project page](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/DEBIAN.md)
+[Debian page](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/DEBIAN.md)
 
-Findnrun depends on the following packages:
+Findnrun **requires** the following dependencies:
 
- * GNU awk, **gawk 4.1.0**
- * **gtk-dialog 0.8.3**
- * the **ash** shell - cf. section _Ash_ below
- * **mdview >2016.02.04** - indispensable to view translated help files;
-   recommended to view English help files.
+* The shell sh - see section _Shell_ below
+* GNU awk gawk 4.1.0 or higher
+* gtk-dialog 0.8.3 or higher
+* xwininfo
+* yad
 
-### Ash
+Findnrun also uses the following packages if they are available. If they
+aren't findnrun will still run but some functions will not work:
 
-If the ash shell **is** installed, be wary that some Linux
-distributions link `/bin/ash` to `/bin/dash`, and dash can't run
-findnrun. When ash is linked to dash findnrun prints error messages to
-the shell such as:
-```
-    gawk: /tmp/findnrun_18ud5t/.build.awk:3:   if("") print "
-    gawk: /tmp/findnrun_18ud5t/.build.awk:3:                ^ syntax error
-    sh: $'\b': command not found
-```
+* **mdview >2016.02.04** - to view English help documentation and its
+  translations. If mdview isn't installed a text editor is used instead but
+  only English documentation can be shown. Mdview source code can be found
+  [here](http://chiselapp.com/user/jamesbond/repository/mdview3/timeline).
+  Mdview itself has no dependencies. It's just a straight C compilation.
+* the /proc file system (Linux). If /proc isn't available, findnrun won't be
+  able to restart itself from its UI but all other functions will work just
+  fine.
+* GNU date - only used in debugging mode, no bearing on normal operation.
 
-If the true ash shell isn't already installed you can target /bin/busybox,
-if available, as a symbolic link or even /bin/bash.
+### Shell
 
-To create a symbolic link run the following commands in a terminal:
-```
-    test `readlink -m /bin/ash` = /bin/dash && echo "Remove link /bin/ash -> /bin/dash first."
-    test -x /bin/ash || sudo ln -s /bin/busybox /bin/ash
-    test -x /bin/ash || sudo ln -s /bin/bash /bin/ash
-    ls -l /bin/ash
-```
+Findnrun is tested and known to work with the following shells: ash, dash,
+bash. By default findnrun runs under `/bin/sh`, which is linked to dash on
+Debian Linux, and to bash on Ubuntu Linux. On Fatdog64 and other slim
+distributions `/bin/sh` is linked to busybox ash.
 
-If `/bin/ash` is still unavailable or linked to `/bin/dash` try changing
-the first line of file `/usr/bin/findnrun` to reference `/bin/bash`
-instead of `/bin/ash`.
+If you need to run findnrun under a specific shell, you can edit the first line
+of file `/usr/bin/findnrun` to reference `/bin/bash` or whatever instead of
+`/bin/sh`.
+
+Historical note: findnrun versions before 3.0.0 only worked with ash and bash.
+

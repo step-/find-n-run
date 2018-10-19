@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/sh
 # vim: foldmarker=[[[,]]]:
 
 # =============================================================================
@@ -6,7 +6,7 @@
   Version=2.5.1-WIP
 # authors: Copyright (C)2015-2018 step; (C)2015 SFR, L18L
 # license: GNU GPL version 2
-# depend: gtk-dialog 0.8.3+, gawk, ash (or bash), xwininfo, yad
+# depend: gtk-dialog 0.8.3+, gawk 4.1.0+, sh/ash/dash/bash, xwininfo, yad
 # suggest: mdview (markdown help), proc(5) (restart findnrun), GNU date (debug)
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
@@ -124,7 +124,7 @@ RWMF="${TMPD}/.msg_restart" # RESTART_WINDOW message
 ETAP="${TMPD}/.eta"; >"${ETAP}" # tap invocation event
 FNRRPC="${TMPD}/.rpc"; >"${FNRRPC}" # remote procedure call mailbox
 YPID="${TMPD}/.pidof_yad_progress"; >"${YPID}" # yad --progress PID
-SEP=`echo -e "\b"` # field separator of packed values
+SEP=`printf '\b'` # field separator of packed values
 SVAR="${TMPD}/.vars-" # set_REFRESH_SOURCE_VARS_FOR_INPUT_FILE
 
 # -----------------------------------------------------------------------------
@@ -722,8 +722,8 @@ fi
 # Usage: gawk -f "${AWKB}" [-v GREP="string"] [-v ALL_ICONS=true] [-v FALLBACK_ICON="icon-name-or-filepath"] [-v SHOWNODISPLAY=true|false] [-v DSKL="desktop-file-list" | desktop-files ]
 # Specify input files (.desktop) either as lines of DSKL or as awk arguments.
 # The former style allows for handling read file errors gracefully and is used throughout this script.
-[ -x /bin/dash ] && SH=/bin/dash || SH=/bin/ash
-> "${AWKB}" echo '#!/usr/bin/gawk -f
+[ -x /bin/dash ] && SH=/bin/dash || SH=sh
+> "${AWKB}" printf %s\\n '#!/usr/bin/gawk -f
 BEGIN { # [[[2
   if('${DEBUG1:-0}') {
     (__c = "date +%s.%N") | getline __t0; close(__c)
@@ -1139,7 +1139,7 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(${case}(a[4]),GREP)${left}"
   case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(${case}(a[5]),GREP)";; esac
 fi
-> "${AWKQ}" echo '#!/usr/bin/gawk -f
+> "${AWKQ}" printf %s\\n '#!/usr/bin/gawk -f
 BEGIN {
   '${DEBUG1:+ ' searchexpr="'"${subject}${left} ${fnameleft} ${commleft} ${categ}"'"'}'
   '${DEBUG1:+ ' gsub("GREP", "\""GREP"\"", searchexpr)'}'
@@ -1181,9 +1181,9 @@ set_HELP_BUTTON_and_HELPVIEWER() #[[[2
       hd="${TMPD}/help" && mkdir -p "${hd}" &&
       case "${hf##*.}" in t[gx]z|[gx]z) tar -C "${hd}" -xaf "${hf}" && hf=$(set +f; echo "${hd}"/index.*) ;; esac &&
       case "${hf##*.}" in md) x=${FNRMDVIEW:-mdview} ;; htm*) x=defaultbrowser;; esac
-      read -t 1 helpviewer << EOF
-$(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
-EOF
+      unset IFS # changing IFS is OK because we're going to exit the outer loop anyway
+      set -- $(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
+      helpviewer=$1
       case ${helpviewer} in
         '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
         *mdview) # used to invoke the main index.md then a plugind index.md, if any: `v ${PLGDIR:-.../index.md}`
@@ -1200,8 +1200,8 @@ EOF
   <action>${helpviewer} &</action>
   <action>closewindow:GUI_ABOUT</action>
 </button>" HELPVIEWER=$helpviewer
-    break # on first valid help file path $hf found
-  fi
+      break # on first valid help file path $hf found
+    fi
   done
 }
 #]]]
@@ -1247,7 +1247,7 @@ export GUI_ABOUT='
 </window>'
 
 # Prepare the built-in FNRSAVEFLT save filter script. [[[1
-> "${AWK4}" echo '#!/usr/bin/gawk -f
+> "${AWK4}" printf %s\\n '#!/usr/bin/gawk -f
 # Usage: gawk -f "$AWK4" [CUT="..."] [RDR="..."] "\${file}"
 #   SAVEFLT_<source-id>="\$FNRSAVEFLT [CUT\"=i,j,k,...\"] [RDR=\"<redirection>\"] \"${file}\""
 #
