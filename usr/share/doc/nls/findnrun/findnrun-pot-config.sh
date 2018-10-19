@@ -39,9 +39,10 @@ is_to_be_translated() # $1-filepath
     */TRANSLATING.md)
       : $f targets translators - they need English doc only
       ;;
-    */DEBIAN.md)
-      : $f Debian package is not maintained since version 2.0.0
-      ;;
+    # $f Debian info is again maintained since version 3.0.0
+    # */DEBIAN.md)
+    #   : $f Debian package is not maintained since version 2.0.0
+    #   ;;
     */plugin-debugging.md|*/plugin-dev.md|*/plugin-examples.md)
       : $f targets developers - they prefer English doc anyway
       # but plugin.md and plugin-list.md are to be translated
@@ -64,7 +65,7 @@ is_to_be_translated() # $1-filepath
 }
 
 # Required project header settings {{{1
-PACKAGE_VERSION="2.5.0"
+PACKAGE_VERSION="3.0.0"
 PACKAGE_NAME="find-n-run"
 PACKAGE_TITLE="Findnrun $PACKAGE_VERSION"
 PACKAGE_COPYRIGHT="2015-2018 step; 2015 SFR, L18L, step"
