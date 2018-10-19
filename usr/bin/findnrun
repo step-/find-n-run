@@ -1962,6 +1962,7 @@ start_window << EOF
         <menuitem label="$i18n_run_top_selected_result_in_terminal" accel-key="${HOTKEY_F5##*:}" accel-mods="${HOTKEY_F5%%:*}">
           <action>grabfocus:varLIST</action>
           <action>${INVOKE_SOURCE_DRAIN_TERM}</action>${REMARK# which saves item to history.}
+          <action condition="active_is_false(varOPEN)">exit:EXIT</action>
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
           <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         </menuitem>
@@ -1969,6 +1970,7 @@ start_window << EOF
         <menuitem label="$i18n_run_top_selected_result" accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
           <action>grabfocus:varLIST</action>
           <action>${INVOKE_SOURCE_DRAIN}</action>${REMARK# which saves item to history.}
+          <action condition="active_is_false(varOPEN)">exit:EXIT</action>
           <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
           <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
         </menuitem>
