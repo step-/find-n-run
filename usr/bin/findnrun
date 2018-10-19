@@ -587,7 +587,7 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
           buf = buf sprintf("\n%s=%s", g, rval = VGI[g, i])
           if("INIT" == g) { #{INVOKEINIT}
             # Add shell code to run INIT once only. env SKIP_INIT=1 ... to skip.
-            buf = buf sprintf("\nif [ \"$INIT\" -a ! \"$SKIP_INIT\" ]; then\n%s\nfi",\
+            buf = buf sprintf("\nif [ \"$INIT\" -a -z \"$SKIP_INIT\" ]; then\n%s\nfi",\
               ('${DEBUG1:-0}' ?("__t0=$(date +%s.%N)\n") :"")\
               "  eval $INIT\n"\
               ('${DEBUG1:-0}' ?("__t1=$(date +%s.%N)\n") :"")\
@@ -703,9 +703,9 @@ IFS=$ifs
 [ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+compiling sources" >&2
 
 # Set default source to the first element of SOURCES. [[[1
-# Note: source with SKIP-INIT not to eval init-command directly in my
-# environment in which init-command could see/change all existing variables.
-SKIP_INIT=true . "${SRCSTEM}0-"*.sh
+# Note: source with SKIP_INIT!="" not to expose findnrun's environmnet to the
+# init-command, which could see/change anything.
+SKIP_INIT=prefetch . "${SRCSTEM}0-"*.sh
 
 # Display warning dialog if some source declarations were found invalid. [[[
 invalid=$(list_diff "$SOURCES" "$VISIBLE_SOURCES $DISABLED_SOURCES $HIDDEN_SOURCES")
@@ -1437,7 +1437,7 @@ set_INVOKE_SOURCE_TAP() # [[[2
 ';ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}"'\
 ';: 2'\
 ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_tap\""'}\
-";$LOAD_INVOCATION_ENV"\
+"; unset SKIP_INIT; $LOAD_INVOCATION_ENV"\
 ' && : 3'\
 ' && fnrevent=${invokeTAP:-Search} && fnrevent=${fnrevent%% *}'\
 ' && : 4'\
