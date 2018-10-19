@@ -365,7 +365,8 @@ store_valid_sources() # [[[
 # 206 unreferenced INITSEARCH_
 # 207 unreferenced MODE_
 # 208 unreferenced PLGDIR_
-# 208 unreferenced SAVEFLT_
+# 209 unreferenced SAVEFLT_
+# 210 unreferenced INIT_
 #]]]
 # i18n Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
@@ -400,7 +401,7 @@ BEGIN {
   IsCode["TAP"]   = 103
   IsCode["DRAIN"] = 104
   IsCode["INIT"]  = 105
-  # SAVEFLT could be considered shell code too
+  IsCode["SAVEFLT"] = 106
   # ]]]
 }
 {
@@ -537,7 +538,7 @@ function syntax_check(group, A, I, err_code,   shell_code, i, checker, status) {
   #   If source-id i is still in the set of valid ids (I)
   #   && its group-id A[i] has an associated value in VGI...
   for(i in A) if(i in I && ((group, A[i]) in VGI)) {
-    if(match(BUILTIN, i)) continue # optimize: skip built-in sources
+    '${DEBUG1:-"if(match(BUILTIN, i)) continue"}' # optimize: skip built-in sources if not debugging
     if(!match(SOURCES, i)) continue # optimize: skip inactive sources
     # Note: if A`s tap references B`s tap and B is inactive, A`s tap [[[
     # won`t be validated/available. The work-around is to declare B
