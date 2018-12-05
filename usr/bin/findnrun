@@ -1174,7 +1174,6 @@ BEGIN {
   # narrow matches by GREP pattern
   if(GREP!="" && ('"${subject}${left} ${fnameleft} ${commleft} ${categ}"') || GREP=="") {
     '"${body}"'
-
     '${DEBUG1:+' # debug: the tree widget top row'}'
     '${DEBUG1:+' #if(""==_row){_row=$0;gsub(SEP,"<SEP>",_row);print _row>"/dev/stderr"}'}'
     '${DEBUG1:+' if(""==_nR){_nR=split($0,_R,"["FS SEP"]");for(_i=1;_i<=_nR;_i++)printf"% 4d : %s\n",_i,_R[_i]>"/dev/stderr";'}'
@@ -1214,7 +1213,9 @@ function fuzzy_file(str, pattern,   byVal, requestFormattedStr, matched, score, 
   matched = fuzzy_match(pattern, str, byVal, requestFormattedStr)
   if(matched) {
     score = byVal[2]
-    Formatted[NR] = byVal[3]
+    if(requestFormattedStr) {
+        Formatted[NR] = byVal[3]
+    }
     InputRecord[NR] = $0
     sort_key = 0+(score"."sprintf("%04d", NR))
     RecordNumber[sort_key] = NR
