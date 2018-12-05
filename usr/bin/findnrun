@@ -181,13 +181,14 @@ gawk '#[[[gawk
 /^HOTKEY_F4=/{f15=1}
 /^HOTKEY_F5=/{f16=1}
 /^GTK_ICON_THEME_NAME=/{f17=1}
+/^SEARCHFUZZY=/{f18=1}
 #]]]
 END{ # lookup GTK2 icon theme name [[[
     # TODO implement GTK3 lookup
   if(!f17) {
     delete RESULT; CURR = 0
     include("'"$HOME/.gtkrc-2.0"'", 0)
-    GTK_ICON_THEME_NAME = CURR ? RESULT[CURR] : "" 
+    GTK_ICON_THEME_NAME = CURR ? RESULT[CURR] : ""
   }
 } #]]]
 function include(file,   s, A, p) { #[[[
@@ -228,6 +229,7 @@ END{ # create config file and add missing settings [[[
   if(!f11) print "HOTKEY_F12=\"0:F12:0xffc9\"">>ARGV[1]
   if(!f17 && GTK_ICON_THEME_NAME) print "GTK_ICON_THEME_NAME=\""GTK_ICON_THEME_NAME"\"">>ARGV[1]
   if(!f1) print "ICONCACHE=\"'"${HOME_ICONS_LEGACY}"'\"">>ARGV[1]
+  if(!f18) print "SEARCHFUZZY=false">>ARGV[1]
   if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
   if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
   if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
@@ -1108,38 +1110,50 @@ function close_progress_dialog(pid,   killer) { # [[[2
 
 # Prepare the generic database query script. [[[1
 # Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
-unset case subject commleft left categ REDIRECT2 func extract_data_fields
-[ true = "${CASEDEPENDENT}" ] || case=tolower
-if ! [ true = "${SEARCHCOMPLETE}" ]; then
-  # Split out the last field of the record that $AWK's format_item() printed.
-  extract_data_fields="
-  split(\$(NF), a, /${SEP}/) # a <- {fullpathname,name,exec,comment,category}"
-  if [ true = "$SEARCHFILENAMES" ]; then
-    extract_data_fields="$extract_data_fields
-    gsub(/^.*[/]|[.][^.]+$/, \"\", a[1]) # basename(fullpathname, .ext)"
-  fi
-  subject="${case}(a[2])"
-else
-  # Keep basename(fullpathname, .ext) & sub-fields 'name'..'category'.
-  extract_data_fields="
-  a=\$(NF); x=index(a,\"${SEP}\"); a1=substr(a,1,x-1)
-  gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a=a1 substr(a,x)"
-  subject="${case}(a)" # ="${case}(basename(a[1], .ext)\";\"a[2]\";\"a[3]\";\"a[4]\";\"a[5])"
-fi
-if [ true = "${SEARCHREGEX}" ]; then
-  REDIRECT2=" 2>/dev/null" # Quiet awk's "fatal: invalid regex" message
+unset case subject commleft left categ REDIRECT2 func extract_data_fields body end_body
+# Variables that describe the match expression. [[[2
+! [ true = "${CASEDEPENDENT}" ] && case=tolower
+if [ true = "${SEARCHFUZZY}" ]; then
+  func=fuzzy_file
+  unset case # fuzzy_match smartly takes case into account
+elif [ true = "${SEARCHREGEX}" ]; then
   func=match
+  REDIRECT2=" 2>/dev/null" # Quiet awk's "fatal: invalid regex" message
   [ true = "${SEARCHFROMLEFT}" ] && left="&& RSTART==1"
 else
   func=index
   [ true = "${SEARCHFROMLEFT}" ] && left="==1"
 fi
+if ! [ true = "${SEARCHCOMPLETE}" ]; then
+  # Extract the last field of the last record printed by $AWKB::format_item().
+  extract_data_fields="# a is an array with indices 1..5
+    split(\$(NF), a, /${SEP}/) # a <- {fullpathname,appname,exec,comment,category}"
+  if [ true = "$SEARCHFILENAMES" ]; then
+    extract_data_fields="$extract_data_fields
+    gsub(/^.*[/]|[.][^.]+$/, \"\", a[1]) # basename(fullpathname, .ext)"
+  fi
+  # Search in a[2] (appname). More a[i] may be added near $SEARCHCOMPLETE below.
+  subject="${case}(a[2])"
+else
+  # Extract basename(fullpathname, .ext) + sub-fields 'appname'..'category'.
+  extract_data_fields="# a is an array with indices 0,2
+  af=\$(NF); x=index(af,\"${SEP}\"); a1=substr(af,1,x-1)
+  gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a[0]=a1 \";\" (a2 = substr(af,x+1))
+  a[2] = substr(a2, 1, index(a2, \"${SEP}\")-1)"
+  # Search in a[0] only (filename ";" appname ";" exec ";" comment ";" category)".
+  subject="${case}(a[0])"
+fi
+# assert: a[2] is defined - it's the list widget visible text column
 subject="${func}(${subject},GREP)"
 if ! [ true = "${SEARCHCOMPLETE}" ]; then
   [ true = "${SEARCHFILENAMES}" ] && fnameleft="|| ${func}(${case}(a[1]),GREP)${left}"
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(${case}(a[4]),GREP)${left}"
   case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(${case}(a[5]),GREP)";; esac
 fi
+# Variables that describe what happens on a match. [[[2
+body='print substr($0, 1, 510)' # 510 works around gtkdialog tree widget buffer overflow limit
+[ true = "${SEARCHFUZZY}" ] && body="if(GREP==\"\"){$body}" end_body="fuzzy_out()"
+# Compose an awk script from the above shell variables. [[[2]]]
 > "${AWKQ}" printf %s\\n '#[[[gawk
 BEGIN {
   '${DEBUG1:+ ' searchexpr="'"${subject}${left} ${fnameleft} ${commleft} ${categ}"'"'}'
@@ -1153,11 +1167,13 @@ BEGIN {
 
   FS="|"
 }
-{'"${extract_data_fields}"'
+{
+  # extract searched-in fields
+  delete a
+  '"${extract_data_fields}"'
   # narrow matches by GREP pattern
-  if(GREP && ('"${subject}${left} ${fnameleft} ${commleft} ${categ}"') || !GREP) {
-    print substr($0, 1, 510)
-    # 510 works around gtkdialog tree widget buffer overflow limit
+  if(GREP!="" && ('"${subject}${left} ${fnameleft} ${commleft} ${categ}"') || GREP=="") {
+    '"${body}"'
 
     '${DEBUG1:+' # debug: the tree widget top row'}'
     '${DEBUG1:+' #if(""==_row){_row=$0;gsub(SEP,"<SEP>",_row);print _row>"/dev/stderr"}'}'
@@ -1166,10 +1182,218 @@ BEGIN {
   }
 }
 END {
+  '"${end_body}"'
   '${DEBUG1:+' print "]] QUERY" >"/dev/stderr"'}'
 }
-#gawk]]]'
+#gawk]]]' # [[[2]]]
+if [ "${func#fuzzy}" != "$func" ]; then
+  >> "${AWKQ}" printf %s\\n '#[[[gawk
+function fuzzy_out(   n, i, p, rn, formatted, ByScore) { # [[[2
+  # With arrays InputRecord, RecordNumber and Formatted in global scope by fuzzy_file:
+  if(n = asorti(RecordNumber, ByScore, "@ind_num_desc")) {
+    for(i = 1; i <= n; i++) {
+      rn = RecordNumber[ByScore[i]]
+      r = InputRecord[rn]
+      if(rn in Formatted) {
+        # replace formatted appname in the visible list widget`s 3rd column
+        fs = FS == "|" ? "\\|" : FS
+        r = gensub("[^"fs"]*"fs, Formatted[rn]fs, 3, r)
+      } else Formatted[rn] = "NA";
+      # max length 510 works around gtkdialog tree widget buffer overflow limit
+      print substr(r, 1, 510)
+#printf "%+10.4f @ %d @ %s @ %s\n", ByScore[i], CallCounter[rn], Formatted[rn], substr(InputRecord[rn], 1, 80) > "/dev/stderr"
+    }
+  }
+}
+function fuzzy_file(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
+  # With array a in outer scope and array CallCounter in global scope by fuzzy_match:
+  # Request a formatted match string only if user setting SEARCHCOMPLETE is disabled and
+  # this will be the 1st call to fuzzy_match for the current input record; the first call
+  # always passes str:=appname, which is the only visible field of the record.
+  requestFormattedStr = a[0] == "" && ! (NR in CallCounter)
+  matched = fuzzy_match(pattern, str, byVal, requestFormattedStr)
+  if(matched) {
+    score = byVal[2]
+    Formatted[NR] = byVal[3]
+    InputRecord[NR] = $0
+    sort_key = 0+(score"."sprintf("%04d", NR))
+    RecordNumber[sort_key] = NR
+  }
+  return matched
+}
+function max(a, b) { # [[[2
+    return a > b ? a : b;
+}
+# License for fuzzy_match [[[2
+# Functions fuzzy_match is derived work from prior art {1}. It is distributed
+# under the findnrun license, which is stated near the top of this file.
+# {1} https://github.com/forrestthewoods/lib_fts/blob/master/code/fts_fuzzy_match.js
+# {2} https://blog.forrestthewoods.com/reverse-engineering-sublime-text-s-fuzzy-match-4cffeed33fdb
+# The original prior-art license follows:
 
+#/ LICENSE
+#/
+#/   This software is dual-licensed to the public domain and under the following
+#/   license: you are granted a perpetual, irrevocable license to copy, modify,
+#/   publish, and distribute this file as you see fit.
+#/
+#/ VERSION
+#/   0.1.0  (2016-03-28)  Initial release
+#/
+#/ AUTHOR
+#/   Forrest Smith
+#/
+
+function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus, separator_bonus, camel_bonus, leading_letter_penalty, max_leading_letter_penalty, unmatched_letter_penalty, score, patternIdx, patternLength, prevMatched, prevLower, prevSeparator, bestLetter, bestLower, bestLetterIdx, bestLetterScore, matchedIndices, patternChar, strChar, patternLower, strLower, strUpper, nextMatch, rematch, advanced, patternRepeat, newScore, penalty, formattedStr, lastIdx, i, idx, matched,      null, word_separators, call_counter_penalty, nMatchedIndices) { #[[[2
+#/ Returns bool & byVal array of bool, score, formattedStr
+#/ bool: true if each character in pattern is found sequentially within str
+#/ score: integer; higher is better match. Value has no intrinsic meaning. Range varies with pattern.
+#/        Can only compare scores with same search pattern.
+#/ formattedStr: input str with matched characters marked in <b> tags. Delete if unwanted.
+    delete byVal;
+    # how many times fuzzy_match was called for the same input record (with a different field each time)
+    ++CallCounter[NR];
+    null = "";
+    word_separators = " _'${SEP}';" FS;
+
+    #/ Score consts
+    call_counter_penalty = -5;          #  penalty for each call after the first one
+    adjacency_bonus = 5;                #/ bonus for adjacent matches
+    separator_bonus = 10;               #/ bonus if match occurs after a separator
+    camel_bonus = 10;                   #/ bonus if match is uppercase and prev is lower
+    leading_letter_penalty = -3;        #/ penalty applied for every letter in str before the first match
+    max_leading_letter_penalty = -9;    #/ maximum penalty for leading letters
+    unmatched_letter_penalty = -1;      #/ penalty for every letter that doesn`t matter
+
+    #/ Loop variables
+    score = 0;
+    patternIdx = 1;
+    patternLength = length(pattern);
+    strIdx = 1;
+    strLength = length(str);
+    prevMatched = 0;
+    prevLower = 0;
+    prevSeparator = 1;       #/ true so if first letter match gets separator bonus
+
+    #/ Use "best" matched letter if multiple string letters match the pattern
+    bestLetter = null;
+    bestLower = null;
+    bestLetterIdx = null;
+    bestLetterScore = 0;
+
+    ## var matchedIndices = [];
+
+    #/ Loop over strings
+    while (strIdx <= strLength) {
+        patternChar = patternIdx <= patternLength ? substr(pattern, patternIdx, 1) : null;
+        strChar = substr(str, strIdx, 1);
+
+        patternLower = patternChar != null ? tolower(patternChar) : null;
+        strLower = tolower(strChar);
+        strUpper = toupper(strChar);
+
+        nextMatch = patternChar != null && patternLower == strLower;
+        rematch = bestLetter != null && bestLower == strLower;
+
+        advanced = nextMatch && bestLetter != null;
+        patternRepeat = bestLetter != null && patternChar != null && bestLower == patternLower;
+        if (advanced || patternRepeat) {
+            score += bestLetterScore;
+            matchedIndices[++nMatchedIndices] = bestLetterIdx;
+            bestLetter = null;
+            bestLower = null;
+            bestLetterIdx = null;
+            bestLetterScore = 0;
+        }
+
+        if (nextMatch || rematch) {
+            newScore = 0;
+
+            #/ Apply penalty for each letter before the first pattern match
+            #/ Note: std::max because penalties are negative values. So max is smallest penalty.
+            if (patternIdx == 1) {
+                penalty = max(strIdx * leading_letter_penalty, max_leading_letter_penalty);
+                score += penalty;
+            }
+
+            #/ Apply bonus for consecutive matches
+            if (prevMatched)
+                newScore += adjacency_bonus;
+
+            #/ Apply bonus for matches after a separator
+            if (prevSeparator)
+                newScore += separator_bonus;
+
+            #/ Apply bonus across camel case boundaries. Includes "clever" isLetter check.
+            if (prevLower && strChar == strUpper && strLower != strUpper)
+                newScore += camel_bonus;
+
+            #/ Update pattern index IFF the next pattern letter was matched
+            if (nextMatch)
+                ++patternIdx;
+
+            #/ Update best letter in str which may be for a "next" letter or a "rematch"
+            if (newScore >= bestLetterScore) {
+
+                #/ Apply penalty for now skipped letter
+                if (bestLetter != null)
+                    score += unmatched_letter_penalty;
+
+                bestLetter = strChar;
+                bestLower = tolower(bestLetter);
+                bestLetterIdx = strIdx;
+                bestLetterScore = newScore;
+            }
+
+            prevMatched = 1;
+        }
+        else {
+            #/ Append unmatch characters
+            formattedStr = formattedStr strChar;
+
+            score += unmatched_letter_penalty;
+            prevMatched = 0;
+        }
+
+        #/ Includes "clever" isLetter check.
+        prevLower = strChar == strLower && strLower != strUpper;
+        prevSeparator = index(word_separators, strChar) > 0;
+
+        ++strIdx;
+    }
+
+    #/ Apply score for last match
+    if (bestLetter) {
+        score += bestLetterScore;
+        matchedIndices[++nMatchedIndices] = bestLetterIdx;
+    }
+
+    # Apply penalty for same-record call
+    score += call_counter_penalty * (CallCounter[NR] - 1);
+
+    #/ Finish out formatted string after last pattern matched
+    #/ Build formatted string based on matched letters
+    formattedStr = "";
+    if(requestFormattedStr) {
+        lastIdx = 1;
+        for (i = 1; i <= nMatchedIndices; ++i) {
+            idx = matchedIndices[i];
+            #formattedStr = formattedStr substr(str, lastIdx, idx - lastIdx) "<b>" substr(str, idx, 1) "</b>";
+            #formattedStr = formattedStr substr(str, lastIdx, idx - lastIdx) "(" substr(str, idx, 1) ")";
+            formattedStr = formattedStr substr(str, lastIdx, idx - lastIdx) substr(str, idx, 1)"\314\262"; #bash: printf "\u0332" | od -b
+
+            lastIdx = idx + 1;
+        }
+        formattedStr = formattedStr substr(str, lastIdx, length(str) - lastIdx + 1);
+    }
+
+    matched = patternIdx > patternLength;
+    byVal[1] = matched; byVal[2] = score; byVal[3] = formattedStr;
+    return matched;
+}
+
+#gawk]]]' # [[[2]]]
+fi
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
 set_HELP_BUTTON_and_HELPVIEWER() #[[[2
@@ -1217,7 +1441,7 @@ set_ABOUT_TEXT() # [[[2
 {
   # Text content for the About dialog.
   # i18n About dialog widgets
-  
+
   ABOUT_TEXT='printf "'"$i18n_gui_about"'"'\
 ' "'"${APP_NAME}"'" "'"${Version}"'" "'"step, SFR, L18L"'"'\
 ' "'"http://www.murga-linux.com/puppy/viewtopic.php?t=98330"'"'\
@@ -1345,7 +1569,7 @@ set_GET_DRAIN_COMMAND() # [[[2
 
   # 1. KLUDGE work around the challenging Windows paths that winemenubuilder generates. [[[
   # input: Exec=env WINEPREFIX="/home/spot/.wine" wine C:\\\\windows\\\\command\\\\start.exe /Unix /home/spot/.wine/dosdevices/c:/users/Public/Start\\ Menu/Programs/Calendar\\ Magic/Calendar\\ Magic.lnk
-  # output: env WINEPREFIX="/home/spot/.wine" wine C:\\windows\\command\\start.exe /Unix /home/spot/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Calendar\ Magic/Calendar\ Magic.lnk 
+  # output: env WINEPREFIX="/home/spot/.wine" wine C:\\windows\\command\\start.exe /Unix /home/spot/.wine/dosdevices/c:/users/Public/Start\ Menu/Programs/Calendar\ Magic/Calendar\ Magic.lnk
   # ]]]
   GET_DRAIN_COMMAND=\
 ': 1;'\
@@ -1509,7 +1733,7 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
   local __terminal=$1 __term_suffix=${1:+_term} __outf=$TMPD/.run-drain${1:+-term}.sh
   if [ "$__terminal" ]; then
     INVOKE_SOURCE_DRAIN_TERM=". \"$__outf\""
-  else INVOKE_SOURCE_DRAIN=". \"$__outf\"" 
+  else INVOKE_SOURCE_DRAIN=". \"$__outf\""
   fi
   > "$__outf" printf %s \
 ': 1'\
