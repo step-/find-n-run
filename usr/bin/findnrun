@@ -159,7 +159,7 @@ export varFOCUSSEARCH=false
 [ -e "$CONFIG" ] || > "$CONFIG"; . "$CONFIG"
 # Add missing/hidden defaults.
 # Define and initialize ALL configuration values here.
-gawk '
+gawk '#[[[gawk
 # look for existing settings [[[
 /^ICONCACHE=/{f1=1}
 /^SEARCHCOMMENTS=/{f2=1}
@@ -242,7 +242,7 @@ END{ # create config file and add missing settings [[[
   # Built-in sources - space separated list
   if(!f12) print "SOURCES=\"FNRstart FNRsc\"">>ARGV[1]
 } #]]]
-' "${CONFIG}" && . "$CONFIG"
+#gawk]]]' "${CONFIG}" && . "$CONFIG"
 [ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+processing $CONFIG" >&2
 
 # Icon paths [[[1
@@ -373,7 +373,7 @@ store_valid_sources() # [[[
     -v MSG1="${i18n_fatal_source_error}\n" \
     -v MSG2="${i18n_recoverable_source_error}\n" \
     -v MSG3="${i18n_source_warning}\n" \
-'#!/usr/bin/gawk -f
+'#[[[gawk
 BEGIN {
   TEXTDOMAIN="'"${TEXTDOMAIN}"'"
   if('${DEBUG1:-0}') print "\n=== COMPILE SOURCE DECLARATIONS (set FNRDEBUG=3-5 for more)" > "/dev/stderr"
@@ -682,7 +682,7 @@ function unquote(s,   p,t,l) { # [[[
   }
   return(s)
 }#]]]
-  '
+#gawk]]]'
 }
 #]]]
 list_diff() # $1-list1 $2-list2 [[[
@@ -724,7 +724,7 @@ fi
 # Specify input files (.desktop) either as lines of DSKL or as awk arguments.
 # The former style allows for handling read file errors gracefully and is used throughout this script.
 [ -x /bin/dash ] && SH=/bin/dash || SH=sh
-> "${AWKB}" printf %s\\n '#!/usr/bin/gawk -f
+> "${AWKB}" printf %s\\n '#[[[gawk
 BEGIN { # [[[2
   if('${DEBUG1:-0}') {
     (__c = "date +%s.%N") | getline __t0; close(__c)
@@ -1104,7 +1104,7 @@ function close_progress_dialog(pid,   killer) { # [[[2
   }
 }
 
-' # [[[2]]] awk script end
+#gawk]]]' # [[[2]]]
 
 # Prepare the generic database query script. [[[1
 # Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
@@ -1140,9 +1140,13 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(${case}(a[4]),GREP)${left}"
   case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(${case}(a[5]),GREP)";; esac
 fi
-> "${AWKQ}" printf %s\\n '#!/usr/bin/gawk -f
+> "${AWKQ}" printf %s\\n '#[[[gawk
 BEGIN {
   '${DEBUG1:+ ' searchexpr="'"${subject}${left} ${fnameleft} ${commleft} ${categ}"'"'}'
+  '${DEBUG1:+ ' gsub("a\\[1\\]", ".desktopFile", searchexpr)'}'
+  '${DEBUG1:+ ' gsub("a\\[2\\]", "AppName", searchexpr)'}'
+  '${DEBUG1:+ ' gsub("a\\[4\\]", "Comment", searchexpr)'}'
+  '${DEBUG1:+ ' gsub("a\\[5\\]", "Category", searchexpr)'}'
   '${DEBUG1:+ ' gsub("GREP", "\""GREP"\"", searchexpr)'}'
   '${DEBUG1:+ ' print "\n=== DB QUERY [[ " searchexpr > "/dev/stderr"'}'
   '${DEBUG1:+ ' SEP="'$SEP'"'}'
@@ -1155,15 +1159,16 @@ BEGIN {
     print substr($0, 1, 510)
     # 510 works around gtkdialog tree widget buffer overflow limit
 
-    # debug: the tree widget top row
-    #'${DEBUG1:+' if(""==_row){_row=$0;gsub(SEP,"<SEP>",_row);print _row>"/dev/stderr"}'}'
+    '${DEBUG1:+' # debug: the tree widget top row'}'
+    '${DEBUG1:+' #if(""==_row){_row=$0;gsub(SEP,"<SEP>",_row);print _row>"/dev/stderr"}'}'
     '${DEBUG1:+' if(""==_nR){_nR=split($0,_R,"["FS SEP"]");for(_i=1;_i<=_nR;_i++)printf"% 4d : %s\n",_i,_R[_i]>"/dev/stderr";'}'
     '${DEBUG1:+'   if(_R[4]){while(0<(getline _s<_R[4])){print "  ",_s>"/dev/stderr"};close(_R[4])}  }#if _nR'}'
   }
 }
 END {
   '${DEBUG1:+' print "]] QUERY" >"/dev/stderr"'}'
-} '
+}
+#gawk]]]'
 
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
@@ -1248,7 +1253,7 @@ export GUI_ABOUT='
 </window>'
 
 # Prepare the built-in FNRSAVEFLT save filter script. [[[1
-> "${AWK4}" printf %s\\n '#!/usr/bin/gawk -f
+> "${AWK4}" printf %s\\n '#[[[gawk
 # Usage: gawk -f "$AWK4" [CUT="..."] [RDR="..."] "\${file}"
 #   SAVEFLT_<source-id>="\$FNRSAVEFLT [CUT\"=i,j,k,...\"] [RDR=\"<redirection>\"] \"${file}\""
 #
@@ -1330,7 +1335,7 @@ function to_tsv_file(f, s) { # [[[2
   gsub(/\t/, "\\t", f) # defensive, since field could embed \t
   printf "%s%s", f, s > RDR
 }
-'
+#gawk]]]'
 
 # Helpers [[[1
 set_GET_DRAIN_COMMAND() # [[[2
