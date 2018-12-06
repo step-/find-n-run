@@ -294,7 +294,17 @@ done
 # Some environment variables may affect operations:
 # BROWSER, GEOMETRY, LANG, and more.
 
-which gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
+command -v gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
+# Below 510 works around a gtkdialog tree widget buffer overflow limit.  When
+# gtkdialog is passed a longer buffer(*) it displays two rows: the buffer row
+# then an empty row. Activating the empty row crashes gtkdialog. To work around
+# the bug we truncate longer buffers before feeding them to the tree widget.
+# (*) Note that it is a buffer-size limit as opposed to a string-size limit.
+# Multi-character strings may yield a string length below the limit but a byte
+# length over the limit. Unfortunately, shell e gawk do not provide built-ins
+# to determine the byte-length of a string, so we need to approximate some
+# limit calculations erring on the safe side (search for {APPROX_SAFE_SIDE}).
+GTKDIALOG_MAX_BYTE_LEN_BUG=510
 
 # Declare built-in sources. [[[1
 # $BUILTIN_SOURCES get special treatment
@@ -826,8 +836,7 @@ END { # [[[2
   # Sort by name and print.
   nkey = asort(key) # Note: asort is a GNU awk (gawk) extension.
   for(i=1; i<=nkey; i++) {
-    print substr(out[key[i]], 1, 510)
-    # 510 works around gtkdialog tree widget buffer overflow limit
+    print substr(out[key[i]], 1, '$GTKDIALOG_MAX_BYTE_LEN_BUG')
   }
   # Remember that we performed a complete icon work-around.
   mark_icon_wa_is_uptodate()
@@ -1151,7 +1160,7 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
   case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(${case}(a[5]),GREP)";; esac
 fi
 # Variables that describe what happens on a match. [[[2
-body='print substr($0, 1, 510)' # 510 works around gtkdialog tree widget buffer overflow limit
+body="print substr(\$0, 1, $GTKDIALOG_MAX_BYTE_LEN_BUG)"
 debug_get_top_row='if(DEBUG_TOP_ROW==""){DEBUG_TOP_ROW=$0}'
 if [ true = "${SEARCHFUZZY}" ]; then
   body="if(GREP==\"\"){$body; $debug_get_top_row}" end_body="fuzzy_out()"
@@ -1218,8 +1227,7 @@ function fuzzy_out(   n, i, p, rn, s, sa, sz, appname, lt, rt, ByScore) { # [[[2
         fs = FS == "|" ? "\\|" : FS
         r = gensub("[^"fs"]*"fs, appname fs, 3, r)
       } else appname = "NA";
-      # max length 510 works around gtkdialog tree widget buffer overflow limit
-      print substr(r, 1, 510)
+      print substr(r, 1, '$GTKDIALOG_MAX_BYTE_LEN_BUG'-36) # {APPROX_SAFE_SIDE: room for 12*3-byte unicode gMark`s}
 #printf "%+10.4f @ %d @ %s @ %s\n", ByScore[i], CallCounter[rn], appname, substr(InputRecord[rn], 1, 80) > "/dev/stderr"
     }
     DEBUG_TOP_ROW = InputRecord[ RecordNumber[ByScore[1]] ]
