@@ -1152,7 +1152,11 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
 fi
 # Variables that describe what happens on a match. [[[2
 body='print substr($0, 1, 510)' # 510 works around gtkdialog tree widget buffer overflow limit
-[ true = "${SEARCHFUZZY}" ] && body="if(GREP==\"\"){$body}" end_body="fuzzy_out()"
+debug_get_top_row='if(DEBUG_TOP_ROW==""){DEBUG_TOP_ROW=$0}'
+if [ true = "${SEARCHFUZZY}" ]; then
+  body="if(GREP==\"\"){$body; $debug_get_top_row}" end_body="fuzzy_out()"
+  unset debug_get_top_row # because fuzzy_out sets DEBUG_TOP_ROW
+fi
 # Compose an awk script from the above shell variables. [[[2]]]
 > "${AWKQ}" printf %s\\n '#[[[gawk
 BEGIN {
@@ -1163,8 +1167,8 @@ BEGIN {
   '${DEBUG1:+ ' gsub("a\\[5\\]", "Category", searchexpr)'}'
   '${DEBUG1:+ ' gsub("GREP", "\""GREP"\"", searchexpr)'}'
   '${DEBUG1:+ ' print "\n=== DB QUERY [[ " searchexpr > "/dev/stderr"'}'
-  '${DEBUG1:+ ' SEP="'$SEP'"'}'
 
+  SEP="'${SEP}'"
   FS="|"
 }
 {
@@ -1174,20 +1178,20 @@ BEGIN {
   # narrow matches by GREP pattern
   if(GREP!="" && ('"${subject}${left} ${fnameleft} ${commleft} ${categ}"') || GREP=="") {
     '"${body}"'
-    '${DEBUG1:+' # debug: the tree widget top row'}'
-    '${DEBUG1:+' #if(""==_row){_row=$0;gsub(SEP,"<SEP>",_row);print _row>"/dev/stderr"}'}'
-    '${DEBUG1:+' if(""==_nR){_nR=split($0,_R,"["FS SEP"]");for(_i=1;_i<=_nR;_i++)printf"% 4d : %s\n",_i,_R[_i]>"/dev/stderr";'}'
-    '${DEBUG1:+'   if(_R[4]){while(0<(getline _s<_R[4])){print "  ",_s>"/dev/stderr"};close(_R[4])}  }#if _nR'}'
+    '${DEBUG1:+$debug_get_top_row}'
   }
 }
 END {
   '"${end_body}"'
+  '${DEBUG1:+' # debug: show the top row unpacked'}'
+  '${DEBUG1:+' _nR=split(DEBUG_TOP_ROW,_R,"["FS SEP"]");for(_i=1;_i<=_nR;_i++)printf"% 4d : %s\n",_i,_R[_i]>"/dev/stderr";'}'
+  '${DEBUG1:+' if(_R[4]){while(0<(getline _s<_R[4])){print "  ",_s>"/dev/stderr"};close(_R[4])}'}'
   '${DEBUG1:+' print "]] QUERY" >"/dev/stderr"'}'
 }
 #gawk]]]' # [[[2]]]
 if [ "${func#fuzzy}" != "$func" ]; then
   >> "${AWKQ}" printf %s\\n '#[[[gawk
-function fuzzy_out(   n, i, p, rn, s, sa, sz, appname, sep, lt, rt, ByScore) { # [[[2
+function fuzzy_out(   n, i, p, rn, s, sa, sz, appname, lt, rt, ByScore) { # [[[2
   # With array a in outer scope, and global scaler gMark and global arrays
   # InputRecord, RecordNumber and Formatted by fuzzy_file:
   if(n = asorti(RecordNumber, ByScore, "@ind_num_desc")) {
@@ -1199,18 +1203,17 @@ function fuzzy_out(   n, i, p, rn, s, sa, sz, appname, sep, lt, rt, ByScore) { #
         if(a[0] == "") {          # SEARCHCOMPLETE disabled - formatted a[2]
           appname = Formatted[rn] # includes all match marks
         } else {                  # SEARCHCOMPLETE  enabled - formatted a[0]
-          sep = "'${SEP}'"
           lt = "\342\227\202" # printf "\u25c2" | od -b; unicode black left-pointing small triangle
           rt = "\342\226\270" # printf "\u25b8" | od -b; unicode black right-pointing small triangle
           # appname may include some match marks or all marks could lie left and/or right of appname
           s = Formatted[rn]
           p = index(s, ";")
           appname = substr(s, p + 1)
-          q = index(appname, sep)
+          q = index(appname, SEP)
           appname = substr(appname, 1, q - 1)
           if(index(sa = substr(s, 1, p), gMark))  appname = lt appname; # some marks lie left
           if(index(sz = substr(s, p + q), gMark)) appname = appname rt; # some marks lie right
-#printf "%16s %s%s%s\n", "", sa, appname, gensub(sep, "@", "g", sz) >"/dev/stderr" 
+#printf "%16s %s%s%s\n", "", sa, appname, gensub(SEP, "@", "g", sz) >"/dev/stderr"
         }
         fs = FS == "|" ? "\\|" : FS
         r = gensub("[^"fs"]*"fs, appname fs, 3, r)
@@ -1219,6 +1222,7 @@ function fuzzy_out(   n, i, p, rn, s, sa, sz, appname, sep, lt, rt, ByScore) { #
       print substr(r, 1, 510)
 #printf "%+10.4f @ %d @ %s @ %s\n", ByScore[i], CallCounter[rn], appname, substr(InputRecord[rn], 1, 80) > "/dev/stderr"
     }
+    DEBUG_TOP_ROW = InputRecord[ RecordNumber[ByScore[1]] ]
   }
 }
 function fuzzy_file(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
@@ -1272,7 +1276,7 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
     # how many times fuzzy_match was called for the same input record (with a different field each time)
     ++CallCounter[NR];
     null = "";
-    word_separators = " _'${SEP}';" FS;
+    word_separators = "_ ;"SEP;
 
     #/ Score consts
     call_counter_penalty = -5;          #  penalty for each call after the first one
