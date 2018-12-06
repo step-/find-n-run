@@ -1139,8 +1139,8 @@ else
   extract_data_fields="# a is an array with indices 0,2
   af=\$(NF); x=index(af,\"${SEP}\"); a1=substr(af,1,x-1)
   gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a[0]=a1 \";\" (a2 = substr(af,x+1))
-  a[2] = substr(a2, 1, index(a2, \"${SEP}\")-1)"
-  # Search in a[0] only (filename ";" appname ";" exec ";" comment ";" category)".
+  #a[2] = substr(a2, 1, index(a2, \"${SEP}\")-1)"
+  # Search in a[0] only (filename ";" appname "\b" exec "\b" comment "\b" category)".
   subject="${case}(a[0])"
 fi
 # assert: a[2] is defined - it's the list widget visible text column
@@ -1187,34 +1187,51 @@ END {
 #gawk]]]' # [[[2]]]
 if [ "${func#fuzzy}" != "$func" ]; then
   >> "${AWKQ}" printf %s\\n '#[[[gawk
-function fuzzy_out(   n, i, p, rn, formatted, ByScore) { # [[[2
-  # With arrays InputRecord, RecordNumber and Formatted in global scope by fuzzy_file:
+function fuzzy_out(   n, i, p, rn, s, sa, sz, appname, sep, lt, rt, ByScore) { # [[[2
+  # With array a in outer scope, and global scaler gMark and global arrays
+  # InputRecord, RecordNumber and Formatted by fuzzy_file:
   if(n = asorti(RecordNumber, ByScore, "@ind_num_desc")) {
     for(i = 1; i <= n; i++) {
       rn = RecordNumber[ByScore[i]]
       r = InputRecord[rn]
       if(rn in Formatted) {
-        # replace formatted appname in the visible list widget`s 3rd column
+        # Replace the formatted appname in the 3rd list widget column.
+        if(a[0] == "") {          # SEARCHCOMPLETE disabled - formatted a[2]
+          appname = Formatted[rn] # includes all match marks
+        } else {                  # SEARCHCOMPLETE  enabled - formatted a[0]
+          sep = "'${SEP}'"
+          lt = "\342\227\202" # printf "\u25c2" | od -b; unicode black left-pointing small triangle
+          rt = "\342\226\270" # printf "\u25b8" | od -b; unicode black right-pointing small triangle
+          # appname may include some match marks or all marks could lie left and/or right of appname
+          s = Formatted[rn]
+          p = index(s, ";")
+          appname = substr(s, p + 1)
+          q = index(appname, sep)
+          appname = substr(appname, 1, q - 1)
+          if(index(sa = substr(s, 1, p), gMark))  appname = lt appname; # some marks lie left
+          if(index(sz = substr(s, p + q), gMark)) appname = appname rt; # some marks lie right
+#printf "%16s %s%s%s\n", "", sa, appname, gensub(sep, "@", "g", sz) >"/dev/stderr" 
+        }
         fs = FS == "|" ? "\\|" : FS
-        r = gensub("[^"fs"]*"fs, Formatted[rn]fs, 3, r)
-      } else Formatted[rn] = "NA";
+        r = gensub("[^"fs"]*"fs, appname fs, 3, r)
+      } else appname = "NA";
       # max length 510 works around gtkdialog tree widget buffer overflow limit
       print substr(r, 1, 510)
-#printf "%+10.4f @ %d @ %s @ %s\n", ByScore[i], CallCounter[rn], Formatted[rn], substr(InputRecord[rn], 1, 80) > "/dev/stderr"
+#printf "%+10.4f @ %d @ %s @ %s\n", ByScore[i], CallCounter[rn], appname, substr(InputRecord[rn], 1, 80) > "/dev/stderr"
     }
   }
 }
 function fuzzy_file(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
-  # With array a in outer scope and array CallCounter in global scope by fuzzy_match:
-  # Request a formatted match string only if user setting SEARCHCOMPLETE is disabled and
-  # this will be the 1st call to fuzzy_match for the current input record; the first call
-  # always passes str:=appname, which is the only visible field of the record.
-  requestFormattedStr = a[0] == "" && ! (NR in CallCounter)
+  # Set global scalar gMark. With global array CallCounter by fuzzy_match:
+  # Request a formatted match string only if this will be the first call to fuzzy_match for
+  # the current input record because only the first call passes appname within str.
+  requestFormattedStr = ! (NR in CallCounter)
   matched = fuzzy_match(pattern, str, byVal, requestFormattedStr)
   if(matched) {
     score = byVal[2]
     if(requestFormattedStr) {
         Formatted[NR] = byVal[3]
+        gMark = byVal[4] # invariant
     }
     InputRecord[NR] = $0
     sort_key = 0+(score"."sprintf("%04d", NR))
@@ -1381,15 +1398,16 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
             idx = matchedIndices[i];
             #formattedStr = formattedStr substr(str, lastIdx, idx - lastIdx) "<b>" substr(str, idx, 1) "</b>";
             #formattedStr = formattedStr substr(str, lastIdx, idx - lastIdx) "(" substr(str, idx, 1) ")";
-            formattedStr = formattedStr substr(str, lastIdx, idx - lastIdx) substr(str, idx, 1)"\314\262"; #bash: printf "\u0332" | od -b
+            formattedStr = formattedStr substr(str, lastIdx, idx - lastIdx) substr(str, idx, 1) \
+              (byVal[4] = "\314\262"); #bash: printf "\u0332" | od -b ; unicode combining low line
 
             lastIdx = idx + 1;
         }
-        formattedStr = formattedStr substr(str, lastIdx, length(str) - lastIdx + 1);
+        byVal[3] = formattedStr = formattedStr substr(str, lastIdx, length(str) - lastIdx + 1);
     }
 
     matched = patternIdx > patternLength;
-    byVal[1] = matched; byVal[2] = score; byVal[3] = formattedStr;
+    byVal[1] = matched; byVal[2] = score
     return matched;
 }
 
