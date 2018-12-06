@@ -1135,7 +1135,8 @@ else
 fi
 if ! [ true = "${SEARCHCOMPLETE}" ]; then
   # Extract the last field of the last record printed by $AWKB::format_item().
-  extract_data_fields="# a is an array with indices 1..5
+  extract_data_fields="SEARCHCOMPLETE=0
+    # a is an array with indices 1..5
     split(\$(NF), a, /${SEP}/) # a <- {fullpathname,appname,exec,comment,category}"
   if [ true = "$SEARCHFILENAMES" ]; then
     extract_data_fields="$extract_data_fields
@@ -1146,13 +1147,14 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
 else
   # Extract filename (basename w/o ext) + sub-fields 'appname'..'category'
   # and replace sub-field 'exec' with the basename (we don't search in 'exec').
-  extract_data_fields="# a is an array with indices 0,2
+  extract_data_fields="SEARCHCOMPLETE=1
+  # a is an array with index 0
   # af <- \"fullpathname${SEP}appname${SEP}exec${SEP}comment${SEP}category\"
   af=\$(NF); x=index(af,\"${SEP}\"); a1=substr(af,1,x)
   gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a2=substr(af,x+1)
   x=index(a2,\"${SEP}\"); a3n=substr(a2,x); a2=substr(a2,1,x-1)
   a[0] = a2 \"${SEP}\" a1 a3n # appname filename comment category"
-  # Search in a[0] (appname "\b" filename "\b" comment "\b" category)".
+  # Search in a[0] (appname "\b" filename "\b" comment "\b" category).
   subject="${case}(a[0])"
 fi
 # assert: a[2] is defined - it's the list widget visible text column
@@ -1204,7 +1206,7 @@ END {
 if [ "${func#fuzzy}" != "$func" ]; then
   >> "${AWKQ}" printf %s\\n '#[[[gawk
 function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore) { # [[[2
-  # With array a in outer scope, and global scaler gMark and global arrays
+  # With global scalars gMark and SEARCHCOMPLETE, and global arrays
   # InputRecord, RecordNumber and Formatted by fuzzy_file:
   if(n = asorti(RecordNumber, ByScore, "@ind_num_desc")) {
     for(i = 1; i <= n; i++) {
@@ -1213,7 +1215,7 @@ function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore
       if(rn in Formatted) {
         # Splice the formatted appname over the 2nd and 3rd list widget columns
         # (the 2nd column is always empty because it`s reserved).
-        if(a[0] == "") {          # SEARCHCOMPLETE disabled - formatted a[2]
+        if(!SEARCHCOMPLETE) {     # SEARCHCOMPLETE disabled - formatted a[2]
           appname = Formatted[rn] # includes all match marks
         } else {                  # SEARCHCOMPLETE  enabled - formatted a[0]
           rt = "\342\200\246" # printf "\u2026" | od -b; unicode horizontal ellipsis
@@ -1243,7 +1245,7 @@ function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore
   }
 }
 function fuzzy_file(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
-  # Set global scalar gMark. With global array CallCounter by fuzzy_match:
+  # Set global scalars gMark. With global array CallCounter by fuzzy_match:
   # Request a formatted match string only if this will be the first call to fuzzy_match for
   # the current input record because only the first call passes appname within str.
   requestFormattedStr = ! (NR in CallCounter)
