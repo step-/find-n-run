@@ -1144,12 +1144,15 @@ if ! [ true = "${SEARCHCOMPLETE}" ]; then
   # Search in a[2] (appname). More a[i] may be added near $SEARCHCOMPLETE below.
   subject="${case}(a[2])"
 else
-  # Extract basename(fullpathname, .ext) + sub-fields 'appname'..'category'.
+  # Extract filename (basename w/o ext) + sub-fields 'appname'..'category'
+  # and replace sub-field 'exec' with the basename (we don't search in 'exec').
   extract_data_fields="# a is an array with indices 0,2
-  af=\$(NF); x=index(af,\"${SEP}\"); a1=substr(af,1,x-1)
-  gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a[0]=a1 \";\" (a2 = substr(af,x+1))
-  #a[2] = substr(a2, 1, index(a2, \"${SEP}\")-1)"
-  # Search in a[0] only (filename ";" appname "\b" exec "\b" comment "\b" category)".
+  # af <- \"fullpathname${SEP}appname${SEP}exec${SEP}comment${SEP}category\"
+  af=\$(NF); x=index(af,\"${SEP}\"); a1=substr(af,1,x)
+  gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a2=substr(af,x+1)
+  x=index(a2,\"${SEP}\"); a3n=substr(a2,x); a2=substr(a2,1,x-1)
+  a[0] = a2 \"${SEP}\" a1 a3n # appname filename comment category"
+  # Search in a[0] (appname "\b" filename "\b" comment "\b" category)".
   subject="${case}(a[0])"
 fi
 # assert: a[2] is defined - it's the list widget visible text column
@@ -1200,7 +1203,7 @@ END {
 #gawk]]]' # [[[2]]]
 if [ "${func#fuzzy}" != "$func" ]; then
   >> "${AWKQ}" printf %s\\n '#[[[gawk
-function fuzzy_out(   n, i, p, rn, s, sa, sz, appname, lt, rt, ByScore) { # [[[2
+function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore) { # [[[2
   # With array a in outer scope, and global scaler gMark and global arrays
   # InputRecord, RecordNumber and Formatted by fuzzy_file:
   if(n = asorti(RecordNumber, ByScore, "@ind_num_desc")) {
@@ -1208,24 +1211,30 @@ function fuzzy_out(   n, i, p, rn, s, sa, sz, appname, lt, rt, ByScore) { # [[[2
       rn = RecordNumber[ByScore[i]]
       r = InputRecord[rn]
       if(rn in Formatted) {
-        # Replace the formatted appname in the 3rd list widget column.
+        # Splice the formatted appname over the 2nd and 3rd list widget columns
+        # (the 2nd column is always empty because it`s reserved).
         if(a[0] == "") {          # SEARCHCOMPLETE disabled - formatted a[2]
           appname = Formatted[rn] # includes all match marks
         } else {                  # SEARCHCOMPLETE  enabled - formatted a[0]
-          lt = "\342\227\202" # printf "\u25c2" | od -b; unicode black left-pointing small triangle
-          rt = "\342\226\270" # printf "\u25b8" | od -b; unicode black right-pointing small triangle
-          # appname may include some match marks or all marks could lie left and/or right of appname
+          rt = "\342\200\246" # printf "\u2026" | od -b; unicode horizontal ellipsis
+          # appname may include some match marks or all marks could lie right of appname
           s = Formatted[rn]
-          p = index(s, ";")
-          appname = substr(s, p + 1)
-          q = index(appname, SEP)
-          appname = substr(appname, 1, q - 1)
-          if(index(sa = substr(s, 1, p), gMark))  appname = lt appname; # some marks lie left
-          if(index(sz = substr(s, p + q), gMark)) appname = appname rt; # some marks lie right
+          p = index(s, SEP)
+          appname = substr(s, 1, p - 1)
+          if(index(sz = substr(s, p + 1), gMark)) { # some marks lie right
+            sa = substr(sz, 1, q = index(sz, gMark) -1) # string right of appname but sans marks
+            nF = split(sa, F, "[; "SEP"]") # string to words
+            sz = F[nF] substr(sz, q + 1) # one word of left context before the first mark
+            gsub(SEP, " `", sz)
+            appname = appname FS rt "`" sz
+          } else {
+            appname = appname FS # leave column empty
+          }
 #printf "%16s %s%s%s\n", "", sa, appname, gensub(SEP, "@", "g", sz) >"/dev/stderr"
         }
+        # Now splice appname over the two columns.
         fs = FS == "|" ? "\\|" : FS
-        r = gensub("[^"fs"]*"fs, appname fs, 3, r)
+        r = gensub("([^"fs"]*"fs")([^"fs"]*"fs"){2,2}", "\\1" appname FS, 1, r)
       } else appname = "NA";
       print substr(r, 1, '$GTKDIALOG_MAX_BYTE_LEN_BUG'-36) # {APPROX_SAFE_SIDE: room for 12*3-byte unicode gMark`s}
 #printf "%+10.4f @ %d @ %s @ %s\n", ByScore[i], CallCounter[rn], appname, substr(InputRecord[rn], 1, 80) > "/dev/stderr"
