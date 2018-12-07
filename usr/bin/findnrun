@@ -1185,7 +1185,7 @@ fi
 body="print substr(\$0, 1, $GTKDIALOG_MAX_BYTE_LEN_BUG)"
 debug_get_top_row='if(DEBUG_TOP_ROW==""){DEBUG_TOP_ROW=$0}'
 if [ true = "${SEARCHFUZZY}" ]; then
-  body="if(GREP==\"\"){$body; $debug_get_top_row}" end_body="fuzzy_out()"
+  body="if(GREP==\"\"){$body${DEBUG1:+; $debug_get_top_row}}" end_body="fuzzy_out()"
   unset debug_get_top_row # because fuzzy_out sets DEBUG_TOP_ROW
 fi
 # Compose an awk script from the above shell variables. [[[2]]]
