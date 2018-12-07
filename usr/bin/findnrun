@@ -2214,16 +2214,15 @@ start_window << EOF
     ${REMARK# ]]]}
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
-      ${REMARK# [[[. EXP0 expander activates EXP1}
-      <expander expanded="false" tooltip-text="$i18n_More">
-        <text visible="false"></text>
-        <variable export="false">EXP0</variable>
-        <action>if false show:EXP1</action>${REMARK# show the other expander and...}
-        <action>if false activate:EXP1</action>${REMARK# ...expand it}
-        <action>if true activate:EXP0</action>${REMARK# shrink myself and...}
-        <action>hide:EXP0</action>${REMARK# ...hide myself immediately}
-        <label>""</label>
-      </expander>
+      ${REMARK# [[[. Options Menubar (visible).}
+      <menubar>
+        <menu>
+          <menuitem radiobutton="true">
+            <label>"i18_Fuzzy"</label>
+          </menuitem>
+          <label>"$i18n_Show_hide_options"</label>
+        </menu>
+      </menubar>
       ${REMARK# ]]]}
       ${REMARK# [[[. varOPEN checkbox}
       <checkbox use-underline="true" tooltip-text="$i18n_Keep_this_window_open">
