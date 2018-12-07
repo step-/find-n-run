@@ -327,8 +327,15 @@ SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\"'\$(wc -l < \"${DATF}\")'\" >> \"\$THISFILE\""
 TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
-ICON_FNRstart='findnrun'
+ICON_FNRstart='findnrun' # Also used as FALLBACK_ICON for all missing app icons.
 SAVEFLT_FNRstart="\$FNRSAVEFLT CUT=\"$CUT\" RDR=\"$RDR\" \"\${file}\""
+# Why is the default fallback icon not displayed? Possibly because findnrun was
+# started in a directory in which file 'findnrun' exists, which confuses
+# icon_wa_match_and_link() when it tests for existence of file $FALLBACK_ICON.
+# Then it doesn't enter the code block that searches for the actual
+# $FALLBACK_ICON file full pathname. Fix: start findnrun in another directory.
+[ -e "$ICON_FNRstart" ] &&
+  echo "Warning [DEV]: File ./$ICON_FNRstart exists and shadows the DEFAULT_FALLBACK icon file. Please 'cd' elsewhere." >&2
 
 # FNRsc - Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc:FNRsc"
