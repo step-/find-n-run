@@ -2217,9 +2217,36 @@ start_window << EOF
       ${REMARK# [[[. Options Menubar (visible).}
       <menubar>
         <menu>
-          <menuitem radiobutton="true">
-            <label>"i18_Fuzzy"</label>
+          ${REMARK# Gtkdialog bug: if a radiobuttom menuitem includes action launch:RESTART_WINDOW some menuitems will not receive their "toggled" signal}
+          ${REMARK# [[[. Default checkbox}
+          <menuitem radiobutton="" use-underline="true" tooltip-text="i18n_Default_tt">
+            <label>"i18_Default"</label>
+            <input>case "\$SEARCHFUZZY\$SEARCHREGEX" in *true*) echo false;; *) echo true;; esac</input>
+            <variable>searchdefault</variable>
+            <action>: >"$RWMF"</action>
+            <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </menuitem>
+          ${REMARK# ]]]}
+          ${REMARK# [[[. SEARCHFUZZY checkbox}
+          <menuitem radiobutton="$SEARCHFUZZY" use-underline="true" tooltip-text="i18n_Fuzzy_tt">
+            <label>"i18n_Fuzzy*"</label>
+            <variable>SEARCHFUZZY</variable>
+            ${DEBUG2:+<action>echo>&2 ,,, SEARCHFUZZY ,,,</action>}
+            <action>awk '$LET_NV' N=SEARCHFUZZY V=\$SEARCHFUZZY '$CONFIG'</action>
+            <action>: >"$RWMF"</action>
+            <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+          </menuitem>
+          ${REMARK# ]]]}
+          ${REMARK# [[[. SEARCHREGEX checkbox}
+          <menuitem radiobutton="$SEARCHREGEX" use-underline="true" tooltip-text="$i18n_Interpret_search_as_BRE">
+            <label>$i18n_Regex*</label>
+            <variable>SEARCHREGEX</variable>
+            ${DEBUG2:+<action>echo>&2 ,,, SEARCHREGEX ,,,</action>}
+            <action>awk '$LET_NV' N=SEARCHREGEX V=\$SEARCHREGEX '$CONFIG'</action>
+            <action>: >"$RWMF"</action>
+            <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+          </menuitem>
+          ${REMARK# ]]]}
           <label>"$i18n_Show_hide_options"</label>
         </menu>
       </menubar>
@@ -2297,17 +2324,6 @@ start_window << EOF
             <action>awk '$LET_NV' N=SHOWNODISPLAY V=\$SHOWNODISPLAY '$CONFIG'</action>
             <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
             <action>refresh:varLIST</action>
-          </checkbox>
-          ${REMARK# ]]]}
-          ${REMARK# [[[. SEARCHREGEX checkbox}
-          <checkbox use-underline="true" tooltip-text="$i18n_Interpret_search_as_BRE">
-            <label>$i18n_Regex*</label>
-            <default>${SEARCHREGEX}</default>
-            <variable>SEARCHREGEX</variable>
-            ${DEBUG2:+<action>echo>&2 ,,, SEARCHREGEX ,,,</action>}
-            <action>awk -v s=SEARCHREGEX=\${SEARCHREGEX} '/^SEARCHREGEX=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
-            <action>: >"$RWMF"</action>
-            <action>launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </checkbox>
           ${REMARK# ]]]}
           ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
