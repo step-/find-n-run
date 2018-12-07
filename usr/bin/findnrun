@@ -149,16 +149,16 @@ UNEXP_INVK="invokeTAP invokeDRAIN" # not sure about these
 
 # Prepare the configuration file. [[[1
 TIMER1=$(date +%s.%N)
-# Defaults - match same variable/value pairs in the next block. [[[2
-# Leave alone the next three configuration values for historical reasons.
+# Legacy default options - see var/value pairs in the next block. [[[2
+# Don't change for historical reasons.
 defOPEN=false
 export varICONS=false
 export varFOCUSSEARCH=false
 
 # Read / supplement $CONFIG. [[[2
 [ -e "$CONFIG" ] || > "$CONFIG"; . "$CONFIG"
-# Add missing/hidden defaults.
-# Define and initialize ALL configuration values here.
+# Add missing/hidden default settings.
+# Define and initialize ALL configuration settings here.
 gawk '#[[[gawk
 # look for existing settings [[[
 /^ICONCACHE=/{f1=1}
@@ -297,10 +297,10 @@ done
 # BROWSER, GEOMETRY, LANG, and more.
 
 command -v gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
-# Below 510 works around a gtkdialog tree widget buffer overflow limit.  When
-# gtkdialog is passed a longer buffer(*) it displays two rows: the buffer row
-# then an empty row. Activating the empty row crashes gtkdialog. To work around
-# the bug we truncate longer buffers before feeding them to the tree widget.
+# GTKDIALOG_MAX_BYTE_LEN_BUG prevents a tree widget buffer overflow bug. If we
+# pass gtkdialog a longer buffer(*) it displays two rows: the buffer row then
+# an extra, empty row. Activating that latter crashes gtkdialog. To stay clear
+# of the bug we truncate longer buffers before feeding them to the tree widget.
 # (*) Note that it is a buffer-size limit as opposed to a string-size limit.
 # Multi-character strings may yield a string length below the limit but a byte
 # length over the limit. Unfortunately, shell e gawk do not provide built-ins
@@ -1121,6 +1121,21 @@ function close_progress_dialog(pid,   killer) { # [[[2
 
 # Prepare the generic database query script. [[[1
 # Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
+# Output script structure: [[[
+#
+# If $SEARCHCOMPLETE = true
+# Then Match(concat(appname, filename, comment, categories))
+# Else Match(appname) || MatchX(filename) || MatchX(comment) || MatchX(categories)
+#   where function MatchX is included iff X = true for
+#   X in {$SEARCHFILENAMES, $SEARCHCOMMENTS, $SEARCHCATEGORIES}
+# SEARCHCOMPLETE is an INTERNAL variable that is true iff all X above are true.
+# The Match function and its argument are prepared according to the values of
+#   $CASEDEPENDENT, $SEARCHFUZZY, $SEARCHREGEX and $SEARCHFROMLEFT.
+# When a match occurs:
+# If $SEARCHFUZZY = true
+# Then awk function fuzzy_out() prints all matched strings in the END clause
+# Else awk main loop prints each matched string immediately.
+# ]]]
 unset case subject commleft left categ REDIRECT2 func extract_data_fields body end_body
 # Variables that describe the match expression. [[[2
 ! [ true = "${CASEDEPENDENT}" ] && case=tolower
