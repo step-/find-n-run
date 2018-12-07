@@ -2363,6 +2363,14 @@ start_window << EOF
       ${REMARK# ]]]}
       ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
       <text space-fill="true" space-expand="true"><label>""</label></text>
+      ${REMARK# [[[. 'edit' button}
+      <button tooltip-text="$i18n_Edit_configuration_file" stock-icon-size="1">
+        <input file stock="gtk-edit"></input>
+        <action>open=$({ command -v rox || command -v xdg-open; } 2>/dev/null); \$open "$CONFIG" &</action>
+        <action>echo "$i18n_When_you_are_finished" >"$RWMF"</action>
+        <action>launch:RESTART_WINDOW</action>
+      </button>
+      ${REMARK# ]]]}
       ${REMARK# [[[. 'help' button}
       <button tooltip-text="$i18n_About_and_help" stock-icon-size="1">
         <input file stock="gtk-about"></input>
