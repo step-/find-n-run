@@ -2212,13 +2212,13 @@ start_window << EOF
       </menu>
     </menubar>
     ${REMARK# ]]]}
-    ${REMARK# [[[. Options and tools (bottom bar)}
+    ${REMARK# [[[. Option Menubar and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. Options Menubar (visible).}
       <menubar>
         <menu>
           ${REMARK# Gtkdialog bug: if a radiobuttom menuitem includes action launch:RESTART_WINDOW some menuitems will not receive their "toggled" signal}
-          ${REMARK# [[[. Default checkbox}
+          ${REMARK# [[[. Default radiobutton}
           <menuitem radiobutton="" use-underline="true" tooltip-text="i18n_Default_tt">
             <label>"i18_Default"</label>
             <input>case "\$SEARCHFUZZY\$SEARCHREGEX" in *true*) echo false;; *) echo true;; esac</input>
@@ -2227,7 +2227,7 @@ start_window << EOF
             <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </menuitem>
           ${REMARK# ]]]}
-          ${REMARK# [[[. SEARCHFUZZY checkbox}
+          ${REMARK# [[[. SEARCHFUZZY radiobutton}
           <menuitem radiobutton="$SEARCHFUZZY" use-underline="true" tooltip-text="i18n_Fuzzy_tt">
             <label>"i18n_Fuzzy*"</label>
             <variable>SEARCHFUZZY</variable>
@@ -2237,7 +2237,7 @@ start_window << EOF
             <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </menuitem>
           ${REMARK# ]]]}
-          ${REMARK# [[[. SEARCHREGEX checkbox}
+          ${REMARK# [[[. SEARCHREGEX radiobutton}
           <menuitem radiobutton="$SEARCHREGEX" use-underline="true" tooltip-text="$i18n_Interpret_search_as_BRE">
             <label>$i18n_Regex*</label>
             <variable>SEARCHREGEX</variable>
@@ -2247,6 +2247,39 @@ start_window << EOF
             <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </menuitem>
           ${REMARK# ]]]}
+          <menuitemseparator></menuitemseparator>
+          <menu use-underline="true">
+            ${REMARK# [[[. SEARCHFILENAMES checkbox}
+            <menuitem checkbox="$SEARCHFILENAMES" use-underline="true" tooltip-text="i18n_Filenames_tt">
+              <label>i18n_Filenames*</label>
+              <variable>SEARCHFILENAMES</variable>
+              ${DEBUG2:+<action>echo>&2 ,,, SEARCHFILENAMES ,,,</action>}
+              <action>awk '$LET_NV' N=SEARCHFILENAMES V=\$SEARCHFILENAMES '$CONFIG'</action>
+              <action>: >"$RWMF"</action>
+              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+            </menuitem>
+            ${REMARK# ]]]}
+            ${REMARK# [[[. SEARCHCOMMENTS checkbox}
+            <menuitem checkbox="$SEARCHCOMMENTS" use-underline="true" tooltip-text="i18n_Comments_tt">
+              <label>i18n_Comments*</label>
+              <variable>SEARCHCOMMENTS</variable>
+              <action>awk '$LET_NV' N=SEARCHCOMMENTS V=\$SEARCHCOMMENTS '$CONFIG'</action>
+              <action>: >"$RWMF"</action>
+              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+            </menuitem>
+            ${REMARK# ]]]}
+            ${REMARK# [[[. SEARCHCATEGORIES checkbox}
+            <menuitem checkbox="$SEARCHCATEGORIES" use-underline="true" tooltip-text="i18n_Categories_tt">
+              <label>i18n_Categories*</label>
+              <variable>SEARCHCATEGORIES</variable>
+              ${DEBUG2:+<action>echo>&2 ,,, SEARCHCATEGORIES ,,,</action>}
+              <action>awk '$LET_NV' N=SEARCHCATEGORIES V=\$SEARCHCATEGORIES '$CONFIG'</action>
+              <action>: >"$RWMF"</action>
+              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+            </menuitem>
+            ${REMARK# ]]]}
+            <label>"i18n_Search_Details"</label>
+          </menu>
           <label>"$i18n_Show_hide_options"</label>
         </menu>
       </menubar>
