@@ -2280,6 +2280,39 @@ start_window << EOF
             ${REMARK# ]]]}
             <label>"i18n_Search_Details"</label>
           </menu>
+          <menu use-underline="true">
+            ${REMARK# [[[. SHOWNODISPLAY checkbox}
+            <menuitem checkbox="$SHOWNODISPLAY" use-underline="true" tooltip-text="$i18n_Show_hidden_system_applications">
+              <label>$i18n_Show_hidden</label>
+              <variable>SHOWNODISPLAY</variable>
+              ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
+              <action>awk '$LET_NV' N=SHOWNODISPLAY V=\$SHOWNODISPLAY '$CONFIG'</action>
+              <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
+              <action>refresh:varLIST</action>
+            </menuitem>
+            ${REMARK# ]]]}
+            ${REMARK# [[[. CASEDEPENDENT checkbox}
+            <menuitem checkbox="$CASEDEPENDENT" use-underline="true" tooltip-text="i18n_Casedepend_tt">
+              <label>i18n_Casedepend*</label>
+              <variable>CASEDEPENDENT</variable>
+              ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
+              <action>awk '$LET_NV' N=CASEDEPENDENT V=\$CASEDEPENDENT '$CONFIG'</action>
+              <action>: >"$RWMF"</action>
+              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+            </menuitem>
+            ${REMARK# ]]]}
+            ${REMARK# [[[. SEARCHFROMLEFT checkbox}
+            <menuitem checkbox="$SEARCHFROMLEFT" use-underline="true" tooltip-text="i18n_FromLeft_tt">
+              <label>i18n_FromLeft*</label>
+              <variable>SEARCHFROMLEFT</variable>
+              ${DEBUG2:+<action>echo>&2 ,,, SEARCHFROMLEFT ,,,</action>}
+              <action>awk '$LET_NV' N=SEARCHFROMLEFT V=\$SEARCHFROMLEFT '$CONFIG'</action>
+              <action>: >"$RWMF"</action>
+              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+            </menuitem>
+            ${REMARK# ]]]}
+            <label>"i18n_Search_Ninja"</label>
+          </menu>
           <label>"$i18n_Show_hide_options"</label>
         </menu>
       </menubar>
@@ -2342,39 +2375,6 @@ start_window << EOF
         <action>exit:EXIT</action>
       </button>
       ${REMARK# ]]]}
-    </hbox>
-    ${REMARK# ]]]}
-    ${REMARK# [[[. EXP1 expander shows More options}
-    <hbox>
-      <expander expanded="false" visible="false" space-fill="true" space-expand="true" label-fill="false" tooltip-text="$i18n_Click_to_hide">
-        <hbox space-fill="false" space-expand="false">
-          ${REMARK# [[[. SHOWNODISPLAY checkbox}
-          <checkbox use-underline="true" tooltip-text="$i18n_Show_hidden_system_applications">
-            <label>$i18n_Show_hidden</label>
-            <default>${SHOWNODISPLAY}</default>
-            <variable>SHOWNODISPLAY</variable>
-            ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
-            <action>awk '$LET_NV' N=SHOWNODISPLAY V=\$SHOWNODISPLAY '$CONFIG'</action>
-            <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
-            <action>refresh:varLIST</action>
-          </checkbox>
-          ${REMARK# ]]]}
-          ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
-          <text space-fill="true" space-expand="true"><label>""</label></text>
-          ${REMARK# [[[. 'edit' button}
-          <button tooltip-text="$i18n_Edit_configuration_file" stock-icon-size="1">
-            <input file stock="gtk-edit"></input>
-            <action>open=$({ command -v rox || command -v xdg-open; } 2>/dev/null); \$open "$CONFIG" &</action>
-            <action>echo "$i18n_When_you_are_finished" >"$RWMF"</action>
-            <action>launch:RESTART_WINDOW</action>
-          </button>
-          ${REMARK# ]]]}
-        </hbox>
-        <label>"$i18n_application_finder_options"</label>
-        <variable export="false">EXP1</variable>
-        <action>if false show:EXP0</action>
-        <action>if false hide:EXP1</action>
-      </expander>
     </hbox>
     ${REMARK# ]]]}
     ${REMARK# [[[. varSBAR statusbar}
