@@ -1901,6 +1901,19 @@ set_SOURCE_HOTKEYS() # [[[2
 #]]]
 set_SOURCE_HOTKEYS
 
+set_LET_NV() # [[[2
+{
+  # Awk code that sets a value in a shell file, such as $CONFIG, e.g. gtkdialog code:
+  # <checkbox>
+  #   <variable>SEARCHFUZZY</variable>
+  #   <action>awk '$LET_NV' N=SEARCHFUZZY V=\$SEARCHFUZZY '$CONFIG'</action>
+  # </checkbox>
+  LET_NV=\
+'$0~"^"N"="{$0=N"="V;f=1}{a[++n]=$0}END{if(!f)a[++n]=N"="V;++n;for(i=1;i!=n;i++)print a[i]>ARGV[ARGC-1]}'
+}
+#]]]
+set_LET_NV
+
 start_window() # Returns when gtkdialog terminates [[[2
 {
   if [ "${DEBUG1}" ]; then
@@ -2130,7 +2143,7 @@ start_window << EOF
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varOPEN ,,,</action>}
-        <action>awk -v s=defOPEN=\${varOPEN} '/^defOPEN=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+        <action>awk '$LET_NV' N=defOPEN V=\$varOPEN '$CONFIG'</action>
       </checkbox>
       ${REMARK# ]]]}
       ${REMARK# [[[. varICONS checkbox}
@@ -2139,7 +2152,7 @@ start_window << EOF
         <default>${varICONS}</default>
         <variable>varICONS</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varICONS ,,,</action>}
-        <action>awk -v s=varICONS=\${varICONS} '/^varICONS=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+        <action>awk '$LET_NV' N=varICONS V=\$varICONS '$CONFIG'</action>
         <action>clear:varSEARCH</action>
         ${DEBUG2:+<action>ls /usr/share/pixmaps/$CACHEFILEPREFIX.uptodate ~/.icons/$CACHEFILEPREFIX.uptodate >&2; cat ~/.findnrunrc >&2</action>}
         <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
@@ -2165,7 +2178,7 @@ start_window << EOF
         <default>${varFOCUSSEARCH}</default>
         <variable>varFOCUSSEARCH</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varFOCUSSEARCH ,,,</action>}
-        <action>awk -v s=varFOCUSSEARCH=\${varFOCUSSEARCH} '/^varFOCUSSEARCH=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+        <action>awk '$LET_NV' N=varFOCUSSEARCH V=\$varFOCUSSEARCH '$CONFIG'</action>
       </checkbox>
       ${REMARK# ]]]}
       ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
@@ -2194,7 +2207,7 @@ start_window << EOF
             <default>${SHOWNODISPLAY}</default>
             <variable>SHOWNODISPLAY</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
-            <action>awk -v s=SHOWNODISPLAY=\${SHOWNODISPLAY} '/^SHOWNODISPLAY=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
+            <action>awk '$LET_NV' N=SHOWNODISPLAY V=\$SHOWNODISPLAY '$CONFIG'</action>
             <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
             <action>refresh:varLIST</action>
           </checkbox>
