@@ -2137,6 +2137,81 @@ start_window << EOF
       <input>IFS=${SEP}; set -- \${varLIST}; echo "\$4${showcategories:+ \$5}"</input>
     </entry>
     ${REMARK# ]]]}
+    ${REMARK# [[[. Hotkey Menubar (nearly hidden 1x1).}
+    ${REMARK# Implementing hotkeys as key-press-event handlers would slow down typing way too much.}
+    ${REMARK# So the menubar implements hotkey handlers as menu accelerators, which are fast.}
+    ${REMARK# Note that menu accelerators act globally, so these hotkeys really apply to all widgets.}
+    <menubar height-request="1" width-request="1">
+      <menu>
+      ${REMARK#  [[[. Hotkeys for varENTRY.}
+        ${REMARK#   [[[. Keys PageUp/PageDown paginate the current source plugin tap.}
+        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
+        <menuitem label="$i18n_previous_results_page" accel-key="0xff55" accel-mods="0">
+          <action>date '+PageUp %s'>"${ETAP}"</action>
+        </menuitem>
+        <menuitem label="$i18n_next_results_page" accel-key="0xff56" accel-mods="0">
+          <action>date '+PageDown %s'>"${ETAP}"</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F5 start item in terminal.}
+        <menuitem label="$i18n_run_top_selected_result_in_terminal" accel-key="${HOTKEY_F5##*:}" accel-mods="${HOTKEY_F5%%:*}">
+          <action>grabfocus:varLIST</action>
+          <action>${INVOKE_SOURCE_DRAIN_TERM}</action>${REMARK# which saves item to history.}
+          <action condition="active_is_false(varOPEN)">exit:EXIT</action>
+          <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
+          <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F12 activates the top varLIST item.}
+        <menuitem label="$i18n_run_top_selected_result" accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
+          <action>grabfocus:varLIST</action>
+          <action>${INVOKE_SOURCE_DRAIN}</action>${REMARK# which saves item to history.}
+          <action condition="active_is_false(varOPEN)">exit:EXIT</action>
+          <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
+          <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
+      ${REMARK#  [[[. Hotkeys for varLIST.}
+        ${REMARK#   [[[. Key F4 saves search results and invokes a filter.}
+        <menuitem label="$i18n_save_search_results" accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
+          <action>save:varLIST</action>
+          <action>${INVOKE_SOURCE_SAVE_FILTER}</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
+      ${REMARK#  [[[. Hotkeys for the main window widget.}
+        ${REMARK#   [[[. Key ESC terminates findnrun.}
+        <menuitem label="$i18n_quit" accel-key="0xff1b" accel-mods="0">
+          <action>exit:EXIT</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F1 invokes the help viewer.}
+        <menuitem label="$i18n_show_help" accel-key="0xffbe" accel-mods="0">
+          <action>refresh:PLGDIR</action>
+          <action>${HELPVIEWER:-:} "\${PLGDIR:-...}/index.md" &</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
+        <menuitem label="$i18n_cycle_through_input_fields" accel-key="${HOTKEY_F2##*:}" accel-mods="${HOTKEY_F2%%:*}">
+          <action>case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
+          <action>refresh:varF2</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
+        <menuitem label="$i18n_cycle_through_search_sources" accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
+          <action>$SELECT_NEXT_SOURCE</action>
+          <action>refresh:varF3</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+      ${REMARK#  ]]]}
+      ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
+        ${SOURCE_HOTKEYS}
+      ${REMARK#  ]]]}
+        <label>""</label>
+      </menu>
+    </menubar>
+    ${REMARK# ]]]}
     ${REMARK# [[[. Options and tools (bottom bar)}
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. EXP0 expander activates EXP1}
@@ -2253,80 +2328,6 @@ start_window << EOF
         <action>if false hide:EXP1</action>
       </expander>
     </hbox>
-    ${REMARK# ]]]}
-    ${REMARK# [[[. Menubar (nearly hidden 1x1).}
-    ${REMARK# Implementing hotkeys as key-press-event handlers would slow down typing way too much.}
-    ${REMARK# So the menubar implements hotkey handlers as menu accelerators, which are fast.}
-    ${REMARK# Note that menu accelerators act globally, so these hotkeys really apply to all widgets.}
-    <menubar height-request="1" width-request="1">
-      <menu>
-      ${REMARK#  [[[. Hotkeys for varENTRY.}
-        ${REMARK#   [[[. Keys PageUp/PageDown paginate the current source plugin tap.}
-        ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
-        <menuitem label="$i18n_previous_results_page" accel-key="0xff55" accel-mods="0">
-          <action>date '+PageUp %s'>"${ETAP}"</action>
-        </menuitem>
-        <menuitem label="$i18n_next_results_page" accel-key="0xff56" accel-mods="0">
-          <action>date '+PageDown %s'>"${ETAP}"</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-        ${REMARK#   [[[. Key F5 start item in terminal.}
-        <menuitem label="$i18n_run_top_selected_result_in_terminal" accel-key="${HOTKEY_F5##*:}" accel-mods="${HOTKEY_F5%%:*}">
-          <action>grabfocus:varLIST</action>
-          <action>${INVOKE_SOURCE_DRAIN_TERM}</action>${REMARK# which saves item to history.}
-          <action condition="active_is_false(varOPEN)">exit:EXIT</action>
-          <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
-          <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
-        </menuitem>
-        ${REMARK#   [[[. Key F12 activates the top varLIST item.}
-        <menuitem label="$i18n_run_top_selected_result" accel-key="${HOTKEY_F12##*:}" accel-mods="${HOTKEY_F12%%:*}">
-          <action>grabfocus:varLIST</action>
-          <action>${INVOKE_SOURCE_DRAIN}</action>${REMARK# which saves item to history.}
-          <action condition="active_is_false(varOPEN)">exit:EXIT</action>
-          <action condition="command_is_true(echo \${varFOCUSSEARCH})">grabfocus:varSEARCH</action>
-          <action condition="command_is_false(echo \${varFOCUSSEARCH})">grabfocus:varLIST</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-      ${REMARK#  ]]]}
-      ${REMARK#  [[[. Hotkeys for varLIST.}
-        ${REMARK#   [[[. Key F4 saves search results and invokes a filter.}
-        <menuitem label="$i18n_save_search_results" accel-key="${HOTKEY_F4##*:}" accel-mods="${HOTKEY_F4%%:*}">
-          <action>save:varLIST</action>
-          <action>${INVOKE_SOURCE_SAVE_FILTER}</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-      ${REMARK#  ]]]}
-      ${REMARK#  [[[. Hotkeys for the main window widget.}
-        ${REMARK#   [[[. Key ESC terminates findnrun.}
-        <menuitem label="$i18n_quit" accel-key="0xff1b" accel-mods="0">
-          <action>exit:EXIT</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-        ${REMARK#   [[[. Key F1 invokes the help viewer.}
-        <menuitem label="$i18n_show_help" accel-key="0xffbe" accel-mods="0">
-          <action>refresh:PLGDIR</action>
-          <action>${HELPVIEWER:-:} "\${PLGDIR:-...}/index.md" &</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-        ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
-        <menuitem label="$i18n_cycle_through_input_fields" accel-key="${HOTKEY_F2##*:}" accel-mods="${HOTKEY_F2%%:*}">
-          <action>case \${varF2:-false} in true) echo false;; false) echo true;; esac >"${F2SF}"</action>
-          <action>refresh:varF2</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-        ${REMARK#   [[[. Key F3 cycles the list view among built-in and plugin sources.}
-        <menuitem label="$i18n_cycle_through_search_sources" accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
-          <action>$SELECT_NEXT_SOURCE</action>
-          <action>refresh:varF3</action>
-        </menuitem>
-        ${REMARK#   ]]]}
-      ${REMARK#  ]]]}
-      ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
-        ${SOURCE_HOTKEYS}
-      ${REMARK#  ]]]}
-        <label>""</label>
-      </menu>
-    </menubar>
     ${REMARK# ]]]}
     ${REMARK# [[[. varSBAR statusbar}
     ${REMARK# Do not vbox the status bar here; keep the vbox under the control}
