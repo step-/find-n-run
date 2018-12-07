@@ -170,7 +170,8 @@ gawk '#[[[gawk
 # DESKTOP_FILE_DIRS initialized from system values, environment overrides
 # ICON_DIRS initialized from system values, environment overrides
 /^SEARCHCATEGORIES=/{f6=1}
-/^SEARCHCOMPLETE=/{f7=1}
+#version 3.1 changed SEARCHCOMPLETE to an INTERNAL variable
+#/^SEARCHCOMPLETE=/{f7=1}
 /^IBOL=/{f8=1}
 /^HOTKEY_F2=/{f9=1}
 /^HOTKEY_F3=/{f10=1}
@@ -235,7 +236,8 @@ END{ # create config file and add missing settings [[[
   if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
   if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]
   if(!f6) print "SEARCHCATEGORIES=false">>ARGV[1]
-  if(!f7) print "SEARCHCOMPLETE=true">>ARGV[1]
+#version 3.1 changed SEARCHCOMPLETE to an INTERNAL variable
+#  if(!f7) print "SEARCHCOMPLETE=true">>ARGV[1]
   if(!f3) print "SEARCHFROMLEFT=false">>ARGV[1]
   if(!f4) print "SEARCHREGEX=false">>ARGV[1]
   if(!f5) print "CASEDEPENDENT=false">>ARGV[1]
@@ -247,6 +249,10 @@ END{ # create config file and add missing settings [[[
   if(!f12) print "SOURCES=\"FNRstart FNRsc\"">>ARGV[1]
 } #]]]
 #gawk]]]' "${CONFIG}" && . "$CONFIG"
+#version 3.1 changed SEARCHCOMPLETE to an INTERNAL variable
+[ "$SEARCHFILENAMES${SEARCHCOMMENTS}$SEARCHCATEGORIES" = truetruetrue ] &&
+  SEARCHCOMPLETE=true || SEARCHCOMPLETE=false
+
 [ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+processing $CONFIG" >&2
 
 # Icon paths [[[1
@@ -2217,17 +2223,6 @@ start_window << EOF
             <action>awk '$LET_NV' N=SHOWNODISPLAY V=\$SHOWNODISPLAY '$CONFIG'</action>
             <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
             <action>refresh:varLIST</action>
-          </checkbox>
-          ${REMARK# ]]]}
-          ${REMARK# [[[. SEARCHCOMPLETE checkbox}
-          <checkbox use-underline="true" tooltip-text="$i18n_Search_in_application_names_etc">
-            <label>${i18n_Search_complete}*</label>
-            <default>${SEARCHCOMPLETE}</default>
-            <variable>SEARCHCOMPLETE</variable>
-            ${DEBUG2:+<action>echo>&2 ,,, SEARCHCOMPLETE ,,,</action>}
-            <action>awk -v s=SEARCHCOMPLETE=\${SEARCHCOMPLETE} '/^SEARCHCOMPLETE=/{\$0=s;f=1}{a[++n]=\$0}END{if(!f)a[++n]=s;++n;for(i=1;i!=n;i++)print a[i]>ARGV[1]}' '${CONFIG}'</action>
-            <action>: >"$RWMF"</action>
-            <action>launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
           </checkbox>
           ${REMARK# ]]]}
           ${REMARK# [[[. SEARCHREGEX checkbox}
