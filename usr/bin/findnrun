@@ -2018,7 +2018,7 @@ unset showcategories
 gettext 0 >/dev/null # work around an xgettext limitation
 # Ensure that we have a unique title handle to the window
 xwininfo -name "$APP_TITLE" >/dev/null 2>&1 && APP_TITLE_UNIQ="$APP_TITLE [$$]"
-start_window << EOF
+start_window << GTKDIALOGDOC
 <window title="${APP_TITLE_UNIQ:-$APP_TITLE}" icon-name="findnrun" window-position="2">
   <vbox>
     ${REMARK# [[[. varSEARCH: progressive typing search input field.}
@@ -2216,11 +2216,11 @@ start_window << EOF
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. Options Menubar (visible).}
       <menubar>
-        <menu>
+        <menu tooltip-text="i18_Options_tt">
           ${REMARK# Gtkdialog bug: if a radiobuttom menuitem includes action launch:RESTART_WINDOW some menuitems will not receive their "toggled" signal}
           ${REMARK# [[[. Default radiobutton}
           <menuitem radiobutton="" use-underline="true" tooltip-text="i18n_Default_tt">
-            <label>"i18_Default"</label>
+            <label>"i18n_Default"</label>
             <input>case "\$SEARCHFUZZY\$SEARCHREGEX" in *true*) echo false;; *) echo true;; esac</input>
             <variable>searchdefault</variable>
             <action>: >"$RWMF"</action>
@@ -2248,7 +2248,7 @@ start_window << EOF
           </menuitem>
           ${REMARK# ]]]}
           <menuitemseparator></menuitemseparator>
-          <menu use-underline="true">
+          <menu use-underline="true" tooltip-text="i18n_Search_Details_tt">
             ${REMARK# [[[. SEARCHFILENAMES checkbox}
             <menuitem checkbox="$SEARCHFILENAMES" use-underline="true" tooltip-text="i18n_Filenames_tt">
               <label>i18n_Filenames*</label>
@@ -2280,7 +2280,7 @@ start_window << EOF
             ${REMARK# ]]]}
             <label>"i18n_Search_Details"</label>
           </menu>
-          <menu use-underline="true">
+          <menu use-underline="true" tooltip-text="i18n_Search_Ninja_tt">
             ${REMARK# [[[. SHOWNODISPLAY checkbox}
             <menuitem checkbox="$SHOWNODISPLAY" use-underline="true" tooltip-text="$i18n_Show_hidden_system_applications">
               <label>$i18n_Show_hidden</label>
@@ -2539,7 +2539,7 @@ start_window << EOF
   <action signal="delete-event">exit:abort</action>
   <variable export="false">MAINWINDOW</variable>
 </window>
-EOF
+GTKDIALOGDOC
 
 # i18n Findnrun own .desktop file. [[[1
 # i18n Translate the Name[xx] field to be added to file findnrun.desktop
