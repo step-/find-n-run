@@ -19,17 +19,66 @@ These values can be set also from the main window:
     varICONS=false
     # Return keyboard focus to the search input field.
     varFOCUSSEARCH=true
-    # Search in application names, file names, command lines, comments and categories all at once.
-    # When false and no other SEARCH* field is true search in application names only.
-    # To search in, i.e., file names only set SEARCHCOMPLETE=false SEARCHFILENAMES=true.
-    SEARCHCOMPLETE=true
+```
+
+These values can be set also from the main menu:
+```gettext
+    # Search approximated words tolerating some mispelling and missing parts.
+    # Fuzzy search ignores the following settings because it substitutes them
+    # in other ways: CASEDEPENDENT, SEARCHFROMLEFT.
+    SEARCHFUZZY=false
+```
+
+```gettext
     # Search pattern is a POSIX Basic regular expression.
     # Applied also to comment search and category search.
     SEARCHREGEX=false
-    # Ignore the NoDisplay=true attribute value of .desktop files (not recommended).
-    # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default.
+```
+
+```gettext
+    # Extend search subject to .desktop file names.
+    SEARCHFILENAMES=false
+```
+
+```gettext
+    # Extend search subject to application comments.
+    SEARCHCOMMENTS=false
+```
+
+```gettext
+    # Extend search subject to application categories.
+    # Show category labels in the comment field.
+    # Set 'hidden' to hide category labels in the comment field.
+    # In search input field prepend ';' to search for category only, i.e., ';office'.
+    SEARCHCATEGORIES=false
+```
+
+```gettext
+    # Enforce case-dependent searching.
+    CASEDEPENDENT=false
+```
+
+```gettext
+    # Search pattern must match from the leftmost position.
+    # Ignored for category search.
+    SEARCHFROMLEFT=false
+```
+
+```gettext
+    # Ignore the NoDisplay=true attribute value of .desktop files.
     SHOWNODISPLAY=false
 ```
+ 
+### Notes
+
+`SHOWNODISPLAY`: Versions up to 1.10.6 didn't have this setting and showed all
+files by default.
+
+`SEARCHFILENAMES` `SEARCHCOMMENTS` `SEARCHCATEGORIES`: If all three are
+enabled, the fields are searched at the same time (faster). If only some are
+enabled, the fields are searched separately, and the search stops at the first
+matching field from the left in the order application name, filename, comment,
+category.
 
 ### Hidden Preferences
 
@@ -50,23 +99,18 @@ power users and custom applications:
     HOTKEY_F12=0:F12:0xffc9
     # Icon cache location.
     ICONCACHE=${HOME}/.icons
-    # Extend search subject to .desktop file names.
-    # Subsumed by SEARCHCOMPLETE=true.
-    SEARCHFILENAMES=false
-    # Extend search subject to application comments.
-    # Subsumed by SEARCHCOMPLETE=true.
-    SEARCHCOMMENTS=false
-    # Extend search subject to application categories.
-    # Show category labels in the comment field.
-    # Subsumed by SEARCHCOMPLETE=true.
-    # Set 'hidden' to hide category labels in the comment field.
-    # In search input field prepend ';' to search for category only, i.e., ';office'.
-    SEARCHCATEGORIES=false
-    # Search pattern must match from the leftmost character.
-    # Ignored for category search.
-    SEARCHFROMLEFT=false
-    # Enforce case-dependent searching.
-    CASEDEPENDENT=false
+```
+
+```gettext
+    # This value affects the relative importance of matching the application
+    # name versus matching other details (filenames, comments, categories).
+    # Increasing this value makes the application name match more important so the
+    # name is found with fewer keystrokes. This setting applies to fuzzy search
+    # with **all** details enabled only.
+    FUZZY_MATCH_BONUS_FOR_APP_NAME=20
+```
+
+```gettext
     # Main window geometry, no default.
     # Command-line option --geometry=WxH+X+Y overrides this value.
     #GEOMETRY=460x280+100+200
@@ -84,6 +128,9 @@ power users and custom applications:
     #GTK_ICON_THEME_NAME="/path/to/icon-theme-directory" # optional
     # Preferred help viewing program (obsolete since version 2.0.0).
     #BROWSER=
+```
+
+```gettext
     # Change the output destination to which hotkey F4 saves search results.
     # Default value: '@timestamp'.
     # Use '@timestamp' for a timestamped, tab-separated-value (.tsv) file in your home folder.
@@ -96,6 +143,9 @@ power users and custom applications:
     # To changes single sources read plugin-dev.md.
     # Built-in sources honor RDR. Some external plugins may not.
     #RDR=@timestamp
+```
+
+```gettext
     # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included. 
     # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
     IBOL=' '

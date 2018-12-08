@@ -4,6 +4,9 @@ This page lists _default_ hotkey assignments. You can redefine assigned keys as
 explained in [Hidden Preferences](preference.md).  Press `[F10]` in the main
 window to see a short list of the currently assigned keys.
 
+Press `[F10]` again (twice) to open the main menu, which is also activated by
+clicking the _pure yang trigram_ **☰** sign in the main window.
+
 **Anywhere in the main window**
 
  * `[F1]` - view help documentation
