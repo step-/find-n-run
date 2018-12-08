@@ -1505,7 +1505,7 @@ set_HELP_BUTTON_and_HELPVIEWER() #[[[2
       esac &&
       HELP_BUTTON="
 <button use-underline=\"true\">
-  <label>$i18n_Help</label>
+  <label>"$i18n_Help"</label>
   <input file stock=\"gtk-help\"></input>
   <action>${helpviewer} &</action>
   <action>closewindow:GUI_ABOUT</action>
@@ -1544,7 +1544,7 @@ export GUI_ABOUT='
     <hbox homogeneous="true">
       <text space-fill="true" space-expand="true"><label>""</label></text>
       <button use-underline="true">
-        <label>'"$i18n_OK"'</label>
+        <label>"'"$i18n_OK"'"</label>
         <input file stock="gtk-ok"></input>
         <action>closewindow:GUI_ABOUT</action>
       </button>
@@ -2054,7 +2054,7 @@ start_window << GTKDIALOGDOC
       ${REMARK# Column names below. Only Reserved and Label are visible.}
       ${REMARK# Consider also that there is an icon column, so a full input}
       ${REMARK# record is defined as Icon|Reserved|Label|PackedValues }
-      <label>Reserved|Label|PackedValues</label>
+      <label>"Reserved|Label|PackedValues"</label>
       <variable>varLIST</variable>
       <output file>$F4SF</output>
       ${REMARK# [[[. Populate list view.}
@@ -2216,11 +2216,14 @@ start_window << GTKDIALOGDOC
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. Options Menubar (visible).}
       <menubar>
-        <menu tooltip-text="i18_Options_tt">
-          ${REMARK# Gtkdialog bug: if a radiobuttom menuitem includes action launch:RESTART_WINDOW some menuitems will not receive their "toggled" signal}
-          ${REMARK# [[[. Default radiobutton}
-          <menuitem radiobutton="" use-underline="true" tooltip-text="i18n_Default_tt">
-            <label>"i18n_Default"</label>
+        <menu tooltip-text="$i18n_mnu_tt_Options">
+          ${REMARK# Gtkdialog bug: if a radiobutton/checkbox menuitem includes action launch:RESTART_WINDOW some menuitems will not receive their "toggled" signal.}
+          <menuitem label="$i18n_Hover_for_help" sensitive="false"></menuitem>
+          <menuitem label=" $i18n_asterisk_restart_required" sensitive="false"></menuitem>
+          <menuitemseparator></menuitemseparator>
+          ${REMARK# [[[. Default search radiobutton}
+          <menuitem radiobutton="" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Default">
+            <label>"$i18n_mnu_Search_Default"</label>
             <input>case "\$SEARCHFUZZY\$SEARCHREGEX" in *true*) echo false;; *) echo true;; esac</input>
             <variable>searchdefault</variable>
             <action>: >"$RWMF"</action>
@@ -2228,8 +2231,8 @@ start_window << GTKDIALOGDOC
           </menuitem>
           ${REMARK# ]]]}
           ${REMARK# [[[. SEARCHFUZZY radiobutton}
-          <menuitem radiobutton="$SEARCHFUZZY" use-underline="true" tooltip-text="i18n_Fuzzy_tt">
-            <label>"i18n_Fuzzy*"</label>
+          <menuitem radiobutton="$SEARCHFUZZY" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Fuzzy">
+            <label>"$i18n_mnu_Search_Fuzzy $i18n_asterisk"</label>
             <variable>SEARCHFUZZY</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHFUZZY ,,,</action>}
             <action>awk '$LET_NV' N=SEARCHFUZZY V=\$SEARCHFUZZY '$CONFIG'</action>
@@ -2238,8 +2241,8 @@ start_window << GTKDIALOGDOC
           </menuitem>
           ${REMARK# ]]]}
           ${REMARK# [[[. SEARCHREGEX radiobutton}
-          <menuitem radiobutton="$SEARCHREGEX" use-underline="true" tooltip-text="$i18n_Interpret_search_as_BRE">
-            <label>$i18n_Regex*</label>
+          <menuitem radiobutton="$SEARCHREGEX" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Regex">
+            <label>"$i18n_mnu_Search_Regex $i18n_asterisk"</label>
             <variable>SEARCHREGEX</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHREGEX ,,,</action>}
             <action>awk '$LET_NV' N=SEARCHREGEX V=\$SEARCHREGEX '$CONFIG'</action>
@@ -2248,10 +2251,10 @@ start_window << GTKDIALOGDOC
           </menuitem>
           ${REMARK# ]]]}
           <menuitemseparator></menuitemseparator>
-          <menu use-underline="true" tooltip-text="i18n_Search_Details_tt">
+          <menu use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Details">
             ${REMARK# [[[. SEARCHFILENAMES checkbox}
-            <menuitem checkbox="$SEARCHFILENAMES" use-underline="true" tooltip-text="i18n_Filenames_tt">
-              <label>i18n_Filenames*</label>
+            <menuitem checkbox="$SEARCHFILENAMES" use-underline="true" tooltip-text="$i18n_Filename_tt">
+              <label>"$i18n_mnu_Search_Filename $i18n_asterisk"</label>
               <variable>SEARCHFILENAMES</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHFILENAMES ,,,</action>}
               <action>awk '$LET_NV' N=SEARCHFILENAMES V=\$SEARCHFILENAMES '$CONFIG'</action>
@@ -2260,8 +2263,8 @@ start_window << GTKDIALOGDOC
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHCOMMENTS checkbox}
-            <menuitem checkbox="$SEARCHCOMMENTS" use-underline="true" tooltip-text="i18n_Comments_tt">
-              <label>i18n_Comments*</label>
+            <menuitem checkbox="$SEARCHCOMMENTS" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Comment">
+              <label>"$i18n_mnu_Search_Comment $i18n_asterisk"</label>
               <variable>SEARCHCOMMENTS</variable>
               <action>awk '$LET_NV' N=SEARCHCOMMENTS V=\$SEARCHCOMMENTS '$CONFIG'</action>
               <action>: >"$RWMF"</action>
@@ -2269,8 +2272,8 @@ start_window << GTKDIALOGDOC
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHCATEGORIES checkbox}
-            <menuitem checkbox="$SEARCHCATEGORIES" use-underline="true" tooltip-text="i18n_Categories_tt">
-              <label>i18n_Categories*</label>
+            <menuitem checkbox="$SEARCHCATEGORIES" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Categories">
+              <label>"$i18n_mnu_Search_Categories $i18n_asterisk"</label>
               <variable>SEARCHCATEGORIES</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHCATEGORIES ,,,</action>}
               <action>awk '$LET_NV' N=SEARCHCATEGORIES V=\$SEARCHCATEGORIES '$CONFIG'</action>
@@ -2278,22 +2281,12 @@ start_window << GTKDIALOGDOC
               <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
             </menuitem>
             ${REMARK# ]]]}
-            <label>"i18n_Search_Details"</label>
+            <label>"$i18n_mnu_Search_Details"</label>
           </menu>
-          <menu use-underline="true" tooltip-text="i18n_Search_Ninja_tt">
-            ${REMARK# [[[. SHOWNODISPLAY checkbox}
-            <menuitem checkbox="$SHOWNODISPLAY" use-underline="true" tooltip-text="$i18n_Show_hidden_system_applications">
-              <label>$i18n_Show_hidden</label>
-              <variable>SHOWNODISPLAY</variable>
-              ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
-              <action>awk '$LET_NV' N=SHOWNODISPLAY V=\$SHOWNODISPLAY '$CONFIG'</action>
-              <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
-              <action>refresh:varLIST</action>
-            </menuitem>
-            ${REMARK# ]]]}
+          <menu use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Ninja">
             ${REMARK# [[[. CASEDEPENDENT checkbox}
-            <menuitem checkbox="$CASEDEPENDENT" use-underline="true" tooltip-text="i18n_Casedepend_tt">
-              <label>i18n_Casedepend*</label>
+            <menuitem checkbox="$CASEDEPENDENT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case">
+              <label>"$i18n_mnu_Search_Case $i18n_asterisk"</label>
               <variable>CASEDEPENDENT</variable>
               ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
               <action>awk '$LET_NV' N=CASEDEPENDENT V=\$CASEDEPENDENT '$CONFIG'</action>
@@ -2302,8 +2295,8 @@ start_window << GTKDIALOGDOC
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHFROMLEFT checkbox}
-            <menuitem checkbox="$SEARCHFROMLEFT" use-underline="true" tooltip-text="i18n_FromLeft_tt">
-              <label>i18n_FromLeft*</label>
+            <menuitem checkbox="$SEARCHFROMLEFT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Anchor_Left">
+              <label>"$i18n_mnu_Search_Anchor_Left $i18n_asterisk"</label>
               <variable>SEARCHFROMLEFT</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHFROMLEFT ,,,</action>}
               <action>awk '$LET_NV' N=SEARCHFROMLEFT V=\$SEARCHFROMLEFT '$CONFIG'</action>
@@ -2311,15 +2304,25 @@ start_window << GTKDIALOGDOC
               <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
             </menuitem>
             ${REMARK# ]]]}
-            <label>"i18n_Search_Ninja"</label>
+            ${REMARK# [[[. SHOWNODISPLAY checkbox}
+            <menuitem checkbox="$SHOWNODISPLAY" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Hidden">
+              <label>"$i18n_mnu_Search_Hidden"</label>
+              <variable>SHOWNODISPLAY</variable>
+              ${DEBUG2:+<action>echo>&2 ,,, SHOWNODISPLAY ,,,</action>}
+              <action>awk '$LET_NV' N=SHOWNODISPLAY V=\$SHOWNODISPLAY '$CONFIG'</action>
+              <action>gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
+              <action>refresh:varLIST</action>
+            </menuitem>
+            ${REMARK# ]]]}
+            <label>"$i18n_mnu_Search_Ninja"</label>
           </menu>
-          <label>"$i18n_Show_hide_options"</label>
+          <label>"$i18n_mnu_Options"</label>
         </menu>
       </menubar>
       ${REMARK# ]]]}
       ${REMARK# [[[. varOPEN checkbox}
       <checkbox use-underline="true" tooltip-text="$i18n_Keep_this_window_open">
-        <label>$i18n_Keep_window</label>
+        <label>"$i18n_Keep_window"</label>
         <default>${defOPEN}</default>
         <variable>varOPEN</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varOPEN ,,,</action>}
@@ -2328,7 +2331,7 @@ start_window << GTKDIALOGDOC
       ${REMARK# ]]]}
       ${REMARK# [[[. varICONS checkbox}
       <checkbox use-underline="true" tooltip-text="$i18n_Display_all_available_icons">
-        <label>$i18n_Show_all_icons</label>
+        <label>"$i18n_Show_all_icons"</label>
         <default>${varICONS}</default>
         <variable>varICONS</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varICONS ,,,</action>}
@@ -2354,7 +2357,7 @@ start_window << GTKDIALOGDOC
       ${REMARK# ]]]}
       ${REMARK# [[[. varFOCUSSEARCH checkbox}
       <checkbox use-underline="true" tooltip-text="$i18n_Return_the_keyboard_focus">
-        <label>$i18n_Focus_search</label>
+        <label>"$i18n_Focus_search"</label>
         <default>${varFOCUSSEARCH}</default>
         <variable>varFOCUSSEARCH</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varFOCUSSEARCH ,,,</action>}
@@ -2495,7 +2498,7 @@ start_window << GTKDIALOGDOC
   ${REMARK# Used by key F2.}
   <checkbox visible="false">
     <default>false</default>
-    <label>F2</label>
+    <label>"F2"</label>
     <variable>varF2</variable>
     <input file>${F2SF}</input>
     ${DEBUG2:+<action>echo>&2 ,,, varF2 ,,,</action>}

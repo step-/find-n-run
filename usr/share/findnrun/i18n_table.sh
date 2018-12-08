@@ -51,13 +51,13 @@ i18n_table() # {{{1
     read i18n_Focus_search
     read i18n_About_and_help
     read i18n_Exit
-    read i18n_Click_to_hide
+    read i18n_Less
     read i18n_Show_hidden_system_applications
     read i18n_Show_hidden
     read i18n_Search_in_application_names_etc
     read i18n_Search_complete
-    read i18n_Interpret_search_as_BRE
-    read i18n_Regex
+    read i18n_mnu_Search_Regex
+    read i18n_mnu_tt_Search_Regex
     read i18n_Edit_configuration_file
     read i18n_When_you_are_finished
     read i18n_application_finder_options
@@ -76,6 +76,31 @@ i18n_table() # {{{1
     read i18n_cycle_through_input_fields
     read i18n_cycle_through_search_sources
     read i18n_Search_results_saved_as
+    read i18n_mnu_Options # printf "\u2630"
+    read i18n_asterisk # printf "\u2723"
+    read i18n_asterisk_restart_required
+    read i18n_Hover_for_help
+    read i18n_mnu_tt_Options
+    read i18n_mnu_Search_Default
+    read i18n_mnu_tt_Search_Default
+    read i18n_mnu_Search_Fuzzy
+    read i18n_mnu_tt_Search_Fuzzy
+    read i18n_mnu_Search_Details
+    read i18n_mnu_tt_Search_Details
+    read i18n_mnu_Search_Filename
+    read i18n_mnu_tt_Search_Filename
+    read i18n_mnu_Search_Comment
+    read i18n_mnu_tt_Search_Comment
+    read i18n_mnu_Search_Categories
+    read i18n_mnu_tt_Search_Categories
+    read i18n_mnu_Search_Ninja
+    read i18n_mnu_tt_Search_Ninja
+    read i18n_mnu_Search_Case
+    read i18n_mnu_tt_Search_Case
+    read i18n_mnu_Search_Anchor_Left
+    read i18n_mnu_tt_Search_Anchor_Left
+    read i18n_mnu_Search_Hidden
+    read i18n_mnu_tt_Search_Hidden
   } << EOF
   $(gettext -es -- \
   "Findnrun\n" \
@@ -110,23 +135,23 @@ i18n_table() # {{{1
   "Comment about current item\n" \
   "More...\n" \
   "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays.\n" \
-  "_Keep window\n" \
+  "_Keep\n" \
   "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.\n" \
-  "_Show all icons\n" \
+  "_Icons\n" \
   "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item.\n" \
   "_Focus search\n" \
   "About and help\n" \
   "Exit\n" \
-  "Click to hide.\n" \
+  "Less\n" \
   "Show also hidden system applications.\n" \
   "Show _hidden\n" \
-  "Search in application names, file names, command lines, comments and categories all at once.\n" \
+  "Search in application names, file names, comments and categories all at once.\n" \
   "Search _complete\n" \
-  "Interpret the search pattern as a POSIX Basic regular expression.\n" \
   "_Regex\n" \
+  "Interpret the search pattern as a POSIX Basic regular expression.\n" \
   "Edit configuration file directly. Restart required for changes to take effect.*\n" \
   "When you are finished making your changes come back to this window and restart findnrun.\n" \
-  "application finder options       * = restart required\n" \
+  "application finder options\n" \
   "Findnrun.\n" \
   "Find applications and much more.\n" \
   "Press ENTER to close the terminal [%s]\n" \
@@ -142,6 +167,31 @@ i18n_table() # {{{1
   "cycle through input fields\n" \
   "cycle through search sources\n" \
   "Search results saved as '%s'.\n" \
+  "☰\n" \
+  "✣\n" \
+  "✣ = restart required\n" \
+  "Hover over for help\n" \
+  "Change options.       [F10][F10]\n" \
+  "_Default search\n" \
+  "Find words as they are written exactly.\n" \
+  "_Fuzzy search\n" \
+  "Find approximated words tolerating some mispelling and missing parts.\n" \
+  "Search _Details\n" \
+  "Without requesting further details, search considers application names only.\n" \
+  "_Filename\n" \
+  "Consider also the .desktop file name when searching for a match.\n" \
+  "_Comment\n" \
+  "Consider also the application comment when searching for a match. The system menu displays the comment as a tooltip.\n" \
+  "C_ategory\n" \
+  "Consider also the application categories when searching for a match. The system menu groups application entries by categories.\n" \
+  "Search _Ninja\n" \
+  "Advanced settings and tweaks.\n" \
+  "Consider Word _Case\n" \
+  "Enable this if you want for search to ignore the difference between 'a' and 'A', 'b' and 'B', etc. Not applied to Fuzzy search because Fuzzy does its own magic with regard to word case.\n" \
+  "Anchor _Left\n" \
+  "Enable this if you want for search to find a match only if it begins in column one. Not applied to Fuzzy search.\n" \
+  "Show _Hidden\n" \
+  "Enable this to also search for hidden applications that don't appear in the system menu.\n" \
   )
 EOF
 }
