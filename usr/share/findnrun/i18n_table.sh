@@ -149,8 +149,8 @@ i18n_table() # {{{1
   "Search _complete\n" \
   "_Regex\n" \
   "Interpret the search pattern as a POSIX Basic regular expression.\n" \
-  "Edit configuration file directly. Restart required for changes to take effect.*\n" \
-  "When you are finished making your changes come back to this window and restart findnrun.\n" \
+  "Edit the configuration file directly. Restart required for changes to take effect.\n" \
+  "When you are finished making your changes come back to this window and restart.\n" \
   "application finder options\n" \
   "Findnrun.\n" \
   "Find applications and much more.\n" \

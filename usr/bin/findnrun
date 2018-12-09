@@ -252,6 +252,8 @@ END{ # create config file and add missing settings [[[
 #version 3.1 changed SEARCHCOMPLETE to an INTERNAL variable
 [ "$SEARCHFILENAMES${SEARCHCOMMENTS}$SEARCHCATEGORIES" = truetruetrue ] &&
   SEARCHCOMPLETE=true || SEARCHCOMPLETE=false
+# SEARCHDEFAULT is internal too.
+case "$SEARCHFUZZY$SEARCHREGEX" in *true*) SEARCHDEFAULT=false;; *) SEARCHDEFAULT=true;; esac
 
 [ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+processing $CONFIG" >&2
 
@@ -1968,7 +1970,7 @@ Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | gvim -R -
 set_DO_RESTART_WINDOW() # [[[2
 {
   # Code to restart findnrun dialog with all command line arguments.
-  # Note: gtkdialog doesn't allow '<' redirection, so we need to 'cat |'.
+  # We use 'cat |' because the gtkdialog parser considers character '<' illegal.
 DO_RESTART_WINDOW=\
 "for pid in $TMPD/.$$-*; do :; done"\
 '; pid=${pid##*-}'\
@@ -1977,6 +1979,17 @@ DO_RESTART_WINDOW=\
 }
 #]]]
 set_DO_RESTART_WINDOW
+
+set_REQUEST_RESTART_WINDOW() # [[[2
+{
+  # Code to request the main window to restart itself.
+  # Usage: <action>$REQUEST_RESTART_WINDOW ["message text"]</action>
+  REQUEST_RESTART_WINDOW="F(){ printf %b >'$RWMF' \"\$@\" && echo 1 >>'$RWMF-trigger'; }; F "
+  # Init for gtkdialog.
+  : > "$RWMF" && : > "$RWMF-trigger"
+  # Gtkdialog timer RESTART_WINDOW0 will serve the requests.
+}
+set_REQUEST_RESTART_WINDOW
 
 # Restart window dialog. [[[1
 # i18n restart window dialog
@@ -2217,17 +2230,14 @@ start_window << GTKDIALOGDOC
       ${REMARK# [[[. Options Menubar (visible).}
       <menubar>
         <menu tooltip-text="$i18n_mnu_tt_Options">
-          ${REMARK# Gtkdialog bug: if a radiobutton/checkbox menuitem includes action launch:RESTART_WINDOW some menuitems will not receive their "toggled" signal.}
           <menuitem label="$i18n_Hover_for_help" sensitive="false"></menuitem>
           <menuitem label=" $i18n_asterisk_restart_required" sensitive="false"></menuitem>
           <menuitemseparator></menuitemseparator>
           ${REMARK# [[[. Default search radiobutton}
-          <menuitem radiobutton="" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Default">
+          <menuitem radiobutton="$SEARCHDEFAULT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Default">
             <label>"$i18n_mnu_Search_Default"</label>
-            <input>case "\$SEARCHFUZZY\$SEARCHREGEX" in *true*) echo false;; *) echo true;; esac</input>
-            <variable>searchdefault</variable>
-            <action>: >"$RWMF"</action>
-            <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+            <variable>SEARCHDEFAULT</variable>
+            <action>if true $REQUEST_RESTART_WINDOW</action>
           </menuitem>
           ${REMARK# ]]]}
           ${REMARK# [[[. SEARCHFUZZY radiobutton}
@@ -2236,8 +2246,7 @@ start_window << GTKDIALOGDOC
             <variable>SEARCHFUZZY</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHFUZZY ,,,</action>}
             <action>awk '$LET_NV' N=SEARCHFUZZY V=\$SEARCHFUZZY '$CONFIG'</action>
-            <action>: >"$RWMF"</action>
-            <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+            <action>if true $REQUEST_RESTART_WINDOW</action>
           </menuitem>
           ${REMARK# ]]]}
           ${REMARK# [[[. SEARCHREGEX radiobutton}
@@ -2246,8 +2255,7 @@ start_window << GTKDIALOGDOC
             <variable>SEARCHREGEX</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHREGEX ,,,</action>}
             <action>awk '$LET_NV' N=SEARCHREGEX V=\$SEARCHREGEX '$CONFIG'</action>
-            <action>: >"$RWMF"</action>
-            <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+            <action>if true $REQUEST_RESTART_WINDOW</action>
           </menuitem>
           ${REMARK# ]]]}
           <menuitemseparator></menuitemseparator>
@@ -2258,8 +2266,7 @@ start_window << GTKDIALOGDOC
               <variable>SEARCHFILENAMES</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHFILENAMES ,,,</action>}
               <action>awk '$LET_NV' N=SEARCHFILENAMES V=\$SEARCHFILENAMES '$CONFIG'</action>
-              <action>: >"$RWMF"</action>
-              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+              <action>$REQUEST_RESTART_WINDOW</action>
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHCOMMENTS checkbox}
@@ -2267,8 +2274,7 @@ start_window << GTKDIALOGDOC
               <label>"$i18n_mnu_Search_Comment $i18n_asterisk"</label>
               <variable>SEARCHCOMMENTS</variable>
               <action>awk '$LET_NV' N=SEARCHCOMMENTS V=\$SEARCHCOMMENTS '$CONFIG'</action>
-              <action>: >"$RWMF"</action>
-              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+              <action>$REQUEST_RESTART_WINDOW</action>
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHCATEGORIES checkbox}
@@ -2277,8 +2283,7 @@ start_window << GTKDIALOGDOC
               <variable>SEARCHCATEGORIES</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHCATEGORIES ,,,</action>}
               <action>awk '$LET_NV' N=SEARCHCATEGORIES V=\$SEARCHCATEGORIES '$CONFIG'</action>
-              <action>: >"$RWMF"</action>
-              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+              <action>$REQUEST_RESTART_WINDOW</action>
             </menuitem>
             ${REMARK# ]]]}
             <label>"$i18n_mnu_Search_Details"</label>
@@ -2290,8 +2295,7 @@ start_window << GTKDIALOGDOC
               <variable>CASEDEPENDENT</variable>
               ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
               <action>awk '$LET_NV' N=CASEDEPENDENT V=\$CASEDEPENDENT '$CONFIG'</action>
-              <action>: >"$RWMF"</action>
-              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+              <action>$REQUEST_RESTART_WINDOW</action>
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHFROMLEFT checkbox}
@@ -2300,8 +2304,7 @@ start_window << GTKDIALOGDOC
               <variable>SEARCHFROMLEFT</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHFROMLEFT ,,,</action>}
               <action>awk '$LET_NV' N=SEARCHFROMLEFT V=\$SEARCHFROMLEFT '$CONFIG'</action>
-              <action>: >"$RWMF"</action>
-              <action>: launch:RESTART_WINDOW</action>${REMARK# restart findnrun? w/ args}
+              <action>$REQUEST_RESTART_WINDOW</action>
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SHOWNODISPLAY checkbox}
@@ -2367,11 +2370,10 @@ start_window << GTKDIALOGDOC
       ${REMARK# This widget makes the widgets to its left float left and distribute evenly when the window is widened.}
       <text space-fill="true" space-expand="true"><label>""</label></text>
       ${REMARK# [[[. 'edit' button}
-      <button tooltip-text="$i18n_Edit_configuration_file" stock-icon-size="1">
+      <button tooltip-text="$i18n_Edit_configuration_file $i18n_asterisk" stock-icon-size="1">
         <input file stock="gtk-edit"></input>
         <action>open=$({ command -v rox || command -v xdg-open; } 2>/dev/null); \$open "$CONFIG" &</action>
-        <action>echo "$i18n_When_you_are_finished" >"$RWMF"</action>
-        <action>launch:RESTART_WINDOW</action>
+        <action>$REQUEST_RESTART_WINDOW "$i18n_When_you_are_finished"</action>
       </button>
       ${REMARK# ]]]}
       ${REMARK# [[[. 'help' button}
@@ -2389,15 +2391,28 @@ start_window << GTKDIALOGDOC
     </hbox>
     ${REMARK# ]]]}
     ${REMARK# [[[. varSBAR statusbar}
-    ${REMARK# Do not vbox the status bar here; keep the vbox under the control}
-    ${REMARK# of set_STATUS_BAR to be able to hide the status bar without}
-    ${REMARK# leaving a tiny empty strip at the bottom of the main window.}
+    ${REMARK# set_STATUS_BAR() generates a vbox wrap for STATUS_BAR.}
     ${STATUS_BAR}
+    ${REMARK# ]]]}
+    ${REMARK# [[[. RESTART_WINDOW1 hidden checkbox, see RESTART_WINDOW0 below.}
+    <checkbox visible="false">
+      <variable>RESTART_WINDOW1</variable>
+      <action>launch:RESTART_WINDOW</action>
+    </checkbox>
     ${REMARK# ]]]}
   </vbox>
   ${REMARK# Do not vbox/hbox hidden widgets because boxes add some unnecessary (tiny) padding.}
   ${REMARK# Keeping hidden items after visible ones prevents issues when resizing window vertically.}
   ${REMARK# [[[. Timers (hidden).}
+  ${REMARK#  [[[. RESTART_WINDOW0: serve REQUEST_RESTART_WINDOW.}
+  ${REMARK# gtkdialog launch function limitations: see /usr/share/doc/gtkdialog/examples/miscellaneous/presentwindow.}
+  ${REMARK# e.g., if a radiobutton/checkbox menuitem launches a window other menuitems will not receive their "toggled" signal, etc. So we use a timer to watch for the launch request, and a checkbox to perform the launch. The checkbox can be hidden but apparently it must to be placed inside a visible vbox or it will not react.}
+  <timer interval="3600" visible="false" file-monitor="true">
+    <variable export="false">RESTART_WINDOW0</variable>
+    <input file>$RWMF-trigger</input>
+    <action signal="file-changed">activate:RESTART_WINDOW1</action>
+  </timer>
+  ${REMARK# -  ]]]}
   ${REMARK#  [[[. varSEARCH0: refresh initial search input.}
   <timer milliseconds="true" interval="100" visible="false">
     <variable export="false">varSEARCH0</variable>
