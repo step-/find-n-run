@@ -1936,7 +1936,7 @@ start_window() # Returns when gtkdialog terminates [[[2
     : >/tmp/varSEARCH
     echo >&2 "==== STARTING GTKDIALOG - DEBUG SEARCH INPUT ENABLED ===="
     timer $TIMER2 $TIMER1 $TIMER0 "+since last split time" >&2
-echo "You can \"type a search\" by writing a term to file /tmp/varSEARCH.
+echo >&2 "You can \"type a search\" by writing a term to file /tmp/varSEARCH.
 Limit $APP_NAME to a single instance because /tmp/varSEARCH can't be shared.
 Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | gvim -R -
 ----"
@@ -2156,7 +2156,7 @@ start_window << GTKDIALOGDOC
     ${REMARK# Note that menu accelerators act globally, so these hotkeys really apply to all widgets.}
     <menubar height-request="1" width-request="1">
       <menu>
-      ${REMARK#  [[[. Hotkeys for varENTRY.}
+      ${REMARK#  [[[. Hotkeys for varSEARCH.}
         ${REMARK#   [[[. Keys PageUp/PageDown paginate the current source plugin tap.}
         ${REMARK# Note that we serialize (%s) the event name to ensure invokeTAP detects a change.}
         <menuitem label="$i18n_previous_results_page" accel-key="0xff55" accel-mods="0">
@@ -2221,6 +2221,12 @@ start_window << GTKDIALOGDOC
       ${REMARK#  [[[. Keys Ctrl+1 through Ctrl+9 select the first 9 source plugins directly.}
         ${SOURCE_HOTKEYS}
       ${REMARK#  ]]]}
+      ${REMARK#   [[[. Hotkeys for DEBUG mode.}
+      ${DEBUG1:+`printf '<menuitem label="DEBUG selected item info" accel-key="0x069" accel-mods="4">'`}
+      ${DEBUG1:+  <action>env |sed -n 's/^varLIST=\(.*\)/\1/p' | tr '\b' '\n' >&2</action>}
+      ${DEBUG1:+</menuitem>}
+      ${REMARK#  ]]]}
+      ${REMARK#   ]]]}
         <label>""</label>
       </menu>
     </menubar>
@@ -2394,7 +2400,7 @@ start_window << GTKDIALOGDOC
     ${REMARK# set_STATUS_BAR() generates a vbox wrap for STATUS_BAR.}
     ${STATUS_BAR}
     ${REMARK# ]]]}
-    ${REMARK# [[[. RESTART_WINDOW1 hidden checkbox, see RESTART_WINDOW0 below.}
+    ${REMARK# [[[. RESTART_WINDOW1 hidden checkbox, see timer RESTART_WINDOW0 below.}
     <checkbox visible="false">
       <variable>RESTART_WINDOW1</variable>
       <action>launch:RESTART_WINDOW</action>
