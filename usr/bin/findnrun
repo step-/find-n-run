@@ -1324,7 +1324,7 @@ function max(a, b) { # [[[2
 #/   Forrest Smith
 #/
 
-function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus, separator_bonus, camel_bonus, leading_letter_penalty, max_leading_letter_penalty, unmatched_letter_penalty, score, patternIdx, patternLength, prevMatched, prevLower, prevSeparator, bestLetter, bestLower, bestLetterIdx, bestLetterScore, matchedIndices, patternChar, strChar, patternLower, strLower, strUpper, nextMatch, rematch, advanced, patternRepeat, newScore, penalty, formattedStr, lastIdx, i, idx, matched,      null, word_separators, call_counter_penalty, nMatchedIndices) { #[[[2
+function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus, separator_bonus, camel_bonus, leading_letter_penalty, max_leading_letter_penalty, unmatched_letter_penalty, score, patternIdx, patternLength, prevMatched, prevLower, prevSeparator, bestLetter, bestLower, bestLetterIdx, bestLetterScore, matchedIndices, patternChar, strChar, patternLower, strLower, strUpper, nextMatch, rematch, advanced, patternRepeat, newScore, penalty, formattedStr, lastIdx, i, idx, matched,      null, word_separators, call_counter_penalty, nMatchedIndices, strAhead) { #[[[2
 #/ Returns bool matched & list byVal={matched, score, formattedStr}
 #/ bool: true if each character in pattern is found sequentially within str
 #/ score: integer; higher is better match. Value has no intrinsic meaning. Range varies with pattern.
@@ -1337,13 +1337,13 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
     # how many times fuzzy_match was called for the same input record (with a different field each time)
     ++CallCounter[NR];
     null = "";
-    word_separators = "_ ;"SEP;
+    word_separators = "_ ;" SEP;
 
     #/ Score consts
     call_counter_penalty = -5;          #  penalty for each call after the first one
     adjacency_bonus = 5;                #/ bonus for adjacent matches
-    separator_bonus = 10;               #/ bonus if match occurs after a separator
-    camel_bonus = 10;                   #/ bonus if match is uppercase and prev is lower
+    separator_bonus = 10;               #/ bonus if match occurs after a separator        #+ and the next letter isn`t a word separator
+    camel_bonus =   0; #was: 10         #/ bonus if match is uppercase and prev is lower
     leading_letter_penalty = -3;        #/ penalty applied for every letter in str before the first match
     max_leading_letter_penalty = -9;    #/ maximum penalty for leading letters
     unmatched_letter_penalty = -1;      #/ penalty for every letter that doesn`t matter
@@ -1365,9 +1365,12 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
     ## var matchedIndices = [];
 
     #/ Loop over strings
+    strAhead = substr(str, strIdx, 1) # null at end of string
     while (strIdx <= strLength) {
         patternChar = patternIdx <= patternLength ? substr(pattern, patternIdx, 1) : null;
-        strChar = substr(str, strIdx, 1);
+        ##strChar = substr(str, strIdx, 1);
+        strChar = strAhead
+        strAhead = substr(str, strIdx + 1, 1); # null at end of string
 
         patternLower = patternChar != null ? tolower(patternChar) : null;
         strLower = tolower(strChar);
@@ -1400,7 +1403,7 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
                 newScore += adjacency_bonus;
 
             #/ Apply bonus for matches after a separator
-            if (prevSeparator)
+            if (prevSeparator && 0 == index(word_separators, strAhead))
                 newScore += separator_bonus;
 
             #/ Apply bonus across camel case boundaries. Includes "clever" isLetter check.
@@ -1437,6 +1440,7 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
         #/ Includes "clever" isLetter check.
         prevLower = strChar == strLower && strLower != strUpper;
         prevSeparator = index(word_separators, strChar) > 0;
+        separatorAhead = index(word_separators, strChar) > 0; #+
 
         ++strIdx;
     }
