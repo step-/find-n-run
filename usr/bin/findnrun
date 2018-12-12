@@ -1356,12 +1356,10 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
     strLength = length(str);
     prevMatched = 0;
     prevLower = 0;
-    prevSeparator = 1;       #/ true so if first letter match gets separator bonus
+    prevSeparator = 1;       #/ true so first letter match gets separator bonus
 
     #/ Use "best" matched letter if multiple string letters match the pattern
-    bestLetter = null;
-    bestLower = null;
-    bestLetterIdx = null;
+    bestLetter = bestLower = bestLetterIdx = null;
     bestLetterScore = 0;
 
     ## var matchedIndices = [];
@@ -1383,9 +1381,7 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
         if (advanced || patternRepeat) {
             score += bestLetterScore;
             matchedIndices[++nMatchedIndices] = bestLetterIdx;
-            bestLetter = null;
-            bestLower = null;
-            bestLetterIdx = null;
+            bestLetter = bestLower = bestLetterIdx = null;
             bestLetterScore = 0;
         }
 
@@ -1451,9 +1447,6 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
         matchedIndices[++nMatchedIndices] = bestLetterIdx;
     }
 
-    # Apply penalty for same-record call
-    score += call_counter_penalty * (CallCounter[NR] - 1);
-
     #/ Finish out formatted string after last pattern matched
     #/ Build formatted string based on matched letters
     formattedStr = "";
@@ -1470,6 +1463,9 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
         }
         byVal[3] = formattedStr = formattedStr substr(str, lastIdx, length(str) - lastIdx + 1);
     }
+
+    # Apply penalty for same-record call
+    score += call_counter_penalty * (CallCounter[NR] - 1);
 
     matched = patternIdx > patternLength;
     byVal[1] = matched; byVal[2] = score
