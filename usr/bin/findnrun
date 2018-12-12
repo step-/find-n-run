@@ -875,6 +875,7 @@ function format_item(   ic,cols) { # [[[2
   ic = format_icon_cell()
   # The second column, which is always empty, is reserved for future expansion.
   # The tree widget does display its value.
+  if(index(comment, "&")) gsub(/&/, "_", comment) # & bothers awk regex replacements somewhere downstream.
   cols = sprintf("%s||%s|%s", \
     ic, name, \
     sprintf("%s'${SEP}'%s'${SEP}'%s'${SEP}'%s'${SEP}'%s", \
