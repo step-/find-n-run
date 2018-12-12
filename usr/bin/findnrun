@@ -1155,21 +1155,20 @@ unset case subject commleft left categ REDIRECT2 func extract_data_fields body e
 # Variables that describe the match expression. [[[2
 ! [ true = "${CASEDEPENDENT}" ] && case=tolower
 if [ true = "${SEARCHFUZZY}" ]; then
-  func=fuzzy_file
+  func=fuzzy_match_record
   unset case # fuzzy_match smartly takes case into account
 elif [ true = "${SEARCHREGEX}" ]; then
   func=match
   REDIRECT2=" 2>/dev/null" # Quiet awk's "fatal: invalid regex" message
   [ true = "${SEARCHFROMLEFT}" ] && left="&& RSTART==1"
-else
+else # SEARCHDEFAULT
   func=index
   [ true = "${SEARCHFROMLEFT}" ] && left="==1"
 fi
 if ! [ true = "${SEARCHCOMPLETE}" ]; then
   # Extract the last field of the last record printed by $AWKB::format_item().
   extract_data_fields="SEARCHCOMPLETE=0
-    # a is an array with indices 1..5
-    split(\$(NF), a, /${SEP}/) # a <- {fullpathname,appname,exec,comment,category}"
+    split(\$(NF), a, /${SEP}/) # a[1..5] <- {fullpathname,appname,exec,comment,category}"
   if [ true = "$SEARCHFILENAMES" ]; then
     extract_data_fields="$extract_data_fields
     gsub(/^.*[/]|[.][^.]+$/, \"\", a[1]) # basename(fullpathname, .ext)"
@@ -1180,12 +1179,12 @@ else
   # Extract filename (basename w/o ext) + sub-fields 'appname'..'category'
   # and replace sub-field 'exec' with the basename (we don't search in 'exec').
   extract_data_fields="SEARCHCOMPLETE=1
-  # a is an array with index 0
+  delete a # a[0..0]
   # af <- \"fullpathname${SEP}appname${SEP}exec${SEP}comment${SEP}category\"
   af=\$(NF); x=index(af,\"${SEP}\"); a1=substr(af,1,x)
   gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a2=substr(af,x+1)
-  x=index(a2,\"${SEP}\"); a3n=substr(a2,x); a2=substr(a2,1,x-1)
-  a[0] = a2 \"${SEP}\" a1 a3n # appname filename comment category"
+  x=index(a2,\"${SEP}\"); a3n=substr(a2,x+1); a2=substr(a2,1,x-1)
+  a[0] = a2 \"${SEP}\" a1 \"${SEP}\" substr(a3n, index(a3n, \"${SEP}\")+1) # appname filename comment category"
   # Search in a[0] (appname "\b" filename "\b" comment "\b" category).
   subject="${case}(a[0])"
 fi
@@ -1239,7 +1238,7 @@ if [ "${func#fuzzy}" != "$func" ]; then
   >> "${AWKQ}" printf %s\\n '#[[[gawk
 function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore) { # [[[2
   # With global scalars gMark and SEARCHCOMPLETE, and global arrays
-  # InputRecord, RecordNumber and Formatted by fuzzy_file:
+  # InputRecord, RecordNumber and Formatted by fuzzy_match_record:
   if(n = asorti(RecordNumber, ByScore, "@ind_num_desc")) {
     for(i = 1; i <= n; i++) {
       rn = RecordNumber[ByScore[i]]
@@ -1276,7 +1275,7 @@ function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore
     DEBUG_TOP_ROW = InputRecord[ RecordNumber[ByScore[1]] ]
   }
 }
-function fuzzy_file(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
+function fuzzy_match_record(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
   # Set global scalars gMark. With global array CallCounter by fuzzy_match:
   # Request a formatted match string only if this will be the first call to fuzzy_match for
   # the current input record because only the first call passes appname within str.
@@ -1326,11 +1325,14 @@ function max(a, b) { # [[[2
 #/
 
 function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus, separator_bonus, camel_bonus, leading_letter_penalty, max_leading_letter_penalty, unmatched_letter_penalty, score, patternIdx, patternLength, prevMatched, prevLower, prevSeparator, bestLetter, bestLower, bestLetterIdx, bestLetterScore, matchedIndices, patternChar, strChar, patternLower, strLower, strUpper, nextMatch, rematch, advanced, patternRepeat, newScore, penalty, formattedStr, lastIdx, i, idx, matched,      null, word_separators, call_counter_penalty, nMatchedIndices) { #[[[2
-#/ Returns bool & byVal array of bool, score, formattedStr
+#/ Returns bool matched & list byVal={matched, score, formattedStr}
 #/ bool: true if each character in pattern is found sequentially within str
 #/ score: integer; higher is better match. Value has no intrinsic meaning. Range varies with pattern.
 #/        Can only compare scores with same search pattern.
 #/ formattedStr: input str with matched characters marked in <b> tags. Delete if unwanted.
+#  Sets global arrays CallCounter[1..NR]
+#  Input str concatenates fields separated by field_separator
+
     delete byVal;
     # how many times fuzzy_match was called for the same input record (with a different field each time)
     ++CallCounter[NR];
@@ -1393,7 +1395,7 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
             #/ Apply penalty for each letter before the first pattern match
             #/ Note: std::max because penalties are negative values. So max is smallest penalty.
             if (patternIdx == 1) {
-                penalty = max(strIdx * leading_letter_penalty, max_leading_letter_penalty);
+                penalty = max((strIdx - 1) * leading_letter_penalty, max_leading_letter_penalty);
                 score += penalty;
             }
 
