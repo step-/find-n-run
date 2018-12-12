@@ -159,6 +159,7 @@ export varFOCUSSEARCH=false
 [ -e "$CONFIG" ] || > "$CONFIG"; . "$CONFIG"
 # Add missing/hidden default settings.
 # Define and initialize ALL configuration settings here.
+#TODO FUZZY_MATCH_FIELD_BONUS
 gawk '#[[[gawk
 # look for existing settings [[[
 /^ICONCACHE=/{f1=1}
@@ -1236,6 +1237,12 @@ END {
 #gawk]]]' # [[[2]]]
 if [ "${func#fuzzy}" != "$func" ]; then
   >> "${AWKQ}" printf %s\\n '#[[[gawk
+BEGIN {
+  # Field bonus = %(abs(field score)) added to each field contribution
+  split("'"${FUZZY_MATCH_FIELD_BONUS:-0.3 0 0 0.5}"'", FieldBonus, " ")
+  FieldBonus[0] = 0 # reserved
+  # 0:call-penalty, 1:appname, 2:filename, 3:comment, 4:categories
+}
 function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore) { # [[[2
   # With global scalars gMark and SEARCHCOMPLETE, and global arrays
   # InputRecord, RecordNumber and Formatted by fuzzy_match_record:
@@ -1276,7 +1283,7 @@ function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore
   }
 }
 function fuzzy_match_record(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
-  # Set global scalars gMark. With global array CallCounter by fuzzy_match:
+  # Set global scalars gMark. With global arrays CallCounter and FieldScore by fuzzy_match:
   # Request a formatted match string only if this will be the first call to fuzzy_match for
   # the current input record because only the first call passes appname within str.
   requestFormattedStr = ! (NR in CallCounter)
@@ -1288,11 +1295,10 @@ function fuzzy_match_record(str, pattern,   byVal, requestFormattedStr, matched,
         Formatted[NR] = byVal[3]
         gMark = byVal[4] # invariant
 
-      # With global SEARCHCOMPLETE score bonus for matching the appname field.
+      # With global SEARCHCOMPLETE add field bonus.
       if(SEARCHCOMPLETE) {
-        if(index(Formatted[NR], gMark) < index(Formatted[NR], SEP)) {
-          score += '${FUZZY_MATCH_BONUS_FOR_APP_NAME:-20}'
-          }
+        '${DEBUG1:+' if(!start_) print start_="=================">"/dev/stderr";'}'
+        score += field_score_bonus(str, score)
       }
     }
 
@@ -1300,6 +1306,33 @@ function fuzzy_match_record(str, pattern,   byVal, requestFormattedStr, matched,
     RecordNumber[sort_key] = NR
   }
   return matched
+}
+function field_score_bonus(str, score,   show, sort, n, i, delta, x_) { # [[[2
+  # With global arrays FieldScore by fuzzy_match and FieldBonus by BEGIN:
+  # Return total bonus - optionally displaying field scores and bonus contributions.
+
+  n = length(FieldScore);
+  # Show field scores before bonus.
+  show = '${DEBUG1:-0}' && (19==NR||82==NR||str~/compton/)
+  if(show) {
+    sort = "sort -k 10,9g |column -t -o \"|\" -s \"\t\" >&2"; # -k 2,9g
+    printf "|% 4d A", NR | sort;
+    for(i = 0; i < n; i++) {
+      printf "\t%+ 5d", FieldScore[i] | sort;
+    }
+    printf "\t=%+ 6d\t%s {%s}\n", score, gensub(SEP, "`", "g", Formatted[NR]), pattern | sort;
+    printf "|% 4d B", NR | sort;
+  }
+
+  # Compute field bonus +abs(percent(FieldScore_i)).
+  for(i = 0; i < n; i++) {
+    if(show) printf "\t%+ 5d", FieldScore[i] | sort;
+    FieldScore[i] += x_ = int(0.5 + FieldBonus[i] * ((x_ = FieldScore[i]) < 0 ? -x_ : x_));
+    if(show) printf "%+d", x_ | sort;
+    delta += x_;
+  }
+  if(show) printf "\t=%+ 6d\t%s {%s}\n", score + delta, gensub(SEP, "`", "g", Formatted[NR]), pattern | sort;
+  return score
 }
 function max(a, b) { # [[[2
     return a > b ? a : b;
@@ -1324,20 +1357,24 @@ function max(a, b) { # [[[2
 #/   Forrest Smith
 #/
 
-function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus, separator_bonus, camel_bonus, leading_letter_penalty, max_leading_letter_penalty, unmatched_letter_penalty, score, patternIdx, patternLength, prevMatched, prevLower, prevSeparator, bestLetter, bestLower, bestLetterIdx, bestLetterScore, matchedIndices, patternChar, strChar, patternLower, strLower, strUpper, nextMatch, rematch, advanced, patternRepeat, newScore, penalty, formattedStr, lastIdx, i, idx, matched,      null, word_separators, call_counter_penalty, nMatchedIndices, strAhead) { #[[[2
+function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus, separator_bonus, camel_bonus, leading_letter_penalty, max_leading_letter_penalty, unmatched_letter_penalty, score, patternIdx, patternLength, prevMatched, prevLower, prevSeparator, bestLetter, bestLower, bestLetterIdx, bestLetterScore, matchedIndices, patternChar, strChar, patternLower, strLower, strUpper, nextMatch, rematch, advanced, patternRepeat, newScore, penalty, formattedStr, lastIdx, i, idx, matched,      null, field_separator, word_separators, call_counter_penalty, nMatchedIndices, fieldIdx, strAhead) { #[[[2
 #/ Returns bool matched & list byVal={matched, score, formattedStr}
 #/ bool: true if each character in pattern is found sequentially within str
 #/ score: integer; higher is better match. Value has no intrinsic meaning. Range varies with pattern.
 #/        Can only compare scores with same search pattern.
 #/ formattedStr: input str with matched characters marked in <b> tags. Delete if unwanted.
-#  Sets global arrays CallCounter[1..NR]
+#  Sets global arrays CallCounter[1..NR] and FieldScore[0..maxindex] with
+#    score == sum(FieldScore[1..maxindex]) + (FieldScore[0] = penalty_function(CallCounter[NR]))
 #  Input str concatenates fields separated by field_separator
 
     delete byVal;
+    delete FieldScore
     # how many times fuzzy_match was called for the same input record (with a different field each time)
     ++CallCounter[NR];
     null = "";
-    word_separators = "_ ;" SEP;
+    field_separator = SEP;
+    word_separators = "_ ;" field_separator;
+    fieldIdx = 1;
 
     #/ Score consts
     call_counter_penalty = -5;          #  penalty for each call after the first one
@@ -1371,6 +1408,10 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
         ##strChar = substr(str, strIdx, 1);
         strChar = strAhead
         strAhead = substr(str, strIdx + 1, 1); # null at end of string
+
+        #+ Entering new field
+        if(strChar == field_separator)
+            FieldScore[fieldIdx++] = score;
 
         patternLower = patternChar != null ? tolower(patternChar) : null;
         strLower = tolower(strChar);
@@ -1468,8 +1509,14 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
         byVal[3] = formattedStr = formattedStr substr(str, lastIdx, length(str) - lastIdx + 1);
     }
 
+    # Sum up scores by field
+    FieldScore[fieldIdx] = score;
+    for(i = fieldIdx - 1; i > 0; i--) {
+      score += FieldScore[i]
+    }
+
     # Apply penalty for same-record call
-    score += call_counter_penalty * (CallCounter[NR] - 1);
+    score += FieldScore[0] = (call_counter_penalty * (CallCounter[NR] - 1));
 
     matched = patternIdx > patternLength;
     byVal[1] = matched; byVal[2] = score
