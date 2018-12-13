@@ -159,7 +159,6 @@ export varFOCUSSEARCH=false
 [ -e "$CONFIG" ] || > "$CONFIG"; . "$CONFIG"
 # Add missing/hidden default settings.
 # Define and initialize ALL configuration settings here.
-#TODO FUZZY_MATCH_FIELD_BONUS
 gawk '#[[[gawk
 # look for existing settings [[[
 /^ICONCACHE=/{f1=1}
@@ -184,7 +183,7 @@ gawk '#[[[gawk
 /^HOTKEY_F5=/{f16=1}
 /^GTK_ICON_THEME_NAME=/{f17=1}
 /^SEARCHFUZZY=/{f18=1}
-/^FUZZY_MATCH_BONUS_FOR_APP_NAME=/{f19=1}
+/^FUZZY_MATCH_FIELD_BONUS=/{f19=1}
 #]]]
 END{ # lookup GTK2 icon theme name [[[
     # TODO implement GTK3 lookup
@@ -232,7 +231,7 @@ END{ # create config file and add missing settings [[[
   if(!f11) print "HOTKEY_F12=\"0:F12:0xffc9\"">>ARGV[1]
   if(!f17 && GTK_ICON_THEME_NAME) print "GTK_ICON_THEME_NAME=\""GTK_ICON_THEME_NAME"\"">>ARGV[1]
   if(!f1) print "ICONCACHE=\"'"${HOME_ICONS_LEGACY}"'\"">>ARGV[1]
-  if(!f19) print "FUZZY_MATCH_BONUS_FOR_APP_NAME=20">>ARGV[1]
+  if(!f19) print "FUZZY_MATCH_FIELD_BONUS=\"0.3 0 0 0.5\"">>ARGV[1]
   if(!f18) print "SEARCHFUZZY=false">>ARGV[1]
   if(!f14) print "SEARCHFILENAMES=false">>ARGV[1]
   if(!f2) print "SEARCHCOMMENTS=false">>ARGV[1]

@@ -23,9 +23,10 @@ These values can be set also from the main window:
 
 These values can be set also from the main menu:
 ```gettext
-    # Search approximated words tolerating some mispelling and missing parts.
+    # Search approximated words tolerating some mispellings and missing parts.
     # Fuzzy search ignores the following settings because it substitutes them
     # in other ways: CASEDEPENDENT, SEARCHFROMLEFT.
+    # Only one of SEARCHFUZZY and SEARCHREGEX can be enabled.
     SEARCHFUZZY=false
 ```
 
@@ -74,11 +75,11 @@ These values can be set also from the main menu:
 `SHOWNODISPLAY`: Versions up to 1.10.6 didn't have this setting and showed all
 files by default.
 
-`SEARCHFILENAMES` `SEARCHCOMMENTS` `SEARCHCATEGORIES`: If all three are
-enabled, the fields are searched at the same time (faster). If only some are
-enabled, the fields are searched separately, and the search stops at the first
-matching field from the left in the order application name, filename, comment,
-category.
+`SEARCHFILENAMES` `SEARCHCOMMENTS` `SEARCHCATEGORIES`: If fuzzy search is
+enabled, all fields are searched at the same time, and the highest scoring
+match can spread across several fields. For non-fuzzy search the fields are
+searched separately and sequentially, and the search stops on the first
+match found in the order: application name, filename, comment, category.
 
 ### Hidden Preferences
 
@@ -102,12 +103,14 @@ power users and custom applications:
 ```
 
 ```gettext
-    # This value affects the relative importance of matching the application
-    # name versus matching other details (filenames, comments, categories).
-    # Increasing this value makes the application name match more important so the
-    # name is found with fewer keystrokes. This setting applies to fuzzy search
-    # with **all** details enabled only.
-    FUZZY_MATCH_BONUS_FOR_APP_NAME=20
+    # This value affects the importance of fuzzy matching each of
+    # the fields: 1) application name, 2) filename, 3) comment, 4) category.
+    # Setting a value = 0 means accepting the calculated match score of that
+    # field as is. Setting a value = R means adding score/R to the calculated
+    # score, therefore raising the overall importance of that field.
+    # For instance, values "0.3 0 0 0.5", increases the application name match
+    # score by 30%, and the category match score by 50%.
+    FUZZY_MATCH_FIELD_BONUS="0.3 0 0 0.5"
 ```
 
 ```gettext
