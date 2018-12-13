@@ -873,10 +873,11 @@ function format_item(   ic,cols) { # [[[2
 # Format tree widget item - columns: icon, name, all-packed-values.
 # Note: assert data does not include characters "|" and $SEP.
   ic = format_icon_cell()
-  # The second column, which is always empty, is reserved for future expansion.
+  # Column names per tree widget varLIST: Icon|Label|Reserved. The third column, is reserved for fuzzy search details.
   # The tree widget does display its value.
+  # findnrun-formatter formats same as sprintf below.
   if(index(comment, "&")) gsub(/&/, "_", comment) # & bothers awk regex replacements somewhere downstream.
-  cols = sprintf("%s||%s|%s", \
+  cols = sprintf("%s|%s||%s", \
     ic, name, \
     sprintf("%s'${SEP}'%s'${SEP}'%s'${SEP}'%s'${SEP}'%s", \
     filename,name,exec,comment,category))
@@ -2114,10 +2115,10 @@ start_window << GTKDIALOGDOC
     ${REMARK# ]]]}
     ${REMARK# [[[. varLIST: list tap-data records; invoke selected.}
     <tree enable-search="false" exported-column="2" column-visible="1|1|0" headers-visible="false" icon-column-name="gtk-apply" hscrollbar-policy="1" vscrollbar-policy="1" tooltip-text="$i18n_Press_ENTER_or_double_click">
-      ${REMARK# Column names below. Only Reserved and Label are visible.}
+      ${REMARK# Column names below. Only Label and Reserved are visible. Reserved is used for fuzzy search details.}
       ${REMARK# Consider also that there is an icon column, so a full input}
-      ${REMARK# record is defined as Icon|Reserved|Label|PackedValues }
-      <label>"Reserved|Label|PackedValues"</label>
+      ${REMARK# record is defined as Icon|Label|Reserved|PackedValues }
+      <label>"Label|Reserved|PackedValues"</label>
       <variable>varLIST</variable>
       <output file>$F4SF</output>
       ${REMARK# [[[. Populate list view.}

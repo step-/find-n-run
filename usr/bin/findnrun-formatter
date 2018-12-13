@@ -3,8 +3,8 @@
 
 # =============================================================================
 # Text line formatter for findnrun source pluging taps.
-# Version=1.0.1
-# author: Copyright (C)2016 step
+# Version=3.1.0
+# author: Copyright (C)2016-2018 step
 # license: GNU GPL applies
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
@@ -15,7 +15,7 @@
 
 # Source plugin formatter script {{{1
 BEGIN {
-  Version = "1.0.1"
+  Version = "3.1.0"
   Program = "findnrun-formatter"
   Opterr = 1    # default is to diagnose
   Optind = 1    # skip ARGV[0]
@@ -62,7 +62,7 @@ BEGIN {
 index(opt["O"], "s") {
   if(! index(opt["O"], "u")) {
     for(i=1; i <= NF; i++)
-      print substr(default_icon "||" $(i) "|" SEP SEP $(i) SEP, 1, 510)
+      print substr(default_icon "|" $(i) "||" SEP SEP $(i) SEP, 1, 510)
       # 510 works around gtkdialog tree widget buffer overflow limit.
     if(verbose > 3)
       print default_icon "||" $(i) > "/dev/stderr"
@@ -74,9 +74,9 @@ index(opt["O"], "s") {
       ai = a[i]
       if(a0 != ai) {
         a0 = ai
-        print substr(default_icon "||" ai "|" SEP SEP ai SEP, 1, 510)
+        print substr(default_icon "|" ai "||" SEP SEP ai SEP, 1, 510)
         if(verbose > 3)
-          print default_icon "||" ai > "/dev/stderr"
+          print default_icon "|" ai "|" > "/dev/stderr"
       }
     }
   }
@@ -86,18 +86,18 @@ index(opt["O"], "s") {
 {
   # Encodings {{{
   # In:   <icon-filename> '|' <tap-reserved> '|' <label> '|' <tap-data> '|' <comment> '|' <categories>
-  # Out:  Icon|FNR-Reserved|Label|PackedValues
+  # Out:  Icon|Label|FNR-Reserved|PackedValues
   # PackedValues:     for SEP=,
   #   plugin tap: <icon-filename>,<tap-reserved>,<label>,<tap-data>,<comment>,<categories>
   #   FNRstart:   icon,filename,name,exec,comment,category
   # Ref:  In: plugin.md tap-record; Out: $AWKB script format_item(); PackedValues: format_item()
   #}}}
-  # The second column below, FNR-Reserved, is always empty and it's reserved for future expansion.
+  # The third column below, FNR-Reserved, is always empty and it's reserved for future expansion.
   # The tree widget does display its value.
-  print substr(($1 ?$1 :default_icon) "||" $3 "|" $2 SEP $3 SEP $4 SEP $5 SEP $6, 1, 510)
+  print substr(($1 ?$1 :default_icon) "|" $3 "||" $2 SEP $3 SEP $4 SEP $5 SEP $6, 1, 510)
   # 510 works around gtkdialog tree widget buffer overflow limit
   if(verbose > 3)
-    print ($1 ?$1 :default_icon) "||" $3 "|", $2 "**", $3, "**", $4, "**", $5, "**", $6 > "/dev/stderr"
+    print ($1 ?$1 :default_icon) "|" $3 "||", $2 "**", $3, "**", $4, "**", $5, "**", $6 > "/dev/stderr"
 }
 
 function get_default_icon(   a, na, iconref) # {{{2
