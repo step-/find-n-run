@@ -1141,8 +1141,8 @@ function close_progress_dialog(pid,   killer) { # [[[2
 # Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
 # Output script structure: [[[
 #
-# If $SEARCHCOMPLETE = true
-# Then Match(concat(appname, filename, comment, categories))
+# If $SEARCHFUZZY = true
+# Then Match(concat(appname, ?filename, ?comment, ?categories))
 # Else Match(appname) || MatchX(filename) || MatchX(comment) || MatchX(categories)
 #   where function MatchX is included iff X = true for
 #   X in {$SEARCHFILENAMES, $SEARCHCOMMENTS, $SEARCHCATEGORIES}
@@ -1159,7 +1159,6 @@ unset case subject commleft left categ REDIRECT2 func extract_data_fields body e
 ! [ true = "${CASEDEPENDENT}" ] && case=tolower
 if [ true = "${SEARCHFUZZY}" ]; then
   func=fuzzy_match_record
-  unset case # fuzzy_match smartly takes case into account
 elif [ true = "${SEARCHREGEX}" ]; then
   func=match
   REDIRECT2=" 2>/dev/null" # Quiet awk's "fatal: invalid regex" message
@@ -1168,32 +1167,32 @@ else # SEARCHDEFAULT
   func=index
   [ true = "${SEARCHFROMLEFT}" ] && left="==1"
 fi
-if ! [ true = "${SEARCHCOMPLETE}" ]; then
-  # Extract the last field of the last record printed by $AWKB::format_item().
-  extract_data_fields="SEARCHCOMPLETE=0
-    split(\$(NF), a, /${SEP}/) # a[1..5] <- {fullpathname,appname,exec,comment,category}"
-  if [ true = "$SEARCHFILENAMES" ]; then
-    extract_data_fields="$extract_data_fields
-    gsub(/^.*[/]|[.][^.]+$/, \"\", a[1]) # basename(fullpathname, .ext)"
-  fi
-  # Search in a[2] (appname). More a[i] may be added near $SEARCHCOMPLETE below.
-  subject="${case}(a[2])"
-else
-  # Extract filename (basename w/o ext) + sub-fields 'appname'..'category'
-  # and replace sub-field 'exec' with the basename (we don't search in 'exec').
-  extract_data_fields="SEARCHCOMPLETE=1
-  delete a # a[0..0]
-  # af <- \"fullpathname${SEP}appname${SEP}exec${SEP}comment${SEP}category\"
-  af=\$(NF); x=index(af,\"${SEP}\"); a1=substr(af,1,x)
-  gsub(/^.*[/]|[.][^.]+$/, \"\", a1); a2=substr(af,x+1)
-  x=index(a2,\"${SEP}\"); a3n=substr(a2,x+1); a2=substr(a2,1,x-1)
-  a[0] = a2 \"${SEP}\" a1 \"${SEP}\" substr(a3n, index(a3n, \"${SEP}\")+1) # appname filename comment category"
-  # Search in a[0] (appname "\b" filename "\b" comment "\b" category).
-  subject="${case}(a[0])"
+# Extract the last field of the last record printed by $AWKB::format_item().
+extract_data_fields="delete a
+  split(\$(NF), a, /${SEP}/) # a[1..5] <- {fullpathname,appname,exec,comment,category}"
+if [ true = "$SEARCHFILENAMES" ]; then
+  extract_data_fields="$extract_data_fields"'
+  sub(/^.*\//, "", a[1]) # basename
+  if(index(a[1], ".") > 1) {sub(/\.[^.]+$/, "", a[1])} # w/o ext'
 fi
-# assert: a[2] is defined - it's the list widget visible text column
-subject="${func}(${subject},GREP)"
-if ! [ true = "${SEARCHCOMPLETE}" ]; then
+if [ true = "${SEARCHFUZZY}" ]; then
+  searchfilenames="\"$SEP\"" searchcomments="\"$SEP\"" searchcategories="\"$SEP\""
+  unset field_mask
+  [ true = "$SEARCHFILENAMES" ] && searchfilenames="${searchfilenames}a[1]" field_mask=1
+  [ true = "$SEARCHCOMMENTS" ] && searchcomments="${searchcomments}a[4]" field_mask=$((field_mask + 2))
+  [ true = "$SEARCHCATEGORIES" ] && searchcategories="${searchcategories}a[5]" field_mask=$((field_mask + 4))
+  extract_data_fields="$extract_data_fields
+  a[0] = a[2]${field_mask:+${searchfilenames}${searchcomments}${searchcategories}} # a[0..5]
+  FIELD_MASK=${field_mask:-0}"
+else
+  extract_data_fields="$extract_data_fields"
+fi
+if [ true = "${SEARCHFUZZY}" ]; then
+  # Search in a[0] (appname "\b" ?filename "\b" ?comment "\b" ?category).
+  subject="${func}(a[0],GREP)"
+else
+  # Search in a[2] (appname) or in ?a[1](filename) or in ?a[4](comment) or in ?a[5](category).
+  subject="${func}(${case}(a[2]),GREP)"
   [ true = "${SEARCHFILENAMES}" ] && fnameleft="|| ${func}(${case}(a[1]),GREP)${left}"
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(${case}(a[4]),GREP)${left}"
   case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(${case}(a[5]),GREP)";; esac
@@ -1221,9 +1220,8 @@ BEGIN {
 }
 {
   # extract searched-in fields
-  delete a
   '"${extract_data_fields}"'
-  # narrow matches by GREP pattern
+  # match typed pattern GREP
   if(GREP!="" && ('"${subject}${left} ${fnameleft} ${commleft} ${categ}"') || GREP=="") {
     '"${body}"'
     '${DEBUG1:+$debug_get_top_row}'
@@ -1245,21 +1243,19 @@ BEGIN {
   FieldBonus[0] = 0 # reserved
   # 0:call-penalty, 1:appname, 2:filename, 3:comment, 4:categories
 }
-function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore) { # [[[2
-  # With global scalars gMark and SEARCHCOMPLETE, and global arrays
+function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, rt, F, nF, ByScore) { # [[[2
+  # With global scalars gMark and FIELD_MASK, and global arrays
   # InputRecord, RecordNumber and Formatted by fuzzy_match_record:
   if(n = asorti(RecordNumber, ByScore, "@ind_num_desc")) {
     for(i = 1; i <= n; i++) {
       rn = RecordNumber[ByScore[i]]
       r = InputRecord[rn]
       if(rn in Formatted) {
-        # Splice the formatted appname over the 2nd and 3rd list widget columns
-        # (the 2nd column is always empty because it`s reserved).
-        if(!SEARCHCOMPLETE) {     # SEARCHCOMPLETE disabled - formatted a[2]
-          appname = Formatted[rn] # includes all match marks
-        } else {                  # SEARCHCOMPLETE  enabled - formatted a[0]
+        if(FIELD_MASK) { # Formatted from a[0]
+          # Splice Formatted over list widget columns 2(Label) and 3(Reserved).
+          # Reserved takes fuzzy search matches for fields other than appname.
           rt = "\342\200\246" # printf "\u2026" | od -b; unicode horizontal ellipsis
-          # appname may include some match marks or all marks could lie right of appname
+          # appname could include some match marks or all marks could lie right of appname
           s = Formatted[rn]
           p = index(s, SEP)
           appname = substr(s, 1, p - 1)
@@ -1269,26 +1265,29 @@ function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, lt, rt, F, nF, ByScore
             sz = F[nF] substr(sz, q + 1) # one word of left context before the first mark
             gsub(SEP, " `", sz)
             appname = appname FS rt "`" sz
-          } else {
-            appname = appname FS # leave column empty
-          }
 #printf "%16s %s%s%s\n", "", sa, appname, gensub(SEP, "@", "g", sz) >"/dev/stderr"
+          } else {
+            appname = appname FS # leave column 3 empty
+          }
+        } else { # Formatted from a[2]
+          appname = Formatted[rn] FS # leave column 3 empty
         }
         # Now splice appname over the two columns.
         fs = FS == "|" ? "\\|" : FS
+        #           Icon|         Label|Reserved|    => Icon| AppName|Details|
         r = gensub("([^"fs"]*"fs")([^"fs"]*"fs"){2,2}", "\\1" appname FS, 1, r)
       } else appname = "NA";
-      print substr(r, 1, '$GTKDIALOG_MAX_BYTE_LEN_BUG'-36) # {APPROX_SAFE_SIDE: room for 12*3-byte unicode gMark`s}
 #printf "%+10.4f @ %d @ %s @ %s\n", ByScore[i], CallCounter[rn], appname, substr(InputRecord[rn], 1, 80) > "/dev/stderr"
+      print substr(r, 1, '$GTKDIALOG_MAX_BYTE_LEN_BUG'-36) # {APPROX_SAFE_SIDE: room for 12*3-byte unicode gMark`s}
     }
     DEBUG_TOP_ROW = InputRecord[ RecordNumber[ByScore[1]] ]
   }
 }
 function fuzzy_match_record(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
-  # Set global scalars gMark. With global arrays CallCounter and FieldScore by fuzzy_match:
+  # Set global scalars gMark. With global array CallCounter by fuzzy_match:
   # Request a formatted match string only if this will be the first call to fuzzy_match for
   # the current input record because only the first call passes appname within str.
-  requestFormattedStr = ! (NR in CallCounter)
+  requestFormattedStr = 1
   matched = fuzzy_match(pattern, str, byVal, requestFormattedStr)
   if(matched) {
     InputRecord[NR] = $0
@@ -1297,10 +1296,10 @@ function fuzzy_match_record(str, pattern,   byVal, requestFormattedStr, matched,
         Formatted[NR] = byVal[3]
         gMark = byVal[4] # invariant
 
-      # With global SEARCHCOMPLETE add field bonus.
-      if(SEARCHCOMPLETE) {
+      # With global FIELD_MASK add field bonus.
+      if(FIELD_MASK) {
         '${DEBUG1:+' if(!start_) print start_="=================">"/dev/stderr";'}'
-        score += field_score_bonus(str, score)
+        score += field_score_bonus(str, pattern, score)
       }
     }
 
@@ -1309,13 +1308,13 @@ function fuzzy_match_record(str, pattern,   byVal, requestFormattedStr, matched,
   }
   return matched
 }
-function field_score_bonus(str, score,   show, sort, n, i, delta, x_) { # [[[2
+function field_score_bonus(str, pattern, score,   show, sort, n, i, delta, x_, mask) { # [[[2
   # With global arrays FieldScore by fuzzy_match and FieldBonus by BEGIN:
   # Return total bonus - optionally displaying field scores and bonus contributions.
 
   n = length(FieldScore);
   # Show field scores before bonus.
-  show = '${DEBUG1:-0}' && (19==NR||82==NR||str~/compton/)
+  show = '${DEBUG1:-0}' && (19==NR||82==NR||str~/compton|GIF/)
   if(show) {
     sort = "sort -k 10,9g |column -t -o \"|\" -s \"\t\" >&2"; # -k 2,9g
     printf "|% 4d A", NR | sort;
@@ -1326,10 +1325,12 @@ function field_score_bonus(str, score,   show, sort, n, i, delta, x_) { # [[[2
     printf "|% 4d B", NR | sort;
   }
 
-  # Compute field bonus +abs(percent(FieldScore_i)).
+  # With global FIELD_MASK: compute field bonus:
+  # If field_i is enabled add abs(FieldBonus_i * FieldScore_i) to field score else zero out field score.
+  mask = or(lshift(FIELD_MASK, 2), 2, 1) # enabled fields, i={0,1} always
   for(i = 0; i < n; i++) {
     if(show) printf "\t%+ 5d", FieldScore[i] | sort;
-    FieldScore[i] += x_ = int(0.5 + FieldBonus[i] * ((x_ = FieldScore[i]) < 0 ? -x_ : x_));
+      FieldScore[i] += x_ = and(mask, lshift(1, i)) ? int(0.5 + FieldBonus[i] * ((x_ = FieldScore[i]) < 0 ? -x_ : x_)) : -FieldScore[i];
     if(show) printf "%+d", x_ | sort;
     delta += x_;
   }
