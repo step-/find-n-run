@@ -1277,16 +1277,14 @@ function fuzzy_out(   n, i, p, q, rn, s, sa, sz, appname, rt, F, nF, ByScore) { 
         #           Icon|         Label|Reserved|    => Icon| AppName|Details|
         r = gensub("([^"fs"]*"fs")([^"fs"]*"fs"){2,2}", "\\1" appname FS, 1, r)
       } else appname = "NA";
-#printf "%+10.4f @ %d @ %s @ %s\n", ByScore[i], CallCounter[rn], appname, substr(InputRecord[rn], 1, 80) > "/dev/stderr"
+#printf "%+10.4f @ %s @ %s\n", ByScore[i], appname, substr(InputRecord[rn], 1, 80) > "/dev/stderr"
       print substr(r, 1, '$GTKDIALOG_MAX_BYTE_LEN_BUG'-36) # {APPROX_SAFE_SIDE: room for 12*3-byte unicode gMark`s}
     }
     DEBUG_TOP_ROW = InputRecord[ RecordNumber[ByScore[1]] ]
   }
 }
 function fuzzy_match_record(str, pattern,   byVal, requestFormattedStr, matched, score, sort_key) { # [[[2
-  # Set global scalars gMark. With global array CallCounter by fuzzy_match:
-  # Request a formatted match string only if this will be the first call to fuzzy_match for
-  # the current input record because only the first call passes appname within str.
+  # Sets global scalar gMark.
   requestFormattedStr = 1
   matched = fuzzy_match(pattern, str, byVal, requestFormattedStr)
   if(matched) {
@@ -1366,14 +1364,12 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
 #/ score: integer; higher is better match. Value has no intrinsic meaning. Range varies with pattern.
 #/        Can only compare scores with same search pattern.
 #/ formattedStr: input str with matched characters marked in <b> tags. Delete if unwanted.
-#  Sets global arrays CallCounter[1..NR] and FieldScore[0..maxindex] with
-#    score == sum(FieldScore[1..maxindex]) + (FieldScore[0] = penalty_function(CallCounter[NR]))
+#  Sets global array FieldScore[0..maxindex] with
+#    score == sum(FieldScore[1..maxindex]) + (FieldScore[0] = reserved = 0)
 #  Input str concatenates fields separated by field_separator
 
     delete byVal;
     delete FieldScore
-    # how many times fuzzy_match was called for the same input record (with a different field each time)
-    ++CallCounter[NR];
     null = "";
     field_separator = SEP;
     word_separators = "_ ;" field_separator;
@@ -1517,9 +1513,6 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
     for(i = fieldIdx - 1; i > 0; i--) {
       score += FieldScore[i]
     }
-
-    # Apply penalty for same-record call
-    score += FieldScore[0] = (call_counter_penalty * (CallCounter[NR] - 1));
 
     matched = patternIdx > patternLength;
     byVal[1] = matched; byVal[2] = score
