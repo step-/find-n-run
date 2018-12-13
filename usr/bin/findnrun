@@ -764,6 +764,7 @@ BEGIN { # [[[2
   # Choose a shell for ongoing command execution - see icon_wa_match_and_link().
   sh = "'${SH}'" # not used as a co-process
   ICONSTEM = "'"${ICONSTEM}"'" # prefix to worked-around icons.
+  UNIQUEPREFIX = "'"${CACHEFILEPREFIX}"'"
   if("" == FALLBACK_ICON) { FALLBACK_ICON = "'"$ICON_FNRstart"'" }
   if('${DEBUG2:-0}') print "ICONSTEM="ICONSTEM >"/dev/stderr"
   if(""==SHOWNODISPLAY) SHOWNODISPLAY = "false"
@@ -813,7 +814,7 @@ END { # [[[2
       continue # trap bogus .desktop application files
     # Delete freedesktop.org %F parameter since Exec= value is going to sh.
     sub(/[ \t]*%[a-zA-Z][ \t]*$/, "", exec)
-    match(fil, /\nIcon=([^\n]*\/)?([^\n.]+)([.][^\n]*)?/, m)
+    match(fil, /\nIcon=([^\n]*\/)?([^\n/.]*)([.][^\n]*)?/, m)
     icnpath=m[1]; icnname=m[2]; icnext=substr(m[3],2)
     if(index(icnext, ".")) {
       # case "filename.any[.any ...].EXT"
@@ -821,7 +822,10 @@ END { # [[[2
       icnname = icnname "." substr(icnext, 1, length(icnext)-length(ic[nic])-1)
       icnext = ic[nic]
     }
-    if(icnext && ! match(icnext, /png|svg|xpm/)) {
+    # corner case /path/.DirIcon: make new distinguishable unique name
+    if(!icnname && icnext) {
+      icnname = UNIQUEPREFIX i # [[:digit:]]+
+    } else if(icnext && ! match(icnext, /png|svg|xpm/)) {
       # case "file.name" implicit icon EXT
       icnname = icnname "." icnext
       icnext = ""
@@ -940,7 +944,7 @@ function icon_wa_find_icon_files(   c,aifp,icon_dirs,icon_theme_name,p1,p2,e1,e2
   # Find paths (colon-separated)
   icon_dirs = "'"$ICON_DIRS"'"
   # Find expression that matches icon file names (find -D opt)
-  e1 = "-type f \\( -name \\*.xpm -o -name \\*.png -o -name \\*.svg \\) -print"
+  e1 = "-type f \\( -name \\*.xpm -o -name \\*.png -o -name \\*.svg -o -name .DirIcon \\) -print"
   if("" == icon_theme_name) {
     e2 = e1
   } else {
@@ -988,15 +992,24 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext,p) { # [[
       # Find the full icon pathname from the icon name only, if any.
       # cf. http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#icon_lookup
       icnname = WA[i,"icnname"]
-      ifp = ""
-      # matched without regex for a huge speed increase
-      if(p = index(WA_ALL_ICON_PATHS, "/"icnname".")) { # potential match
-        # look back enough (-512) and look ahead enough (+6: +4 for
-        # /.(png|svg|xpm)/ and +2 for /\n./) to cross \n boundaries
-        x = substr(WA_ALL_ICON_PATHS, p -512, +512+length(icnname) +6)
-        x = split(x, a, /\n/)
-        if(index(a[x -1], "/"icnname".")) { # confirmed that it`s an actual match
-          ifp = a[x -1]
+      if(1 == index(icnname, UNIQUEPREFIX)) { # corner case /path/.DirIcon
+        sub(UNIQUEPREFIX"[[:digit:]]+", "", ifp)
+        if(-1 != getline < ifp) {
+          close(ifp) # icon file x exists
+        } else {
+          ifp = ""
+        }
+      } else {
+        ifp = ""
+        # matched without regex for a huge speed increase
+        if(p = index(WA_ALL_ICON_PATHS, "/"icnname".")) { # potential match
+          # look back enough (-512) and look ahead enough (+6: +4 for
+          # /.(png|svg|xpm)/ and +2 for /\n./) to cross \n boundaries
+          x = substr(WA_ALL_ICON_PATHS, p -512, +512+length(icnname) +6)
+          x = split(x, a, /\n/)
+          if(index(a[x -1], "/"icnname".")) { # confirmed that it`s an actual match
+            ifp = a[x -1]
+          }
         }
       }
     }
@@ -1010,11 +1023,19 @@ function icon_wa_match_and_link(sh,    i,IFP,ifp,icnname,c,x,a,lnk,ext,p) { # [[
     # Note that link file creation may be postponed until END performs close(sh).
     # The link name is located in the icon cache directory ICONSTEM->.
     # The icon name passed to the tree widget must not include dot+extension.
-    # However when passing a link name the extension must be included.
+    # However, when passed a link name, GTK seems to require a supported extension png|svg|xpm.
     x = split(ifp, a, /\//)
     lnk = a[x] # link name lnk <- icon-name[.ext] (no path)
-    ext = (x = split(lnk, a, /\./)) ?"."a[x] :"" # ".ext" if any
-    if(ext) x-- # forget ext from split link name
+    ext = (x = split(lnk, a, /\./)) > 1 ?"."a[x] :"" # ".ext" if any
+    if(ext) x-- # exclude ext from split link name
+    if(!a[1]) { # corner case /path/.DirIcon
+      # borrow from IFP: refill a[] for imploding link name
+      x = split(IFP, a, /\//)
+      c = a[x]
+      c = (x = split(c, a, /\./)) > 1
+      if(c) x--
+      ext = ".png" # fake the extension to please GTK
+    }
     # implode link name while replacing all dots and dashes with underscores
     # (no dashes to avoid the risk of clash with GTK`s icon sub-theme name rules)
     lnk = ""; for(c=1; c<=x; c++) {
