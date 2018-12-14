@@ -12,6 +12,7 @@
 
 # Usage: source | findnrun-formatter [-S source-id] [-I icon-filename] [-T title] [-O options] [-v verbosity-level]
 # This program assumes that plugin invocation environment variables are defined.
+# This program transforms input data as described in section "Encodings" below.
 
 # Source plugin formatter script {{{1
 BEGIN {
@@ -90,7 +91,8 @@ index(opt["O"], "s") {
   # PackedValues:     for SEP=,
   #   plugin tap: <icon-filename>,<tap-reserved>,<label>,<tap-data>,<comment>,<categories>
   #   FNRstart:   icon,filename,name,exec,comment,category
-  # Ref:  In: plugin.md tap-record; Out: $AWKB script format_item(); PackedValues: format_item()
+  # Reference In : /usr/share/doc/findnrun/plugin-dev.md section "Tap-record".
+  # Reference Out: findnrun::$AWKB::format_item(); PackedValues: format_item()
   #}}}
   # The third column below, FNR-Reserved, is always empty and it's reserved for future expansion.
   # The tree widget does display its value.

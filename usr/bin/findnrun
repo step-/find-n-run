@@ -1189,7 +1189,9 @@ else # SEARCHDEFAULT
 fi
 # Extract the last field of the last record printed by $AWKB::format_item().
 extract_data_fields="delete a
-  split(\$(NF), a, /${SEP}/) # a[1..5] <- {fullpathname,appname,exec,comment,category}"
+  split(\$(NF), a, /${SEP}/) # a[1..5] <- {fullpathname,appname,exec,comment,category}
+  a[2] = \$2" # While both a[2] and $2 hold the appname, taps like FNRsc omit a[2]'s value.
+  # Specifically all taps that are filtered through "findnrun-formatter -O s" set a[2] null.
 if [ true = "$SEARCHFILENAMES" ]; then
   extract_data_fields="$extract_data_fields"'
   sub(/^.*\//, "", a[1]) # basename
