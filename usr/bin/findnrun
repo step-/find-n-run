@@ -2314,35 +2314,19 @@ start_window << GTKDIALOGDOC
           <menuitem label="$i18n_Hover_for_help" sensitive="false"></menuitem>
           <menuitem label=" $i18n_asterisk_restart_required" sensitive="false"></menuitem>
           <menuitemseparator></menuitemseparator>
-          ${REMARK# [[[. Default search radiobutton}
-          <menuitem radiobutton="$SEARCHDEFAULT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Default">
-            <label>"$i18n_mnu_Search_Default"</label>
-            <variable>SEARCHDEFAULT</variable>
-            <action>if true $REQUEST_RESTART_WINDOW</action>
-          </menuitem>
-          ${REMARK# ]]]}
-          ${REMARK# [[[. SEARCHFUZZY radiobutton}
-          <menuitem radiobutton="$SEARCHFUZZY" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Fuzzy">
-            <label>"$i18n_mnu_Search_Fuzzy $i18n_asterisk"</label>
-            <variable>SEARCHFUZZY</variable>
-            ${DEBUG2:+<action>echo>&2 ,,, SEARCHFUZZY ,,,</action>}
-            <action>awk '$LET_NV' N=SEARCHFUZZY V=\$SEARCHFUZZY '$CONFIG'</action>
-            <action>if true $REQUEST_RESTART_WINDOW</action>
-          </menuitem>
-          ${REMARK# ]]]}
-          ${REMARK# [[[. SEARCHREGEX radiobutton}
-          <menuitem radiobutton="$SEARCHREGEX" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Regex">
+          ${REMARK# [[[. SEARCHREGEX checkbox}
+          <menuitem checkbox="$SEARCHREGEX" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Regex $i18n_mnu_tt_Fuzzy_ignores_this">
             <label>"$i18n_mnu_Search_Regex $i18n_asterisk"</label>
             <variable>SEARCHREGEX</variable>
             ${DEBUG2:+<action>echo>&2 ,,, SEARCHREGEX ,,,</action>}
             <action>awk '$LET_NV' N=SEARCHREGEX V=\$SEARCHREGEX '$CONFIG'</action>
-            <action>if true $REQUEST_RESTART_WINDOW</action>
+            <action>$REQUEST_RESTART_WINDOW</action>
           </menuitem>
           ${REMARK# ]]]}
           <menuitemseparator></menuitemseparator>
           <menu use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Details">
             ${REMARK# [[[. SEARCHFILENAMES checkbox}
-            <menuitem checkbox="$SEARCHFILENAMES" use-underline="true" tooltip-text="$i18n_Filename_tt">
+            <menuitem checkbox="$SEARCHFILENAMES" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Filename">
               <label>"$i18n_mnu_Search_Filename $i18n_asterisk"</label>
               <variable>SEARCHFILENAMES</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHFILENAMES ,,,</action>}
@@ -2371,7 +2355,7 @@ start_window << GTKDIALOGDOC
           </menu>
           <menu use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Ninja">
             ${REMARK# [[[. CASEDEPENDENT checkbox}
-            <menuitem checkbox="$CASEDEPENDENT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case">
+            <menuitem checkbox="$CASEDEPENDENT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case $i18n_mnu_tt_Fuzzy_ignores_this">
               <label>"$i18n_mnu_Search_Case $i18n_asterisk"</label>
               <variable>CASEDEPENDENT</variable>
               ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
@@ -2403,6 +2387,15 @@ start_window << GTKDIALOGDOC
           <label>"$i18n_mnu_Options"</label>
         </menu>
       </menubar>
+      ${REMARK# ]]]}
+      ${REMARK# [[[. SEARCHFUZZY checkbox}
+      <checkbox use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Fuzzy">
+        <label>"$i18n_Fuzzy"</label>
+        <default>$SEARCHFUZZY</default>
+        <variable>SEARCHFUZZY</variable>
+        ${DEBUG2:+<action>echo>&2 ,,, SEARCHFUZZY ,,,</action>}
+        <action>awk '$LET_NV' N=SEARCHFUZZY V=\$SEARCHFUZZY '$CONFIG'</action>
+      </checkbox>
       ${REMARK# ]]]}
       ${REMARK# [[[. varOPEN checkbox}
       <checkbox use-underline="true" tooltip-text="$i18n_Keep_this_window_open">
