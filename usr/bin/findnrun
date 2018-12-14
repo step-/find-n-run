@@ -113,6 +113,7 @@ DSKL="${TMP0}/.desktop-ls" # list .desktop file paths
 AIPF="${TMPD}/.installed-icon-ls" # list system/usr installed icon file paths
 AWKB="${TMP0}/.build.awk" # builds (and queries) database
 AWKQ="${TMP0}/.query.awk" # queries database (faster)
+AWKZ="${AWKQ%.awk}"-fuzzy.awk # AWKQ fuzzy search
 AWK4="${TMPD}/.saveflt.awk" # filters saved items
 TTLF="${TMPD}/.titles" # source titles
 HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
@@ -333,7 +334,7 @@ SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 # to the source declaration file (THISFILE).  The subsequent TAP's gawk -f AWKQ
 # queries the .desktop db on each search box keypress.
 INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\"'\$(wc -l < \"${DATF}\")'\" >> \"\$THISFILE\""
-TAP_FNRstart="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
+TAP_FNRstart="[ true = \"\$SEARCHFUZZY\" ] && q=\"$AWKZ\" || q=\"$AWKQ\"; gawk -f \"\$q\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='findnrun' # Also used as FALLBACK_ICON for all missing app icons.
 SAVEFLT_FNRstart="\$FNRSAVEFLT CUT=\"$CUT\" RDR=\"$RDR\" \"\${file}\""
@@ -1159,6 +1160,9 @@ function close_progress_dialog(pid,   killer) { # [[[2
 
 # Prepare the generic database query script. [[[1
 # Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
+write_query_script() # $1-SEARCHFUZZY
+{
+  local SEARCHFUZZY=$1
 # Output script structure: [[[
 #
 # If $SEARCHFUZZY = true
@@ -1543,6 +1547,10 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
 
 #gawk]]]' # [[[2]]]
 fi
+}
+write_query_script true && mv "$AWKQ" "$AWKZ"
+write_query_script false
+
 # Prepare Help system and its GUI button (About). [[[1
 # i18n About dialog.
 set_HELP_BUTTON_and_HELPVIEWER() #[[[2

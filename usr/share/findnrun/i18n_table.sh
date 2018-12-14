@@ -43,6 +43,7 @@ i18n_table() # {{{1
     read i18n_Remove_entry_from_history
     read i18n_Comment_about_current_item
     read i18n_More
+    read i18n_Fuzzy
     read i18n_Keep_this_window_open
     read i18n_Keep_window
     read i18n_Display_all_available_icons
@@ -58,6 +59,7 @@ i18n_table() # {{{1
     read i18n_Search_complete
     read i18n_mnu_Search_Regex
     read i18n_mnu_tt_Search_Regex
+    read i18n_mnu_tt_Fuzzy_ignores_this
     read i18n_Edit_configuration_file
     read i18n_When_you_are_finished
     read i18n_application_finder_options
@@ -134,6 +136,7 @@ i18n_table() # {{{1
   "Remove entry from history\n" \
   "Comment about current item\n" \
   "More...\n" \
+  "Fu_zzy\n" \
   "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays.\n" \
   "_Keep\n" \
   "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.\n" \
@@ -149,6 +152,7 @@ i18n_table() # {{{1
   "Search _complete\n" \
   "_Regex\n" \
   "Interpret the search pattern as a POSIX Basic regular expression.\n" \
+  "Fuzzy search ignores this.\n" \
   "Edit the configuration file directly. Restart required for changes to take effect.\n" \
   "When you are finished making your changes come back to this window and restart.\n" \
   "application finder options\n" \
@@ -175,7 +179,7 @@ i18n_table() # {{{1
   "_Default search\n" \
   "Find words as they are written exactly.\n" \
   "_Fuzzy search\n" \
-  "Find approximated words tolerating some mispelling and missing parts.\n" \
+  "Find words that match the search terms approximately rather than exactly.\n" \
   "Search _Details\n" \
   "Without requesting further details, search considers application names only.\n" \
   "_Filename\n" \
@@ -187,7 +191,7 @@ i18n_table() # {{{1
   "Search _Ninja\n" \
   "Advanced settings and tweaks.\n" \
   "Consider Word _Case\n" \
-  "Enable this if you want for search to ignore the difference between 'a' and 'A', 'b' and 'B', etc. Not applied to Fuzzy search because Fuzzy does its own magic with regard to word case.\n" \
+  "Enable this if you want for search to ignore the difference between 'a' and 'A', 'b' and 'B', etc.\n" \
   "Anchor _Left\n" \
   "Enable this if you want for search to find a match only if it begins in column one. Not applied to Fuzzy search.\n" \
   "Show _Hidden\n" \
