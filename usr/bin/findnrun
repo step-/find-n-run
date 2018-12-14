@@ -2041,7 +2041,7 @@ set_DO_RESTART_WINDOW() # [[[2
 DO_RESTART_WINDOW=\
 "for pid in $TMPD/.$$-*; do :; done"\
 '; pid=${pid##*-}'\
-"; cat /proc/$$/cmdline | xargs -0 env -- &"\
+"; cat /proc/$$/cmdline | xargs -0 env -u varSEARCH -- &"\
 ' kill $pid'
 }
 #]]]
