@@ -807,7 +807,7 @@ END { # [[[2
     if(match(fil, /\nName\[('"${LR:-@}|${LL:-@}"')\]=([^\n]+)/, m)) name=m[2]
     if(!name) continue # trap bogus .desktop files
     if(SHOWNODISPLAY != "true" && index(fil, "NoDisplay=true")) {
-      printf(MSG1"\n", filename) > "/dev/stderr"
+      if('${DEBUG1:-0}') printf(MSG1"\n", filename) > "/dev/stderr"
       continue
     }
     if(! (match(fil, /\nType=Application/) && match(fil, /\nExec=([^\n]+)/, m) && exec=m[1]))
