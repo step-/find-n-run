@@ -1960,7 +1960,7 @@ ${DEBUG3:+'; echo >&2 "=== GENERATE STATUS BAR [["; set -x'}\
 '; SKIP_INIT=1 '"$LOAD_NEXT_INVOCATION_ENV"\
 '; next="${TITLE}"'\
 ';: 3'\
-'; printf "'"%s ${ctrlnkey} » ${funckey} %s      %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}" "'"$i18n_F10_hotkeys"'"'\
+'; printf "'"%s ${ctrlnkey} » ${funckey} %s      %s"'" "${title}" $((${varF3}+1)) "'"${keysymF3}"'" "${next}" "'"$i18n_MenuKey $i18n_hotkeys"'"'\
 ${DEBUG3:+'; set +x; echo >&2 "]]"'}\
 "</input>
         ${DEBUG2:+<action>echo>&2 ,,, varSBAR ,,,</action>}
@@ -2310,7 +2310,7 @@ start_window << GTKDIALOGDOC
     <hbox space-fill="false" space-expand="false">
       ${REMARK# [[[. Options Menubar (visible).}
       <menubar>
-        <menu tooltip-text="$i18n_mnu_tt_Options">
+        <menu tooltip-text="$i18n_mnu_tt_Options       ${i18n_MenuKey}${i18n_MenuKey}">
           <menuitem label="$i18n_Hover_for_help" sensitive="false"></menuitem>
           <menuitem label=" $i18n_asterisk_restart_required" sensitive="false"></menuitem>
           <menuitemseparator></menuitemseparator>

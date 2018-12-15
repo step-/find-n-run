@@ -67,7 +67,8 @@ i18n_table() # {{{1
     read i18n_desktop_Comment
     read i18n_Key_Enter_to_close_terminal
     read i18n_Run_command_in_terminal
-    read i18n_F10_hotkeys
+    read i18n_MenuKey
+    read i18n_hotkeys
     read i18n_previous_results_page
     read i18n_next_results_page
     read i18n_run_top_selected_result
@@ -160,7 +161,8 @@ i18n_table() # {{{1
   "Find applications and much more.\n" \
   "Press ENTER to close the terminal [%s]\n" \
   "Run entry in a terminal\n" \
-  "[F10] hotkeys\n" \
+  "[F10]\n" \
+  "hotkeys\n" \
   "previous results page\n" \
   "next results page\n" \
   "run top/selected result\n" \
