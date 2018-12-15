@@ -67,6 +67,7 @@ i18n_table() # {{{1
     read i18n_desktop_Comment
     read i18n_Key_Enter_to_close_terminal
     read i18n_Run_command_in_terminal
+    read i18n_info # printf "\u2139"
     read i18n_MenuKey
     read i18n_hotkeys
     read i18n_previous_results_page
@@ -78,6 +79,7 @@ i18n_table() # {{{1
     read i18n_show_help
     read i18n_cycle_through_input_fields
     read i18n_cycle_through_search_sources
+    read i18n_clear_search_input
     read i18n_Search_results_saved_as
     read i18n_mnu_Options # printf "\u2630"
     read i18n_asterisk # printf "\u2723"
@@ -161,6 +163,7 @@ i18n_table() # {{{1
   "Find applications and much more.\n" \
   "Press ENTER to close the terminal [%s]\n" \
   "Run entry in a terminal\n" \
+  "ℹ\n" \
   "[F10]\n" \
   "hotkeys\n" \
   "previous results page\n" \
@@ -172,12 +175,13 @@ i18n_table() # {{{1
   "show help\n" \
   "cycle through input fields\n" \
   "cycle through search sources\n" \
+  "clear search input field\n" \
   "Search results saved as '%s'.\n" \
   "☰\n" \
   "✣\n" \
   "✣ = restart required\n" \
   "Hover over for help\n" \
-  "Change options.       [F10][F10]\n" \
+  "Change options.\n" \
   "_Default search\n" \
   "Find words as they are written exactly.\n" \
   "_Fuzzy search\n" \

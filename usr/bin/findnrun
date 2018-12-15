@@ -185,6 +185,7 @@ gawk '#[[[gawk
 /^GTK_ICON_THEME_NAME=/{f17=1}
 /^SEARCHFUZZY=/{f18=1}
 /^FUZZY_MATCH_FIELD_BONUS=/{f19=1}
+/^HOTKEY_F6=/{f20=1}
 #]]]
 END{ # lookup GTK2 icon theme name [[[
     # TODO implement GTK3 lookup
@@ -229,6 +230,7 @@ END{ # create config file and add missing settings [[[
   if(!f10) print "HOTKEY_F3=\"0:F3:0xffc0\"">>ARGV[1]
   if(!f15) print "HOTKEY_F4=\"0:F4:0xffc1\"">>ARGV[1]
   if(!f16) print "HOTKEY_F5=\"0:F5:0xffc2\"">>ARGV[1]
+  if(!f20) print "HOTKEY_F6=\"0:F6:0xffc3\"">>ARGV[1]
   if(!f11) print "HOTKEY_F12=\"0:F12:0xffc9\"">>ARGV[1]
   if(!f17 && GTK_ICON_THEME_NAME) print "GTK_ICON_THEME_NAME=\""GTK_ICON_THEME_NAME"\"">>ARGV[1]
   if(!f1) print "ICONCACHE=\"'"${HOME_ICONS_LEGACY}"'\"">>ARGV[1]
@@ -2130,10 +2132,9 @@ start_window << GTKDIALOGDOC
         <action signal="activate">grabfocus:varLIST</action>
         <action signal="activate">echo false>"${FCSF}"</action>
       </entry>
-      <button tooltip-text="$i18n_Clear_entry" stock-icon-size="1">
+      <button tooltip-text="$i18n_Clear_entry    ${i18n_info} ${i18n_MenuKey}" stock-icon-size="1">
         <input file stock="gtk-clear"></input>
-        <action>grabfocus:varSEARCH</action>
-        <action>clear:varSEARCH</action>
+        <action>enable:varF6</action>
       </button>
     </hbox>
     ${REMARK# ]]]}
@@ -2290,6 +2291,11 @@ start_window << GTKDIALOGDOC
         <menuitem label="$i18n_cycle_through_search_sources" accel-key="${HOTKEY_F3##*:}" accel-mods="${HOTKEY_F3%%:*}">
           <action>$SELECT_NEXT_SOURCE</action>
           <action>refresh:varF3</action>
+        </menuitem>
+        ${REMARK#   ]]]}
+        ${REMARK#   [[[. Key F6 clears the search input field.}
+        <menuitem label="$i18n_clear_search_input" accel-key="${HOTKEY_F6##*:}" accel-mods="${HOTKEY_F6%%:*}">
+          <action>enable:varF6</action>
         </menuitem>
         ${REMARK#   ]]]}
       ${REMARK#  ]]]}
@@ -2623,6 +2629,17 @@ start_window << GTKDIALOGDOC
     <action>refresh:varLIST</action>${COMMENT# Invoke tap.}
     <action>clear:invokeTAP</action>${COMMENT# Clear cached value.}
   </entry>
+  ${REMARK#  ]]]}
+  ${REMARK#  [[[. enable:varF6 to clear the search entry field.}
+  ${REMARK# Used by key F6.}
+  <timer milliseconds="true" interval="100" visible="false">
+    <sensitive>false</sensitive>
+    <variable export="false">varF6</variable>
+    ${DEBUG2:+<action>echo>&2 ,,, varF6 ,,,</action>}
+    <action>disable:varF6</action>
+    <action>grabfocus:varSEARCH</action>
+    <action>clear:varSEARCH</action>
+  </timer>
   ${REMARK#  ]]]}
   ${REMARK# ]]]}
   ${REMARK# [[[. Hotkey actions (hidden).}
