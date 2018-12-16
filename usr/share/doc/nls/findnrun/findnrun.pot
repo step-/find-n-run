@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 3.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2018-12-16 06:18+0000\n"
+"POT-Creation-Date: 2018-12-16 10:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2021,61 +2021,110 @@ msgid "Screenshots"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:3
-msgid "Version 2.0.0"
+msgid "Version 3.1.0"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:5
-msgid "**About dialog**"
+msgid "Shown with GTK2 theme 'Windows10Light' and GTK2 icon theme 'Clarity' on Fatdog64."
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:7
-msgid "![About dialog](images/findnrun-2.0.0-about.png)"
+msgid "**Main window open on _Application Finder_ fuzzy search results**"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:9
-msgid "**Main window open on _Application Finder_ source**"
+msgid "The right column shows matches for comments and categories."
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:11
-msgid "![Main window open on Application Finder source](images/findnrun-2.0.0-main.png)"
+msgid "![Fuzzy search](images/findnrun-3.1.0-main-fuzzy-completion.png)"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:13
-msgid "**Main window open on _Shell Completion_ source**"
+msgid "**Hotkeys**"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:15
-msgid "![Main window open on Shell Completion source](images/findnrun-2.0.0-main-shell-completion.png)"
+msgid "Some default and some custom assignments are mixed together."
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:17
-msgid "**Filmstrip source**"
+msgid "![Hotkeys](images/findnrun-3.1.0-custom-hotkeys.png)"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:19
-msgid "Main window open on _Filmstrip_ source (top) and _Filmstrip_ viewer (bottom)"
+msgid "**Options menu**"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:21
-msgid "![Main window open on Filmstrip source](images/findnrun-2.0.0-main-filmstrip-1.0.png)"
+msgid "![Options menu](images/findnrun-3.1.0-options-menu.png)"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:23
-msgid "![Filmstrip plugin viewer window](images/filmstrip-1.0.0-viewer.pub.png)"
+#: /usr/share/doc/findnrun/screenshots.md:49
+msgid "-----"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:25
-msgid "Older Versions"
+msgid "Version 2.0.0"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:27
-msgid "Version 1.10.6 (default window size)"
+msgid "Shown with GTK2 theme 'Flat-grey-rounded' and GTK2 icon theme 'ROX' on Fatdog64."
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:29
-msgid "![Main window](images/findnrun-1.10.6-main.pub.png)"
+msgid "**About dialog**"
 msgstr ""
 
 #: /usr/share/doc/findnrun/screenshots.md:31
+msgid "![About dialog](images/findnrun-2.0.0-about.png)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:33
+msgid "**Main window open on _Application Finder_ source**"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:35
+msgid "![Main window open on Application Finder source](images/findnrun-2.0.0-main.png)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:37
+msgid "**Main window open on _Shell Completion_ source**"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:39
+msgid "![Main window open on Shell Completion source](images/findnrun-2.0.0-main-shell-completion.png)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:41
+msgid "**Filmstrip source**"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:43
+msgid "Main window open on _Filmstrip_ source (top) and _Filmstrip_ viewer (bottom)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:45
+msgid "![Main window open on Filmstrip source](images/findnrun-2.0.0-main-filmstrip-1.0.png)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:47
+msgid "![Filmstrip plugin viewer window](images/filmstrip-1.0.0-viewer.pub.png)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:51
+msgid "Version 1.10.6"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:53
+msgid "Version 1.10.6 (default window size)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:55
+msgid "![Main window](images/findnrun-1.10.6-main.pub.png)"
+msgstr ""
+
+#: /usr/share/doc/findnrun/screenshots.md:57
 msgid "![About dialog](images/findnrun-1.10.6-about.pub.png)"
 msgstr ""
