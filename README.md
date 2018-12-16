@@ -12,6 +12,26 @@ A progressive finder.
 
 ## News
 
+**16-Dec-2018 Release 3.1.0**
+
+Notable in this release: a new **fuzzy search** mode (off by default), a new configurable **hotkey F6**, and a **configuration menu** that reveals all previously hidden settings (hotkey re-assignment is still hidden in the configuration file `~/.findnrunrc`). Press `[F10]` in the main window to see hoteys settings. Press `[F10]` again to access the configuration menu, or click the new menu symbol "☰".
+
+* New: add fuzzy search (SEARCHFUZZY setting), off by default
+* New: add Options menu.
+* New: fuzzy search checkbox in the main window
+* New: hidden setting `FUZZY_MATCH_FIELD_BONUS`
+* New: hotkey `F6` clears the search input field
+* Change: remove user setting SEARCHCOMPLETE
+* Fix: work around "&" in .desktop comment field
+* Fix: did not show icon for `.DirIcon` files
+* Fix: restart did not reset the search input field
+* Update: screenshots
+* Update: credits
+* Update: user and plugin documentation
+* Update: translation template
+* Plugin dev: update `findnrun-formatter`
+* Dev: add desktop file lister (debug level 1)
+
 **19-Oct-2018 Release 3.0.0**
 * Faster program start.
 * Huge speed increase "Showing all icons".
