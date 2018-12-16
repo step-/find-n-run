@@ -1,4 +1,4 @@
-# Findnrun 3.0.0.
+# Findnrun 3.1.0.
 # Copyright (C) 2015-2018 step; 2015 SFR, L18L, step
 # This file is distributed under the same license as the find-n-run package.
 # step, https://github.com/step-/
@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: find-n-run 3.0.0\n"
+"Project-Id-Version: find-n-run 3.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2018-10-19 20:29+0000\n"
+"POT-Creation-Date: 2018-12-16 06:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,15 +26,15 @@ msgstr ""
 #. i18n IMPORTANT! Reproduce indentation and special punctuation exactly.
 #. =======================================================================
 #.
-#. i18n File 'preference.md' includes markdown CODE BLOCKS. Generally, you
-#. i18n don't not need to translate code blocks but for file preference.md
-#. i18n you do because they are shell comments that tell the user what
-#. i18n function each setting performs. So, INSIDE code blocks you will
-#. i18n translate the COMMENT lines before each variable assignment.
-#. i18n Make sure to keep the comment '#' hash character where it is.
-#. i18n The source text can include MULTIPLE-LINE shell comments. In such
-#. i18n case each line is presented for translation as a separate msgid,
-#. i18n which can be confusing. Look at the source file to understand over
+#. i18n File 'preference.md' includes markdown CODE BLOCKS, for which
+#. i18n you need to translate the shell comments that the blocks include.
+#. i18n The comments explain which function each setting performs.
+#. i18n INSIDE each code block you will translate the COMMENT lines
+#. i18n located above each variable assignment.
+#. i18n Make sure to reproduce the comment '#' hash character in place.
+#. i18n When the source text includes MULTIPLE-LINE shell comments each line
+#. i18n is presented for translation as a separate msgid, which can be
+#. i18n initially confusing. Look at the source file to understand over
 #. i18n which set of msgids the shell comment spreads. Your translation
 #. i18n needs to spread over the same set exactly. You may choose to format
 #. i18n your comment differently from the source, for example to even out
@@ -43,7 +43,7 @@ msgstr ""
 #. i18n Do NOT translate VARIABLE names or variable assignments.
 #. i18n And, as usual, translate all text outside the code blocks.
 #.
-#: /usr/bin/findnrun:46
+#: /usr/bin/findnrun:44
 msgid ""
 "INSTRUCTIONS FOR TRANSLATORS\n"
 "1 Download the latest commented translation template from:\n"
@@ -54,7 +54,7 @@ msgstr ""
 
 #. i18n Main window widgets
 #. i18n "0" (invisible, disregard).
-#: /usr/bin/findnrun:1698
+#: /usr/bin/findnrun:2108
 msgid "0"
 msgstr ""
 
@@ -69,388 +69,568 @@ msgstr ""
 #.    C. Replace trailing spaces (hex 20) with non-breaking spaces (hex A0).
 #.
 #. i18n_Findnrun
-#: /usr/share/findnrun/i18n_table.sh:80
+#: /usr/share/findnrun/i18n_table.sh:110
 #: /usr/share/findnrun/i18n_table.sh:15
-#: /usr/share/findnrun/i18n_table.sh:81
+#: /usr/share/findnrun/i18n_table.sh:111
 msgid "Findnrun\n"
 msgstr ""
 
 #. i18n_application_finder
 #: /usr/share/findnrun/i18n_table.sh:16
-#: /usr/share/findnrun/i18n_table.sh:82
+#: /usr/share/findnrun/i18n_table.sh:112
 msgid "application finder\n"
 msgstr ""
 
 #. i18n_shell_completion
 #: /usr/share/findnrun/i18n_table.sh:17
-#: /usr/share/findnrun/i18n_table.sh:83
+#: /usr/share/findnrun/i18n_table.sh:113
 msgid "shell completion\n"
 msgstr ""
 
 #. i18n_fatal_source_error
 #: /usr/share/findnrun/i18n_table.sh:18
-#: /usr/share/findnrun/i18n_table.sh:84
+#: /usr/share/findnrun/i18n_table.sh:114
 msgid "fatal source error: %d%s\n"
 msgstr ""
 
 #. i18n_recoverable_source_error
 #: /usr/share/findnrun/i18n_table.sh:19
-#: /usr/share/findnrun/i18n_table.sh:85
+#: /usr/share/findnrun/i18n_table.sh:115
 msgid "recoverable source error: %d%s\n"
 msgstr ""
 
 #. i18n_source_warning
 #: /usr/share/findnrun/i18n_table.sh:20
-#: /usr/share/findnrun/i18n_table.sh:86
+#: /usr/share/findnrun/i18n_table.sh:116
 msgid "source warning: %d%s\n"
 msgstr ""
 
 #. i18n_Invalid_source_plugins
 #: /usr/share/findnrun/i18n_table.sh:21
-#: /usr/share/findnrun/i18n_table.sh:87
+#: /usr/share/findnrun/i18n_table.sh:117
 msgid "Invalid source plugins found and disabled:\r%s\n"
 msgstr ""
 
 #. i18n_SHOWNODISPLAY_false_excludes
 #: /usr/share/findnrun/i18n_table.sh:22
-#: /usr/share/findnrun/i18n_table.sh:88
+#: /usr/share/findnrun/i18n_table.sh:118
 msgid "SHOWNODISPLAY false excludes file '%s'\n"
 msgstr ""
 
 #. i18n_filename_Icon_not_found
 #: /usr/share/findnrun/i18n_table.sh:23
-#: /usr/share/findnrun/i18n_table.sh:89
+#: /usr/share/findnrun/i18n_table.sh:119
 msgid "filename '%s': Icon '%s' not found.\n"
 msgstr ""
 
 #. i18n_analyzing_applications
 #: /usr/share/findnrun/i18n_table.sh:24
-#: /usr/share/findnrun/i18n_table.sh:90
+#: /usr/share/findnrun/i18n_table.sh:120
 msgid "analyzing %d applications...\n"
 msgstr ""
 
 #. i18n_Help
 #: /usr/share/findnrun/i18n_table.sh:25
-#: /usr/share/findnrun/i18n_table.sh:91
+#: /usr/share/findnrun/i18n_table.sh:121
 msgid "_Help\n"
 msgstr ""
 
 #. i18n_gui_about
 #: /usr/share/findnrun/i18n_table.sh:26
-#: /usr/share/findnrun/i18n_table.sh:92
+#: /usr/share/findnrun/i18n_table.sh:122
 msgid "%s %s\rauthors: %s\rOpen source - GNU GPL license applies\r\r%s\r%s\r\rconfiguration: %s\r\n"
 msgstr ""
 
 #. i18n_application_found
 #: /usr/share/findnrun/i18n_table.sh:27
-#: /usr/share/findnrun/i18n_table.sh:93
+#: /usr/share/findnrun/i18n_table.sh:123
 msgid "%s application found\n"
 msgstr ""
 
 #. i18n_applications_found
 #: /usr/share/findnrun/i18n_table.sh:28
-#: /usr/share/findnrun/i18n_table.sh:94
+#: /usr/share/findnrun/i18n_table.sh:124
 msgid "%s applications found\n"
 msgstr ""
 
 #. i18n_source_loaded
 #: /usr/share/findnrun/i18n_table.sh:29
-#: /usr/share/findnrun/i18n_table.sh:95
+#: /usr/share/findnrun/i18n_table.sh:125
 msgid "%s source loaded\n"
 msgstr ""
 
 #. i18n_sources_loaded
 #: /usr/share/findnrun/i18n_table.sh:30
-#: /usr/share/findnrun/i18n_table.sh:96
+#: /usr/share/findnrun/i18n_table.sh:126
 msgid "%s sources loaded\n"
 msgstr ""
 
 #. i18n_OK
 #: /usr/share/findnrun/i18n_table.sh:31
-#: /usr/share/findnrun/i18n_table.sh:97
+#: /usr/share/findnrun/i18n_table.sh:127
 msgid "_OK\n"
 msgstr ""
 
 #. i18n_invalid_SAVEFLT_redirection
 #: /usr/share/findnrun/i18n_table.sh:32
-#: /usr/share/findnrun/i18n_table.sh:98
+#: /usr/share/findnrun/i18n_table.sh:128
 msgid "Source %s defines an invalid SAVEFLT redirection: '%s'.\n"
 msgstr ""
 
 #. i18n_ctrl_digit
 #: /usr/share/findnrun/i18n_table.sh:33
-#: /usr/share/findnrun/i18n_table.sh:99
+#: /usr/share/findnrun/i18n_table.sh:129
 msgid "[ctrl+%d]\n"
 msgstr ""
 
 #. i18n_boxed_string
 #: /usr/share/findnrun/i18n_table.sh:34
-#: /usr/share/findnrun/i18n_table.sh:100
+#: /usr/share/findnrun/i18n_table.sh:130
 msgid "[%s]\n"
 msgstr ""
 
 #. i18n_Click_the_status_bar
 #: /usr/share/findnrun/i18n_table.sh:35
-#: /usr/share/findnrun/i18n_table.sh:101
+#: /usr/share/findnrun/i18n_table.sh:131
 msgid "Click the status bar or press a hotkey to activate the next source.\r%s\r%s\n"
 msgstr ""
 
 #. i18n_Restart_Findnrun
 #: /usr/share/findnrun/i18n_table.sh:36
-#: /usr/share/findnrun/i18n_table.sh:102
+#: /usr/share/findnrun/i18n_table.sh:132
 msgid "Restart Findnrun?\n"
 msgstr ""
 
 #. i18n_Press_ENTER_to_select
 #: /usr/share/findnrun/i18n_table.sh:37
-#: /usr/share/findnrun/i18n_table.sh:103
+#: /usr/share/findnrun/i18n_table.sh:133
 msgid "Press ENTER to select\n"
 msgstr ""
 
 #. i18n_Type_some_letters
 #: /usr/share/findnrun/i18n_table.sh:38
-#: /usr/share/findnrun/i18n_table.sh:104
+#: /usr/share/findnrun/i18n_table.sh:134
 msgid "Type some letters to refine the list\n"
 msgstr ""
 
 #. i18n_Clear_entry
 #: /usr/share/findnrun/i18n_table.sh:39
-#: /usr/share/findnrun/i18n_table.sh:105
+#: /usr/share/findnrun/i18n_table.sh:135
 msgid "Clear entry\n"
 msgstr ""
 
 #. i18n_Press_ENTER_or_double_click
 #: /usr/share/findnrun/i18n_table.sh:40
-#: /usr/share/findnrun/i18n_table.sh:106
+#: /usr/share/findnrun/i18n_table.sh:136
 msgid "Press ENTER or double-click to run the selected item\n"
 msgstr ""
 
 #. i18n_Press_the_Down_Arrow_key
 #: /usr/share/findnrun/i18n_table.sh:41
-#: /usr/share/findnrun/i18n_table.sh:107
+#: /usr/share/findnrun/i18n_table.sh:137
 msgid "Press the Down Arrow key to grab the selected item and move through the history list. You can edit the grabbed entry. History persists while the program is running. History is cleared on exit.\n"
 msgstr ""
 
 #. i18n_Press_Down_Arrow
 #: /usr/share/findnrun/i18n_table.sh:42
-#: /usr/share/findnrun/i18n_table.sh:108
+#: /usr/share/findnrun/i18n_table.sh:138
 msgid "Press Down Arrow to grab selected item\n"
 msgstr ""
 
 #. i18n_Remove_entry_from_history
 #: /usr/share/findnrun/i18n_table.sh:43
-#: /usr/share/findnrun/i18n_table.sh:109
+#: /usr/share/findnrun/i18n_table.sh:139
 msgid "Remove entry from history\n"
 msgstr ""
 
 #. i18n_Comment_about_current_item
 #: /usr/share/findnrun/i18n_table.sh:44
-#: /usr/share/findnrun/i18n_table.sh:110
+#: /usr/share/findnrun/i18n_table.sh:140
 msgid "Comment about current item\n"
 msgstr ""
 
 #. i18n_More
 #: /usr/share/findnrun/i18n_table.sh:45
-#: /usr/share/findnrun/i18n_table.sh:111
+#: /usr/share/findnrun/i18n_table.sh:141
 msgid "More...\n"
 msgstr ""
 
-#. i18n_Keep_this_window_open
+#. i18n_Fuzzy
 #: /usr/share/findnrun/i18n_table.sh:46
-#: /usr/share/findnrun/i18n_table.sh:112
+#: /usr/share/findnrun/i18n_table.sh:142
+msgid "Fu_zzy\n"
+msgstr ""
+
+#. i18n_Keep_this_window_open
+#: /usr/share/findnrun/i18n_table.sh:47
+#: /usr/share/findnrun/i18n_table.sh:143
 msgid "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays.\n"
 msgstr ""
 
 #. i18n_Keep_window
-#: /usr/share/findnrun/i18n_table.sh:47
-#: /usr/share/findnrun/i18n_table.sh:113
-msgid "_Keep window\n"
+#: /usr/share/findnrun/i18n_table.sh:48
+#: /usr/share/findnrun/i18n_table.sh:144
+msgid "_Keep\n"
 msgstr ""
 
 #. i18n_Display_all_available_icons
-#: /usr/share/findnrun/i18n_table.sh:48
-#: /usr/share/findnrun/i18n_table.sh:114
+#: /usr/share/findnrun/i18n_table.sh:49
+#: /usr/share/findnrun/i18n_table.sh:145
 msgid "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.\n"
 msgstr ""
 
 #. i18n_Show_all_icons
-#: /usr/share/findnrun/i18n_table.sh:49
-#: /usr/share/findnrun/i18n_table.sh:115
-msgid "_Show all icons\n"
+#: /usr/share/findnrun/i18n_table.sh:50
+#: /usr/share/findnrun/i18n_table.sh:146
+msgid "_Icons\n"
 msgstr ""
 
 #. i18n_Return_the_keyboard_focus
-#: /usr/share/findnrun/i18n_table.sh:50
-#: /usr/share/findnrun/i18n_table.sh:116
+#: /usr/share/findnrun/i18n_table.sh:51
+#: /usr/share/findnrun/i18n_table.sh:147
 msgid "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item.\n"
 msgstr ""
 
 #. i18n_Focus_search
-#: /usr/share/findnrun/i18n_table.sh:51
-#: /usr/share/findnrun/i18n_table.sh:117
+#: /usr/share/findnrun/i18n_table.sh:52
+#: /usr/share/findnrun/i18n_table.sh:148
 msgid "_Focus search\n"
 msgstr ""
 
 #. i18n_About_and_help
-#: /usr/share/findnrun/i18n_table.sh:52
-#: /usr/share/findnrun/i18n_table.sh:118
+#: /usr/share/findnrun/i18n_table.sh:53
+#: /usr/share/findnrun/i18n_table.sh:149
 msgid "About and help\n"
 msgstr ""
 
 #. i18n_Exit
-#: /usr/share/findnrun/i18n_table.sh:53
-#: /usr/share/findnrun/i18n_table.sh:119
+#: /usr/share/findnrun/i18n_table.sh:54
+#: /usr/share/findnrun/i18n_table.sh:150
 msgid "Exit\n"
 msgstr ""
 
-#. i18n_Click_to_hide
-#: /usr/share/findnrun/i18n_table.sh:54
-#: /usr/share/findnrun/i18n_table.sh:120
-msgid "Click to hide.\n"
+#. i18n_Less
+#: /usr/share/findnrun/i18n_table.sh:55
+#: /usr/share/findnrun/i18n_table.sh:151
+msgid "Less\n"
 msgstr ""
 
 #. i18n_Show_hidden_system_applications
-#: /usr/share/findnrun/i18n_table.sh:55
-#: /usr/share/findnrun/i18n_table.sh:121
+#: /usr/share/findnrun/i18n_table.sh:56
+#: /usr/share/findnrun/i18n_table.sh:152
 msgid "Show also hidden system applications.\n"
 msgstr ""
 
 #. i18n_Show_hidden
-#: /usr/share/findnrun/i18n_table.sh:56
-#: /usr/share/findnrun/i18n_table.sh:122
+#: /usr/share/findnrun/i18n_table.sh:57
+#: /usr/share/findnrun/i18n_table.sh:153
 msgid "Show _hidden\n"
 msgstr ""
 
 #. i18n_Search_in_application_names_etc
-#: /usr/share/findnrun/i18n_table.sh:57
-#: /usr/share/findnrun/i18n_table.sh:123
-msgid "Search in application names, file names, command lines, comments and categories all at once.\n"
+#: /usr/share/findnrun/i18n_table.sh:58
+#: /usr/share/findnrun/i18n_table.sh:154
+msgid "Search in application names, file names, comments and categories all at once.\n"
 msgstr ""
 
 #. i18n_Search_complete
-#: /usr/share/findnrun/i18n_table.sh:58
-#: /usr/share/findnrun/i18n_table.sh:124
+#: /usr/share/findnrun/i18n_table.sh:59
+#: /usr/share/findnrun/i18n_table.sh:155
 msgid "Search _complete\n"
 msgstr ""
 
-#. i18n_Interpret_search_as_BRE
-#: /usr/share/findnrun/i18n_table.sh:59
-#: /usr/share/findnrun/i18n_table.sh:125
-msgid "Interpret the search pattern as a POSIX Basic regular expression.\n"
-msgstr ""
-
-#. i18n_Regex
+#. i18n_mnu_Search_Regex
 #: /usr/share/findnrun/i18n_table.sh:60
-#: /usr/share/findnrun/i18n_table.sh:126
+#: /usr/share/findnrun/i18n_table.sh:156
 msgid "_Regex\n"
 msgstr ""
 
-#. i18n_Edit_configuration_file
+#. i18n_mnu_tt_Search_Regex
 #: /usr/share/findnrun/i18n_table.sh:61
-#: /usr/share/findnrun/i18n_table.sh:127
-msgid "Edit configuration file directly. Restart required for changes to take effect.*\n"
+#: /usr/share/findnrun/i18n_table.sh:157
+msgid "Interpret the search pattern as a POSIX Basic regular expression.\n"
+msgstr ""
+
+#. i18n_mnu_tt_Fuzzy_ignores_this
+#: /usr/share/findnrun/i18n_table.sh:62
+#: /usr/share/findnrun/i18n_table.sh:158
+msgid "Fuzzy search ignores this.\n"
+msgstr ""
+
+#. i18n_Edit_configuration_file
+#: /usr/share/findnrun/i18n_table.sh:63
+#: /usr/share/findnrun/i18n_table.sh:159
+msgid "Edit the configuration file directly. Restart required for changes to take effect.\n"
 msgstr ""
 
 #. i18n_When_you_are_finished
-#: /usr/share/findnrun/i18n_table.sh:62
-#: /usr/share/findnrun/i18n_table.sh:128
-msgid "When you are finished making your changes come back to this window and restart findnrun.\n"
+#: /usr/share/findnrun/i18n_table.sh:64
+#: /usr/share/findnrun/i18n_table.sh:160
+msgid "When you are finished making your changes come back to this window and restart.\n"
 msgstr ""
 
 #. i18n_application_finder_options
-#: /usr/share/findnrun/i18n_table.sh:63
-#: /usr/share/findnrun/i18n_table.sh:129
-msgid "application finder options       * = restart required\n"
+#: /usr/share/findnrun/i18n_table.sh:65
+#: /usr/share/findnrun/i18n_table.sh:161
+msgid "application finder options\n"
 msgstr ""
 
 #. i18n_desktop_Name
-#: /usr/share/findnrun/i18n_table.sh:64
-#: /usr/share/findnrun/i18n_table.sh:130
+#: /usr/share/findnrun/i18n_table.sh:66
+#: /usr/share/findnrun/i18n_table.sh:162
 msgid "Findnrun.\n"
 msgstr ""
 
 #. i18n_desktop_Comment
-#: /usr/share/findnrun/i18n_table.sh:65
-#: /usr/share/findnrun/i18n_table.sh:131
+#: /usr/share/findnrun/i18n_table.sh:67
+#: /usr/share/findnrun/i18n_table.sh:163
 msgid "Find applications and much more.\n"
 msgstr ""
 
 #. i18n_Key_Enter_to_close_terminal
-#: /usr/share/findnrun/i18n_table.sh:66
-#: /usr/share/findnrun/i18n_table.sh:132
+#: /usr/share/findnrun/i18n_table.sh:68
+#: /usr/share/findnrun/i18n_table.sh:164
 msgid "Press ENTER to close the terminal [%s]\n"
 msgstr ""
 
 #. i18n_Run_command_in_terminal
-#: /usr/share/findnrun/i18n_table.sh:67
-#: /usr/share/findnrun/i18n_table.sh:133
+#: /usr/share/findnrun/i18n_table.sh:69
+#: /usr/share/findnrun/i18n_table.sh:165
 msgid "Run entry in a terminal\n"
 msgstr ""
 
-#. i18n_F10_hotkeys
-#: /usr/share/findnrun/i18n_table.sh:68
-#: /usr/share/findnrun/i18n_table.sh:134
-msgid "[F10] hotkeys\n"
+#. i18n_info
+#: /usr/share/findnrun/i18n_table.sh:70
+#: /usr/share/findnrun/i18n_table.sh:166
+msgid "ℹ\n"
+msgstr ""
+
+#. i18n_MenuKey
+#: /usr/share/findnrun/i18n_table.sh:71
+#: /usr/share/findnrun/i18n_table.sh:167
+msgid "[F10]\n"
+msgstr ""
+
+#. i18n_hotkeys
+#: /usr/share/findnrun/i18n_table.sh:72
+#: /usr/share/findnrun/i18n_table.sh:168
+msgid "hotkeys\n"
 msgstr ""
 
 #. i18n_previous_results_page
-#: /usr/share/findnrun/i18n_table.sh:69
-#: /usr/share/findnrun/i18n_table.sh:135
+#: /usr/share/findnrun/i18n_table.sh:73
+#: /usr/share/findnrun/i18n_table.sh:169
 msgid "previous results page\n"
 msgstr ""
 
 #. i18n_next_results_page
-#: /usr/share/findnrun/i18n_table.sh:70
-#: /usr/share/findnrun/i18n_table.sh:136
+#: /usr/share/findnrun/i18n_table.sh:74
+#: /usr/share/findnrun/i18n_table.sh:170
 msgid "next results page\n"
 msgstr ""
 
 #. i18n_run_top_selected_result
-#: /usr/share/findnrun/i18n_table.sh:71
-#: /usr/share/findnrun/i18n_table.sh:137
+#: /usr/share/findnrun/i18n_table.sh:75
+#: /usr/share/findnrun/i18n_table.sh:171
 msgid "run top/selected result\n"
 msgstr ""
 
 #. i18n_run_top_selected_result_in_terminal
-#: /usr/share/findnrun/i18n_table.sh:72
-#: /usr/share/findnrun/i18n_table.sh:138
+#: /usr/share/findnrun/i18n_table.sh:76
+#: /usr/share/findnrun/i18n_table.sh:172
 msgid "run top/selected result in a terminal\n"
 msgstr ""
 
 #. i18n_save_search_results
-#: /usr/share/findnrun/i18n_table.sh:73
-#: /usr/share/findnrun/i18n_table.sh:139
+#: /usr/share/findnrun/i18n_table.sh:77
+#: /usr/share/findnrun/i18n_table.sh:173
 msgid "save search results\n"
 msgstr ""
 
 #. i18n_quit
-#: /usr/share/findnrun/i18n_table.sh:74
-#: /usr/share/findnrun/i18n_table.sh:140
+#: /usr/share/findnrun/i18n_table.sh:78
+#: /usr/share/findnrun/i18n_table.sh:174
 msgid "quit\n"
 msgstr ""
 
 #. i18n_show_help
-#: /usr/share/findnrun/i18n_table.sh:75
-#: /usr/share/findnrun/i18n_table.sh:141
+#: /usr/share/findnrun/i18n_table.sh:79
+#: /usr/share/findnrun/i18n_table.sh:175
 msgid "show help\n"
 msgstr ""
 
 #. i18n_cycle_through_input_fields
-#: /usr/share/findnrun/i18n_table.sh:76
-#: /usr/share/findnrun/i18n_table.sh:142
+#: /usr/share/findnrun/i18n_table.sh:80
+#: /usr/share/findnrun/i18n_table.sh:176
 msgid "cycle through input fields\n"
 msgstr ""
 
 #. i18n_cycle_through_search_sources
-#: /usr/share/findnrun/i18n_table.sh:77
-#: /usr/share/findnrun/i18n_table.sh:143
+#: /usr/share/findnrun/i18n_table.sh:81
+#: /usr/share/findnrun/i18n_table.sh:177
 msgid "cycle through search sources\n"
 msgstr ""
 
+#. i18n_clear_search_input
+#: /usr/share/findnrun/i18n_table.sh:82
+#: /usr/share/findnrun/i18n_table.sh:178
+msgid "clear search input field\n"
+msgstr ""
+
 #. i18n_Search_results_saved_as
-#: /usr/share/findnrun/i18n_table.sh:78
-#: /usr/share/findnrun/i18n_table.sh:144
+#: /usr/share/findnrun/i18n_table.sh:83
+#: /usr/share/findnrun/i18n_table.sh:179
 msgid "Search results saved as '%s'.\n"
+msgstr ""
+
+#. i18n_mnu_Options
+#: /usr/share/findnrun/i18n_table.sh:84
+#: /usr/share/findnrun/i18n_table.sh:180
+msgid "☰\n"
+msgstr ""
+
+#. i18n_asterisk
+#: /usr/share/findnrun/i18n_table.sh:85
+#: /usr/share/findnrun/i18n_table.sh:181
+msgid "✣\n"
+msgstr ""
+
+#. i18n_asterisk_restart_required
+#: /usr/share/findnrun/i18n_table.sh:86
+#: /usr/share/findnrun/i18n_table.sh:182
+msgid "✣ = restart required\n"
+msgstr ""
+
+#. i18n_Hover_for_help
+#: /usr/share/findnrun/i18n_table.sh:87
+#: /usr/share/findnrun/i18n_table.sh:183
+msgid "Hover over for help\n"
+msgstr ""
+
+#. i18n_mnu_tt_Options
+#: /usr/share/findnrun/i18n_table.sh:88
+#: /usr/share/findnrun/i18n_table.sh:184
+msgid "Change options.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Default
+#: /usr/share/findnrun/i18n_table.sh:89
+#: /usr/share/findnrun/i18n_table.sh:185
+msgid "_Default search\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Default
+#: /usr/share/findnrun/i18n_table.sh:90
+#: /usr/share/findnrun/i18n_table.sh:186
+msgid "Find words as they are written exactly.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Fuzzy
+#: /usr/share/findnrun/i18n_table.sh:91
+#: /usr/share/findnrun/i18n_table.sh:187
+msgid "_Fuzzy search\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Fuzzy
+#: /usr/share/findnrun/i18n_table.sh:92
+#: /usr/share/findnrun/i18n_table.sh:188
+msgid "Find words that match the search terms approximately rather than exactly.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Details
+#: /usr/share/findnrun/i18n_table.sh:93
+#: /usr/share/findnrun/i18n_table.sh:189
+msgid "Search _Details\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Details
+#: /usr/share/findnrun/i18n_table.sh:94
+#: /usr/share/findnrun/i18n_table.sh:190
+msgid "Without requesting further details, search considers application names only.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Filename
+#: /usr/share/findnrun/i18n_table.sh:95
+#: /usr/share/findnrun/i18n_table.sh:191
+msgid "_Filename\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Filename
+#: /usr/share/findnrun/i18n_table.sh:96
+#: /usr/share/findnrun/i18n_table.sh:192
+msgid "Consider also the .desktop file name when searching for a match.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Comment
+#: /usr/share/findnrun/i18n_table.sh:97
+#: /usr/share/findnrun/i18n_table.sh:193
+msgid "_Comment\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Comment
+#: /usr/share/findnrun/i18n_table.sh:98
+#: /usr/share/findnrun/i18n_table.sh:194
+msgid "Consider also the application comment when searching for a match. The system menu displays the comment as a tooltip.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Categories
+#: /usr/share/findnrun/i18n_table.sh:99
+#: /usr/share/findnrun/i18n_table.sh:195
+msgid "C_ategory\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Categories
+#: /usr/share/findnrun/i18n_table.sh:100
+#: /usr/share/findnrun/i18n_table.sh:196
+msgid "Consider also the application categories when searching for a match. The system menu groups application entries by categories.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Ninja
+#: /usr/share/findnrun/i18n_table.sh:101
+#: /usr/share/findnrun/i18n_table.sh:197
+msgid "Search _Ninja\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Ninja
+#: /usr/share/findnrun/i18n_table.sh:102
+#: /usr/share/findnrun/i18n_table.sh:198
+msgid "Advanced settings and tweaks.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Case
+#: /usr/share/findnrun/i18n_table.sh:103
+#: /usr/share/findnrun/i18n_table.sh:199
+msgid "Consider Word _Case\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Case
+#: /usr/share/findnrun/i18n_table.sh:104
+#: /usr/share/findnrun/i18n_table.sh:200
+msgid "Enable this if you want for search to ignore the difference between 'a' and 'A', 'b' and 'B', etc.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Anchor_Left
+#: /usr/share/findnrun/i18n_table.sh:105
+#: /usr/share/findnrun/i18n_table.sh:201
+msgid "Anchor _Left\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Anchor_Left
+#: /usr/share/findnrun/i18n_table.sh:106
+#: /usr/share/findnrun/i18n_table.sh:202
+msgid "Enable this if you want for search to find a match only if it begins in column one. Not applied to Fuzzy search.\n"
+msgstr ""
+
+#. i18n_mnu_Search_Hidden
+#: /usr/share/findnrun/i18n_table.sh:107
+#: /usr/share/findnrun/i18n_table.sh:203
+msgid "Show _Hidden\n"
+msgstr ""
+
+#. i18n_mnu_tt_Search_Hidden
+#: /usr/share/findnrun/i18n_table.sh:108
+#: /usr/share/findnrun/i18n_table.sh:204
+msgid "Enable this to also search for hidden applications that don't appear in the system menu.\n"
 msgstr ""
 
 #.
@@ -483,7 +663,7 @@ msgid "License: GNU/GPL"
 msgstr ""
 
 #: /usr/share/doc/findnrun/CREDITS.md:11
-msgid "Download: http://findicons.com/icon/94185/old_zoom_original"
+msgid "[Download link](http://findicons.com/icon/94185/old_zoom_original)"
 msgstr ""
 
 #: /usr/share/doc/findnrun/CREDITS.md:13
@@ -495,34 +675,42 @@ msgid "[Woof-CE](https://github.com/puppylinux-woof-CE/woof-CE/tree/testing/woof
 msgstr ""
 
 #: /usr/share/doc/findnrun/CREDITS.md:18
-msgid "**Translations**"
-msgstr ""
-
-#: /usr/share/doc/findnrun/CREDITS.md:20
-msgid "French - ASRI, Puppy Linux forum"
-msgstr ""
-
-#: /usr/share/doc/findnrun/CREDITS.md:21
-msgid "German - L18L, Puppy Linux forum"
-msgstr ""
-
-#: /usr/share/doc/findnrun/CREDITS.md:23
-msgid "Italian - xanad, [Italian](http://www.italianpuppy.org/) Puppy Linux forum"
+msgid "**Source Code**"
 msgstr ""
 
 #: /usr/share/doc/findnrun/CREDITS.md:24
+msgid "Fuzzy search, which was added in version 3.1, derives some code from public domain javascript code written by Forrest Smith: [github](https://github.com/forrestthewoods/lib_fts/blob/master/code/fts_fuzzy_match.js) (hash 08a4bb1 on Feb 19, 2017), [blog](https://blog.forrestthewoods.com/reverse-engineering-sublime-text-s-fuzzy-match-4cffeed33fdb)."
+msgstr ""
+
+#: /usr/share/doc/findnrun/CREDITS.md:26
+msgid "**Translations**"
+msgstr ""
+
+#: /usr/share/doc/findnrun/CREDITS.md:28
+msgid "French - ASRI, Puppy Linux forum"
+msgstr ""
+
+#: /usr/share/doc/findnrun/CREDITS.md:29
+msgid "German - L18L, Puppy Linux forum"
+msgstr ""
+
+#: /usr/share/doc/findnrun/CREDITS.md:30
+msgid "Italian - xanad, [Italian](http://www.italianpuppy.org/) Puppy Linux forum"
+msgstr ""
+
+#: /usr/share/doc/findnrun/CREDITS.md:31
 msgid "Spanish - nilsonmorales, nilsonmorales@hotmail.com"
 msgstr ""
 
-#: /usr/share/doc/findnrun/CREDITS.md:25
+#: /usr/share/doc/findnrun/CREDITS.md:32
 msgid "Simplified Chinese, Traditional Chinese - icake, icake@hotmail.com"
 msgstr ""
 
-#: /usr/share/doc/findnrun/CREDITS.md:27
+#: /usr/share/doc/findnrun/CREDITS.md:34
 msgid "**Packages**"
 msgstr ""
 
-#: /usr/share/doc/findnrun/CREDITS.md:33
+#: /usr/share/doc/findnrun/CREDITS.md:40
 msgid "Debian - Puppy Linux forum user _saintless_ helped me improve my rudimentary .deb packages for version 1.10.6. _Saintless_ and _fredx_ co-author [DebianDog](http://www.murga-linux.com/puppy/viewtopic.php?t=93225), a live CD that looks and acts like Puppy Linux but is Debian."
 msgstr ""
 
@@ -637,111 +825,119 @@ msgstr ""
 msgid "This page lists _default_ hotkey assignments. You can redefine assigned keys as explained in [Hidden Preferences](preference.md).  Press `[F10]` in the main window to see a short list of the currently assigned keys."
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:7
-msgid "**Anywhere in the main window**"
-msgstr ""
-
-#: /usr/share/doc/findnrun/hotkey.md:9
-msgid "`[F1]` - view help documentation"
+#: /usr/share/doc/findnrun/hotkey.md:8
+msgid "Press `[F10]` again (twice) to open the main menu, which is also activated by clicking the _pure yang trigram_ **☰** sign in the main window."
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:10
-msgid "`[F2]` - cycle keyboard focus between the history field and the search input field"
-msgstr ""
-
-#: /usr/share/doc/findnrun/hotkey.md:11
-msgid "`[F3]` - start the next search plugin"
+msgid "**Anywhere in the main window**"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:12
-msgid "`[F4]` - save search results to file or command pipeline"
+msgid "`[F1]` - view help documentation"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:13
-msgid "`[F5]` - activate in terminal the top or highlighted search result item[0]"
+msgid "`[F2]` - cycle keyboard focus between the history field and the search input field"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:14
-msgid "`[F12]` - activate the top or highlighted search result item[0]"
+msgid "`[F3]` - start the next search plugin"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:15
-msgid "`[Escape]` - exit findnrun"
+msgid "`[F4]` - save search results to file or command pipeline"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:16
-msgid "`[Page Down]` - Rotate down search result items[1]"
+msgid "`[F5]` - activate in terminal the top or highlighted search result item[0]"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:17
-msgid "`[Page Up]` - Rotate up search result items[1]"
+msgid "`[F6]` - clear the search input field"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:18
-msgid "`[Tab]` - cycle through user interface controls"
+msgid "`[F12]` - activate the top or highlighted search result item[0]"
+msgstr ""
+
+#: /usr/share/doc/findnrun/hotkey.md:19
+msgid "`[Escape]` - exit findnrun"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:20
-msgid "`[Ctrl+1]` .. `[Ctrl+9]` - start search plugin `1` through `9`. Usually `1` is findnrun's default application search."
+msgid "`[Page Down]` - Rotate down search result items[1]"
+msgstr ""
+
+#: /usr/share/doc/findnrun/hotkey.md:21
+msgid "`[Page Up]` - Rotate up search result items[1]"
 msgstr ""
 
 #: /usr/share/doc/findnrun/hotkey.md:22
+msgid "`[Tab]` - cycle through user interface controls"
+msgstr ""
+
+#: /usr/share/doc/findnrun/hotkey.md:24
+msgid "`[Ctrl+1]` .. `[Ctrl+9]` - start search plugin `1` through `9`. Usually `1` is findnrun's default application search."
+msgstr ""
+
+#: /usr/share/doc/findnrun/hotkey.md:26
 msgid "[0] Focus moves according to user preference 'Focus search'."
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:25
+#: /usr/share/doc/findnrun/hotkey.md:29
 msgid "[1] Plugin only feature. Demo plugin: 'Filmstrip'. The number of lines that get rotated varies with each plugin."
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:27
+#: /usr/share/doc/findnrun/hotkey.md:31
 msgid "**With the focus in the search input field**"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:29
+#: /usr/share/doc/findnrun/hotkey.md:33
 msgid "`[Enter]` - move focus to the top search result item"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:31
+#: /usr/share/doc/findnrun/hotkey.md:35
 msgid "**With the focus in the search result list**"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:33
+#: /usr/share/doc/findnrun/hotkey.md:37
 msgid "`[Arrow Down]` - select the next item"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:34
+#: /usr/share/doc/findnrun/hotkey.md:38
 msgid "`[Arrow Up]` - select the previous item"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:35
+#: /usr/share/doc/findnrun/hotkey.md:39
 msgid "`[Enter]` - activate the current item"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:36
+#: /usr/share/doc/findnrun/hotkey.md:40
 msgid "`[Page Down]` - Scroll up search results"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:37
+#: /usr/share/doc/findnrun/hotkey.md:41
 msgid "`[Page Up]` - Scroll down search results"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:39
+#: /usr/share/doc/findnrun/hotkey.md:43
 msgid "**With the focus in the history field**"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:42
+#: /usr/share/doc/findnrun/hotkey.md:46
 msgid "`[Arrow Down]` - grab the current search result selection / show the previous history item"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:43
+#: /usr/share/doc/findnrun/hotkey.md:47
 msgid "`[Arrow Up]` - show the next history item"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:44
+#: /usr/share/doc/findnrun/hotkey.md:48
 msgid "`[Enter]` - activate current entry text"
 msgstr ""
 
-#: /usr/share/doc/findnrun/hotkey.md:45
+#: /usr/share/doc/findnrun/hotkey.md:49
 msgid "`Edit keys` - edit current entry text, including a grabbed item"
 msgstr ""
 
@@ -759,7 +955,7 @@ msgid "**Findrun** - A progressive finder"
 msgstr ""
 
 #: /usr/share/doc/findnrun/index.md:5
-msgid "_3.0.0_"
+msgid "_3.1.0_"
 msgstr ""
 
 #: /usr/share/doc/findnrun/index.md:8
@@ -1239,15 +1435,15 @@ msgstr ""
 #. i18n ../../../../share/doc/findnrun/preference.md
 #. ---------------------------------------------------------
 #.
-#. i18n File 'preference.md' includes markdown CODE BLOCKS. Generally, you
-#. i18n don't not need to translate code blocks but for file preference.md
-#. i18n you do because they are shell comments that tell the user what
-#. i18n function each setting performs. So, INSIDE code blocks you will
-#. i18n translate the COMMENT lines before each variable assignment.
-#. i18n Make sure to keep the comment '#' hash character where it is.
-#. i18n The source text can include MULTIPLE-LINE shell comments. In such
-#. i18n case each line is presented for translation as a separate msgid,
-#. i18n which can be confusing. Look at the source file to understand over
+#. i18n File 'preference.md' includes markdown CODE BLOCKS, for which
+#. i18n you need to translate the shell comments that the blocks include.
+#. i18n The comments explain which function each setting performs.
+#. i18n INSIDE each code block you will translate the COMMENT lines
+#. i18n located above each variable assignment.
+#. i18n Make sure to reproduce the comment '#' hash character in place.
+#. i18n When the source text includes MULTIPLE-LINE shell comments each line
+#. i18n is presented for translation as a separate msgid, which can be
+#. i18n initially confusing. Look at the source file to understand over
 #. i18n which set of msgids the shell comment spreads. Your translation
 #. i18n needs to spread over the same set exactly. You may choose to format
 #. i18n your comment differently from the source, for example to even out
@@ -1257,7 +1453,7 @@ msgstr ""
 #. i18n And, as usual, translate all text outside the code blocks.
 #.
 #: /usr/share/doc/findnrun/preference.md:1
-#: /usr/share/doc/findnrun/preference.md:108
+#: /usr/share/doc/findnrun/preference.md:161
 msgid "_Next: [Hotkeys](hotkey.md)_"
 msgstr ""
 
@@ -1305,305 +1501,347 @@ msgstr ""
 msgid "    varFOCUSSEARCH=true"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:21
-msgid "    # Search in application names, file names, command lines, comments and categories all at once."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:22
-msgid "    # When false and no other SEARCH* field is true search in application names only."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:23
-msgid "    # To search in, i.e., file names only set SEARCHCOMPLETE=false SEARCHFILENAMES=true."
-msgstr ""
-
 #: /usr/share/doc/findnrun/preference.md:24
-msgid "    SEARCHCOMPLETE=true"
+msgid "These values can be set also from the main menu:"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:25
-msgid "    # Search pattern is a POSIX Basic regular expression."
+msgid "    # Find words that match the search terms approximately rather than exactly."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:26
-msgid "    # Applied also to comment search and category search."
+msgid "    # Fuzzy search ignores the following settings because it substitutes them"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:27
-msgid "    SEARCHREGEX=false"
+msgid "    # in other ways: CASEDEPENDENT, SEARCHFROMLEFT."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:28
-msgid "    # Ignore the NoDisplay=true attribute value of .desktop files (not recommended)."
+msgid "    # Only one of SEARCHFUZZY and SEARCHREGEX can be enabled."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:29
-msgid "    # Note: Versions up to 1.10.6 didn't have this setting and showed all files by default."
+msgid "    SEARCHFUZZY=false"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:30
-msgid "    SHOWNODISPLAY=false"
+#: /usr/share/doc/findnrun/preference.md:33
+msgid "    # Search pattern is a POSIX Basic regular expression."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:34
-msgid "Hidden Preferences"
+msgid "    # Applied also to comment search and category search."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:37
-msgid "These values aren't available from the main window. They are intended mostly for power users and custom applications:"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:38
-msgid "    # Hotkey format: accel-mods':'key-sym':'accel-key"
+#: /usr/share/doc/findnrun/preference.md:35
+msgid "    SEARCHREGEX=false"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:39
-msgid "    # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:40
-msgid "    # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:41
-msgid "    HOTKEY_F2=0:F2:0xffbf"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:42
-msgid "    # Pressing HOTKEY_F3 starts the next available source plugin."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:43
-msgid "    HOTKEY_F3=0:F3:0xffc0"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:44
-msgid "    # Pressing HOTKEY_F4 saves+filters search results"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:45
-msgid "    HOTKEY_F4=0:F4:0xffc1"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:46
-msgid "    # Pressing HOTKEY_F5 runs the top/selected search result item in a terminal"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:47
-msgid "    HOTKEY_F5=0:F5:0xffc2"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:48
-msgid "    # Pressing HOTKEY_F12 activates the top search result list item."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:49
-msgid "    HOTKEY_F12=0:F12:0xffc9"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:50
-msgid "    # Icon cache location."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:51
-msgid "    ICONCACHE=${HOME}/.icons"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:52
 msgid "    # Extend search subject to .desktop file names."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:53
-#: /usr/share/doc/findnrun/preference.md:56
-#: /usr/share/doc/findnrun/preference.md:60
-msgid "    # Subsumed by SEARCHCOMPLETE=true."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:54
+#: /usr/share/doc/findnrun/preference.md:40
 msgid "    SEARCHFILENAMES=false"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:55
+#: /usr/share/doc/findnrun/preference.md:44
 msgid "    # Extend search subject to application comments."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:57
+#: /usr/share/doc/findnrun/preference.md:45
 msgid "    SEARCHCOMMENTS=false"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:58
+#: /usr/share/doc/findnrun/preference.md:49
 msgid "    # Extend search subject to application categories."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:59
+#: /usr/share/doc/findnrun/preference.md:50
 msgid "    # Show category labels in the comment field."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:61
+#: /usr/share/doc/findnrun/preference.md:51
 msgid "    # Set 'hidden' to hide category labels in the comment field."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:62
+#: /usr/share/doc/findnrun/preference.md:52
 msgid "    # In search input field prepend ';' to search for category only, i.e., ';office'."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:63
+#: /usr/share/doc/findnrun/preference.md:53
 msgid "    SEARCHCATEGORIES=false"
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:64
-msgid "    # Search pattern must match from the leftmost character."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:65
-msgid "    # Ignored for category search."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:66
-msgid "    SEARCHFROMLEFT=false"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:67
+#: /usr/share/doc/findnrun/preference.md:57
 msgid "    # Enforce case-dependent searching."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:68
+#: /usr/share/doc/findnrun/preference.md:58
 msgid "    CASEDEPENDENT=false"
 msgstr ""
 
+#: /usr/share/doc/findnrun/preference.md:62
+msgid "    # Search pattern must match from the leftmost position."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:63
+msgid "    # Ignored for category search."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:64
+msgid "    SEARCHFROMLEFT=false"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:68
+msgid "    # Ignore the NoDisplay=true attribute value of .desktop files."
+msgstr ""
+
 #: /usr/share/doc/findnrun/preference.md:69
-msgid "    # Main window geometry, no default."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:70
-msgid "    # Command-line option --geometry=WxH+X+Y overrides this value."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:71
-msgid "    #GEOMETRY=460x280+100+200"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:72
-msgid "    # Desktop file search directories, colon-separated list from system settings."
+msgid "    SHOWNODISPLAY=false"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:73
-msgid "    # Recursively search folders and sub-folders."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:74
-msgid "    #DESKTOP_FILE_DIRS=\"$HOME/.local/share/applications:/usr/share/applications:+"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:75
-msgid "    #  + /usr/local/share/applications\""
+msgid "Notes"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:76
-msgid "    # Icon search directories, colon-separated list from system default settings."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:77
-msgid "    #ICON_DIRS=\"$HOME/.icons:$HOME/.local/icons:/usr/share/icons:+"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:78
-msgid "    #  + /usr/local/share/icons:/usr/share/pixmaps:+"
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:79
-msgid "    #  + /usr/share/midi-icons:/usr/share/mini-icons\""
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:80
-msgid "    # GTK2 icon-theme-name value initialized from ~/.gtkrc-2.0 (or in included file)."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:81
-msgid "    # Icons found in the icon theme directory take precedence over other icons."
+msgid "`SHOWNODISPLAY`: Versions up to 1.10.6 didn't have this setting and showed all files by default."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:82
-msgid "    # You may change this settings to experience another installed icon theme."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:83
-msgid "    #GTK_ICON_THEME_NAME=\"/path/to/icon-theme-directory\" # optional"
+msgid "`SEARCHFILENAMES` `SEARCHCOMMENTS` `SEARCHCATEGORIES`: If fuzzy search is enabled, all fields are searched at the same time, and the highest scoring match can spread across several fields. For non-fuzzy search the fields are searched separately and sequentially, and the search stops on the first match found in the order: application name, filename, comment, category."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:84
-msgid "    # Preferred help viewing program (obsolete since version 2.0.0)."
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:85
-msgid "    #BROWSER="
-msgstr ""
-
-#: /usr/share/doc/findnrun/preference.md:86
-msgid "    # Change the output destination to which hotkey F4 saves search results."
+msgid "Hidden Preferences"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:87
-msgid "    # Default value: '@timestamp'."
+msgid "These values aren't available from the main window. They are intended mostly for power users and custom applications:"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:88
-msgid "    # Use '@timestamp' for a timestamped, tab-separated-value (.tsv) file in your home folder."
+msgid "    # Hotkey format: accel-mods':'key-sym':'accel-key"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:89
-msgid "    # Use 'none' to disable saving search results."
+msgid "    # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:90
-msgid "    # Use '>/path/to/filename' to save to filename. /path/to must exist."
+msgid "    # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:91
-msgid "    # Command pipelines are supported, too, i.e.,"
+msgid "    HOTKEY_F2=0:F2:0xffbf"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:92
-msgid "    #   RDR=\"|cut -f1,2 |tee /dev/stderr\" # label & .desktop full path to stderr"
+msgid "    # Pressing HOTKEY_F3 starts the next available source plugin."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:93
-msgid "    #   RDR=\"|xclip\" # all columns to the clipboard"
+msgid "    HOTKEY_F3=0:F3:0xffc0"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:94
-msgid "    # Changing RDR affects the destination of all sources."
+msgid "    # Pressing HOTKEY_F4 saves+filters search results"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:95
-msgid "    # To changes single sources read plugin-dev.md."
+msgid "    HOTKEY_F4=0:F4:0xffc1"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:96
-msgid "    # Built-in sources honor RDR. Some external plugins may not."
+msgid "    # Pressing HOTKEY_F5 runs the top/selected search result item in a terminal"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:97
-msgid "    #RDR=@timestamp"
+msgid "    HOTKEY_F5=0:F5:0xffc2"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:98
-msgid "    # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included."
+msgid "    # Pressing HOTKEY_F12 activates the top search result list item."
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:99
-msgid "    # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun."
+msgid "    HOTKEY_F12=0:F12:0xffc9"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:100
-msgid "    IBOL=' '"
+msgid "    # Icon cache location."
 msgstr ""
 
-#: /usr/share/doc/findnrun/preference.md:104
-msgid "See Also"
+#: /usr/share/doc/findnrun/preference.md:101
+msgid "    ICONCACHE=${HOME}/.icons"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:105
+msgid "    # This value affects the importance of fuzzy matching each of"
 msgstr ""
 
 #: /usr/share/doc/findnrun/preference.md:106
+msgid "    # the fields: 1) application name, 2) filename, 3) comment, 4) category."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:107
+msgid "    # Setting a value = 0 means accepting the calculated match score of that"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:108
+msgid "    # field as is. Setting a value = R means adding score/R to the calculated"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:109
+msgid "    # score, therefore raising the overall importance of that field."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:110
+msgid "    # For instance, values \"0.3 0 0 0.5\", increases the application name match"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:111
+msgid "    # score by 30%, and the category match score by 50%."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:112
+msgid "    FUZZY_MATCH_FIELD_BONUS=\"0.3 0 0 0.5\""
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:116
+msgid "    # Main window geometry, no default."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:117
+msgid "    # Command-line option --geometry=WxH+X+Y overrides this value."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:118
+msgid "    #GEOMETRY=460x280+100+200"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:119
+msgid "    # Desktop file search directories, colon-separated list from system settings."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:120
+msgid "    # Recursively search folders and sub-folders."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:121
+msgid "    #DESKTOP_FILE_DIRS=\"$HOME/.local/share/applications:/usr/share/applications:+"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:122
+msgid "    #  + /usr/local/share/applications\""
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:123
+msgid "    # Icon search directories, colon-separated list from system default settings."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:124
+msgid "    #ICON_DIRS=\"$HOME/.icons:$HOME/.local/icons:/usr/share/icons:+"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:125
+msgid "    #  + /usr/local/share/icons:/usr/share/pixmaps:+"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:126
+msgid "    #  + /usr/share/midi-icons:/usr/share/mini-icons\""
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:127
+msgid "    # GTK2 icon-theme-name value initialized from ~/.gtkrc-2.0 (or in included file)."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:128
+msgid "    # Icons found in the icon theme directory take precedence over other icons."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:129
+msgid "    # You may change this settings to experience another installed icon theme."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:130
+msgid "    #GTK_ICON_THEME_NAME=\"/path/to/icon-theme-directory\" # optional"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:131
+msgid "    # Preferred help viewing program (obsolete since version 2.0.0)."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:132
+msgid "    #BROWSER="
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:136
+msgid "    # Change the output destination to which hotkey F4 saves search results."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:137
+msgid "    # Default value: '@timestamp'."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:138
+msgid "    # Use '@timestamp' for a timestamped, tab-separated-value (.tsv) file in your home folder."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:139
+msgid "    # Use 'none' to disable saving search results."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:140
+msgid "    # Use '>/path/to/filename' to save to filename. /path/to must exist."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:141
+msgid "    # Command pipelines are supported, too, i.e.,"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:142
+msgid "    #   RDR=\"|cut -f1,2 |tee /dev/stderr\" # label & .desktop full path to stderr"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:143
+msgid "    #   RDR=\"|xclip\" # all columns to the clipboard"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:144
+msgid "    # Changing RDR affects the destination of all sources."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:145
+msgid "    # To changes single sources read plugin-dev.md."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:146
+msgid "    # Built-in sources honor RDR. Some external plugins may not."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:147
+msgid "    #RDR=@timestamp"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:151
+msgid "    # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:152
+msgid "    # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun."
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:153
+msgid "    IBOL=' '"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:157
+msgid "See Also"
+msgstr ""
+
+#: /usr/share/doc/findnrun/preference.md:159
 msgid "_Environment Variables_ in [Starting Findnrun](running.md)."
 msgstr ""
 
