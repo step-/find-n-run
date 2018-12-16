@@ -56,7 +56,7 @@ user interface elements.
 
 ### Source Plugins
 
-A source plugin comprises a _tap_, an optional _drain_. The tap outputs
+A source plugin comprises a _tap_ and an optional _drain_. The tap outputs
 the data records that populate the list widget. The drain consumes the
 selected record when the user presses ENTER or double-clicks the list
 view selection.
@@ -68,9 +68,9 @@ A tap-record consists of fields separated by the pipe character '|':
     <icon-reference> '|' <tap-reserved> '|' <label> '|' <tap-data> '|' <comment> '|' <categories>
 ````
 
-All fields yield string values, all characters allowed (caveat) except
-the pipe character. There is no way to include a literal pipe character
-in a value.  All values can be null except for `<tap-data>`.
+All fields hold string values, which can include any character except '|'.
+Caveat: no value can include a literal pipe character.
+All values can be null except for `<tap-data>`.
 
  * `<icon-reference>` is an icon _reference_. See section _Findnrun User
    Interface and Source Plugins_.
@@ -93,8 +93,8 @@ in a value.  All values can be null except for `<tap-data>`.
     |||chrome
     firefox
 
-The last example is the minimum data a well-formed record must
-include. Accordingly, findnrun's list view shows a predefined icon,
+The last example shows the minimum data a well-formed record must
+include. Accordingly, findnrun's list view displays a predefined icon,
 label "firefox" and tap-data "firefox". Similarly, for record
 `|||chrome` the list view shows a predefined icon, title "chrome" and
 tap-data "chrome". To show an empty icon, set the filename of an empty

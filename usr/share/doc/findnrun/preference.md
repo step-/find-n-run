@@ -23,7 +23,7 @@ These values can be set also from the main window:
 
 These values can be set also from the main menu:
 ```gettext
-    # Search approximated words tolerating some mispellings and missing parts.
+    # Find words that match the search terms approximately rather than exactly.
     # Fuzzy search ignores the following settings because it substitutes them
     # in other ways: CASEDEPENDENT, SEARCHFROMLEFT.
     # Only one of SEARCHFUZZY and SEARCHREGEX can be enabled.

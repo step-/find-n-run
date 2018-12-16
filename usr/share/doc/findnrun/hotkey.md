@@ -14,6 +14,7 @@ clicking the _pure yang trigram_ **☰** sign in the main window.
  * `[F3]` - start the next search plugin
  * `[F4]` - save search results to file or command pipeline
  * `[F5]` - activate in terminal the top or highlighted search result item[0]
+ * `[F6]` - clear the search input field
  * `[F12]` - activate the top or highlighted search result item[0]
  * `[Escape]` - exit findnrun
  * `[Page Down]` - Rotate down search result items[1]
