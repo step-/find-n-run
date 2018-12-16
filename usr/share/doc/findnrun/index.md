@@ -2,7 +2,7 @@
 
 **Findrun** - A progressive finder
 
-_3.0.0_
+_3.1.0_
 
 [Project home](http://github.com/step-/find-n-run)
    | [Downloads](http://github.com/step-/find-n-run/releases)
