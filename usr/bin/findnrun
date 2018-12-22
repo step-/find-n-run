@@ -336,7 +336,8 @@ SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 # to the source declaration file (THISFILE).  The subsequent TAP's gawk -f AWKQ
 # queries the .desktop db on each search box keypress.
 INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\"'\$(wc -l < \"${DATF}\")'\" >> \"\$THISFILE\""
-TAP_FNRstart="[ true = \"\$SEARCHFUZZY\" ] && q=\"$AWKZ\" || q=\"$AWKQ\"; gawk -f \"\$q\" -v GREP=\"\${term}\" \"${DATF}\"${REDIRECT2}"
+# $TAP_FNRstart is also used as the body of function FNRsearch defined by $INVOKE_SOURCE_TAP.
+TAP_FNRstart="[ true = \"\$SEARCHFUZZY\" ] && q=\"$AWKZ\" || q=\"$AWKQ\"; gawk -f \"\$q\" -v GREP=\"\${term}\" \"\${DATF:-$DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='findnrun' # Also used as FALLBACK_ICON for all missing app icons.
 SAVEFLT_FNRstart="\$FNRSAVEFLT CUT=\"$CUT\" RDR=\"$RDR\" \"\${file}\""
@@ -1195,9 +1196,10 @@ else # SEARCHDEFAULT
 fi
 # Extract the last field of the last record printed by $AWKB::format_item().
 extract_data_fields="delete a
-  split(\$(NF), a, /${SEP}/) # a[1..5] <- {fullpathname,appname,exec,comment,category}
-  a[2] = \$2" # While both a[2] and $2 hold the appname, taps like FNRsc omit a[2]'s value.
-  # Specifically all taps that are filtered through "findnrun-formatter -O s" set a[2] null.
+  nA = split(\$(NF), a, /${SEP}/) # a[1..5] <- {fullpathname,appname,exec,comment,category}
+  a[2] = \$(nA > 1 ? 2 : 0)" # While both a[2] and $2 hold the appname, taps like FNRsc omit a[2]'s value,
+  # so we set a[2] = $2 to be sure. Specifically taps filtered through "findnrun-formatter -O s" set a[2] null.
+  # When nA is < 2 we set a[2] = $0 the entire record. This can happen when a plugin calls FNRsearch().
 if [ true = "$SEARCHFILENAMES" ]; then
   extract_data_fields="$extract_data_fields"'
   sub(/^.*\//, "", a[1]) # basename
@@ -1815,6 +1817,7 @@ set_REFRESH_SOURCE_VARS_FOR_INPUT_FILE
 set_INVOKE_SOURCE_TAP() # [[[2
 {
   # Code that invokes the current source's tap-command.
+  # 0. Output plugin helpers.
   # 1. Extract search input value as $term with IBOL+IBOL correction.
   # 2. Get source's values.
   # 3. Update plugin event. '%% *' trims the event timestamp.
@@ -1822,7 +1825,10 @@ set_INVOKE_SOURCE_TAP() # [[[2
   # 5. Unexport all vars but source's. Cf. UNEXPORT in set_INVOKE_SOURCE_DRAIN.
   # 6. Set invocation environment and start tap-command.
   INVOKE_SOURCE_TAP=\
-': 1'\
+': 0'\
+';FNRset_TMPD_DATF(){ TMPD="${FNRTMP:-/tmp}/.$ID" && ! [ -d "$TMPD" ] && mkdir -p "$TMPD" && chmod 700 "${TMPD}"; DATF="$TMPD"/.dat; }'\
+';FNRsearch(){ '"$TAP_FNRstart"'; }'\
+';: 1'\
 ';ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}"'\
 ';: 2'\
 ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_tap\""'}\

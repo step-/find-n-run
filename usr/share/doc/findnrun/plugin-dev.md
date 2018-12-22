@@ -50,6 +50,7 @@ Findnrun provides plugins with:
  * a _call interface_ for a plugin to request execution of findnrun
    functions
  * a set of _services_
+ * a set of _helper functions_
 
 Plugins provide findnrun with new search types/methods, and optional
 user interface elements.
@@ -214,6 +215,8 @@ Each tap-, drain- and save-filter-command is implemented as a shell
 command, script, or external program, something that the shell can
 execute.
 
+Some _helper functions_ are available for use in shell commands.
+
 ### Plugin Invocation
 
 Findnrun _invokes_ four kinds of commands. When a source is first
@@ -232,6 +235,12 @@ tap-command as follows:
 The tap-command can use the current value of the search input field by
 including the string `${term}` in `<tap-command>`.  On each plugin
 invocation the tap may output zero or more formatted tap-records.
+
+A tap-command can use the following pre-defined helper functions:
+* `FNRset_TMPD_DATF`
+* `FNRsearch`
+
+See section _Helper Functions_.
 
 When the user selects and activates an entry in the list view, findnrun
 invokes the drain-command as follows:
@@ -287,6 +296,7 @@ For save-filter-command these additional variables can be used:
 ```
     TMPD="${FNRTMP:-/tmp}/.${ID}" && mkdir -p "${TMPD}" && chmod 700 "${TMPD}"
 ```
+  which is also available as a helper function. See section _Helper Functions_.
 
 [3] Name of the event that led to the invocation of a tap or
    drain. Currently the following names are defined:
@@ -485,6 +495,43 @@ So a plugin can subscribe to findnrun's killing service if it needs
 for its sub-process(es) to be automatically terminated when findnrun
 exits. To subscribe write the sub-process id(s) to a suitably-named
 `.pidof_*` file under findnrun's temporary folder.
+
+### Helper Functions
+
+A tap-command shell code can call the following helper functions:
+
+**FNRset_TMPD_DATF**
+
+This function sets global variables `TMPD` and `DATF`, and creates temporary
+directory `$TMPD` named after the current plugin `$ID`. The plugin can save
+its temporary files in `$TMPD`, e.g.
+```
+    set_TMPD_DATF; ! [ "$term" ] && tap_data > "$TMPD"/data
+```
+
+The example assumes that `tap_data` is a function that outputs tap records
+prior to performing a search for `${term}`. The search could be written as:
+```
+    grep "${term:-.}" < "$TMPD"/data | findnrun-formatter -O s
+```
+
+which completes the tap-command definition.
+
+**FNRsearch**
+
+A tap-command can call the built-in search engine that powers the
+_Application Finder_. `FNRsearch` expects input variable `DATF` to hold the
+full path of the tap-record data file. The tap-command can set DATF explicitly
+or implicitly, by calling `set_TMPD_DATF`.  Then it can start the search as:
+```
+    FNRsearch
+```
+
+The following complete example implements a tap-command that can perform
+regular and fuzzy search, according to the currently enabled search options:
+```
+    FNRset_TMPD_DATF; ! [ "$term" ] && tap_data > "$DATF"; FNRsearch | findnrun-formatter -O s
+```
 
 ### Plugin Internationalization (i18n)
 
