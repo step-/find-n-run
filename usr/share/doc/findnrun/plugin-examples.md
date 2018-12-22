@@ -57,6 +57,29 @@ for the default source use:
     INITSEARCH_FNRstart='audio'
 ```
 
+### SFS Lister
+
+The following definitions implement an SFS file lister/loader. It assumes
+that script `s-sfs` can list all known SFS files (`s-sfs -l`) and load/unload
+them. The definitions make use of helper functions.
+```
+    # search my sfs files
+    SOURCE_sfs='sfs:sfs:sfs:sfs:sfs:sfs:sfs:sfs:sfs:'
+    ICON_sfs=/usr/share/pixmaps/themes/puppy48/squashfs-image48.png
+    INIT_sfs='FNRset_TMPD_DATF; s-sfs -l > "$DATF"; echo >"$TMPD"/go-drain "yad --text=\"\$*\" --button=gtk-go-up:0 --button=gtk-go-down:1 --button=gtk-cancel:2 --window-icon="'"$ICON_sfs"'"; case \$? in 0) s-sfs load \"\$*\";; 1) s-sfs unload \"\$*\";; esac"'
+    TAP_sfs='FNRset_TMPD_DATF; FNRsearch | findnrun-formatter -- -O s'
+    # Note that DRAIN can only be a simple shell command. Cf. Caveat in plugin-dev.md "Plugin Invocation"
+    # So we replace $TMPD with its definition taken from FNRset_TMPD_DATF.
+    DRAIN_sfs='sh "$FNRTMP/.$ID/go-drain"'
+    TITLE_sfs='s-sfs'
+    INITSEARCH_sfs=
+    MODE_sfs=
+    PLGDIR_sfs=
+    SAVEFLT_sfs=
+    
+    SOURCES="FNRstart FNRsc sfs"
+```
+
 ### Multi-Field Tap
 
 So far we have only seen examples of source taps that output a single
@@ -75,9 +98,9 @@ The multi-field plugin code and documentation consists of a single file
 The filmstrip source plugin demonstrates several advanced features of
 the plugin interface:
 
-  * paginating search results
-  * remote interface calls
-  * an independent GUI
+* paginating search results
+* remote interface calls
+* an independent GUI
 
 The filmstrip viewer is a full example of an independent GUI that syncs
 with findnrun keyboard events. On the practical side, it is also an

@@ -363,6 +363,19 @@ TITLE_FNRsc=$i18n_shell_completion
 # save item label(-4) == exec line(3)
 SAVEFLT_FNRsc="\$FNRSAVEFLT CUT=\"-4\" RDR=\"$RDR\" \"\${file}\""
 
+# Public Helpers [[[1
+set_Helper_Functions() # [[[2
+{
+  # Cf. share/doc/findnrun/plugin-dev.md "Helper Functions"
+
+  FNRset_TMPD_DATF=\
+'FNRset_TMPD_DATF(){ TMPD="'"$TMPD"'/.$ID" && ! [ -d "$TMPD" ] && mkdir -p "$TMPD" && chmod 700 "$TMPD"; DATF="$TMPD"/.dat; }'
+  FNRsearch=\
+'FNRsearch(){ '"$TAP_FNRstart"'; }'
+}
+#]]]
+set_Helper_Functions
+
 # Compile built-in and plugin sources. [[[1
 TIMER1=$(date +%s.%N)
 # Don't change next two formats without mirroring them in functions set_INVOKE*
@@ -403,6 +416,7 @@ store_valid_sources() # [[[
 #]]]
 # i18n Source plugin validation.
   set | gawk -v SOURCES="${SOURCES}" -v BUILTIN="${BUILTIN_SOURCES}" \
+    -v PUBLIC_HELPERS="$FNRset_TMPD_DATF" \
     -v MSG1="${i18n_fatal_source_error}\n" \
     -v MSG2="${i18n_recoverable_source_error}\n" \
     -v MSG3="${i18n_source_warning}\n" \
@@ -623,6 +637,7 @@ function try_store_source(s, S, Store, buf, A,   a, g, i, j, I, iconpath, cached
             # Add shell code to run INIT once only. env SKIP_INIT=1 ... to skip.
             buf = buf sprintf("\nif [ \"$INIT\" -a -z \"$SKIP_INIT\" ]; then\n%s\nfi",\
               ('${DEBUG1:-0}' ?("__t0=$(date +%s.%N)\n") :"")\
+              PUBLIC_HELPERS"\n"\
               "  eval $INIT\n"\
               ('${DEBUG1:-0}' ?("__t1=$(date +%s.%N)\n") :"")\
               ('${DEBUG1:-0}' ?("  awk -v fmt=\"\\033[7mINIT $ID %g ms elapsed\\033[0m\\n\" -v t0=$__t0 -v t1=$__t1 \x27""BEGIN {printf fmt, (t1-t0)*1000;exit}\x27 >&2\n") :"")\
@@ -1722,7 +1737,7 @@ function to_tsv_file(f, s) { # [[[2
 }
 #gawk]]]'
 
-# Helpers [[[1
+# Private Helpers [[[1
 set_GET_DRAIN_COMMAND() # [[[2
 {
   # Code that extracts the drain command of the selected list item.
@@ -1770,10 +1785,13 @@ set_LOAD_INVOCATION_ENV
 set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 {
   # Code that invokes the current source's save-filter-command.
+  # 0. Output plugin helpers.
   # 1. Unexport some vars.
   # 2. Set invocation environment and start save-filter-command.
   INVOKE_SOURCE_SAVE_FILTER=\
-': 1'\
+': 0'\
+";$FNRset_TMPD_DATF"\
+';: 1'\
 "$UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_INVK"\
 ';: 2'\
 "; $LOAD_INVOCATION_ENV"\
@@ -1826,8 +1844,8 @@ set_INVOKE_SOURCE_TAP() # [[[2
   # 6. Set invocation environment and start tap-command.
   INVOKE_SOURCE_TAP=\
 ': 0'\
-';FNRset_TMPD_DATF(){ TMPD="${FNRTMP:-/tmp}/.$ID" && ! [ -d "$TMPD" ] && mkdir -p "$TMPD" && chmod 700 "${TMPD}"; DATF="$TMPD"/.dat; }'\
-';FNRsearch(){ '"$TAP_FNRstart"'; }'\
+";$FNRset_TMPD_DATF"\
+";$FNRsearch"\
 ';: 1'\
 ';ifs="${IFS}"; IFS="'"${IBOL}"'"; set -f; set -- ${varSEARCH}; for i; do term="$i"; done; set +f; set IFS="${ifs}"'\
 ';: 2'\
@@ -1883,6 +1901,8 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
   # Write the code to a private file that gtkdialog will source.
   # Pass $1 to set INVOKE_SOURCE_DRAIN_TERM.
 
+  # 0. No plugin helpers for drain-command because it can't make use of them since it
+  #    must be a simple shell command.  Cf. caveat in plugin-dev.md "Plugin Invocation".
   # 1. Extract selected list item value as "$@".
   # 2. Unexport some vars.  Cf. UNEXPORT in set_INVOKE_SOURCE_TAP and also further down below.
   # 3. Load source's values into drain's invocation environment.
@@ -1902,7 +1922,9 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
   else INVOKE_SOURCE_DRAIN=". \"$__outf\""
   fi
   > "$__outf" printf %s \
-': 1'\
+': 0'\
+' drain-command must be a simple shell command'\
+';: 1'\
 ";$GET_DRAIN_COMMAND"\
 ';: 2'\
 "; $UNEXPORT $UNEXP_GUI1"\
