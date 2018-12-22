@@ -1886,15 +1886,16 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
   # 1. Extract selected list item value as "$@".
   # 2. Unexport some vars.  Cf. UNEXPORT in set_INVOKE_SOURCE_TAP and also further down below.
   # 3. Load source's values into drain's invocation environment.
-  # 4. Save drain-command to history lists.
-  # 6. Update plugin event. '%% *' trims the event timestamp. [[[
+  # 4. Update plugin event. '%% *' trims the event timestamp. [[[
   # NOTE: v.2.0.0 main window's gtkdialog doesn't implement variable
   # invokeDRAIN. So, for the plugin interface, here it's sufficient to
   # pretend that invokeDRAIN is implemented, and handle it similarly to
   # what we do for invokeTAP, which instead is fully implemented. ]]]
+  # 5. Set and export invocation environment.
+  # 6. Save drain-command to history lists.
   # 7. Debug messages.
   # 8. Unexport all remaining variables.
-  # 9. Set invocation environment and start drain-command (optionally in terminal).
+  # 9. Start drain-command (optionally in terminal).
   local __terminal=$1 __term_suffix=${1:+_term} __outf=$TMPD/.run-drain${1:+-term}.sh
   if [ "$__terminal" ]; then
     INVOKE_SOURCE_DRAIN_TERM=". \"$__outf\""
@@ -1909,17 +1910,18 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
 ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain'$__term_suffix'\""'}\
 ";$LOAD_INVOCATION_ENV"\
 ';: 4'\
-'; eval set -- ${DRAIN} "$@"; '"$SAVE_ARGS_HISTORY"\
-';: 6'\
 '; fnrevent=${invokeDRAIN:-Activate} && fnrevent=${fnrevent%% *}'\
+';: 5'\
+'; export FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
+' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'\
+';: 6'\
+'; eval set -- ${DRAIN} "$@"; '"$SAVE_ARGS_HISTORY"\
 ';: 7'\
 ${DEBUG1:+' && >&2 printf %s $(date +%H:%M:%S.%N)'}\
 ${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'}\
 ';: 8'\
 "; $UNEXPORT $UNEXP_GUI2 $UNEXP_INVK"\
-';: 9'\
-'&& FNREVENT="${fnrevent}" FNRDEBUG='"${FNRDEBUG}"\
-' FNRTMP="'"${TMPD}"'" FNRPID=${FNRPID} FNRRPC="'"${FNRRPC}"'"'
+';: 9;'
   if [ "$__terminal" ]; then
     >> "$__outf" printf %s " $EVAL_ARGS_IN_TERM"
   else
