@@ -142,6 +142,7 @@ LL=${LANG%_*} #ex:pt
 UNEXPORT=unset
 UNEXP_GUI1="varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET GUI_ABOUT RESTART_WINDOW"
 UNEXP_GUI2="varLIST varF3" # in some cases they can be unexported but only at a later stage
+eNEXP_NOT_TAPS="SEARCHFUZZY CASEDEPENDENT" # for set_INVOKE* except TAP
 UNEXP_INVK="invokeTAP invokeDRAIN" # not sure about these
 # 2. plugin-dev.md says these vars are part of the invocation environment therefore
 # they shouldn't be unexported (technically they are set but not exported).
@@ -257,6 +258,7 @@ END{ # create config file and add missing settings [[[
   SEARCHCOMPLETE=true || SEARCHCOMPLETE=false
 # SEARCHDEFAULT is internal too.
 case "$SEARCHFUZZY$SEARCHREGEX" in *true*) SEARCHDEFAULT=false;; *) SEARCHDEFAULT=true;; esac
+export SEARCHFUZZY CASEDEPENDENT # reminder: add to UNEXP_NOT_TAP
 
 [ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+processing $CONFIG" >&2
 
@@ -333,11 +335,12 @@ SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 # The single invocation code generator can be found at {INVOKEINIT}.  Gist
 # below: Up to "f >..." create a list of .desktop file paths. Then gawk -f
 # AWKB outputs the .desktop db given the paths. Then echo NDATF appends NDATF
-# to the source declaration file (THISFILE).  The subsequent TAP's gawk -f AWKQ
+# to the source declaration file (THISFILE).  The subsequent TAP's gawk -f AWK{Q,Z}
 # queries the .desktop db on each search box keypress.
 INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\"'\$(wc -l < \"${DATF}\")'\" >> \"\$THISFILE\""
 # $TAP_FNRstart is also used as the body of function FNRsearch defined by $INVOKE_SOURCE_TAP.
-TAP_FNRstart="[ true = \"\$SEARCHFUZZY\" ] && q=\"$AWKZ\" || q=\"$AWKQ\"; gawk -f \"\$q\" -v GREP=\"\${term}\" \"\${DATF:-$DATF}\"${REDIRECT2}"
+TAP_FNRstart="[ true = \$SEARCHFUZZY ] && q=\"$AWKZ\" || q=\"$AWKQ\";"\
+"gawk -f \"\$q\" -v CASEDEPENDENT=\$CASEDEPENDENT -v GREP=\"\${term}\" \"\${DATF:-$DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='findnrun' # Also used as FALLBACK_ICON for all missing app icons.
 SAVEFLT_FNRstart="\$FNRSAVEFLT CUT=\"$CUT\" RDR=\"$RDR\" \"\${file}\""
@@ -1172,8 +1175,9 @@ function close_progress_dialog(pid,   killer) { # [[[2
 
 #gawk]]]' # [[[2]]]
 
-# Prepare the generic database query script. [[[1
-# Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
+# Prepare the database query script a.k.a. search engine. [[[1
+# Usage: gawk -f "${AWKQ}" [-v GREP="string"] [-v CASEDEPENDENT=<TF>] ${DATF}
+# <TF> := "true"|"false"
 write_query_script() # $1-SEARCHFUZZY
 {
   local SEARCHFUZZY=$1
@@ -1194,7 +1198,6 @@ write_query_script() # $1-SEARCHFUZZY
 # ]]]
 unset case subject commleft left categ REDIRECT2 func extract_data_fields body end_body
 # Variables that describe the match expression. [[[2
-! [ true = "${CASEDEPENDENT}" ] && case=tolower
 if [ true = "${SEARCHFUZZY}" ]; then
   func=fuzzy_match_record
 elif [ true = "${SEARCHREGEX}" ]; then
@@ -1233,10 +1236,10 @@ if [ true = "${SEARCHFUZZY}" ]; then
   subject="${func}(a[0],GREP)"
 else
   # Search in a[2] (appname) or in ?a[1](filename) or in ?a[4](comment) or in ?a[5](category).
-  subject="${func}(${case}(a[2]),GREP)"
-  [ true = "${SEARCHFILENAMES}" ] && fnameleft="|| ${func}(${case}(a[1]),GREP)${left}"
-  [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(${case}(a[4]),GREP)${left}"
-  case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(${case}(a[5]),GREP)";; esac
+  subject="${func}(@CASE(a[2]),GREP)"
+  [ true = "${SEARCHFILENAMES}" ] && fnameleft="|| ${func}(@CASE(a[1]),GREP)${left}"
+  [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(@CASE(a[4]),GREP)${left}"
+  case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(@CASE(a[5]),GREP)";; esac
 fi
 # Variables that describe what happens on a match. [[[2
 body="print substr(\$0, 1, $GTKDIALOG_MAX_BYTE_LEN_BUG)"
@@ -1248,7 +1251,9 @@ fi
 # Compose an awk script from the above shell variables. [[[2]]]
 > "${AWKQ}" printf %s\\n '#[[[gawk
 BEGIN {
+  CASE = CASEDEPENDENT == "true" ? "identity" : "tolower"
   '${DEBUG1:+ ' searchexpr="'"${subject}${left} ${fnameleft} ${commleft} ${categ}"'"'}'
+  '${DEBUG1:+ ' gsub("@CASE", CASE, searchexpr)'}'
   '${DEBUG1:+ ' gsub("a\\[1\\]", ".desktopFile", searchexpr)'}'
   '${DEBUG1:+ ' gsub("a\\[2\\]", "AppName", searchexpr)'}'
   '${DEBUG1:+ ' gsub("a\\[4\\]", "Comment", searchexpr)'}'
@@ -1275,6 +1280,7 @@ END {
   '${DEBUG1:+' if(_R[4]){while(0<(getline _s<_R[4])){print "  ",_s>"/dev/stderr"};close(_R[4])}'}'
   '${DEBUG1:+' print "]] QUERY" >"/dev/stderr"'}'
 }
+function identity(x) { return x }
 #gawk]]]' # [[[2]]]
 if [ "${func#fuzzy}" != "$func" ]; then
   >> "${AWKQ}" printf %s\\n '#[[[gawk
@@ -1788,7 +1794,7 @@ set_INVOKE_SOURCE_SAVE_FILTER() # [[[2
 ': 0'\
 ";$FNRset_TMPD_DATF"\
 ';: 1'\
-"$UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_INVK"\
+"$UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_INVK $UNEXP_NOT_TAP"\
 ';: 2'\
 "; $LOAD_INVOCATION_ENV"\
 "; if [ -n \"\$SAVEFLT\" ]; then"\
@@ -1923,7 +1929,7 @@ set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
 ';: 1'\
 ";$GET_DRAIN_COMMAND"\
 ';: 2'\
-"; $UNEXPORT $UNEXP_GUI1"\
+"; $UNEXPORT $UNEXP_GUI1 $UNEXP_NOT_TAP"\
 ';: 3'\
 ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_drain'$__term_suffix'\""'}\
 ";$LOAD_INVOCATION_ENV"\
@@ -2215,7 +2221,7 @@ start_window << GTKDIALOGDOC
         <output file>$HSTF</output>
         ${DEBUG2:+<action>echo>&2 ,,, varCMD ,,,</action>}
         <action signal="activate" condition="command_is_true(echo \${varCMD:-true})">break:</action>
-        <action signal="activate">set -- \$varCMD; echo "\$@" >> '$HSTF'; echo "\$@" >> "$TMPD/.hist-\$ID.sh"; $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2; eval "\$@" &</action>
+        <action signal="activate">set -- \$varCMD; echo "\$@" >> '$HSTF'; echo "\$@" >> "$TMPD/.hist-\$ID.sh"; $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_NOT_TAP; eval "\$@" &</action>
         <action signal="activate" condition="active_is_false(varOPEN)">exit:EXIT</action>
         <action signal="activate" condition="command_is_true(echo \$varFOCUSSEARCH)">grabfocus:varSEARCH</action>
         <action signal="activate" condition="command_is_false(echo \$varFOCUSSEARCH)">grabfocus:varLIST</action>
@@ -2226,7 +2232,7 @@ start_window << GTKDIALOGDOC
       <button tooltip-text="$i18n_Run_command_in_terminal" theme-icon-size="16">
         <input file icon="findnrun_terminal"></input>
         <action>grabfocus:varCMD</action>
-        <action>$LOAD_INVOCATION_ENV; eval set -- \$varCMD; $SAVE_ARGS_HISTORY; $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_NOT_TAPS; $EVAL_ARGS_IN_TERM</action>
+        <action>$LOAD_INVOCATION_ENV; eval set -- \$varCMD; $SAVE_ARGS_HISTORY; $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_NOT_TAP; $EVAL_ARGS_IN_TERM</action>
       </button>
       ${REMARK#  ]]]}
       ${REMARK#  [[[. History item delete button.}
@@ -2388,11 +2394,10 @@ start_window << GTKDIALOGDOC
           <menu use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Ninja">
             ${REMARK# [[[. CASEDEPENDENT checkbox}
             <menuitem checkbox="$CASEDEPENDENT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case $i18n_mnu_tt_Fuzzy_ignores_this">
-              <label>"$i18n_mnu_Search_Case $i18n_asterisk"</label>
+              <label>"$i18n_mnu_Search_Case"</label>
               <variable>CASEDEPENDENT</variable>
               ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
               <action>awk '$LET_NV' N=CASEDEPENDENT V=\$CASEDEPENDENT '$CONFIG'</action>
-              <action>$REQUEST_RESTART_WINDOW</action>
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHFROMLEFT checkbox}
