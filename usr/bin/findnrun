@@ -2226,7 +2226,7 @@ start_window << GTKDIALOGDOC
       <button tooltip-text="$i18n_Run_command_in_terminal" theme-icon-size="16">
         <input file icon="findnrun_terminal"></input>
         <action>grabfocus:varCMD</action>
-        <action>eval set -- \$varCMD; $SAVE_ARGS_HISTORY; $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2; $EVAL_ARGS_IN_TERM</action>
+        <action>$LOAD_INVOCATION_ENV; eval set -- \$varCMD; $SAVE_ARGS_HISTORY; $UNEXPORT $UNEXP_GUI1 $UNEXP_GUI2 $UNEXP_NOT_TAPS; $EVAL_ARGS_IN_TERM</action>
       </button>
       ${REMARK#  ]]]}
       ${REMARK#  [[[. History item delete button.}
