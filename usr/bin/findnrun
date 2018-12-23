@@ -2453,7 +2453,7 @@ start_window << GTKDIALOGDOC
       ${REMARK# ]]]}
             ${REMARK# [[[. CASEDEPENDENT checkbox}
             <checkbox use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case $i18n_mnu_tt_Fuzzy_ignores_this">
-              <label>"$i18n_mnu_Search_Case"</label>
+              <label>"$i18n_Case"</label>
               <default>${CASEDEPENDENT}</default>
               <variable>CASEDEPENDENT</variable>
               ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}

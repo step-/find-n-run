@@ -103,6 +103,7 @@ i18n_table() # {{{1
     read i18n_mnu_tt_Search_Ninja
     read i18n_mnu_Search_Case
     read i18n_mnu_tt_Search_Case
+    read i18n_Case
     read i18n_mnu_Search_Anchor_Left
     read i18n_mnu_tt_Search_Anchor_Left
     read i18n_mnu_Search_Hidden
@@ -198,10 +199,11 @@ i18n_table() # {{{1
   "Consider also the application categories when searching for a match. The system menu groups application entries by categories.\n" \
   "Search _Ninja\n" \
   "Advanced settings and tweaks.\n" \
-  "Consider Word _Case\n" \
-  "Enable this if you want for search to ignore the difference between 'a' and 'A', 'b' and 'B', etc.\n" \
+  "Match _Case\n" \
+  "Enable this to make searching match both 'A' and 'a' when you type 'a', etc.\n" \
+  "'_A is 'a'\n" \
   "Anchor _Left\n" \
-  "Enable this if you want for search to find a match only if it begins in column one. Not applied to Fuzzy search.\n" \
+  "Enable this to make searching match a term only if the term begins in column one. Not applied to Fuzzy search.\n" \
   "Show _Hidden\n" \
   "Enable this to also search for hidden applications that don't appear in the system menu.\n" \
   )
