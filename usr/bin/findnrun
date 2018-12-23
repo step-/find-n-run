@@ -351,14 +351,10 @@ SAVEFLT_FNRstart="\$FNRSAVEFLT CUT=\"$CUT\" RDR=\"$RDR\" \"\${file}\""
 
 # FNRsc - Built-in source "Shell Completion" [[[2
 SOURCE_FNRsc="FNRsc::FNRsc:FNRsc:FNRsc:::FNRsc:FNRsc"
-unset opts
-! [ true = "${CASEDEPENDENT}" ] && opts="${opts}i"
-[ true = "${SEARCHREGEX}" ] && opts="${opts}E" || opts="${opts}F"
-p="${TMPD}/.FNRsc"; mkdir -p "$p"
 # Embedded newline characters not allowed.
 ICON_FNRsc='findnrun_sc'
-INIT_FNRsc="set +f; ifs=\$IFS; IFS=:; for d in \$PATH; do cd \"\$d\" && ls -1 *\"\${term}\"*; done 2>/dev/null | findnrun-formatter -- -I $ICON_FNRsc -O su >\"$p/.dat\"; IFS=\$ifs"
-TAP_FNRsc="gawk -f \"${AWKQ}\" -v GREP=\"\${term}\" \"$p/.dat\"${REDIRECT2}"
+INIT_FNRsc='FNRset_TMPD_DATF; set +f; ifs=$IFS; IFS=:; for d in $PATH; do cd "$d" && ls -1 *"${term}"*; done 2>/dev/null | findnrun-formatter -- -I '"$ICON_FNRsc"' -O su >"$DATF"; IFS=$ifs'
+TAP_FNRsc='FNRset_TMPD_DATF; FNRsearch'
 TITLE_FNRsc=$i18n_shell_completion
 # save item label(-4) == exec line(3)
 SAVEFLT_FNRsc="\$FNRSAVEFLT CUT=\"-4\" RDR=\"$RDR\" \"\${file}\""
