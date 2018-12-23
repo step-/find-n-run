@@ -48,6 +48,7 @@ i18n_table() # {{{1
     read i18n_Keep_window
     read i18n_Display_all_available_icons
     read i18n_Show_all_icons
+    read i18n_Icons
     read i18n_Return_the_keyboard_focus
     read i18n_Focus_search
     read i18n_About_and_help
@@ -143,6 +144,7 @@ i18n_table() # {{{1
   "Keep this window open after activating an item. Keep the window open to use the history feature, or to avoid startup delays.\n" \
   "_Keep\n" \
   "Display all available icons instead of displaying just the icons that do not need to be cached. Caching all icons may take some time. Disabling this option clears the existing cache.\n" \
+  "Show all _Icons\n" \
   "_Icons\n" \
   "Return the keyboard focus to the search input field after activating an item instead of keeping the keyboard focus on the activated list item.\n" \
   "_Focus search\n" \

@@ -2392,14 +2392,6 @@ start_window << GTKDIALOGDOC
             <label>"$i18n_mnu_Search_Details"</label>
           </menu>
           <menu use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Ninja">
-            ${REMARK# [[[. CASEDEPENDENT checkbox}
-            <menuitem checkbox="$CASEDEPENDENT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case $i18n_mnu_tt_Fuzzy_ignores_this">
-              <label>"$i18n_mnu_Search_Case"</label>
-              <variable>CASEDEPENDENT</variable>
-              ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
-              <action>awk '$LET_NV' N=CASEDEPENDENT V=\$CASEDEPENDENT '$CONFIG'</action>
-            </menuitem>
-            ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHFROMLEFT checkbox}
             <menuitem checkbox="$SEARCHFROMLEFT" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Anchor_Left">
               <label>"$i18n_mnu_Search_Anchor_Left $i18n_asterisk"</label>
@@ -2419,6 +2411,31 @@ start_window << GTKDIALOGDOC
               <action>refresh:varLIST</action>
             </menuitem>
             ${REMARK# ]]]}
+            ${REMARK# [[[. varICONS checkbox}
+            <menuitem checkbox="$varICONS" use-underline="true" tooltip-text="$i18n_Display_all_available_icons">
+              <label>"$i18n_Show_all_icons"</label>
+              <variable>varICONS</variable>
+              ${DEBUG2:+<action>echo>&2 ,,, varICONS ,,,</action>}
+              <action>awk '$LET_NV' N=varICONS V=\$varICONS '$CONFIG'</action>
+              <action>clear:varSEARCH</action>
+              ${DEBUG2:+<action>ls /usr/share/pixmaps/$CACHEFILEPREFIX.uptodate ~/.icons/$CACHEFILEPREFIX.uptodate >&2; cat ~/.findnrunrc >&2</action>}
+              <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
+              ${DEBUG2:+<action>if true echo >&2 in true rebuilding database...</action>}
+              <action>if true gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
+              ${DEBUG2:+<action>if true echo >&2 in true clear:varLIST</action>}
+              <action>if true clear:varLIST</action>
+              ${DEBUG2:+<action>if true echo >&2 in true refresh:varLIST</action>}
+              <action>if true refresh:varLIST</action>
+              ${DEBUG2:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/$CACHEFILEPREFIX\*</action>}
+              <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
+              ${DEBUG2:+<action>if false echo >&2 in false rebuilding database...</action>}
+              <action>if false gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
+              ${DEBUG2:+<action>if false echo >&2 in false clear:varLIST</action>}
+              <action>if false clear:varLIST</action>
+              ${DEBUG2:+<action>if false echo >&2 in false refresh:varLIST</action>}
+              <action>if false refresh:varLIST</action>
+            </menuitem>
+            ${REMARK# ]]]}
             <label>"$i18n_mnu_Search_Ninja"</label>
           </menu>
           <label>"$i18n_mnu_Options"</label>
@@ -2434,6 +2451,15 @@ start_window << GTKDIALOGDOC
         <action>awk '$LET_NV' N=SEARCHFUZZY V=\$SEARCHFUZZY '$CONFIG'</action>
       </checkbox>
       ${REMARK# ]]]}
+            ${REMARK# [[[. CASEDEPENDENT checkbox}
+            <checkbox use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case $i18n_mnu_tt_Fuzzy_ignores_this">
+              <label>"$i18n_mnu_Search_Case"</label>
+              <default>${CASEDEPENDENT}</default>
+              <variable>CASEDEPENDENT</variable>
+              ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
+              <action>awk '$LET_NV' N=CASEDEPENDENT V=\$CASEDEPENDENT '$CONFIG'</action>
+            </checkbox>
+            ${REMARK# ]]]}
       ${REMARK# [[[. varOPEN checkbox}
       <checkbox use-underline="true" tooltip-text="$i18n_Keep_this_window_open">
         <label>"$i18n_Keep_window"</label>
@@ -2441,32 +2467,6 @@ start_window << GTKDIALOGDOC
         <variable>varOPEN</variable>
         ${DEBUG2:+<action>echo>&2 ,,, varOPEN ,,,</action>}
         <action>awk '$LET_NV' N=defOPEN V=\$varOPEN '$CONFIG'</action>
-      </checkbox>
-      ${REMARK# ]]]}
-      ${REMARK# [[[. varICONS checkbox}
-      <checkbox use-underline="true" tooltip-text="$i18n_Display_all_available_icons">
-        <label>"$i18n_Show_all_icons"</label>
-        <default>${varICONS}</default>
-        <variable>varICONS</variable>
-        ${DEBUG2:+<action>echo>&2 ,,, varICONS ,,,</action>}
-        <action>awk '$LET_NV' N=varICONS V=\$varICONS '$CONFIG'</action>
-        <action>clear:varSEARCH</action>
-        ${DEBUG2:+<action>ls /usr/share/pixmaps/$CACHEFILEPREFIX.uptodate ~/.icons/$CACHEFILEPREFIX.uptodate >&2; cat ~/.findnrunrc >&2</action>}
-        <action condition="command_is_true([ -f '${ICONSTEM}.uptodate' -a true = \${varICONS} ] && echo true)">break:</action>
-        ${DEBUG2:+<action>if true echo >&2 in true rebuilding database...</action>}
-        <action>if true gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
-        ${DEBUG2:+<action>if true echo >&2 in true clear:varLIST</action>}
-        <action>if true clear:varLIST</action>
-        ${DEBUG2:+<action>if true echo >&2 in true refresh:varLIST</action>}
-        <action>if true refresh:varLIST</action>
-        ${DEBUG2:+<action>if false echo >&2 in false rm -f \{~/.icons\|/usr/share/pixmaps\}/$CACHEFILEPREFIX\*</action>}
-        <action>if false rm -f '${ICONSTEM:-/tmp/dummy}'*</action>
-        ${DEBUG2:+<action>if false echo >&2 in false rebuilding database...</action>}
-        <action>if false gawk -v ALL_ICONS=\${varICONS} -v SHOWNODISPLAY=\${SHOWNODISPLAY} -f '${AWKB}' -v DSKL='$DSKL' > '${DATF}'</action>
-        ${DEBUG2:+<action>if false echo >&2 in false clear:varLIST</action>}
-        <action>if false clear:varLIST</action>
-        ${DEBUG2:+<action>if false echo >&2 in false refresh:varLIST</action>}
-        <action>if false refresh:varLIST</action>
       </checkbox>
       ${REMARK# ]]]}
       ${REMARK# [[[. varFOCUSSEARCH checkbox}
