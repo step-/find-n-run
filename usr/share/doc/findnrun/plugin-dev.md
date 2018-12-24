@@ -92,14 +92,26 @@ All values can be null except for `<tap-data>`.
     american_icon||born to run|mplayer /root/bruce.mp3|the boss|multimedia;audio
     |command line||xterm -e sh||system
     |||chrome
-    firefox
 
 The last example shows the minimum data a well-formed record must
 include. Accordingly, findnrun's list view displays a predefined icon,
-label "firefox" and tap-data "firefox". Similarly, for record
-`|||chrome` the list view shows a predefined icon, title "chrome" and
-tap-data "chrome". To show an empty icon, set the filename of an empty
-image. To show an empty label set a space character (" ").
+label "chrome" and tap-data "chrome". To show an empty icon, pass the file
+name of an empty image. To show an empty label pass a space character (" ").
+
+**Whole line records**
+
+Findnrun can accept whole lines that contain no "|" as well-formed records.
+The requirement is for your plugin to filter its output through
+`findnrun-formatter -- -O s`. See section '_Formatter_' for details.
+This feature simplifies using the output of common Linux text utilites to
+create tap-records.
+
+So for a line consisting solely of one (or more words), e.g.
+
+    firefox
+
+findnrun's list view will display a predefined icon, label "firefox"
+and tap-data "firefox".
 
 ### Declaring Source Plugins
 
@@ -522,9 +534,9 @@ tap-command stanza is:
     <command> | findnrun-formatter -- [ <formatter-options> ]
 ```
 
-If tap-command outputs single records, that is, the records don't
-include "|" (pipe), then do include option `-O s`, which tells the
-formatter not to decode each tap-record in detail.
+If tap-command outputs whole line records that don't include "|" (pipe),
+then the plugin must pass option `-O s`, which tells the formatter not to
+parse each line in detail, and makes it run faster.
 
 Run `findnrun-formatter -- -h` for usage information. Note again the
 double dashes in the formatter command line: they are required before
@@ -537,7 +549,7 @@ Commands (column names) can call the following helpers (row names):
     |                  | TAP | DRAIN | SAVEFLT | INIT |
     | FNRset_TMPD_DATF | *   |       | *       | *    |
     | FNRsearch        | *   |       |         |      |
-  
+
 **FNRset\_TMPD\_DATF**
 
 This function sets global variables `TMPD` and `DATF`, and creates temporary
