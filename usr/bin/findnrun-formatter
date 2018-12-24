@@ -49,7 +49,8 @@ BEGIN {
   }
   # Optimize well-known sources and single-field case.
   if(index(opt["O"], "s")) {
-    RS="^~cannot~match~me~" # enable slurp read mode.
+    RS="^$" # slurp whole input file
+    FS = "\n"
   }
   else
   {
@@ -63,10 +64,10 @@ BEGIN {
 index(opt["O"], "s") {
   if(! index(opt["O"], "u")) {
     for(i=1; i <= NF; i++)
-      print substr(default_icon "|" $(i) "||" SEP SEP $(i) SEP, 1, 510)
+      if($(i)) print substr(default_icon "|" $(i) "||" SEP SEP $(i) SEP, 1, 510)
       # 510 works around gtkdialog tree widget buffer overflow limit.
     if(verbose > 3)
-      print default_icon "||" $(i) > "/dev/stderr"
+      if($(i)) print default_icon "||" $(i) > "/dev/stderr"
   } else { # sort -unique
     split($0, a)
     asort(a)
