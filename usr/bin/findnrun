@@ -158,7 +158,7 @@ GTKDIALOG_MAX_BYTE_LEN_BUG=510
 UNEXPORT=unset
 UNEXP_GUI1="varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET GUI_ABOUT RESTART_WINDOW"
 UNEXP_GUI2="varLIST varF3" # in some cases they can be unexported but only at a later stage
-eNEXP_NOT_TAPS="SEARCHFUZZY CASEDEPENDENT" # for set_INVOKE* except TAP
+UNEXP_NOT_TAP="SEARCHFUZZY CASEDEPENDENT" # for set_INVOKE* except TAP
 UNEXP_INVK="invokeTAP invokeDRAIN" # not sure about these
 # 2. plugin-dev.md says these vars are part of the invocation environment therefore
 # they shouldn't be unexported (technically they are set but not exported).
@@ -1942,7 +1942,7 @@ ${DEBUG2:+'; eval ">&2 echo \"GET SOURCE \${varF3:-0} on event: invoke_source_dr
 '; eval set -- ${DRAIN} "$@"; '"$SAVE_ARGS_HISTORY"\
 ';: 7'\
 ${DEBUG1:+' && >&2 printf %s $(date +%H:%M:%S.%N)'}\
-${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN} \$@ \""'}\
+${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN:-DRAIN==NULL} \$@ \""'}\
 ';: 8'\
 "; $UNEXPORT $UNEXP_GUI2 $UNEXP_INVK"\
 ';: 9;'
