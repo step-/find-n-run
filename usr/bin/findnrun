@@ -48,6 +48,9 @@ export OUTPUT_CHARSET=UTF-8
   https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/TRANSLATING.md'
 
 # Initialize variables that can be changed. [[[1
+# Note: Some environment variables may affect operations:
+# BROWSER, GEOMETRY, LANG, and more.
+
 # i18n Main window title
 APP_NAME=$i18n_Findnrun
 
@@ -134,6 +137,19 @@ LR=${LANG%.*} #ex:pt_BR
 LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
+
+command -v gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
+# GTKDIALOG_MAX_BYTE_LEN_BUG prevents a tree widget buffer overflow bug. If we
+# pass gtkdialog a longer buffer(*) it displays two rows: the buffer row then
+# an extra, empty row. Activating that latter crashes gtkdialog. To stay clear
+# of the bug we truncate longer buffers before feeding them to the tree widget.
+# (*) Note that it is a buffer-size limit as opposed to a string-size limit.
+# Multi-character strings may yield a string length below the limit but a byte
+# length over the limit. Unfortunately, shell e gawk do not provide built-ins
+# to determine the byte-length of a string, so we need to approximate some
+# limit calculations erring on the safe side (search for {APPROX_SAFE_SIDE}).
+GTKDIALOG_MAX_BYTE_LEN_BUG=510
+
 # Variables to be unexported before running tap-command. [[[1
 # Applies to drain-command, save-filter-command and init-command too.
 # Cf. share/doc/findnrun/plugin-dev.md for terminology.
@@ -304,22 +320,6 @@ while ! [ "${1#--}" = "$1" ]; do
   esac
   shift
 done
-
-# Initialize more variables [[[1
-# Some environment variables may affect operations:
-# BROWSER, GEOMETRY, LANG, and more.
-
-command -v gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
-# GTKDIALOG_MAX_BYTE_LEN_BUG prevents a tree widget buffer overflow bug. If we
-# pass gtkdialog a longer buffer(*) it displays two rows: the buffer row then
-# an extra, empty row. Activating that latter crashes gtkdialog. To stay clear
-# of the bug we truncate longer buffers before feeding them to the tree widget.
-# (*) Note that it is a buffer-size limit as opposed to a string-size limit.
-# Multi-character strings may yield a string length below the limit but a byte
-# length over the limit. Unfortunately, shell e gawk do not provide built-ins
-# to determine the byte-length of a string, so we need to approximate some
-# limit calculations erring on the safe side (search for {APPROX_SAFE_SIDE}).
-GTKDIALOG_MAX_BYTE_LEN_BUG=510
 
 # Declare built-in sources. [[[1
 # $BUILTIN_SOURCES get special treatment
@@ -2338,7 +2338,6 @@ start_window << GTKDIALOGDOC
       ${DEBUG1:+`printf '<menuitem label="[DEBUG] show selected item info" accel-key="0x069" accel-mods="4">'`}
       ${DEBUG1:+`printf '<action>IFS="\b"; set -- \$varLIST; i=0; for p; do [ $i = 0 ] && f=$p; : $((++i)); printf "\x25 4d : \x25s" $i "$p"; echo; done >&2; sed -e "s/^/   /" "$f" >&2</action>'`}
       ${DEBUG1:+</menuitem>}
-      ${REMARK#  ]]]}
       ${REMARK#   ]]]}
         <label>""</label>
       </menu>
