@@ -368,7 +368,7 @@ set_Helper_Functions() # [[[2
   # Cf. share/doc/findnrun/plugin-dev.md "Helper Functions"
 
   FNRset_TMPD_DATF=\
-'FNRset_TMPD_DATF(){ TMPD="'"$TMPD"'/.$ID" && ! [ -d "$TMPD" ] && mkdir -p "$TMPD" && chmod 700 "$TMPD"; DATF="$TMPD"/.dat; }'
+'FNRset_TMPD_DATF(){ TMPD="'"$TMPD"'/.${1:-$ID}" && ! [ -d "$TMPD" ] && mkdir -p "$TMPD" && chmod 700 "$TMPD"; DATF="$TMPD"/.dat; }'
   FNRsearch=\
 'FNRsearch(){ '"$TAP_FNRstart"'; }'
 }

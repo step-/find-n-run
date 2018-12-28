@@ -550,10 +550,11 @@ Commands (column names) can call the following helpers (row names):
     | FNRset_TMPD_DATF | *   |       | *       | *    |
     | FNRsearch        | *   |       |         |      |
 
-**FNRset\_TMPD\_DATF**
+**FNRset\_TMPD\_DATF [<source\_id>]**
 
 This function sets global variables `TMPD` and `DATF`, and creates temporary
-directory `$TMPD/.$ID`. The plugin can save its temporary files in `$TMPD`:
+directory `$TMPD/.<source_id>`. If `<source_id>` is null `$ID` is substituted
+in its place. The plugin can save its temporary files in `$TMPD`:
 ```
     set_TMPD_DATF; ! [ "$term" ] && tap_data > "$TMPD"/data
 ```
