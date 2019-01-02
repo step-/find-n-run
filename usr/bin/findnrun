@@ -156,7 +156,7 @@ GTKDIALOG_MAX_BYTE_LEN_BUG=510
 # 1. These vars would "pollute" the *-command's env because they are truly exported.
 # varICONS and varFOCUSSEARCH shouldn't be unexported before gtkdialog starts.
 UNEXPORT=unset
-UNEXP_GUI1="varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET GUI_ABOUT RESTART_WINDOW"
+UNEXP_GUI1="varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET GUI_ABOUT RESTART_WINDOW HELPINDEX"
 UNEXP_GUI2="varLIST varF3" # in some cases they can be unexported but only at a later stage
 UNEXP_NOT_TAP="SEARCHFUZZY CASEDEPENDENT" # for set_INVOKE* except TAP
 UNEXP_INVK="invokeTAP invokeDRAIN" # not sure about these
@@ -1578,88 +1578,6 @@ fi
 write_query_script true && mv "$AWKQ" "$AWKZ"
 write_query_script false
 
-# Prepare Help system and its GUI button (About). [[[1
-# i18n About dialog.
-set_HELP_BUTTON_and_HELPVIEWER() #[[[2
-{
-  # In:  ${FNRHELPINDEX} paths.
-  # Out: ${HELPVIEWER} command, ${HELP_BUTTON} gtk code.
-  local IFS=: subject="${i18n_Help%%_*}${i18n_Help##*_}" i x p s helpviewer hf hd
-  set -- ${FNRHELPINDEX}
-  for i; do
-    unset x p s helpviewer HELP_BUTTON; hf="$i"
-    case "${hf}" in *\[*\]*) p="${hf%[*}["; s="]${hf##*]}" # search for translation
-      [ -e "$p${LL}$s" ] && hf="$p${LL}$s"; [ -e "$p${LR}$s" ] && hf="$p${LR}$s"; [ -e "$p${LANG}$s" ] && hf="$p${LANG}$s" ;;
-    esac
-    if [ -e "${hf}" ]; then
-      hd="${TMPD}/help" && mkdir -p "${hd}" &&
-      case "${hf##*.}" in t[gx]z|[gx]z) tar -C "${hd}" -xaf "${hf}" && hf=$(set +f; echo "${hd}"/index.*) ;; esac &&
-      case "${hf##*.}" in md) x=${FNRMDVIEW:-mdview} ;; htm*) x=defaultbrowser;; esac
-      unset IFS # changing IFS is OK because we're going to exit the outer loop anyway
-      set -- $(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
-      helpviewer=$1
-      case ${helpviewer} in
-        '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
-        *mdview) # used to invoke the main index.md then a plugind index.md, if any: `v ${PLGDIR:-.../index.md}`
-          helpviewer='v() { for a; do [ -e "$a" ] && [ -d "${a%/*}" ] && exec "'"$helpviewer"'" "${a%/*}" "${a##*/}" "'"$subject - $APP_TITLE"'" & sleep 0.4 || sleep 1; done ;}; v "'"$hf"'"' ;;
-        *browser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
-        *) # dup help files to protect sources from text editors
-          if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
-          helpviewer="cd '${hd}' && '${helpviewer}' 'no-help.md'" ;;#${hf##*.}'";;
-      esac &&
-      HELP_BUTTON="
-<button use-underline=\"true\">
-  <label>"$i18n_Help"</label>
-  <input file stock=\"gtk-help\"></input>
-  <action>${helpviewer} &</action>
-  <action>closewindow:GUI_ABOUT</action>
-</button>" HELPVIEWER=$helpviewer
-      break # on first valid help file path $hf found
-    fi
-  done
-}
-#]]]
-set_HELP_BUTTON_and_HELPVIEWER
-
-set_ABOUT_TEXT() # [[[2
-{
-  # Text content for the About dialog.
-  # i18n About dialog widgets
-
-  ABOUT_TEXT='printf "'"$i18n_gui_about"'"'\
-' "'"${APP_NAME}"'" "'"${Version}"'" "'"step, SFR, L18L"'"'\
-' "'"http://www.murga-linux.com/puppy/viewtopic.php?t=98330"'"'\
-' "'"https://github.com/step-/find-n-run"'" "'"${CONFIG}"'" | tr \\r \\n'\
-' ; n="'"${NSOURCES}"'"; printf "$(ngettext "'"$i18n_source_loaded"'" "'"$i18n_sources_loaded"'" "$n")\n" "$n"'\
-' ; set -- $(wc -l "'"${DATF}"'"); printf "$(ngettext "'"$i18n_application_found"'" "'"$i18n_applications_found"'" $1)\n" $1'
-}
-#]]]
-set_ABOUT_TEXT
-
-export GUI_ABOUT='
-<window title="'"$i18n_About_and_help - ${APP_TITLE}"'" icon-name="findnrun" window-position="2">
-  <vbox>
-    <frame>
-      <text xalign="0" selectable="true" can-focus="false">
-        <variable export="false">about_text</variable>
-        <input>'"${ABOUT_TEXT}"'</input>
-      </text>
-    </frame>
-    <hbox homogeneous="true">
-      <text space-fill="true" space-expand="true"><label>""</label></text>
-      <button use-underline="true">
-        <label>"'"$i18n_OK"'"</label>
-        <input file stock="gtk-ok"></input>
-        <action>closewindow:GUI_ABOUT</action>
-      </button>
-      '"${HELP_BUTTON}"'
-      <text space-fill="true" space-expand="true"><label>""</label></text>
-    </hbox>
-  </vbox>
-  <variable>GUI_ABOUT</variable>
-  <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:GUI_ABOUT</action>
-</window>'
-
 # Prepare the built-in FNRSAVEFLT save filter script. [[[1
 > "${AWK4}" printf %s\\n '#[[[gawk
 # Usage: gawk -f "$AWK4" [CUT="..."] [RDR="..."] "\${file}"
@@ -1746,6 +1664,65 @@ function to_tsv_file(f, s) { # [[[2
 #gawk]]]'
 
 # Private Helpers [[[1
+set_HELPINDEX_and_HELP_BUTTON_and_HELPVIEWER() #[[[2
+{
+  # In:  ${FNRHELPINDEX} paths.
+  # Out: ${HELPVIEWER} command, ${HELP_BUTTON} gtk code.
+  local IFS=: subject="${i18n_Help%%_*}${i18n_Help##*_}" i x p s helpviewer hf hd
+  set -- ${FNRHELPINDEX}
+  for i; do
+    unset x p s helpviewer HELP_BUTTON; hf="$i"
+    case "${hf}" in *\[*\]*) p="${hf%[*}["; s="]${hf##*]}" # search for translation
+      [ -e "$p${LL}$s" ] && hf="$p${LL}$s"; [ -e "$p${LR}$s" ] && hf="$p${LR}$s"; [ -e "$p${LANG}$s" ] && hf="$p${LANG}$s" ;;
+    esac
+    if [ -e "${hf}" ]; then
+      hd="${TMPD}/help" && mkdir -p "${hd}" &&
+      case "${hf##*.}" in t[gx]z|[gx]z) tar -C "${hd}" -xaf "${hf}" && hf=$(set +f; echo "${hd}"/index.*) ;; esac &&
+      case "${hf##*.}" in md) x=${FNRMDVIEW:-mdview} ;; htm*) x=defaultbrowser;; esac
+      unset IFS # changing IFS is OK because we're going to exit the outer loop anyway
+      set -- $(which $x www-browser x-www-browser defaulttexteditor geany leafpad 2>&-)
+      helpviewer=$1
+      case ${helpviewer} in
+        '') helpviewer="${BROWSER:-xdg-open} '${hf}'";; # catchall
+        *mdview)
+          #  Usage: "$HELP_BUTTON<action>ACTION</action>OTHER_ACTIONS...</button>"
+          # ACTION: "<action>${HELPVIEWER:-:} \"\$HELPINDEX\" &</action>" # main index.md
+          # ACTION: "<action>${HELPVIEWER:-:} \"\$HELPINDEX\" \"\${PLGDIR:-...}/index.md\" &</action>" # +plugin's index.md, if any
+          # ACTION: "<action>${HELPVIEWER:-:} \"/path/to/topic.md\" &</action>" # topic.md only
+          helpviewer='v() { for a; do [ -e "$a" ] && [ -d "${a%/*}" ] && exec "'"$helpviewer"'" "$a" "" "'"$subject - $APP_TITLE"'" & sleep 0.4; done; }; v' ;;
+        *browser) helpviewer="'${helpviewer}' 'file://${hf}'" ;;
+        *) # dup help files to protect sources from text editors
+          if ! [ "${hf%/*}" = "${hd}" ]; then cp -fr "${hf%/*}/"* "${hd}/"; fi &&
+          helpviewer="cd '${hd}' && '${helpviewer}' 'no-help.md'" ;;
+      esac && HELPVIEWER=$helpviewer HELP_BUTTON="
+<button use-underline=\"true\">
+  <label>"$i18n_Help"</label>
+  <input file stock=\"gtk-help\"></input>"
+      break # on first valid help file path $hf found
+    fi
+  done
+  export HELPINDEX=$hf
+  ! [ "$HELP_BUTTON" ] && HELP_BUTTON='<button visible="false">'
+}
+#]]]
+set_HELPINDEX_and_HELP_BUTTON_and_HELPVIEWER
+
+set_ABOUT_TEXT() # [[[2
+{
+  # Text content for the About dialog.
+  # i18n About dialog widgets
+
+  ABOUT_TEXT='printf "'"$i18n_gui_about"'"'\
+' "'"${APP_NAME}"'" "'"${Version}"'" "'"step, SFR, L18L"'"'\
+' "'"http://www.murga-linux.com/puppy/viewtopic.php?t=98330"'"'\
+' "'"https://github.com/step-/find-n-run"'" "'"${CONFIG}"'" | tr \\r \\n'\
+' ; printf "$(gettext "'"$i18n_search_engine"'")\n" "'"${FNRSEARCHENGINE:-$i18n_builtin}"'"'\
+' ; n="'"${NSOURCES}"'"; printf "$(ngettext "'"$i18n_source_loaded"'" "'"$i18n_sources_loaded"'" "$n")\n" "$n"'\
+' ; set -- $(wc -l "'"${DATF}"'"); printf "$(ngettext "'"$i18n_application_found"'" "'"$i18n_applications_found"'" $1)\n" $1'
+}
+#]]]
+set_ABOUT_TEXT
+
 set_GET_DRAIN_COMMAND() # [[[2
 {
   # Code that extracts the drain command of the selected list item.
@@ -2108,8 +2085,38 @@ set_REQUEST_RESTART_WINDOW() # [[[2
 }
 set_REQUEST_RESTART_WINDOW
 
-# Restart window dialog. [[[1
-# i18n restart window dialog
+# Dialogs [[[1
+# About dialog. [[[2
+# i18n About dialog.
+export GUI_ABOUT='
+<window title="'"$i18n_About_and_help - ${APP_TITLE}"'" icon-name="findnrun" window-position="2">
+  <vbox>
+    <frame>
+      <text xalign="0" selectable="true" can-focus="false">
+        <variable export="false">about_text</variable>
+        <input>'"${ABOUT_TEXT}"'</input>
+      </text>
+    </frame>
+    <hbox homogeneous="true">
+      <text space-fill="true" space-expand="true"><label>""</label></text>
+      <button use-underline="true">
+        <label>"'"$i18n_OK"'"</label>
+        <input file stock="gtk-ok"></input>
+        <action>closewindow:GUI_ABOUT</action>
+      </button>
+      '"${HELP_BUTTON}
+        <action>${HELPVIEWER:-:}"' "$HELPINDEX" "${PLGDIR:-...}/index.md" &</action>
+        <action>closewindow:GUI_ABOUT</action>
+      </button>
+      <text space-fill="true" space-expand="true"><label>""</label></text>
+    </hbox>
+  </vbox>
+  <variable>GUI_ABOUT</variable>
+  <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:GUI_ABOUT</action>
+</window>'
+
+# Restart main window dialog. [[[2
+# i18n restart main window dialog
 export RESTART_WINDOW='
 <window title="'"$APP_TITLE"'" icon-name="findnrun" resizable="false" window-position="2">
   <vbox>
@@ -2318,7 +2325,7 @@ start_window << GTKDIALOGDOC
         ${REMARK#   [[[. Key F1 invokes the help viewer.}
         <menuitem label="$i18n_show_help" accel-key="0xffbe" accel-mods="0">
           <action>refresh:PLGDIR</action>
-          <action>${HELPVIEWER:-:} "\${PLGDIR:-...}/index.md" &</action>
+          <action>${HELPVIEWER:-:} "\$HELPINDEX" "\${PLGDIR:-...}/index.md" &</action>
         </menuitem>
         ${REMARK#   ]]]}
         ${REMARK#   [[[. Key F2 cycles focus between the search and the command entry field.}
