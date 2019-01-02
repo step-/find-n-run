@@ -7,7 +7,7 @@
 # authors: Copyright (C)2015-2018 step; (C)2015 SFR, L18L
 # license: GNU GPL version 2
 # depend: gtk-dialog 0.8.3+, gawk 4.1.0+, sh/ash/dash/bash, xwininfo, yad
-# suggest: mdview (markdown help), proc(5) (restart findnrun), GNU date (debug)
+# suggest: fzf, mdview (markdown help), proc(5) (restart findnrun), GNU date (debug)
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
 # =============================================================================
@@ -48,8 +48,8 @@ export OUTPUT_CHARSET=UTF-8
   https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/TRANSLATING.md'
 
 # Initialize variables that can be changed. [[[1
-# Note: Some environment variables may affect operations:
-# BROWSER, GEOMETRY, LANG, and more.
+# Note: Some environment variables may affect operation:
+# BROWSER, GEOMETRY, LANG, FNRSEARCHENGINE and more. See /usr/share/doc/findnrun/running.md.
 
 # i18n Main window title
 APP_NAME=$i18n_Findnrun
@@ -116,7 +116,8 @@ DSKL="${TMP0}/.desktop-ls" # list .desktop file paths
 AIPF="${TMPD}/.installed-icon-ls" # list system/usr installed icon file paths
 AWKB="${TMP0}/.build.awk" # builds (and queries) database
 AWKQ="${TMP0}/.query.awk" # queries database (faster)
-AWKZ="${AWKQ%.awk}"-fuzzy.awk # AWKQ fuzzy search
+AWKZ="${AWKQ%.awk}"-v1-fuzzy.awk # AWKQ fuzzy search
+AWKZe="${AWKQ%.awk}"-fzf.awk # AWKQ fuzzy/exact search with fzf
 AWK4="${TMPD}/.saveflt.awk" # filters saved items
 TTLF="${TMPD}/.titles" # source titles
 HSTF="${TMPD}/.hist-FNR.sh"; >"${HSTF}" # global command line history
@@ -158,7 +159,7 @@ GTKDIALOG_MAX_BYTE_LEN_BUG=510
 UNEXPORT=unset
 UNEXP_GUI1="varSEARCH varFOCUSGRABBER varCMD varCOMMENT varOPEN varICONS varFOCUSSEARCH varF2 TEXTDOMAIN OUTPUT_CHARSET GUI_ABOUT RESTART_WINDOW HELPINDEX"
 UNEXP_GUI2="varLIST varF3" # in some cases they can be unexported but only at a later stage
-UNEXP_NOT_TAP="SEARCHFUZZY CASEDEPENDENT" # for set_INVOKE* except TAP
+UNEXP_NOT_TAP="SEARCHFUZZY CASEDEPENDENT SEARCHCOMMENTS SEARCHCATEGORIES SEARCHFILENAMES" # for set_INVOKE* except TAP
 UNEXP_INVK="invokeTAP invokeDRAIN" # not sure about these
 # 2. plugin-dev.md says these vars are part of the invocation environment therefore
 # they shouldn't be unexported (technically they are set but not exported).
@@ -280,7 +281,8 @@ fi
   SEARCHCOMPLETE=true || SEARCHCOMPLETE=false
 # SEARCHDEFAULT is internal too.
 case "$SEARCHFUZZY$SEARCHREGEX" in *true*) SEARCHDEFAULT=false;; *) SEARCHDEFAULT=true;; esac
-export SEARCHFUZZY CASEDEPENDENT # reminder: add to UNEXP_NOT_TAP
+export SEARCHFUZZY CASEDEPENDENT SEARCHCOMMENTS SEARCHCATEGORIES SEARCHFILENAMES # reminder: add to UNEXP_NOT_TAP
+export FNRSEARCHENGINE=${FNRSEARCHENGINE:-fzf} # susbstitute "v1" for the built-in engine
 
 [ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+processing $CONFIG" >&2
 
@@ -345,8 +347,8 @@ SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 # queries the .desktop db on each search box keypress.
 INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\"'\$(wc -l < \"${DATF}\")'\" >> \"\$THISFILE\""
 # $TAP_FNRstart is also used as the body of function FNRsearch defined by $INVOKE_SOURCE_TAP.
-TAP_FNRstart="[ true = \$SEARCHFUZZY ] && q=\"$AWKZ\" || q=\"$AWKQ\";"\
-"gawk -f \"\$q\" -v CASEDEPENDENT=\$CASEDEPENDENT -v GREP=\"\${term}\" \"\${DATF:-$DATF}\"${REDIRECT2}"
+TAP_FNRstart="if [ fzf = \$FNRSEARCHENGINE ]; then q=\"$AWKZe\"; else [ true = \$SEARCHFUZZY ] && q=\"$AWKZ\" || q=\"$AWKQ\"; fi;"\
+"gawk -f \"\$q\" -v GREP=\"\${term}\" \"\${DATF:-$DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='findnrun' # Also used as FALLBACK_ICON for all missing app icons.
 SAVEFLT_FNRstart="\$FNRSAVEFLT CUT=\"$CUT\" RDR=\"$RDR\" \"\${file}\""
@@ -1182,29 +1184,45 @@ function close_progress_dialog(pid,   killer) { # [[[2
 #gawk]]]' # [[[2]]]
 
 # Prepare the database query script a.k.a. search engine. [[[1
-# Usage: gawk -f "${AWKQ}" [-v GREP="string"] [-v CASEDEPENDENT=<TF>] ${DATF}
-# <TF> := "true"|"false"
-write_query_script() # $1-SEARCHFUZZY
+# Usage: gawk -f "${AWKQ}" [-v GREP="string"] ${DATF}
+write_query_script() # $1-target ::= "fzf"|"v1-fuzzy"|"v1-exact"
 {
-  local SEARCHFUZZY=$1
+  local target=$1
 # Output script structure: [[[
-#
-# If $SEARCHFUZZY = true
+# If $target == fzf
+# Then use fzf search engine for both fuzzy and exact matching (regex not possible)
+#   Match(fzf_nth(appname, ?comment, ?categories, ?filename))
+#   where fzf_nth is fzf option --nth, which matches selectively sub-fields.
+#   Sub-fields are enabled DYNAMICALLY according to the values of
+#   $SEARCHCOMMENTS, $SEARCHCATEGORIES, $SEARCHFILENAMES.
+#   Ignored: $SEARCHFROMLEFT.
+# Else If $target == v1-fuzzy
 # Then Match(concat(appname, ?filename, ?comment, ?categories))
+#   (concat DYNAMICALLY, so this is equivalent to fzf but limited to the fuzzy case)
+#   Ignored: $SEARCHFROMLEFT.
 # Else Match(appname) || MatchX(filename) || MatchX(comment) || MatchX(categories)
-#   where function MatchX is included iff X = true for
+#   where function MatchX is STATICALLY included iff X = true for
 #   X in {$SEARCHFILENAMES, $SEARCHCOMMENTS, $SEARCHCATEGORIES}
-# SEARCHCOMPLETE is an INTERNAL variable that is true iff all X above are true.
-# The Match function and its argument are prepared according to the values of
-#   $CASEDEPENDENT, $SEARCHFUZZY, $SEARCHREGEX and $SEARCHFROMLEFT.
+#   The Match function and its argument are statically prepared according to the values of
+#   $SEARCHREGEX and $SEARCHFROMLEFT.
 # When a match occurs:
-# If $SEARCHFUZZY = true
-# Then awk function fuzzy_out() prints all matched strings in the END clause
-# Else awk main loop prints each matched string immediately.
+# If $target == fzf
+# Then gawk END statement prints all matched records, including nth fields.
+# Else If $target = v1-fuzzy
+# Then gawk function fuzzy_out() in END statement prints all matched strings including concat
+# Else gawk main loop prints each matched string immediately.
 # ]]]
-unset case subject commleft left categ REDIRECT2 func extract_data_fields body end_body
+local subject commleft left categ REDIRECT2 func extract_data_fields begin_body body end_body fzf
+# Sanity check: fall back to built-in target if fzf isn't installed.
+if [ fzf = "$target" ]; then
+  fzf="${0%/*}"/../share/$SN/bin/fzf # from install_fzf() on first start
+  ! [ -x "$fzf" ] && fzf=$(command -v fzf) # possibly from the system
+  ! [ -x "$fzf" ] && target=v1-fuzzy # fallback
+fi
 # Variables that describe the match expression. [[[2
-if [ true = "${SEARCHFUZZY}" ]; then
+if [ fzf = "$target" ]; then
+  : blank
+elif [ v1-fuzzy = "$target" ]; then
   func=fuzzy_match_record
 elif [ true = "${SEARCHREGEX}" ]; then
   func=match
@@ -1225,7 +1243,7 @@ if [ true = "$SEARCHFILENAMES" ]; then
   sub(/^.*\//, "", a[1]) # basename
   if(index(a[1], ".") > 1) {sub(/\.[^.]+$/, "", a[1])} # w/o ext'
 fi
-if [ true = "${SEARCHFUZZY}" ]; then
+if [ v1-fuzzy = "$target" ]; then
   searchfilenames="\"$SEP\"" searchcomments="\"$SEP\"" searchcategories="\"$SEP\""
   unset field_mask
   [ true = "$SEARCHFILENAMES" ] && searchfilenames="${searchfilenames}a[1]" field_mask=1
@@ -1237,7 +1255,7 @@ if [ true = "${SEARCHFUZZY}" ]; then
 else
   extract_data_fields="$extract_data_fields"
 fi
-if [ true = "${SEARCHFUZZY}" ]; then
+if [ v1-fuzzy = "$target" ]; then
   # Search in a[0] (appname "\b" ?filename "\b" ?comment "\b" ?category).
   subject="${func}(a[0],GREP)"
 else
@@ -1247,17 +1265,72 @@ else
   [ true = "${SEARCHCOMMENTS}" ] && commleft="|| ${func}(@CASE(a[4]),GREP)${left}"
   case $SEARCHCATEGORIES in true|hidden) categ="|| ${func}(@CASE(a[5]),GREP)";; esac
 fi
-# Variables that describe what happens on a match. [[[2
-body="print substr(\$0, 1, $GTKDIALOG_MAX_BYTE_LEN_BUG)"
-debug_get_top_row='if(DEBUG_TOP_ROW==""){DEBUG_TOP_ROW=$0}'
-if [ true = "${SEARCHFUZZY}" ]; then
-  body="if(GREP==\"\"){$body${DEBUG1:+; $debug_get_top_row}}" end_body="fuzzy_out()"
-  unset debug_get_top_row # because fuzzy_out sets DEBUG_TOP_ROW
+if [ fzf = $target ]; then
+  query="fzfcop"
+else
+  query="GREP && (${subject}${left} ${fnameleft} ${commleft} ${categ}) || !GREP"
 fi
+# Variables that describe what happens on a match. [[[2
+local print_max_len="print substr(\$0, 1, $GTKDIALOG_MAX_BYTE_LEN_BUG)"
+local debug_get_top_row='if(!DEBUG_TOP_ROW){DEBUG_TOP_ROW=$0}'
+if [ v1-fuzzy = "$target" ]; then
+  body="if(!GREP){$print_max_len${DEBUG1:+; $debug_get_top_row}}" # optization to speed up start up
+  end_body='fuzzy_out()' # fuzzy_out sets DEBUG_TOP_ROW
+elif [ fzf = "$target" ]; then # [[[
+  begin_body='
+is_fuzzy = "true" == ENVIRON["SEARCHFUZZY"] ? 1:0
+is_comment = "true" == ENVIRON["SEARCHCOMMENTS"] ? 1:0
+is_category = "true" == ENVIRON["SEARCHCATEGORIES"] ? 1:0
+is_filename = "true" == ENVIRON["SEARCHFILENAMES"] ? 1:0
+is_casesensitive = "true" == ENVIRON["CASEDEPENDENT"] ? 1:0
+fzfopt = "-d \"'$SEP'\" --nth 3"(is_comment ? ",5":"")(is_category ? ",6":"")(is_filename ? ",2":"")(!is_fuzzy ? " -e":"")(is_casesensitive ? " +i":"")
+fzfcop = "\"'"$fzf"'\" -f \""GREP"\" "fzfopt
+'"${DEBUG1:+print fzfcop > \"/dev/stderr\"}"'
+'
+  extract_data_fields='
+nA = split($NF, a, /'$SEP'/) # a[1..5] <- {fullpathname,appname,exec,comment,category}
+a[2] = $(nA > 1 ? 2 : 0) # Note
+sub(/^.*\//, "", a[1]) # basename
+if(index(a[1], ".") > 1) {sub(/\.[^.]+$/, "", a[1])} # w/o ext
+' # Note: While both a[2] and $2 hold the appname, taps like FNRsc omit a[2]'s value,
+  # so we set a[2] = $2 to be sure. Specifically taps filtered through "findnrun-formatter -O s" set a[2] null.
+  # When nA is < 2 we set a[2] = $0 the entire record. This can happen when a plugin calls FNRsearch().
+
+  # optization to speed up start up
+  body="
+if(!GREP) { # optimization to speed up start up
+  $print_max_len${DEBUG1:+; $debug_get_top_row}"'
+} else {
+  # here and fzfopt: 1(NR) 2(fileNAME) 3(appname) 4(exec) 5(comment) 6(categories)
+  OFS = "'$SEP'"
+  print NR, a[1], a[2], a[3], a[4], a[5] |& fzfcop
+  InputRecord[NR] = $0
+}
+'
+  end_body='
+if(GREP) {
+  close(fzfcop, "to")
+  '"${DEBUG1:+DEBUG_TOP_ROW = \"\"}"'
+  while(0 < (fzfcop |& getline)) {
+    split($0, a, "'$SEP'")
+    $0 = InputRecord[a[1]]
+    #if(is_fuzzy) { # column 3 cosmetics
+      OFS = "|"
+      $3 = (is_comment && a[5] ? "`"a[5]:"") (is_category && ";" != a[6] ? "`"a[6]:"") (is_filename && a[2] ? "`"a[2]:"")
+    #}
+    print substr($0, 1, '$GTKDIALOG_MAX_BYTE_LEN_BUG')
+  }
+  close(fzfcop, "from")
+  '"$debug_get_top_row"'
+}'
+else
+  body="$print_max_len${DEBUG1:+; $debug_get_top_row}"
+fi # ]]]
+
 # Compose an awk script from the above shell variables. [[[2]]]
 > "${AWKQ}" printf %s\\n '#[[[gawk
 BEGIN {
-  CASE = CASEDEPENDENT == "true" ? "identity" : "tolower"
+  CASE = "true" == ENVIRON["CASEDEPENDENT"] ? "identity" : "tolower"
   '${DEBUG1:+ ' searchexpr="'"${subject}${left} ${fnameleft} ${commleft} ${categ}"'"'}'
   '${DEBUG1:+ ' gsub("@CASE", CASE, searchexpr)'}'
   '${DEBUG1:+ ' gsub("a\\[1\\]", ".desktopFile", searchexpr)'}'
@@ -1269,14 +1342,14 @@ BEGIN {
 
   SEP="'${SEP}'"
   FS="|"
+  '"${begin_body}"'
 }
 {
   # extract searched-in fields
   '"${extract_data_fields}"'
   # match typed pattern GREP
-  if(GREP!="" && ('"${subject}${left} ${fnameleft} ${commleft} ${categ}"') || GREP=="") {
+  if('"${query}"') {
     '"${body}"'
-    '${DEBUG1:+$debug_get_top_row}'
   }
 }
 END {
@@ -1288,7 +1361,7 @@ END {
 }
 function identity(x) { return x }
 #gawk]]]' # [[[2]]]
-if [ "${func#fuzzy}" != "$func" ]; then
+if [ v1-fuzzy = "$target" ]; then
   >> "${AWKQ}" printf %s\\n '#[[[gawk
 BEGIN {
   # Field bonus = %(abs(field score)) added to each field contribution
@@ -1575,8 +1648,9 @@ function fuzzy_match(pattern, str, byVal, requestFormattedStr,   adjacency_bonus
 #gawk]]]' # [[[2]]]
 fi
 }
-write_query_script true && mv "$AWKQ" "$AWKZ"
-write_query_script false
+write_query_script fzf && mv "$AWKQ" "$AWKZe"
+write_query_script v1-fuzzy && mv "$AWKQ" "$AWKZ"
+write_query_script v1-exact
 
 # Prepare the built-in FNRSAVEFLT save filter script. [[[1
 > "${AWK4}" printf %s\\n '#[[[gawk
@@ -2150,6 +2224,7 @@ export RESTART_WINDOW='
 unset showcategories
 [ true = "$SEARCHCATEGORIES" -o true = "$SEARCHCOMPLETE" ] && showcategories=true
 [ hidden = "${SEARCHCATEGORIES}" ] && unset showcategories
+[ fzf = "$FNRSEARCHENGINE" ] && unset need_restart || need_restart=1
 # i18n Main window widgets
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext limitation
@@ -2379,28 +2454,31 @@ start_main_window << GTKDIALOGDOC
           <menu use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Details">
             ${REMARK# [[[. SEARCHFILENAMES checkbox}
             <menuitem checkbox="$SEARCHFILENAMES" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Filename">
-              <label>"$i18n_mnu_Search_Filename $i18n_asterisk"</label>
+            <label>"$i18n_mnu_Search_Filename${need_restart:+ $i18n_asterisk}"</label>
               <variable>SEARCHFILENAMES</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHFILENAMES ,,,</action>}
               <action>awk '$LET_NV' N=SEARCHFILENAMES V=\$SEARCHFILENAMES '$CONFIG'</action>
-              <action>$REQUEST_RESTART_WINDOW</action>
+              ${need_restart:+<action>$REQUEST_RESTART_WINDOW</action>}
+              <action>refresh:varLIST</action>
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHCOMMENTS checkbox}
             <menuitem checkbox="$SEARCHCOMMENTS" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Comment">
-              <label>"$i18n_mnu_Search_Comment $i18n_asterisk"</label>
+              <label>"$i18n_mnu_Search_Comment${need_restart:+ $i18n_asterisk}"</label>
               <variable>SEARCHCOMMENTS</variable>
               <action>awk '$LET_NV' N=SEARCHCOMMENTS V=\$SEARCHCOMMENTS '$CONFIG'</action>
-              <action>$REQUEST_RESTART_WINDOW</action>
+              ${need_restart:+<action>$REQUEST_RESTART_WINDOW</action>}
+              <action>refresh:varLIST</action>
             </menuitem>
             ${REMARK# ]]]}
             ${REMARK# [[[. SEARCHCATEGORIES checkbox}
             <menuitem checkbox="$SEARCHCATEGORIES" use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Categories">
-              <label>"$i18n_mnu_Search_Categories $i18n_asterisk"</label>
+              <label>"$i18n_mnu_Search_Categories${need_restart:+ $i18n_asterisk}"</label>
               <variable>SEARCHCATEGORIES</variable>
               ${DEBUG2:+<action>echo>&2 ,,, SEARCHCATEGORIES ,,,</action>}
               <action>awk '$LET_NV' N=SEARCHCATEGORIES V=\$SEARCHCATEGORIES '$CONFIG'</action>
-              <action>$REQUEST_RESTART_WINDOW</action>
+              ${need_restart:+<action>$REQUEST_RESTART_WINDOW</action>}
+              <action>refresh:varLIST</action>
             </menuitem>
             ${REMARK# ]]]}
             <label>"$i18n_mnu_Search_Details"</label>
@@ -2463,17 +2541,19 @@ start_main_window << GTKDIALOGDOC
         <variable>SEARCHFUZZY</variable>
         ${DEBUG2:+<action>echo>&2 ,,, SEARCHFUZZY ,,,</action>}
         <action>awk '$LET_NV' N=SEARCHFUZZY V=\$SEARCHFUZZY '$CONFIG'</action>
+        <action>refresh:varLIST</action>
       </checkbox>
       ${REMARK# ]]]}
-            ${REMARK# [[[. CASEDEPENDENT checkbox}
-            <checkbox use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case $i18n_mnu_tt_Fuzzy_ignores_this">
-              <label>"$i18n_Case"</label>
-              <default>${CASEDEPENDENT}</default>
-              <variable>CASEDEPENDENT</variable>
-              ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
-              <action>awk '$LET_NV' N=CASEDEPENDENT V=\$CASEDEPENDENT '$CONFIG'</action>
-            </checkbox>
-            ${REMARK# ]]]}
+      ${REMARK# [[[. CASEDEPENDENT checkbox, built-in fuzzy ignores this, fzf does smart-casing or +i}
+      <checkbox use-underline="true" tooltip-text="$i18n_mnu_tt_Search_Case">
+        <label>"$i18n_CaseSensitive"</label>
+        <default>${CASEDEPENDENT}</default>
+        <variable>CASEDEPENDENT</variable>
+        ${DEBUG2:+<action>echo>&2 ,,, CASEDEPENDENT ,,,</action>}
+        <action>awk '$LET_NV' N=CASEDEPENDENT V=\$CASEDEPENDENT '$CONFIG'</action>
+        <action>refresh:varLIST</action>
+      </checkbox>
+      ${REMARK# ]]]}
       ${REMARK# [[[. varOPEN checkbox}
       <checkbox use-underline="true" tooltip-text="$i18n_Keep_this_window_open">
         <label>"$i18n_Keep_window"</label>

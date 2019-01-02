@@ -126,4 +126,14 @@ initialization files.
 
   See more examples in the [translation tutorial](TRANSLATING.md).
 
+`FNRSEARCHENGINE`
+
+  See section _[Fzf Search Engine](fzf.md)_ for details.
+  To use the older, built-in search engine set this variable to value "v1":
+
+    env FNRSEARCHENGINE=v1 findnrun
+  
+  You can set it also in your [configuration file](preference.md).
+
 _Next: [Configuring Preferences](preference.md)_
+

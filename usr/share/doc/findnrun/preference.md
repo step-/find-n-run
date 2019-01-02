@@ -20,12 +20,16 @@ These values can be set also from the main window:
     # Return keyboard focus to the search input field.
     varFOCUSSEARCH=true
 ```
+```gettext
+    # Enforce case-sensitive searching.
+    CASEDEPENDENT=false
+```
 
 These values can be set also from the main menu:
 ```gettext
     # Find words that match the search terms approximately rather than exactly.
     # Fuzzy search ignores the following settings because it substitutes them
-    # in other ways: CASEDEPENDENT, SEARCHFROMLEFT.
+    # in other ways: SEARCHFROMLEFT.
     # Only one of SEARCHFUZZY and SEARCHREGEX can be enabled.
     SEARCHFUZZY=false
 ```
@@ -55,11 +59,6 @@ These values can be set also from the main menu:
 ```
 
 ```gettext
-    # Enforce case-dependent searching.
-    CASEDEPENDENT=false
-```
-
-```gettext
     # Search pattern must match from the leftmost position.
     # Ignored for category search.
     SEARCHFROMLEFT=false
@@ -69,7 +68,7 @@ These values can be set also from the main menu:
     # Ignore the NoDisplay=true attribute value of .desktop files.
     SHOWNODISPLAY=false
 ```
- 
+
 ### Notes
 
 `SHOWNODISPLAY`: Versions up to 1.10.6 didn't have this setting and showed all
@@ -108,8 +107,8 @@ power users and custom applications:
 ```
 
 ```gettext
-    # This value affects the importance of fuzzy matching each of
-    # the fields: 1) application name, 2) filename, 3) comment, 4) category.
+    # This value affects the relative importance of each field in built-in
+    # fuzzy search: 1) application name, 2) filename, 3) comment, 4) category.
     # Setting a value = 0 means accepting the calculated match score of that
     # field as is. Setting a value = R means adding score/R to the calculated
     # score, therefore raising the overall importance of that field.
@@ -154,7 +153,7 @@ power users and custom applications:
 ```
 
 ```gettext
-    # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included. 
+    # Entering IBOL+IBOL makes the search input field ignore all characters to the left of IBOL+IBOL included.
     # This is a reserved setting; do not edit it. If you accidentally do, delete the line and restart findnrun.
     IBOL=' '
 ```
