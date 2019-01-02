@@ -3,7 +3,7 @@
 # =============================================================================
 # finnrun-pot-config.sh - Project configuration for findnrun .pot file creator
   Version=1.1.1
-# author: Copyright (C)2015-2018 step
+# author: Copyright (C)2015-2019 step
 # license: GNU GPL version 2
 # depends: GNU gettext package, mdview, xgettext.sh
 # source: https://github.com/step-/find-n-run
