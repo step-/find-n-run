@@ -78,7 +78,7 @@ x="${0%/*}/../share/doc/$SN"
 FNRHELPINDEX=${FNRHELPINDEX:-$x/index.md:$x/help[en].tar.gz:$x/index.html}
 
 # Initialize variables that should not be changed. [[[1
-APP_TITLE="${APP_NAME}" # see also APP_TITLE_UNIQ in start_window()
+APP_TITLE="${APP_NAME}" # see also APP_TITLE_UNIQ in start_main_window()
 REMARK= # leave unset
 FNRDEBUG=${FNRDEBUG:-} # unset to disable debug trace to stderr; set verbosity (integer) 1-10
 if [ -n "${FNRDEBUG}" ]; then # set DEBUG1, DEBUG2, ... [[[
@@ -2023,7 +2023,7 @@ set_LET_NV() # [[[2
 #]]]
 set_LET_NV
 
-start_window() # Returns when gtkdialog terminates [[[2
+start_main_window() # Returns when gtkdialog terminates [[[2
 {
   if [ "${DEBUG1}" ]; then
     TIMER1=$(date +%s.%N)
@@ -2035,11 +2035,11 @@ Limit $APP_NAME to a single instance because /tmp/varSEARCH can't be shared.
 Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | gvim -R -
 ----"
   fi
-  local dialog findnrun
+  local dialog program
   dialog="${TMPD}/.main.xml"
-  findnrun="$TMPD/${0##*/}"
-  # Rename GTKDIALOG "$findnrun" in the ps/htop process list.
-  ln -sf "$(command -v $GTKDIALOG)" "$findnrun"
+  program="$TMPD/${0##*/}"
+  # Link to rename GTKDIALOG "$program" in ps/htop process list.
+  ln -sf "$(command -v $GTKDIALOG)" "$program"
   cat > "${dialog}" &&
   if [ ${FNRDEBUG:-0} -gt 9 ]; then
     { cat "$dialog"
@@ -2049,14 +2049,14 @@ Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | gvim -R -
     return
   fi &&
   if [ "${ENABLESTDOUT}" ]; then
-    "$findnrun" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" &
+    "$program" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" &
   else
-    "$findnrun" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null &
+    "$program" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null &
   fi
   mv "$TMPD"/.$$ "$TMPD/.$$-$!" # track PPID-PID
   if [ "${FNRDEBUG}" ]; then
-    echo "$RESTART_WINDOW" > "${dialog#.xml}"_RESTART_WINDOW.xml
-    echo "$GUI_ABOUT" > "${dialog#.xml}"_GUI_ABOUT.xml
+    echo "$RESTART_WINDOW" > "${dialog%.xml}"_RESTART_WINDOW.xml
+    echo "$GUI_ABOUT" > "${dialog%.xml}"_GUI_ABOUT.xml
   fi
   wait # for traps on gtkdialog's PID
 }
@@ -2155,7 +2155,7 @@ unset showcategories
 gettext 0 >/dev/null # work around an xgettext limitation
 # Ensure that we have a unique title handle to the window
 xwininfo -name "$APP_TITLE" >/dev/null 2>&1 && APP_TITLE_UNIQ="$APP_TITLE [$$]"
-start_window << GTKDIALOGDOC
+start_main_window << GTKDIALOGDOC
 <window title="${APP_TITLE_UNIQ:-$APP_TITLE}" icon-name="findnrun" window-position="2">
   <vbox>
     ${REMARK# [[[. varSEARCH: progressive typing search input field.}
