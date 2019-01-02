@@ -87,6 +87,10 @@ power users and custom applications:
 ```gettext
     # Name or path of the preferred terminal binary
     TERMINAL_PROGRAM="defaultterm"
+```gettext
+```
+    # Test if fzf is installed and show installation dialog
+    CHECK_FZF=true # can be set false from the installation dialog
 ```
 
 ```gettext

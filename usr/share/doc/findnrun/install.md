@@ -1,4 +1,4 @@
-_Next: [Starting Findnrun](running.md)_
+_Next: [Fzf Search Engine](fzf.md)_
 
 ## Installing
 
@@ -11,6 +11,9 @@ distribution, which is split into multiple sub-packages:
    languages
 
 [Installation requirements](install-require.md).
+
+To improve search features, accuracy and speed consider also installing the
+_[fzf search engine](fzf.md)_ package (highly recommended).
 
 To read _translated_ help files the _mdview_ markdown viewer is
 required.  While a text editor is sufficient to read English help files,
@@ -57,5 +60,5 @@ and
 Some plugins may require you to install a separate NLS support package
 before they can display translated messages.
 
-_Next: [Starting Findnrun](running.md)_
+_Next: [Fzf Search Engine](fzf.md)_
 

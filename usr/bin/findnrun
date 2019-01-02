@@ -205,6 +205,7 @@ gawk '#[[[gawk
 /^FUZZY_MATCH_FIELD_BONUS=/{f19=1}
 /^HOTKEY_F6=/{f20=1}
 /^TERMINAL_PROGRAM=/{f21=1}
+/^CHECK_FZF=/{f22=1}
 #]]]
 END{ # lookup GTK2 icon theme name [[[
     # TODO implement GTK3 lookup
@@ -246,6 +247,7 @@ END{ # create config file and add missing settings [[[
   # Hotkey format: accel-mods":"key-sym":"accel-key
   # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
   if(!f21) print "TERMINAL_PROGRAM=\"defaultterm\"">>ARGV[1]
+  if(!f22) print "CHECK_FZF=true">>ARGV[1]
   if(!f9) print "HOTKEY_F2=\"0:F2:0xffbf\"">>ARGV[1]
   if(!f10) print "HOTKEY_F3=\"0:F3:0xffc0\"">>ARGV[1]
   if(!f15) print "HOTKEY_F4=\"0:F4:0xffc1\"">>ARGV[1]
@@ -2097,6 +2099,30 @@ set_LET_NV() # [[[2
 #]]]
 set_LET_NV
 
+start_check_fzf_window() # Returns when gtkdialog terminates [[[2
+{
+  local dialog program
+  dialog="${TMPD}/.check-fzf.xml"
+  program="$TMPD/check-fzf"
+  # Link to rename GTKDIALOG "$program" in ps/htop process list.
+  ln -sf "$(command -v $GTKDIALOG)" "$program"
+  echo "$CHECK_FZF_WINDOW" > "$dialog" &&
+  if [ ${FNRDEBUG:-0} -gt 9 ]; then
+    echo "$CHECK_FZF_WINDOW" | tr \\r \\n
+    return
+  fi &&
+  "$program" -f "$dialog" &
+  wait
+}
+
+set_DO_CHECK_FZF_WINDOW() # [[[2
+{
+DO_CHECK_FZF_WINDOW=': placeholder'
+}
+#]]]
+set_DO_CHECK_FZF_WINDOW
+! [ false = "$CHECK_FZF" ] && CHECK_FZF=true
+
 start_main_window() # Returns when gtkdialog terminates [[[2
 {
   if [ "${DEBUG1}" ]; then
@@ -2189,6 +2215,41 @@ export GUI_ABOUT='
   <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:GUI_ABOUT</action>
 </window>'
 
+# Check fzf window dialog. [[[2
+# i18n check fzf window dialog
+CHECK_FZF_WINDOW='
+<window title="'"$APP_TITLE"'" icon-name="findnrun" resizable="false" window-position="1">
+  <vbox>
+    <frame>
+      <text justify="0">
+        <label>"'"$i18n_Check_fzf_text"'"</label>
+      </text>
+    </frame>
+    <checkbox use-underline="true">
+      <label>"'"$i18n_Show_this_at_next_start"'"</label>
+      <default>'"$CHECK_FZF"'</default>
+      <variable>CHECK_FZF</variable>
+      <action>awk '"'$LET_NV'"' N=CHECK_FZF V=$CHECK_FZF "'"$CONFIG"'"</action>
+    </checkbox>
+    <text><label>""</label></text>
+    <hbox>
+      <text space-fill="true" space-expand="true"><label>""</label></text>
+      <button yes>
+        <action>('"$DO_CHECK_FZF_WINDOW"')&</action>
+        <action>exit:0</action>
+      </button>
+      <button no>
+        <action>exit:1</action>
+      </button>'"$HELP_BUTTON
+        <action>${HELPVIEWER:-:} \"\${HELPINDEX%index.md}fzf.md\" &</action>
+      </button>"'
+      <text space-fill="true" space-expand="true"><label>""</label></text>
+    </hbox>
+  </vbox>
+  <variable>CHECK_FZF_WINDOW</variable>
+  <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:CHECK_FZF_WINDOW</action>
+</window>'
+
 # Restart main window dialog. [[[2
 # i18n restart main window dialog
 export RESTART_WINDOW='
@@ -2216,6 +2277,24 @@ export RESTART_WINDOW='
   <variable>RESTART_WINDOW</variable>
   <action signal="key-press-event" condition="command_is_true([ $KEY_SYM = Escape ] && echo true )">closewindow:RESTART_WINDOW</action>
 </window>'
+
+# Check / Install fzf. [[[1
+install_fzf() # [[[2
+{
+  local install="${0%/*}"/../share/$SN/install-fzf  do="$TMPD/.install-fzf"
+  # installs .../share/$SN/bin/fzf
+  echo "set -- \"$install\" --bin; $EVAL_ARGS_IN_TERM" > "$do" &&
+  chmod +x "$do" &&
+  if command -v gtksu >/dev/null && [ $(id -u) -ne 0 ]; then
+    gtksu "$i18n_root_access_rights_needed" "$do"
+  else
+    "$do"
+  fi
+} #]]]2
+
+[ true = "$CHECK_FZF" ] &&
+start_check_fzf_window | grep -Fq 'EXIT="0"' &&
+install_fzf # binary to .../share/findnrun/bin/fzf
 
 # Prepare and show the main window with hotkeys. [[[1
 # Tip: if your /bin/sh is bash you can use the following stanza in

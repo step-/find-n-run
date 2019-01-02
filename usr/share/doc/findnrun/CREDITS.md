@@ -22,6 +22,8 @@ _earlier_ Find'N'Run script in Spring 2015.
   [github](https://github.com/forrestthewoods/lib_fts/blob/master/code/fts_fuzzy_match.js)
   (hash 08a4bb1 on Feb 19, 2017),
   [blog](https://blog.forrestthewoods.com/reverse-engineering-sublime-text-s-fuzzy-match-4cffeed33fdb).
+* [Fzf](https://github.com/junegunn/fzf) installer script, which was added in
+  version 4.0.0, is licensed under the MIT license.
 
 **Translations**
 

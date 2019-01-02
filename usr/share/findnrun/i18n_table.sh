@@ -24,6 +24,8 @@ i18n_table() # {{{1
     read i18n_analyzing_applications
     read i18n_Help
     read i18n_gui_about
+    read i18n_search_engine
+    read i18n_builtin
     read i18n_application_found
     read i18n_applications_found
     read i18n_source_loaded
@@ -103,11 +105,14 @@ i18n_table() # {{{1
     read i18n_mnu_tt_Search_Ninja
     read i18n_mnu_Search_Case
     read i18n_mnu_tt_Search_Case
-    read i18n_Case
+    read i18n_CaseSensitive # printf "\u2260"
     read i18n_mnu_Search_Anchor_Left
     read i18n_mnu_tt_Search_Anchor_Left
     read i18n_mnu_Search_Hidden
     read i18n_mnu_tt_Search_Hidden
+    read i18n_Check_fzf_text
+    read i18n_Show_this_at_next_start
+    read i18n_root_access_rights_needed
   } << EOF
   $(gettext -es -- \
   "Findnrun\n" \
@@ -122,6 +127,8 @@ i18n_table() # {{{1
   "analyzing %d applications...\n" \
   "_Help\n" \
   "%s %s\rauthors: %s\rOpen source - GNU GPL license applies\r\r%s\r%s\r\rconfiguration: %s\r\n" \
+  "search engine: %s\n" \
+  "built-in\n" \
   "%s application found\n" \
   "%s applications found\n" \
   "%s source loaded\n" \
@@ -200,12 +207,15 @@ i18n_table() # {{{1
   "Search _Ninja\n" \
   "Advanced settings and tweaks.\n" \
   "Match _Case\n" \
-  "Enable this to make searching match both 'A' and 'a' when you type 'a', etc.\n" \
-  "'_A is 'a'\n" \
+  "Enable this for case-sensitive matching.\n" \
+  "'_A ≠ 'a'\n" \
   "Anchor _Left\n" \
   "Enable this to make searching match a term only if the term begins in column one. Not applied to Fuzzy search.\n" \
   "Show _Hidden\n" \
   "Enable this to also search for hidden applications that don't appear in the system menu.\n" \
+  "The optional Fzf search engine wasn't found.\r\rDo you want to download and install fzf (recommended)?\r\rClick [Help] for details.\n"\
+  "_Show this window at next start\n" \
+  "This operation needs root's access rights\n" \
   )
 EOF
 }
