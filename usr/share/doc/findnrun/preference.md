@@ -86,6 +86,11 @@ match found in the order: application name, filename, comment, category.
 These values aren't available from the main window. They are intended mostly for
 power users and custom applications:
 ```gettext
+    # Name or path of the preferred terminal binary
+    TERMINAL_PROGRAM="defaultterm"
+```
+
+```gettext
     # Hotkey format: accel-mods':'key-sym':'accel-key
     # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
     # Pressing HOTKEY_F2 cycles keyboard input focus between the history field and the search input field.

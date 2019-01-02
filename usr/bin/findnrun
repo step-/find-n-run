@@ -203,6 +203,7 @@ gawk '#[[[gawk
 /^SEARCHFUZZY=/{f18=1}
 /^FUZZY_MATCH_FIELD_BONUS=/{f19=1}
 /^HOTKEY_F6=/{f20=1}
+/^TERMINAL_PROGRAM=/{f21=1}
 #]]]
 END{ # lookup GTK2 icon theme name [[[
     # TODO implement GTK3 lookup
@@ -243,6 +244,7 @@ END{ # create config file and add missing settings [[[
   # Follow desired configuration file order
   # Hotkey format: accel-mods":"key-sym":"accel-key
   # cf. https://github.com/01micko/gtkdialog/blob/wiki/menuitem.md
+  if(!f21) print "TERMINAL_PROGRAM=\"defaultterm\"">>ARGV[1]
   if(!f9) print "HOTKEY_F2=\"0:F2:0xffbf\"">>ARGV[1]
   if(!f10) print "HOTKEY_F3=\"0:F3:0xffc0\"">>ARGV[1]
   if(!f15) print "HOTKEY_F4=\"0:F4:0xffc1\"">>ARGV[1]
@@ -269,6 +271,10 @@ END{ # create config file and add missing settings [[[
   if(!f12) print "SOURCES=\"FNRstart FNRsc\"">>ARGV[1]
 } #]]]
 #gawk]]]' "${CONFIG}" && . "$CONFIG"
+if ! command -v "$TERMINAL_PROGRAM" >/dev/null 2>&1; then
+  ls "$TERMINAL_PROGRAM"
+  exit 1
+fi
 #version 3.1 changed SEARCHCOMPLETE to an INTERNAL variable
 [ "$SEARCHFILENAMES${SEARCHCOMMENTS}$SEARCHCATEGORIES" = truetruetrue ] &&
   SEARCHCOMPLETE=true || SEARCHCOMPLETE=false
@@ -1882,20 +1888,22 @@ set_EVAL_ARGS_IN_TERM() # $1-terminal-prog+opts [[[2
 {
   # Code that runs "$@" in a terminal.
   # Write the code to a private file that gtkdialog will source.
+  # "$@"'s exit status is saved to $TMPD/.eval-args-term-exit-status.
 
-  local __terminal=$1 __outf=$TMPD/.eval-args-term
+  local __terminal=$1 __outf="$TMPD"/.eval-args-term
   EVAL_ARGS_IN_TERM=". \"$__outf\""
   > "$__outf" printf %s \
 "$__terminal -T \"\$1\" -e ${SHELL:-sh} -c "\
 "'"\
 '"$@"'\
+'; echo $? > "${__outf}-exit-status"'\
 '; printf "\033[7m'"$i18n_Key_Enter_to_close_terminal"'\033[0m" "'"$i18n_Findnrun"'"' \
 '; read x'\
 "'"\
 " $SN"' "$@"'
 }
 #]]]
-set_EVAL_ARGS_IN_TERM "defaultterm"
+set_EVAL_ARGS_IN_TERM "$TERMINAL_PROGRAM"
 
 set_INVOKE_SOURCE_DRAIN() # [$1-terminal-prog+opts] [[[2
 {
@@ -1954,7 +1962,7 @@ ${DEBUG1:+' && eval ">&2 echo \" INVOKE DRAIN event=${fnrevent} \${DRAIN:-DRAIN=
 }
 #]]]
 set_INVOKE_SOURCE_DRAIN
-set_INVOKE_SOURCE_DRAIN "defaultterm"
+set_INVOKE_SOURCE_DRAIN "$TERMINAL_PROGRAM"
 
 set_STATUS_BAR() # [[[2
 {
