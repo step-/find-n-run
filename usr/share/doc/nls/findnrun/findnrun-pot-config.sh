@@ -65,10 +65,10 @@ is_to_be_translated() # $1-filepath
 }
 
 # Required project header settings {{{1
-PACKAGE_VERSION="3.1.0"
+PACKAGE_VERSION="4.0.0"
 PACKAGE_NAME="find-n-run"
 PACKAGE_TITLE="Findnrun $PACKAGE_VERSION"
-PACKAGE_COPYRIGHT="2015-2018 step; 2015 SFR, L18L, step"
+PACKAGE_COPYRIGHT="2015-2019 step; 2015 SFR, L18L, step"
 PACKAGE_FIRST_POT_AUTHOR="step, https://github.com/step-/"
 PACKAGE_POT_CREATION_TZ="UTC"
 PACKAGE_POT_LANGUAGE="en"
