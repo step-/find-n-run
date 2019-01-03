@@ -1143,7 +1143,7 @@ function read_list_file(list_file, acontent,   name,nname,nfiles,f,i,s) { # [[[2
 
 function show_progress_dialog(message,   pid,c,p,s,A,px,py,w,h,g,cmd) { # [[[2
   # Center the dialog over the main window.
-  c="xwininfo -name \"'"${APP_TITLE_UNIQ:-$APP_TITLE}"'\""
+  c="xwininfo -name \"'"${APP_TITLE_UNIQ:-$APP_TITLE}"'\" 2>/dev/null"
   c | getline s # slurp wininfo output
   close(c)
   if('${DEBUG2:-0}') print "XWININFO("c")[[\n"s"\n]] XWININFO" >"/dev/stderr"
@@ -1159,7 +1159,7 @@ function show_progress_dialog(message,   pid,c,p,s,A,px,py,w,h,g,cmd) { # [[[2
   ## Calculate new size and position.
   px = A[1] - A[3] + 1; py = A[2] - A[4]; w = A[5] - 1; h = A[6]
   if('${DEBUG2:-0}') printf "px(%d) py(%d) w(%d) h(%d)\n", px,py,w,h >"/dev/stderr"
-  py = h / 2 + py; h = 0 # uncontrained height
+  py = h / 2 + py; h = 0 # unconstrained height
   if(px < 0) { w += px; px = 0 }
   if(py < 0) { py = 0 }
   if('${DEBUG2:-0}') printf "px(%d) py(%d) w(%d) h(%d)\n", px,py,w,h >"/dev/stderr"
@@ -1941,7 +1941,8 @@ set_EVAL_ARGS_IN_TERM() # $1-terminal-prog+opts [[[2
 {
   # Code that runs "$@" in a terminal.
   # Write the code to a private file that gtkdialog will source.
-  # "$@"'s exit status is saved to $TMPD/.eval-args-term-exit-status.
+  # "$@"'s exit status is saved to $TMPD/.eval-args-term-exit-status. However, be wary
+  # that some terminals, i.e., urxvtc, return control to the calling process immediately.
 
   local __terminal=$1 __outf="$TMPD"/.eval-args-term
   EVAL_ARGS_IN_TERM=". \"$__outf\""
@@ -1949,7 +1950,7 @@ set_EVAL_ARGS_IN_TERM() # $1-terminal-prog+opts [[[2
 "$__terminal -T \"\$1\" -e ${SHELL:-sh} -c "\
 "'"\
 '"$@"'\
-'; echo $? > "${__outf}-exit-status"'\
+'; echo $? > "'"${__outf}"'-exit-status"'\
 '; printf "\033[7m'"$i18n_Key_Enter_to_close_terminal"'\033[0m" "'"$i18n_Findnrun"'"' \
 '; read x'\
 "'"\
@@ -2153,7 +2154,7 @@ Debug tip: Dump gtkdialog XML: FNRDEBUG=10 $SN | gvim -R -
   else
     "$program" ${GEOMETRY:+--geometry=}${GEOMETRY} ${CMDLINEOPTS} -f "${dialog}" >/dev/null &
   fi
-  mv "$TMPD"/.$$ "$TMPD/.$$-$!" # track PPID-PID
+  mv "$TMPD"/.$$ "$TMPD/.$$-$!" # track PPID(script)-PID(gtkdialog)
   if [ "${FNRDEBUG}" ]; then
     echo "$RESTART_WINDOW" > "${dialog%.xml}"_RESTART_WINDOW.xml
     echo "$GUI_ABOUT" > "${dialog%.xml}"_GUI_ABOUT.xml
@@ -2165,11 +2166,12 @@ set_DO_RESTART_WINDOW() # [[[2
 {
   # Code to restart findnrun dialog with all command line arguments.
   # We use 'cat |' because the gtkdialog parser considers character '<' illegal.
+  # .$$-* is PPID(script)-PID(gtkdialog); if gtkdialog isn't running, PID == "*".
 DO_RESTART_WINDOW=\
 "for pid in $TMPD/.$$-*; do :; done"\
 '; pid=${pid##*-}'\
 "; cat /proc/$$/cmdline | xargs -0 env -u varSEARCH -- &"\
-' kill $pid'
+' [ "*" != "$pid" ] && kill $pid'
 }
 #]]]
 set_DO_RESTART_WINDOW
