@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 4.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2019-01-02 16:27+0000\n"
+"POT-Creation-Date: 2019-01-03 07:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 
 #. i18n Main window widgets
 #. i18n "0" (invisible, disregard).
-#: /usr/bin/findnrun:2309
+#: /usr/bin/findnrun:2326
 msgid "0"
 msgstr ""
 
@@ -864,7 +864,7 @@ msgstr ""
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/fzf.md:1
-#: /usr/share/doc/findnrun/fzf.md:56
+#: /usr/share/doc/findnrun/fzf.md:54
 msgid "_Next: [Starting Findnrun](running.md)_"
 msgstr ""
 
@@ -928,28 +928,24 @@ msgstr ""
 msgid "If command `fzf` is already installed in the shell `PATH`, fzf becomes the default search engine automatically for both fuzzy and exact search. Fzf's extended search syntax applies to both cases."
 msgstr ""
 
-#: /usr/share/doc/findnrun/fzf.md:41
-msgid "If `fzf` isn't found in `PATH`, findnrun shows a startup reminder that offers to download and install fzf.  Such installation limits the scope of fzf to findnrun - fzf won't be available for general command-line use."
+#: /usr/share/doc/findnrun/fzf.md:40
+msgid "If `fzf` isn't found in `PATH`, findnrun displays a startup dialog that offers to download and install fzf."
 msgstr ""
 
-#: /usr/share/doc/findnrun/fzf.md:43
-msgid "If instead you wish to perform a complete fzf installation run command"
+#: /usr/share/doc/findnrun/fzf.md:44
+msgid "You can also install fzf by following the instructions found on [fzf's website](https://github.com/junegunn/fzf). This full installation is recommended for interactive shell use."
 msgstr ""
 
-#: /usr/share/doc/findnrun/fzf.md:47
-msgid "in a terminal window. Read more about [fzf](https://github.com/junegunn/fzf)."
-msgstr ""
-
-#: /usr/share/doc/findnrun/fzf.md:49
+#: /usr/share/doc/findnrun/fzf.md:46
 msgid "Uninstalling Fzf"
 msgstr ""
 
-#: /usr/share/doc/findnrun/fzf.md:51
+#: /usr/share/doc/findnrun/fzf.md:48
 msgid "To disable fzf see [FNRSEARCHENGINE](running.md)."
 msgstr ""
 
-#: /usr/share/doc/findnrun/fzf.md:54
-msgid "To uninstall fzf delete file `/usr/share/findnrun/fzf`. If you performed a full installation follow the uninstallation instructions found on fzf's website."
+#: /usr/share/doc/findnrun/fzf.md:52
+msgid "To uninstall fzf delete the binary file `/usr/share/findnrun/fzf` and the link file `/usr/bin/fzf`. If you performed a full installation follow the uninstallation instructions found on fzf's website."
 msgstr ""
 
 #.
@@ -1095,7 +1091,7 @@ msgid "**Findrun** - A progressive finder"
 msgstr ""
 
 #: /usr/share/doc/findnrun/index.md:5
-msgid "_3.1.0_"
+msgid "_4.0.0_"
 msgstr ""
 
 #: /usr/share/doc/findnrun/index.md:8

@@ -12,9 +12,30 @@ A progressive finder.
 
 ## News
 
+**3-Jan-2019 Release 4.0.0**
+
+Release highlights: * Faster, better, alternative **fuzzy and exact search** engine using the optional [fzf](https://github.com/junegunn/fzf) external binary. * Now plugins can call the built-in and fzf search engines.
+
+* New: integrate external search engine `fzf` for exact and fuzzy search
+* New: start-up dialog to download/install `fzf`
+* New: user preference `TERMINAL_PROGRAM` (defaultterm)
+* Change: UI rename "Consider word case" to "A ≠ a"
+* Change: UI "Show all icons" and "A ≠ a" swap places
+* Change: Toggling "A ≠ a" no longer requires a restart
+* Change: Toggling search details no longer requires a restart when `fzf` is used
+* Fix: `findnrun-formatter -s` splits lines on spaces
+* Fix: Run in terminal saves history to `.hist-` instead of `.hist-$ID`
+* Fix: Null `FNR*` variables when saving drain invocation history
+* Update: credits
+* Update: user and plugin documentation
+* Update: translation template
+* Plugin: New: plugins can call the built-in and fzf search engines
+* Plugin: New: plugin Helper Functions
+* Dev: extend help system to allow directly opening any markdown file
+
 **16-Dec-2018 Release 3.1.0**
 
-Notable in this release: a new **fuzzy search** mode (off by default), a new configurable **hotkey F6**, and a **configuration menu** that reveals all previously hidden settings (hotkey re-assignment is still hidden in the configuration file `~/.findnrunrc`). Press `[F10]` in the main window to see hoteys settings. Press `[F10]` again to access the configuration menu, or click the new menu symbol "☰".
+Release highlights: A new **fuzzy search** mode (off by default), a new configurable **hotkey F6**, and a **configuration menu** that reveals all previously hidden settings (hotkey re-assignment is still hidden in the configuration file `~/.findnrunrc`). Press `[F10]` in the main window to see hoteys settings. Press `[F10]` again to access the configuration menu, or click the new menu symbol "☰".
 
 * New: add fuzzy search (SEARCHFUZZY setting), off by default
 * New: add Options menu.
