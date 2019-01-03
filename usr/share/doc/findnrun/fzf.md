@@ -36,22 +36,20 @@ If command `fzf` is already installed in the shell `PATH`, fzf becomes the
 default search engine automatically for both fuzzy and exact search. Fzf's
 extended search syntax applies to both cases.
 
-If `fzf` isn't found in `PATH`, findnrun shows a startup reminder that offers
-to download and install fzf.  Such installation limits the scope of fzf to
-findnrun - fzf won't be available for general command-line use.
+If `fzf` isn't found in `PATH`, findnrun displays a startup dialog that offers
+to download and install fzf.
 
-If instead you wish to perform a complete fzf installation run command
-
-    /usr/share/findnrun/install-fzf --help
-
-in a terminal window. Read more about [fzf](https://github.com/junegunn/fzf).
+You can also install fzf by following the instructions found on
+[fzf's website](https://github.com/junegunn/fzf). This full installation is
+recommended for interactive shell use.
 
 ### Uninstalling Fzf
 
 To disable fzf see [FNRSEARCHENGINE](running.md).
 
-To uninstall fzf delete file `/usr/share/findnrun/fzf`. If you performed a full
-installation follow the uninstallation instructions found on fzf's website.
+To uninstall fzf delete the binary file `/usr/share/findnrun/fzf` and the link
+file `/usr/bin/fzf`. If you performed a full installation follow the
+uninstallation instructions found on fzf's website.
 
 _Next: [Starting Findnrun](running.md)_
 
