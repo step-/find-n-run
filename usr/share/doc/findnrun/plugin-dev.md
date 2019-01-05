@@ -291,6 +291,8 @@ commands with the following preset variables:
  * `${NSOURCES}` - number of sources
  * `${THISFILE}` - the shell file that sets all of the above variables.
 
+ * `${FNRFZF}` - full path of `fzf`, null if `fzf` isn't installed
+ * `${FNRSEARCHENGINE}` - requested search engine: "fzf" or "v1"
  * `${FNRPID}` - findnrun gtkdialog process id [1]
  * `${FNRTMP}` - findnrun temporary folder full path [2]
  * `${FNREVENT}` - invocation event name [3]

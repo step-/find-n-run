@@ -285,13 +285,14 @@ fi
 case "$SEARCHFUZZY$SEARCHREGEX" in *true*) SEARCHDEFAULT=false;; *) SEARCHDEFAULT=true;; esac
 export SEARCHFUZZY CASEDEPENDENT SEARCHCOMMENTS SEARCHCATEGORIES SEARCHFILENAMES # reminder: add to UNEXP_NOT_TAP
 export FNRSEARCHENGINE=${FNRSEARCHENGINE:-fzf} # susbstitute "v1" for the built-in engine
-set_FZF() # [[[
+export FNRFZF
+set_FNRFZF() # [[[
 {
-  FZF="${0%/*}"/../share/$SN/bin/fzf # from install_fzf() on first start
-  ! [ -x "$FZF" ] && FZF=$(command -v fzf) # the one in PATH, if any
-  ! [ -x "$FZF" ] && unset FZF
+  FNRFZF="${0%/*}"/../share/$SN/bin/fzf # from install_fzf() on first start
+  ! [ -x "$FNRFZF" ] && FNRFZF=$(command -v fzf) # the one in PATH, if any
+  ! [ -x "$FNRFZF" ] && unset FNRFZF
 } # ]]]
-set_FZF
+set_FNRFZF
 
 [ "$DEBUG1" ] && TIMER2=$(date +%s.%N) && timer $TIMER1 $TIMER2 $TIMER0 "+processing $CONFIG" >&2
 
@@ -356,7 +357,7 @@ SOURCE_FNRstart="FNRstart::FNRstart:FNRstart:FNRstart:::FNRstart:FNRstart"
 # queries the .desktop db on each search box keypress.
 INIT_FNRstart="p=\"$DESKTOP_FILE_DIRS\"; f(){ local IFS=:; find -L \$p -type f -name \\*.desktop 2>/dev/null; :;}; f >\"$DSKL\"; gawk -f \"${AWKB}\" -v ALL_ICONS=${varICONS} -v SHOWNODISPLAY=${SHOWNODISPLAY} -v DSKL=\"$DSKL\" > \"${DATF}\"; echo NDATF=\"'\$(wc -l < \"${DATF}\")'\" >> \"\$THISFILE\""
 # $TAP_FNRstart is also used as the body of function FNRsearch defined by $INVOKE_SOURCE_TAP.
-TAP_FNRstart="if [ fzf = \$FNRSEARCHENGINE ]; then q=\"$AWKZe\"; else [ true = \$SEARCHFUZZY ] && q=\"$AWKZ\" || q=\"$AWKQ\"; fi;"\
+TAP_FNRstart="if [ fzf = \$FNRSEARCHENGINE -a \"\$FNRFZF\" ]; then q=\"$AWKZe\"; else [ true = \$SEARCHFUZZY ] && q=\"$AWKZ\" || q=\"$AWKQ\"; fi;"\
 "gawk -f \"\$q\" -v GREP=\"\${term}\" \"\${DATF:-$DATF}\"${REDIRECT2}"
 TITLE_FNRstart=$i18n_application_finder
 ICON_FNRstart='findnrun' # Also used as FALLBACK_ICON for all missing app icons.
@@ -1223,7 +1224,7 @@ write_query_script() # $1-target ::= "fzf"|"v1-fuzzy"|"v1-exact"
 # ]]]
 local subject fnameleft commleft left categ REDIRECT2 func extract_data_fields begin_body body end_body
 # Sanity check: fall back to built-in target if fzf isn't installed.
-[ fzf = "$target" ] && ! [ "$FZF" ] && target=v1-fuzzy # fallback
+[ fzf = "$target" ] && ! [ "$FNRFZF" ] && target=v1-fuzzy # fallback
 # Variables that describe the match expression. [[[2
 if [ fzf = "$target" ]; then
   : blank
@@ -1289,7 +1290,7 @@ is_category = "true" == ENVIRON["SEARCHCATEGORIES"] ? 1:0
 is_filename = "true" == ENVIRON["SEARCHFILENAMES"] ? 1:0
 is_casesensitive = "true" == ENVIRON["CASEDEPENDENT"] ? 1:0
 fzfopt = "-d \"'$SEP'\" --nth 3"(is_comment ? ",5":"")(is_category ? ",6":"")(is_filename ? ",2":"")(!is_fuzzy ? " -e":"")(is_casesensitive ? " +i":"")
-fzfcop = "\"'"$FZF"'\" -f \""GREP"\" "fzfopt
+fzfcop = "\"'"$FNRFZF"'\" -f \""GREP"\" "fzfopt
 '"${DEBUG1:+print fzfcop > \"/dev/stderr\"}"'
 '
   extract_data_fields='
@@ -1791,7 +1792,7 @@ set_ABOUT_TEXT() # [[[2
   # Text content for the About dialog.
   # i18n About dialog widgets
 
-  local engine=${FZF:-$i18n_builtin}
+  local engine=${FNRFZF:-$i18n_builtin}
   ! [ fzf = "$FNRSEARCHENGINE" ] && engine=$i18n_builtin
   ABOUT_TEXT='printf "'"$i18n_gui_about"'"'\
 ' "'"${APP_NAME}"'" "'"${Version}"'" "'"step, SFR, L18L"'"'\
@@ -2303,11 +2304,11 @@ install_fzf() # [[[2
   fi
 } #]]]2
 
-if [ fzf = "$FNRSEARCHENGINE" -a true = "$CHECK_FZF" -a ! "$FZF" ]; then
+if [ fzf = "$FNRSEARCHENGINE" -a true = "$CHECK_FZF" -a ! "$FNRFZF" ]; then
   if start_check_fzf_window | grep -Fq 'EXIT="0"'; then
     install_fzf
-    set_FZF
-    if [ "$FZF" ]; then
+    set_FNRFZF
+    if [ "$FNRFZF" ]; then
       # restart findnrun with its command-line parameters
       xargs -0 env -u varSEARCH -- < /proc/$$/cmdline &
       exit # via trap_handler
@@ -2322,7 +2323,7 @@ fi
 unset showcategories
 [ true = "$SEARCHCATEGORIES" -o true = "$SEARCHCOMPLETE" ] && showcategories=true
 [ hidden = "${SEARCHCATEGORIES}" ] && unset showcategories
-[ fzf = "$FNRSEARCHENGINE" -a "$FZF" ] && unset need_restart || need_restart=1
+[ fzf = "$FNRSEARCHENGINE" -a "$FNRFZF" ] && unset need_restart || need_restart=1
 # i18n Main window widgets
 # i18n "0" (invisible, disregard).
 gettext 0 >/dev/null # work around an xgettext limitation
