@@ -1791,11 +1791,13 @@ set_ABOUT_TEXT() # [[[2
   # Text content for the About dialog.
   # i18n About dialog widgets
 
+  local engine=${FZF:-$i18n_builtin}
+  ! [ fzf = "$FNRSEARCHENGINE" ] && engine=$i18n_builtin
   ABOUT_TEXT='printf "'"$i18n_gui_about"'"'\
 ' "'"${APP_NAME}"'" "'"${Version}"'" "'"step, SFR, L18L"'"'\
 ' "'"http://www.murga-linux.com/puppy/viewtopic.php?t=98330"'"'\
 ' "'"https://github.com/step-/find-n-run"'" "'"${CONFIG}"'" | tr \\r \\n'\
-' ; printf "$(gettext "'"$i18n_search_engine"'")\n" "'"${FZF:-$i18n_builtin}"'"'\
+' ; printf "$(gettext "'"$i18n_search_engine"'")\n" "'"$engine"'"'\
 ' ; n="'"${NSOURCES}"'"; printf "$(ngettext "'"$i18n_source_loaded"'" "'"$i18n_sources_loaded"'" "$n")\n" "$n"'\
 ' ; set -- $(wc -l "'"${DATF}"'"); printf "$(ngettext "'"$i18n_application_found"'" "'"$i18n_applications_found"'" $1)\n" $1'
 }

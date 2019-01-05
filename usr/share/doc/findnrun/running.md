@@ -133,7 +133,8 @@ initialization files.
 
     env FNRSEARCHENGINE=v1 findnrun
   
-  You can set it also in your [configuration file](preference.md).
+  Or set it in your [configuration file](preference.md), which takes precedence
+  over the environment value.
 
 _Next: [Configuring Preferences](preference.md)_
 

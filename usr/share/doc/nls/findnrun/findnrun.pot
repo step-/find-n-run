@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 4.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2019-01-03 07:44+0000\n"
+"POT-Creation-Date: 2019-01-05 16:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 
 #. i18n Main window widgets
 #. i18n "0" (invisible, disregard).
-#: /usr/bin/findnrun:2326
+#: /usr/bin/findnrun:2328
 msgid "0"
 msgstr ""
 
@@ -2007,7 +2007,7 @@ msgstr ""
 #. ---------------------------------------------------------
 #.
 #: /usr/share/doc/findnrun/running.md:1
-#: /usr/share/doc/findnrun/running.md:138
+#: /usr/share/doc/findnrun/running.md:139
 msgid "_Next: [Configuring Preferences](preference.md)_"
 msgstr ""
 
@@ -2175,8 +2175,8 @@ msgstr ""
 msgid "See section _[Fzf Search Engine](fzf.md)_ for details. To use the older, built-in search engine set this variable to value \"v1\":"
 msgstr ""
 
-#: /usr/share/doc/findnrun/running.md:136
-msgid "You can set it also in your [configuration file](preference.md)."
+#: /usr/share/doc/findnrun/running.md:137
+msgid "Or set it in your [configuration file](preference.md), which takes precedence over the environment value."
 msgstr ""
 
 #.
