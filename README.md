@@ -12,7 +12,38 @@ A progressive finder.
 
 ## News
 
-**3-Jan-2019 Release 4.0.0**
+**13-Jan-2019 Release [4.0.1](https://github.com/step-/find-n-run/releases/tag/4.0.1)**
+
+Recommended upgrade for all users.
+
+* Critical fix: Built-in fuzzy search displays no results if only search-filenames is enabled in default configuration.
+* Fix: Built-in fuzzy search used even though disabled on pristine start.
+* Fix: Fuzzy search engine choice displayed incorrectly in About dialog text.
+* Update: user documentation and translation template.
+
+**Upgrading**
+
+From version 2.2.0 - You need to edit your existing configuration file
+as explained in the
+[2.3.0 release announcement](https://github.com/step-/find-n-run/releases/tag/2.3.0).
+
+From an earlier version - You need to edit your existing configuration
+file as explained in the
+[2.2.0 release announcement](https://github.com/step-/find-n-run/releases/tag/2.2.0).
+
+## Introduction, Features, Installing, Documentation and more
+
+[Main article](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/index.md)
+
+## Change Log
+
+See [release announcements](https://github.com/step-/find-n-run/releases)
+and
+[commit history](https://github.com/step-/find-n-run/commits/master).
+
+## Old News
+
+**3-Jan-2019 Release [4.0.0](https://github.com/step-/find-n-run/releases/tag/4.0.0)**
 
 Release highlights: * Faster, better, alternative **fuzzy and exact search** engine using the optional [fzf](https://github.com/junegunn/fzf) external binary. * Now plugins can call the built-in and fzf search engines.
 
@@ -33,7 +64,7 @@ Release highlights: * Faster, better, alternative **fuzzy and exact search** eng
 * Plugin: New: plugin Helper Functions
 * Dev: extend help system to allow directly opening any markdown file
 
-**16-Dec-2018 Release 3.1.0**
+**16-Dec-2018 Release [3.1.0](https://github.com/step-/find-n-run/releases/tag/3.1.0)**
 
 Release highlights: A new **fuzzy search** mode (off by default), a new configurable **hotkey F6**, and a **configuration menu** that reveals all previously hidden settings (hotkey re-assignment is still hidden in the configuration file `~/.findnrunrc`). Press `[F10]` in the main window to see hoteys settings. Press `[F10]` again to access the configuration menu, or click the new menu symbol "☰".
 
@@ -53,7 +84,7 @@ Release highlights: A new **fuzzy search** mode (off by default), a new configur
 * Plugin dev: update `findnrun-formatter`
 * Dev: add desktop file lister (debug level 1)
 
-**19-Oct-2018 Release 3.0.0**
+**19-Oct-2018 Release [3.0.0](https://github.com/step-/find-n-run/releases/tag/3.0.0)**
 * Faster program start.
 * Huge speed increase "Showing all icons".
 * New: Dash compatible out-of-the-box (sh, bash and ash too).
@@ -80,9 +111,8 @@ Release highlights: A new **fuzzy search** mode (off by default), a new configur
 * i18n translation template (.pot file) updated.
 * Plugins: New `INIT_<source>`, _Saving Search Results_.
 
-**24-Aug-2018 Release 2.5.0**
-* Faster application start thanks to new translation lookup method, new
-  icon caching algorithm, and optimized plugin validation.
+**24-Aug-2018 Release [2.5.0](https://github.com/step-/find-n-run/releases/tag/2.5.0)**
+* Faster application start thanks to new translation lookup method, new icon caching algorithm, and optimized plugin validation.
 * New progress dialog for long scans.
 * Change: yad replaces Xdialog for sub-dialogs.
 * Updated "de" (63%) and "it" (100%) translations.
@@ -90,55 +120,31 @@ Release highlights: A new **fuzzy search** mode (off by default), a new configur
 * Fix: some documentation typos.
 * New translation tools.
 
-**Upgrading**
+**13-Sep-2017 Release [2.4.1](https://github.com/step-/find-n-run/releases/tag/2.4.1)**
+* updates the German translation.
 
-From version 2.2.0 - You need to edit your existing configuration file
-as explained in the
-[2.3.0 release announcement](https://github.com/step-/find-n-run/releases/tag/2.3.0).
+**6-Sep-2016 Release [2.4.0](https://github.com/step-/find-n-run/releases/tag/2.4.0)**
+* is a recommended feature upgrade for all users.
 
-From an earlier version - You need to edit your existing configuration
-file as explained in the
-[2.2.0 release announcement](https://github.com/step-/find-n-run/releases/tag/2.2.0).
+**1-Aug-2016 Release [2.3.0](https://github.com/step-/find-n-run/releases/tag/2.3.0)**
+* is a recommended feature upgrade for all users.
 
-## Introduction, Features, Installing, Documentation and more
+**13-Jun-2016 Release [2.2.0](https://github.com/step-/find-n-run/releases/tag/2.2.0)**
+* is a recommended feature upgrade for all users.
 
-[Main article](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/index.md)
+**25-Apr-2016 Release [2.1.1](https://github.com/step-/find-n-run/releases/tag/2.1.1)**
+* is a recommended upgrade for all users.
 
-## Change Log
+**11-Mar-2016 Release [2.1.0](https://github.com/step-/find-n-run/releases/tag/2.1.0)**
+* is a recommended upgrade for all users.
 
-See [release announcements](https://github.com/step-/find-n-run/releases)
-and
-[commit history](https://github.com/step-/find-n-run/commits/master).
+**23-Jan-2016 Release [2.0.0](https://github.com/step-/find-n-run/releases/tag/2.0.0)**
+* adds plugins and new features!
 
-## Old News
+**4-Sep-2015 Version 1.10.6 runs on Lubuntu:**
+* [package information](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/DEBIAN.md)
 
- * 13-Sep-2017 Release
-   [2.4.1](https://github.com/step-/find-n-run/releases/tag/2.4.1)
-   updates the German translation.
- * 6-Sep-2016 Release
-   [2.4.0](https://github.com/step-/find-n-run/releases/tag/2.4.0)
-   is a recommended feature upgrade for all users.
- * 1-Aug-2016 Release
-   [2.3.0](https://github.com/step-/find-n-run/releases/tag/2.3.0)
-   is a recommended feature upgrade for all users.
- * 1-Aug-2016 Release
-   [2.3.0](https://github.com/step-/find-n-run/releases/tag/2.3.0)
-   is a recommended feature upgrade for all users.
- * 13-Jun-2016 Release
-   [2.2.0](https://github.com/step-/find-n-run/releases/tag/2.2.0)
-   is a recommended feature upgrade for all users.
- * 25-Apr-2016 Release
-   [2.1.1](https://github.com/step-/find-n-run/releases/tag/2.1.1)
-   is a recommended upgrade for all users.
- * 11-Mar-2016 Release
-   [2.1.0](https://github.com/step-/find-n-run/releases/tag/2.1.0)
-   is a recommended upgrade for all users.
- * 23-Jan-2016 Release
-   [2.0.0](https://github.com/step-/find-n-run/releases/tag/2.0.0)
-   adds plugins and new features!
- * 4-Sep-2015 Version 1.10.6 runs on Lubuntu:
-   [package information](http://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/DEBIAN.md)
- * 18-Jun-2015 As of version 1.10.5 this script is featured in the
-   _original_
-   [Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
+**18-Jun-2015**
+* As of version 1.10.5 this script replaces the _original_
+  [Find'N'Run](http://www.murga-linux.com/puppy/viewtopic.php?t=98330)
 
