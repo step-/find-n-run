@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: find-n-run 4.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/step-/find-n-run/issues/\n"
-"POT-Creation-Date: 2019-01-05 16:17+0000\n"
+"POT-Creation-Date: 2019-01-13 12:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 
 #. i18n Main window widgets
 #. i18n "0" (invisible, disregard).
-#: /usr/bin/findnrun:2328
+#: /usr/bin/findnrun:2329
 msgid "0"
 msgstr ""
 
