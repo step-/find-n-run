@@ -12,14 +12,9 @@ A progressive finder.
 
 ## News
 
-**13-Jan-2019 Release [4.0.1](https://github.com/step-/find-n-run/releases/tag/4.0.1)**
+**24-Jan-2019 Release [4.0.2](https://github.com/step-/find-n-run/releases/tag/4.0.2)**
 
-Recommended upgrade for all users.
-
-* Critical fix: Built-in fuzzy search displays no results if only search-filenames is enabled in default configuration.
-* Fix: Built-in fuzzy search used even though disabled on pristine start.
-* Fix: Fuzzy search engine choice displayed incorrectly in About dialog text.
-* Update: user documentation and translation template.
+* Fix: Selected command not started (involves plugin use only).
 
 **Upgrading**
 
@@ -42,6 +37,15 @@ and
 [commit history](https://github.com/step-/find-n-run/commits/master).
 
 ## Old News
+
+**13-Jan-2019 Release [4.0.1](https://github.com/step-/find-n-run/releases/tag/4.0.1)**
+
+Recommended upgrade for all users.
+
+* Critical fix: Built-in fuzzy search displays no results if only search-filenames is enabled in default configuration.
+* Fix: Built-in fuzzy search used even though disabled on pristine start.
+* Fix: Fuzzy search engine choice displayed incorrectly in About dialog text.
+* Update: user documentation and translation template.
 
 **3-Jan-2019 Release [4.0.0](https://github.com/step-/find-n-run/releases/tag/4.0.0)**
 
