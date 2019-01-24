@@ -3,7 +3,7 @@
 
 # =============================================================================
 # Findnrun - a progressive finder
-  Version=4.0.1
+  Version=4.0.2
 # authors: Copyright (C)2015-2019 step; (C)2015 SFR, L18L
 # license: GNU GPL version 2
 # depend: gtk-dialog 0.8.3+, gawk 4.1.0+, sh/ash/dash/bash, xwininfo, yad
@@ -1317,12 +1317,13 @@ if(!GREP) { # optimization to speed up start up
 if(GREP) {
   close(fzfcop, "to")
   '"${DEBUG1:+DEBUG_TOP_ROW = \"\"}"'
+  OFS = "|"
   while(0 < (fzfcop |& getline)) {
     split($0, a, "'$SEP'")
     $0 = InputRecord[a[1]]
     #if(is_fuzzy) { # column 3 cosmetics
-      OFS = "|"
-      $3 = (is_comment && a[5] ? "`"a[5]:"") (is_category && ";" != a[6] ? "`"a[6]:"") (is_filename && a[2] ? "`"a[2]:"")
+      col3 = (is_comment && a[5] ? "`"a[5]:"") (is_category && a[6] && ";" != a[6] ? "`"a[6]:"") (is_filename && a[2] ? "`"a[2]:"")
+      if(col3) { $3 = col3 }
     #}
     print substr($0, 1, '$GTKDIALOG_MAX_BYTE_LEN_BUG')
   }
