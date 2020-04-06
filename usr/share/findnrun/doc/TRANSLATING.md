@@ -210,7 +210,7 @@ involves editing file findnrun.po and keep working through this tutorial
 again. When you are satisfied with your work send me the new .mo and
 .po files. Preferably generate a GitHub pull request for your files.
 Otherwise attach them to the project
-[forum thread](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/index.md#links).
+[forum thread](https://github.com/step-/find-n-run/blob/master/usr/share/findnrun/doc/index.md#links).
 
 ### Plugins
 

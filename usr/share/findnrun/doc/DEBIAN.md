@@ -18,7 +18,7 @@ sudo).  Findnrun run-time files will be added as follows:
 
     /install           <- delete this after unpacking
     /usr/bin/findnrun*
-    /usr/share/doc/findnrun/*
+    /usr/share/findnrun/doc/*
     /usr/share/applications/findnrun.desktop
     /usr/share/findnrun/*
     /usr/share/icons/hicolor/*/apps/findnrun.*
@@ -36,7 +36,7 @@ some packages not normally available on such systems (except if you are running
 a Debian/Ubuntu "Dog" system).
 
 The list of required packages can be found in the installation requirements
-[page](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/install-require.md).
+[page](https://github.com/step-/find-n-run/blob/master/usr/share/findnrun/doc/install-require.md).
 
 ### GNU awk
 
@@ -68,7 +68,7 @@ Yad can be found in the StretchDog repository, and in your distribution PPA.
 
 ### mdview
 
-Mdview isn't strictly required to run findnrun, but the help system is definitely better with it so I recommend installing it. 
+Mdview isn't strictly required to run findnrun, but the help system is definitely better with it so I recommend installing it.
 Unfortunately, I don't know of any deb packages for it, so you will need to
 compile it from source.
 

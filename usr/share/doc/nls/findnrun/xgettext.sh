@@ -3,9 +3,9 @@
 # =============================================================================
 # xgettext.sh - Expanded xgettext(1) extraction tool
   Version=1.1.0
-# author: Copyright (C)2018 step
+# author: Copyright (C)2018-2020 step
 # license: GNU GPL version 2
-# depends: GNU gettext package, mdview, GNU awk
+# depends: GNU gettext package, GNU awk
 # source: https://github.com/step-/find-n-run
 # forum: http://www.murga-linux.com/puppy/viewtopic.php?t=102811
 # =============================================================================

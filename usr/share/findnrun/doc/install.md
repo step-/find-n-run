@@ -32,7 +32,7 @@ Packages for various distributions can be downloaded from:
 * Puppy Linux [.pet](http://github.com/step-/find-n-run/releases/)
 * Debian/Ubuntu/Mint - .deb packages aren't available, but you should be able
   to install findnrun following the
-  [Debian page](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/DEBIAN.md).
+  [Debian page](https://github.com/step-/find-n-run/blob/master/usr/share/findnrun/doc/DEBIAN.md).
 
 (2) one of these known threads:
 

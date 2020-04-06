@@ -3,8 +3,8 @@
 
 # =============================================================================
 # Findnrun - a progressive finder
-  Version=4.0.2
-# authors: Copyright (C)2015-2019 step; (C)2015 SFR, L18L
+  Version=4.0.3
+# authors: Copyright (C)2015-2020 step; (C)2015 SFR, L18L
 # license: GNU GPL version 2
 # depend: gtk-dialog 0.8.3+, gawk 4.1.0+, sh/ash/dash/bash, xwininfo, yad
 # suggest: fzf, mdview (markdown help), proc(5) (restart findnrun), GNU date (debug)
@@ -45,11 +45,11 @@ export OUTPUT_CHARSET=UTF-8
 1 Download the latest commented translation template from:
   https://raw.githubusercontent.com/step-/find-n-run/master/usr/share/doc/nls/findnrun/findnrun.pot
 2 Follow the translation tutorial at:
-  https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/TRANSLATING.md'
+  https://github.com/step-/find-n-run/blob/master/usr/share/findnrun/doc/TRANSLATING.md'
 
 # Initialize variables that can be changed. [[[1
 # Note: Some environment variables may affect operation:
-# BROWSER, GEOMETRY, LANG, FNRSEARCHENGINE and more. See /usr/share/doc/findnrun/running.md.
+# BROWSER, GEOMETRY, LANG, FNRSEARCHENGINE and more. See /usr/share/findnrun/doc/running.md.
 
 # i18n Main window title
 APP_NAME=$i18n_Findnrun
@@ -74,7 +74,7 @@ HOME_ICONS_LEGACY="$HOME/.icons" # don't change
 ICON_DIRS="$HOME_ICONS_LEGACY:$ICON_DIRS:/usr/share/pixmaps:/usr/share/midi-icons:/usr/share/mini-icons"
 
 [ -f "${CONFIG}" ] || CONFIG="${HOME}/.findnrunrc"
-x="${0%/*}/../share/doc/$SN"
+x="${0%/*}/../share/$SN/doc"
 FNRHELPINDEX=${FNRHELPINDEX:-$x/index.md:$x/help[en].tar.gz:$x/index.html}
 
 # Initialize variables that should not be changed. [[[1
@@ -153,7 +153,7 @@ GTKDIALOG_MAX_BYTE_LEN_BUG=510
 
 # Variables to be unexported before running tap-command. [[[1
 # Applies to drain-command, save-filter-command and init-command too.
-# Cf. share/doc/findnrun/plugin-dev.md for terminology.
+# Cf. usr/share/findnrun/doc/plugin-dev.md for terminology.
 # 1. These vars would "pollute" the *-command's env because they are truly exported.
 # varICONS and varFOCUSSEARCH shouldn't be unexported before gtkdialog starts.
 UNEXPORT=unset
@@ -383,7 +383,7 @@ SAVEFLT_FNRsc="\$FNRSAVEFLT CUT=\"-4\" RDR=\"$RDR\" \"\${file}\""
 # Public Helpers [[[1
 set_Helper_Functions() # [[[2
 {
-  # Cf. share/doc/findnrun/plugin-dev.md "Helper Functions"
+  # Cf. usr/share/findnrun/doc/plugin-dev.md "Helper Functions"
 
   FNRset_TMPD_DATF=\
 'FNRset_TMPD_DATF(){ TMPD="'"$TMPD"'/.${1:-$ID}" && ! [ -d "$TMPD" ] && mkdir -p "$TMPD" && chmod 700 "$TMPD"; DATF="$TMPD"/.dat; }'
@@ -928,7 +928,7 @@ function format_icon_cell( ) { # [[[2
 # Format gtkdialog tree widget icon cell content.
 # Cells are output to varLIST`s directive <input icon-column="0">.
 # Note: tree widget does not support icons with paths anyway.
-# FALLBACK_ICON is used as fallback icon-reference per doc/findnrun/plugin-dev.md.
+# FALLBACK_ICON is used as fallback icon-reference per usr/share/findnrun/doc/plugin-dev.md.
   return(icnpath ? icnpath icnname "." icnext : (""!=icnname ? icnname : FALLBACK_ICON))
 }
 
@@ -1809,7 +1809,7 @@ set_ABOUT_TEXT
 set_GET_DRAIN_COMMAND() # [[[2
 {
   # Code that extracts the drain command of the selected list item.
-  # Command is returned in "$@" - Command defined per doc/findnrun/plugin-dev.md.
+  # Command is returned in "$@" - Command defined per usr/share/findnrun/doc/plugin-dev.md.
 
   # 1. KLUDGE work around the challenging Windows paths that winemenubuilder generates. [[[
   # input: Exec=env WINEPREFIX="/home/spot/.wine" wine C:\\\\windows\\\\command\\\\start.exe /Unix /home/spot/.wine/dosdevices/c:/users/Public/Start\\ Menu/Programs/Calendar\\ Magic/Calendar\\ Magic.lnk
@@ -1838,7 +1838,7 @@ set_SELECT_NEXT_SOURCE
 
 set_LOAD_INVOCATION_ENV() # [[[2
 {
-  # Code that loads the current source's invocation environment as defined in doc/findnrun/plugin-dev.md.
+  # Code that loads the current source's invocation environment as defined in usr/share/findnrun/doc/plugin-dev.md.
   LOAD_INVOCATION_ENV=\
 ${DEBUG3:+'>&2 echo "[["; set -x;'}\
 ". \"${SRCSTEM}\"\${varF3:-0}-*.sh"\

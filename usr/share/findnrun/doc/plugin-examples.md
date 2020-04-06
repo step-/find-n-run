@@ -91,7 +91,7 @@ to study. Since it's a more substantial example, it isn't included in
 this document.
 
 The multi-field plugin code and documentation consists of a single file
-[/usr/share/doc/findnrun/examples/multi-field-tap.sh](examples/multi-field-tap.sh).
+[/usr/share/findnrun/doc/examples/multi-field-tap.sh](examples/multi-field-tap.sh).
 
 ### Filmstrip Viewer
 
@@ -111,6 +111,6 @@ settings, geotags and so on, should be relatively simple - given some
 knowledge of shell scripting and of the exiftool command-line utility.
 
 The filmstrip plugin/application consists of several files located in
-`/usr/share/doc/findnrun/examples/filmstrip/`.
+`/usr/share/findnrun/doc/examples/filmstrip/`.
 Plugin [help file](examples/filmstrip/index.md).
 

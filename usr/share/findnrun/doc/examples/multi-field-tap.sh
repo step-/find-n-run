@@ -20,7 +20,7 @@ MAXREC=500 # output records
 # And add source 'multi' to variable SOURCES in ~/.findnrunrc.
 # Uncomment each line when copying.
 #SOURCE_multi='multi:multi::multi:'
-#TAP_multi='/usr/share/doc/findnrun/examples/multi-field-tap.sh "${term}" | findnrun-formatter --'
+#TAP_multi='/usr/share/findnrun/doc/examples/multi-field-tap.sh "${term}" | findnrun-formatter --'
 #DRAIN_multi='show() { Xdialog --msgbox "$*" 0x0 ;} ; show'
 #TITLE_multi='multi-field example'
 

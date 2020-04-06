@@ -5,7 +5,7 @@ already meet the minimum requirements for findnrun.  Other Debian-based
 distributions, such as Ubuntu and Mint, need additional packages before
 they can use findnrun. More information for Debian systems is available
 on the
-[Debian page](https://github.com/step-/find-n-run/blob/master/usr/share/doc/findnrun/DEBIAN.md)
+[Debian page](https://github.com/step-/find-n-run/blob/master/usr/share/findnrun/doc/DEBIAN.md)
 
 Findnrun **requires** the following dependencies:
 

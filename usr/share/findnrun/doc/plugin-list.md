@@ -16,8 +16,8 @@ it.
 
 ### Demo Plugins
 
- * [Filmstrip](https://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/examples) - progressive image search  - `filmstrip` - 1.1.0
- * [Fuzzy Search](https://github.com/step-/find-n-run/tree/master/usr/share/doc/findnrun/examples) - approximate (fuzzy) search with agrep - `agrep_apps` - 1.0.0
+ * [Filmstrip](https://github.com/step-/find-n-run/tree/master/usr/share/findnrun/doc/examples) - progressive image search  - `filmstrip` - 1.1.0
+ * [Fuzzy Search](https://github.com/step-/find-n-run/tree/master/usr/share/findnrun/doc/examples) - approximate (fuzzy) search with agrep - `agrep_apps` - 1.0.0
 
 ### Contributed Plugins
 
