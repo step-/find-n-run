@@ -12,9 +12,9 @@ A progressive finder.
 
 ## News
 
-**24-Jan-2019 Release [4.0.2](https://github.com/step-/find-n-run/releases/tag/4.0.2)**
+**06-Apr-2020 Release [4.0.3](https://github.com/step-/find-n-run/releases/tag/4.0.3)**
 
-* Fix: Selected command not started (involves plugin use only).
+* Move help folder to a more standard path.
 
 **Upgrading**
 
@@ -37,6 +37,10 @@ and
 [commit history](https://github.com/step-/find-n-run/commits/master).
 
 ## Old News
+
+**24-Jan-2019 Release [4.0.2](https://github.com/step-/find-n-run/releases/tag/4.0.2)**
+
+* Fix: Selected command not started (involves plugin use only).
 
 **13-Jan-2019 Release [4.0.1](https://github.com/step-/find-n-run/releases/tag/4.0.1)**
 
