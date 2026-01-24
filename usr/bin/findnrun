@@ -139,7 +139,7 @@ LL=${LANG%_*} #ex:pt
 
 # -----------------------------------------------------------------------------
 
-command -v gtkdialog4 >/dev/null 2>&1 && GTKDIALOG=gtkdialog4 || GTKDIALOG=gtkdialog
+GTKDIALOG=${GTKDIALOG_BIN:-gtkdialog}
 # GTKDIALOG_MAX_BYTE_LEN_BUG prevents a tree widget buffer overflow bug. If we
 # pass gtkdialog a longer buffer(*) it displays two rows: the buffer row then
 # an extra, empty row. Activating that latter crashes gtkdialog. To stay clear
