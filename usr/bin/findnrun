@@ -776,7 +776,7 @@ SKIP_INIT=prefetch . "${SRCSTEM}0-"*.sh
 # Display warning dialog if some source declarations were found invalid. [[[
 invalid=$(list_diff "$SOURCES" "$VISIBLE_SOURCES $DISABLED_SOURCES $HIDDEN_SOURCES")
 if [ -n "$invalid" ]; then
-  yad --title "${APP_NAME}" --window-icon=edit-find --center --on-top \
+  ${YAD_BIN:-yad} --title "${APP_NAME}" --window-icon=edit-find --center --on-top \
     --image gtk-dialog-warning --buttons-layout=center --borders=4 \
     --button=gtk-ok \
     --text "$(printf \
@@ -1175,7 +1175,7 @@ function show_progress_dialog(message,   pid,c,p,s,A,px,py,w,h,g,cmd) { # [[[2
   cmd = " --progress-text=\""message"\" --progress --pulsate --splash --no-buttons < /dev/null & echo $! >\"'"${YPID}"'\""
   g = sprintf("--geometry %dx%d+%d+%d --width=%d --height=%d", w, h, px, py, w, h)
   if('${DEBUG2:-0}') print "geometry("g")" >"/dev/stderr"
-  if(system("yad "g cmd))
+  if(system("${YAD_BIN:-yad} "g cmd))
       { return("") }
   getline pid < "'"${YPID}"'" # running yads PID
   close("'"${YPID}"'")
@@ -1723,7 +1723,7 @@ ENDFILE {
     icon = "gtk-dialog-warning"
   }
   if("none" != exit_msg) {
-    system("yad --text=\""exit_msg"\" --button=gtk-ok --window-icon="icon" --title=\"'"$APP_NAME"'\" --center --on-top --buttons-layout=center --borders=4 &")
+    system("${YAD_BIN:-yad} --text=\""exit_msg"\" --button=gtk-ok --window-icon="icon" --title=\"'"$APP_NAME"'\" --center --on-top --buttons-layout=center --borders=4 &")
   }
 }
 function emit(f,a,n,   i) { # [[[2
