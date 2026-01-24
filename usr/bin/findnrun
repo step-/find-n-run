@@ -2711,7 +2711,7 @@ start_main_window << GTKDIALOGDOC
   ${REMARK# [[[. Timers (hidden).}
   ${REMARK#  [[[. RESTART_WINDOW0: serve REQUEST_RESTART_WINDOW.}
   ${REMARK# gtkdialog launch function limitations: see /usr/share/doc/gtkdialog/examples/miscellaneous/presentwindow.}
-  ${REMARK# e.g., if a radiobutton/checkbox menuitem launches a window other menuitems will not receive their "toggled" signal, etc. So we use a timer to watch for the launch request, and a checkbox to perform the launch. The checkbox can be hidden but apparently it must to be placed inside a visible vbox or it will not react.}
+  ${REMARK# e.g., if a radiobutton/checkbox menuitem launches a window other menuitems will not receive their "toggled" signal, etc. So we use a timer to watch for the launch request, and a checkbox to perform the launch. The checkbox can be hidden but apparently it must be placed inside a visible vbox or it will not react.}
   <timer interval="3600" visible="false" file-monitor="true">
     <variable export="false">RESTART_WINDOW0</variable>
     <input file>$RWMF-trigger</input>

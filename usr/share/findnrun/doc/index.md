@@ -49,12 +49,10 @@ Both projects name the main script 'findnrun'.
    with **regular expressions**, **case-independently**. Search for
    applications installed with **Wine**.
 
-[2] Help documents are encoded as _markdown_. You can _read_ markdown as
-   plain text - with some minor loss of formatting - or with the
-   [mdview](http://chiselapp.com/user/jamesbond/repository/mdview3/index)
-   viewer (recommended). Mdview can also _browse_ markdown, and
-   automatically show _translated_ markdown provided that the findnrun
-   NLS package for your language is installed.
+[2] Help documents are written in _Markdown_. You can read Markdown
+  as plain text with a text editor. To view it as formatted text
+  you can use the GTK [mdview MTX](http://github.com/step-/mdview/)
+  viewer, or various other applications.
 
 [3] Run multiple searches at the same time. Each search window is
    separate from other running instances. Use multiple preference

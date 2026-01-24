@@ -230,7 +230,7 @@ provide a corresponding `po` file to ease up the translator's task.
 
 ### Help Documents
 
-Since version 2.0.0 findnrun's help system is based on markdown code
+Since version 2.0.0 findnrun's help pages are formatted as Markdown.
 only, and it is translated as part of the main window translation as
 GetText 'msgstr' strings.  The `pot` template includes source
 file locations and comments that help you identify when you are dealing

@@ -15,18 +15,14 @@ Findnrun **requires** the following dependencies:
 * xwininfo
 * yad
 
-Findnrun also uses the following packages if they are available. If they
-aren't findnrun will still run but some functions will not work:
+Findnrun also uses the following packages if they are installed.
 
-* **mdview >2016.02.04** - to view English help documentation and its
-  translations. If mdview isn't installed a text editor is used instead but
-  only English documentation can be shown. Mdview source code can be found
-  [here](http://chiselapp.com/user/jamesbond/repository/mdview3/timeline).
-  Mdview itself has no dependencies. It's just a straight C compilation.
-* the /proc file system (Linux). If /proc isn't available, findnrun won't be
-  able to restart itself from its UI but all other functions will work just
-  fine.
-* GNU date - only used in debugging mode, no bearing on normal operation.
+* **MDVIEW MTX** - graphical Markdown viewer. If mdview isn't
+  installed a text editor will be used to open Markdown documents.
+  Mdview can be found [here](http://github.com/step-/mdview).
+* The /proc file system (Linux). If /proc isn't available, findnrun can't
+  restart itself automatically. Other functions are unaffected.
+* GNU date - only if debugging mode is enabled.
 
 ### Shell
 
